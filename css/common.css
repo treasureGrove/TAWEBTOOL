@@ -1,0 +1,114 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Yu Gothic UI";
+}
+
+.top_search {
+    position: fixed;
+    margin-left: 20vw;
+    width: 79vw;
+    margin-top: 1vh;
+    margin-right: 1vw;
+    top: 0;
+    left: 0;
+    height: 5vh;
+    background-color: #fff;
+    z-index: 100;
+    box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+}
+
+.top_search input {
+    width: 90%;
+    height: 60%;
+    margin: 10px 10px;
+    font-size: 16px;
+}
+
+.left_menu ul.menu_root {
+    top: 0;
+    left: 0;
+    width: 18vw;
+    height: 100vh;
+    background-color: #fff;
+    z-index: 100;
+    box-shadow: 6px 0px 5px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    display: block;
+    flex-direction: column;
+}
+
+.left_item {
+    box-sizing: border-box;
+    margin: 0;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    background-color: rgba(255, 255, 255, 0.5);
+    display: block;
+    align-items: center;
+    padding: 8px;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition-duration: 0.5s;
+}
+
+.left_item:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    /* transform: translateX(5px); */
+}
+
+.left_item.active {
+    background-color: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+}
+
+.left_icon {
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+#left_icon1 {
+    background-image: url('https://blog-image-1316340567.cos.ap-shanghai.myqcloud.com/blog/music/ai.webp');
+}
+
+.item_context {
+    width: 50%;
+    text-align: center;
+    font-size: 18px;
+    display: inline;
+}
+
+.left_menu .sub_menu {
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height .16s ease-out, opacity .12s ease-out;
+}
+
+.left_item.open>.sub_menu {
+    max-height: 260px;
+    display: block;
+    opacity: 1;
+    transition: max-height .28s ease-in, opacity .2s ease-in;
+}
+
+
+
+/* .left_menu ul{
+} */
