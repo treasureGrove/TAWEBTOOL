@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
@@ -104,7 +104,7 @@
         
         <div class="settings-panel">
             <div class="setting-group">
-                <label>放大倍数 (Scale)</label>
+                <label>Scale</label>
                 <select id="scaleSelect">
                     <option value="2">2x</option>
                     <option value="3">3x</option>
@@ -113,11 +113,11 @@
             </div>
             
             <div class="setting-group">
-                <label>AI模型 (Model)</label>
+                <label>AI Model</label>
                 <select id="modelSelect">
-                    <option value="esrgan-medium" selected>ESRGAN Medium (推荐)</option>
-                    <option value="esrgan-thick">ESRGAN Thick (高质量)</option>
-                    <option value="esrgan-slim">ESRGAN Slim (快速)</option>
+                    <option value="esrgan-medium" selected>ESRGAN Medium (Recommended)</option>
+                    <option value="esrgan-thick">ESRGAN Thick (High Quality)</option>
+                    <option value="esrgan-slim">ESRGAN Slim (Fast)</option>
                 </select>
             </div>
         </div>
@@ -125,15 +125,54 @@
         <div class="file-list" id="fileList"></div>
         
         <div class="action-buttons">
-            <button id="clearBtn" class="btn-secondary">清空列表</button>
-            <button id="processBtn" class="btn-primary">开始处理</button>
+            <button id="clearBtn" class="btn-secondary">Clear All</button>
+            <button id="downloadAllBtn" class="btn-secondary" style="display: none;">Download All</button>
+            <button id="processBtn" class="btn-primary">Start Processing</button>
         </div>
         
         <div class="progress-container" id="progressContainer" style="display: none;">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div class="progress-text" id="progressText">处理中... 0/0</div>
+            <div class="progress-text" id="progressText">Processing... 0/0</div>
+        </div>
+    </div>
+    
+    <!-- 对比查看模态框 -->
+    <div class="comparison-modal" id="comparisonModal" style="display: none;">
+        <div class="comparison-modal-content">
+            <div class="comparison-modal-header">
+                <button class="nav-btn" id="prevBtn" title="Previous">&lt;</button>
+                <div class="modal-title-group">
+                    <h2>Image Comparison</h2>
+                    <div class="current-file-name" id="currentFileName"></div>
+                </div>
+                <button class="nav-btn" id="nextBtn" title="Next">&gt;</button>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="comparison-slider-container">
+                <div class="comparison-slider" id="comparisonSlider">
+                    <div class="comparison-image comparison-before">
+                        <canvas id="originalCanvas"></canvas>
+                        <div class="image-label label-left">
+                            <span id="originalInfo">Original</span>
+                        </div>
+                    </div>
+                    <div class="comparison-image comparison-after">
+                        <canvas id="upscaledCanvas"></canvas>
+                        <div class="image-label label-right">
+                            <span id="upscaledInfo">Upscaled</span>
+                        </div>
+                    </div>
+                    <div class="comparison-handle" id="comparisonHandle">
+                        <div class="handle-line"></div>
+                        <div class="handle-circle">
+                            <div class="handle-arrow handle-arrow-left"></div>
+                            <div class="handle-arrow handle-arrow-right"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     

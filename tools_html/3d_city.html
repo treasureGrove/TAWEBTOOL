@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D城市工具</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/3d_city.css">
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.138/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+
+<body>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.138/Build/Cesium/Cesium.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/3d_city.js" defer></script>
+    <div id="main_bg"></div>
+    <div class="left_menu">
+        <ul class="menu_root">
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">AI工具箱</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">图片处理</div>
+                <ul class="sub_menu">
+                    <li><a href="compress_image.html">图片压缩转换</a></li>
+                    <li><a href="ai_upscale.html">AI高清放大</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">视频处理</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">TA工具</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">3D助手</div>
+                <ul class="sub_menu">
+                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">和我一起听</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">关于
+
+            </li>
+        </ul>
+    </div>
+    <div class="top_search">
+        <input type="text" placeholder="搜索">
+    </div>
+    </div>
+    <div id="panel">
+        <section class="city-app">
+            <aside class="city-controls">
+                <h1>真实城市预览与导出</h1>
+                <p class="city-subtitle">3D 预览采用 Cesium 渲染，支持搜索定位与下载数据。</p>
+
+                <div class="control-group">
+                    <label>选择位置</label>
+                    <div class="search-row">
+                        <button id="useCenterBtn" class="btn-solid">用视图中心定位</button>
+                    </div>
+                </div>
+
+                <div class="action-row">
+                    <button id="downloadBuildingsBtn" class="btn-ghost">下载建筑 GeoJSON</button>
+                    <button id="downloadDemBtn" class="btn-ghost">下载地形 DEM</button>
+                    <button id="downloadLandcoverBtn" class="btn-ghost">下载生态图</button>
+                </div>
+
+                <p class="hint">提示：点击地图更新预览与导出范围。</p>
+            </aside>
+
+            <div class="city-stage-wrap">
+                <div class="map-wrap">
+                    <div id="cityStatus" class="city-status">准备就绪</div>
+                    <div id="cityMap"></div>
+                </div>
+                <div class="preview-wrap">
+                    <div class="preview-toolbar">
+                        <span class="preview-title">3D 预览</span>
+                        <button id="refreshPreviewBtn" class="btn-ghost btn-mini">刷新预览</button>
+                    </div>
+                    <div id="cityPreview3D"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</body>
+
+</html>

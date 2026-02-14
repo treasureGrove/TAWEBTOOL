@@ -146,18 +146,19 @@
 .left_item.open>.sub_menu li:hover{
     background-color: rgba(55, 177, 140, 0.5);
 }
-.left_item.open > .sub_menu li > a {
-    color: inherit;
-    text-decoration: none;
+.left_menu .sub_menu li > a {
+    color: inherit !important;
+    text-decoration: none !important;
     background: transparent;
     display: block;
     outline: none;
 }
-.left_item.open > .sub_menu li > a:hover,
-.left_item.open > .sub_menu li > a:focus,
-.left_item.open > .sub_menu li > a:active {
-    color: inherit;
-    text-decoration: none;
+.left_menu .sub_menu li > a:hover,
+.left_menu .sub_menu li > a:focus,
+.left_menu .sub_menu li > a:active,
+.left_menu .sub_menu li > a:visited {
+    color: inherit !important;
+    text-decoration: none !important;
     outline: none;
 }
 #panel{
