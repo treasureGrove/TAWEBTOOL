@@ -13,24 +13,29 @@
     top: 0;
     left: 0;
     height: 5vh;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.5);
     z-index: 100;
-    box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
+    box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
 }
 
 .top_search input {
-    width: 90%;
+    width: 97%;
     height: 60%;
     margin: 10px 10px;
     font-size: 16px;
+    background-color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    padding: 0 8px;
 }
 
 .left_menu ul.menu_root {
     top: 0;
     left: 0;
     width: 18vw;
-    height: 100vh;
+    height: calc(100vh - 20px);
     background-color: #fff;
     z-index: 100;
     box-shadow: 6px 0px 5px rgba(0, 0, 0, 0.5);
@@ -43,23 +48,22 @@
 .left_item {
     box-sizing: border-box;
     margin: 0;
-    min-height: 0;
     width: 100%;
-    height: auto;
     background-color: rgba(255, 255, 255, 0.5);
-    display: block;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    grid-template-rows: auto auto;
     align-items: center;
     padding: 8px;
-    align-items: center;
     border-radius: 10px;
     margin-bottom: 10px;
     cursor: pointer;
     transition-duration: 0.5s;
+    transform: none;
 }
 
 .left_item:hover {
     background-color: rgba(255, 255, 255, 0.8);
-    /* transform: translateX(5px); */
 }
 
 .left_item.active {
@@ -68,14 +72,15 @@
 }
 
 .left_icon {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
     width: 36px;
     height: 36px;
     margin: 0;
     padding: 0;
-    display: inline-block;
-    align-items: center;
-    justify-content: center;
-    background-size: 100%;
+    display: block;
+    background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     border-radius: 10px;
@@ -87,28 +92,135 @@
 }
 
 .item_context {
-    width: 50%;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
     text-align: center;
     font-size: 18px;
-    display: inline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .left_menu .sub_menu {
+    grid-column: 1 / -1;
+    grid-row: 2;
     max-height: 0;
     padding: 0;
-    overflow: hidden;
+    margin: 0;
     opacity: 0;
-    transition: max-height .16s ease-out, opacity .12s ease-out;
+    visibility: hidden;
+    overflow: hidden;
+    transition: max-height .2s ease-out, opacity .12s ease-out, padding .2s ease-out, visibility 0s .2s;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .left_item.open>.sub_menu {
-    max-height: 260px;
+    max-height: 360px;
+    width: 100%;
     display: block;
     opacity: 1;
-    transition: max-height .28s ease-in, opacity .2s ease-in;
+    visibility: visible;
+    padding: 8px;
+    transition: max-height .28s ease-in, opacity .16s ease-in, padding .28s ease-in, visibility 0s 0s;
+}
+.left_menu .sub_menu li {
+    height: 36px;
+    width: 100%;
+    display: block;
+    list-style: none;
+    margin: 6px 0;
+    padding: 0;
+    border-radius: 10px;
+    line-height: 36px;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: background-color .18s ease, opacity .12s ease;
+    opacity: 0;
+}
+.left_item.open>.sub_menu li {
+    opacity: 1;
+    transition: background-color .18s ease, opacity .16s ease .08s;
+}
+.left_item.open>.sub_menu li:hover{
+    background-color: rgba(55, 177, 140, 0.5);
+}
+.left_item.open > .sub_menu li > a {
+    color: inherit;
+    text-decoration: none;
+    background: transparent;
+    display: block;
+    outline: none;
+}
+.left_item.open > .sub_menu li > a:hover,
+.left_item.open > .sub_menu li > a:focus,
+.left_item.open > .sub_menu li > a:active {
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+}
+#panel{
+    position: fixed;
+    left: 20vw;
+    top: 7vh;
+    width: 79vw;
+    height: calc(100vh - 8vh);
+    margin: 0 1vw 1vh 0;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    box-shadow: 0px 6px 5px rgba(0, 0, 0, 0.3);
+    overflow-y: auto;
+    z-index: 50;
 }
 
+#waifu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 999;
+    font-size: 0;
+    transition: all 0.3s ease-in-out;
+}
 
+#waifu:hover {
+    transform: translateY(-10px);
+}
 
-/* .left_menu ul{
-} */
+#waifu-tool {
+    color: #5b6c7d;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#waifu:hover #waifu-tool {
+    opacity: 1;
+}
+
+#waifu-tips {
+    position: fixed;
+    bottom: 45px;
+    /* left: 20px; */
+    max-width: 18vw;
+    min-height: 70px;
+    padding: 15px 15px;
+    border: 1px solid rgba(55, 177, 140, 0.5);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 3px 15px rgba(55, 177, 140, 0.2);
+    font-size: 14px;
+    line-height: 24px;
+    color: #333;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-family: "Yu Gothic UI", sans-serif;
+    word-wrap: break-word;
+    z-index: 998;
+}
+
+#waifu-tips.active {
+    opacity: 1;
+    transition: opacity 0.3s;
+}

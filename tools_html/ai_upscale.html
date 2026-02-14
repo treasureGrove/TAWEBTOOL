@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI图片高清放大 - 智能超分辨率</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ai_upscale.css">
+</head>
+
+<body>
+    <script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu">
+        <ul class="menu_root">
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">AI工具箱</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">图片处理</div>
+                <ul class="sub_menu">
+                    <li><a href="compress_image.html">图片压缩转换</a></li>
+                    <li><a href="ai_upscale.html">AI高清放大</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">视频处理</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">TA工具</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">3D助手</div>
+                <ul class="sub_menu">
+                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">和我一起听</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                    <li><a href=""></a></li>
+                </ul>
+            </li>
+            <li class="left_item">关于
+
+            </li>
+        </ul>
+    </div>
+    <div class="top_search">
+        <input type="text" placeholder="搜索">
+    </div>
+    </div>
+    <div id="panel">
+        <h1>AI图片高清放大工具</h1>
+        
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p>拖拽图片到此处或点击选择</p>
+                    <p class="sub-text">支持 JPG, PNG, JPEG, WEBP 等格式</p>
+                </div>
+            </div>
+        </div>
+        
+        <input type="file" id="fileInput" multiple accept="image/jpeg,image/png,image/jpg,image/webp" hidden>
+        
+        <div class="settings-panel">
+            <div class="setting-group">
+                <label>放大倍数 (Scale)</label>
+                <select id="scaleSelect">
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="4" selected>4x</option>
+                </select>
+            </div>
+            
+            <div class="setting-group">
+                <label>AI模型 (Model)</label>
+                <select id="modelSelect">
+                    <option value="esrgan-medium" selected>ESRGAN Medium (推荐)</option>
+                    <option value="esrgan-thick">ESRGAN Thick (高质量)</option>
+                    <option value="esrgan-slim">ESRGAN Slim (快速)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="file-list" id="fileList"></div>
+        
+        <div class="action-buttons">
+            <button id="clearBtn" class="btn-secondary">清空列表</button>
+            <button id="processBtn" class="btn-primary">开始处理</button>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">处理中... 0/0</div>
+        </div>
+    </div>
+    
+    <script src="../js/menu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/esrgan-slim@latest/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/esrgan-medium@latest/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/esrgan-thick@latest/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/upscaler@1.0.0-beta.18/dist/browser/umd/upscaler.min.js"></script>
+    <script src="../js/ai_upscale.js"></script>
+
+</body>
+
+</html>

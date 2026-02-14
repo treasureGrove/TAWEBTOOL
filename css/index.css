@@ -9,3 +9,49 @@
     background-attachment: fixed;
     z-index: -1;
 }
+
+/* ...existing code... */
+#welcome_title{
+    position: fixed;
+    left: 220px;
+    top: 0;
+    width: calc(100% - 220px);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px;
+    box-sizing: border-box;
+    z-index: 50;
+
+    /* glassy gradient text */
+    color: transparent;
+    background: rgba(255,255,255,0.8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    font-size: 64px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+
+    -webkit-text-stroke: 0.6px rgba(255,255,255,0.22);
+
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25));
+}
+
+/* subtle glossy highlight over the text area */
+#welcome_title::after{
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    transform: translate(-50%,-50%) skewY(-6deg);
+    width: min(72%, 920px);
+    height: 46%;
+    background: linear-gradient(180deg, rgba(177, 201, 255, 0.28), rgba(255, 155, 155, 0.23));
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 49;
+}
+/* ...existing code... */
