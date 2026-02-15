@@ -1,0 +1,34 @@
+.local-workbench {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  height: 100%;
+}
+.workbench-card {
+  background: rgba(255,255,255,0.88);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
+.workbench-card h2 { font-size: 18px; margin-bottom: 8px; }
+.workbench-tip { color:#445; font-size:13px; margin-bottom:10px; }
+.workbench-toolbar { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.workbench-toolbar button, .workbench-toolbar label {
+  border:none; border-radius:8px; padding:8px 10px; background:#37b18c; color:#fff; cursor:pointer; font-size:13px;
+}
+.workbench-toolbar .secondary { background:#6b7280; }
+.workbench-toolbar .danger { background:#ef4444; }
+.workbench-toolbar input[type="file"] { display:none; }
+.workbench-textarea {
+  width:100%; height:52vh; border:1px solid #d1d5db; border-radius:8px; padding:10px; box-sizing:border-box; resize:vertical; font-size:13px;
+}
+.compute-actions { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:8px; margin-bottom:10px; }
+.compute-actions button { border:none; border-radius:8px; background:#111827; color:white; padding:8px; cursor:pointer; }
+.result-box {
+  width:100%; height:44vh; border:1px solid #d1d5db; border-radius:8px; padding:10px; white-space:pre-wrap; overflow:auto; background:#f8fafc; font-size:13px;
+}
+@media (max-width: 1200px) {
+  .local-workbench { grid-template-columns: 1fr; }
+  .workbench-textarea { height: 34vh; }
+  .result-box { height: 28vh; }
+}
