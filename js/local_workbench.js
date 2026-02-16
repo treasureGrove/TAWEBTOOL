@@ -2,6 +2,7 @@
   function $(id) { return document.getElementById(id); }
 
   const toolMeta = {
+    chatgpt: { title: 'AI 对话助手', intro: '免登录开箱即用：直接在当前页面与 AI 进行多轮对话。' },
     hdr_editor: { title: 'HDR 编辑器', intro: '参考 DesignTool 的工作流：优先在线工具，附带本地快速调色。' },
     combine_rgba: { title: 'RGBA 通道合成', intro: '本地合成 R/G/B/A 通道，输出 PNG。' },
     physics_light: { title: '物理光照计算器', intro: 'EV100 与曝光参数快速换算。' },
@@ -30,6 +31,7 @@
   }
 
   function buildBase(panel, meta) {
+    const noteTitle = panel.dataset.localTool === 'chatgpt' ? '问题排查（精简）' : '本地笔记';
     panel.innerHTML = `
       <div class="tool-shell">
         <section class="tool-head card">
@@ -38,7 +40,7 @@
         </section>
         <section id="toolMain" class="card"></section>
         <section class="card">
-          <h3>本地笔记</h3>
+          <h3>${noteTitle}</h3>
           <div class="workbench-toolbar">
             <label>导入文本<input id="loadLocalFile" type="file" accept=".txt,.md,.json,.csv,.glsl,.js,.xml"></label>
             <button id="saveLocalFile" class="secondary">导出文本</button>
@@ -264,6 +266,14 @@
     host.innerHTML = `<iframe class="tool-iframe" src="https://www.photopea.com/" referrerpolicy="no-referrer"></iframe>`;
   }
 
+  function initChatTool(host) {
+    if (typeof window.initChatgptTool === 'function') {
+      return window.initChatgptTool(host);
+    }
+
+    host.innerHTML = '<p class="hint">ChatGPT 工具脚本未加载，请刷新页面重试。</p>';
+  }
+
   function renderDefault(host, key) {
     const url = designToolLinks[key];
     if (url) return renderDesignToolSection(host, url);
@@ -276,6 +286,7 @@
     if (!panel || !panel.dataset.localTool) return;
 
     const key = panel.dataset.localTool;
+    panel.classList.toggle('chatgpt-panel', key === 'chatgpt');
     const meta = toolMeta[key] || { title: panel.dataset.toolTitle || '工具页', intro: '参考 designtool.site 风格提供开箱即用能力。' };
     const main = buildBase(panel, meta);
 
@@ -285,6 +296,7 @@
     if (key === 'shader_library') return initShaderLibrary(main);
     if (key === 'model_previewer') return initModelPreview(main);
     if (key === 'ps_online') return initPsOnline(main);
+    if (key === 'chatgpt') return initChatTool(main);
 
     renderDefault(main, key);
   }
