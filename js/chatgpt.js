@@ -28,7 +28,7 @@
         <div class="chat-input-wrap">
           <textarea id="chatInput" placeholder="输入消息，Enter 发送，Shift+Enter 换行"></textarea>
           <div class="chat-input-toolbar">
-            <span class="hint">公开接口免登录，避免输入敏感信息。</span>
+            <span class="hint">已接入智谱 GLM-4.7-Flash，免登录使用，避免输入敏感信息。</span>
             <div>
               <button id="clearChat" class="ghost-btn" type="button">清空对话</button>
               <button id="sendChat" type="button">发送</button>
@@ -45,6 +45,7 @@
     const emptyState = $('chatEmptyState');
     const storeKey = 'tool-chatgpt-messages';
     const systemPrompt = '你是一个简洁、友好的中文 AI 助手。';
+    const zhipuApiKey = '48ca4cce66704a418ec6e25f2f4d5cdd.tCF9NFIxQjsM8ucW';
     let pending = false;
     let history = [];
 
@@ -55,6 +56,17 @@
     function updateEmptyState() {
       emptyState.style.display = history.length ? 'none' : 'block';
       messageBox.style.display = history.length ? 'flex' : 'none';
+    }
+
+    function normalizeAssistantContent(content) {
+      if (typeof content === 'string') return content;
+      if (Array.isArray(content)) {
+        return content
+          .map((item) => (typeof item === 'string' ? item : item?.text || ''))
+          .filter(Boolean)
+          .join('\n');
+      }
+      return '';
     }
 
     function renderMessage(role, content, isLoading = false) {
@@ -109,26 +121,41 @@
 
       try {
         const messages = [{ role: 'system', content: systemPrompt }, ...history].slice(-20);
-        const res = await fetch('https://text.pollinations.ai/openai', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'openai-large',
-            messages,
-            temperature: 0.7,
-            stream: false
-          })
-        });
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 30000);
+        let res;
+        try {
+          res = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${zhipuApiKey}`
+            },
+            body: JSON.stringify({
+              model: 'glm-4.7-flash',
+              messages,
+              temperature: 0.7,
+              stream: false
+            }),
+            signal: controller.signal
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const apiMsg = data?.error?.message || data?.message || `HTTP ${res.status}`;
+          throw new Error(apiMsg);
+        }
 
-        const data = await res.json();
-        const answer = data?.choices?.[0]?.message?.content?.trim() || '暂时没有生成内容，请稍后再试。';
+        const answer = normalizeAssistantContent(data?.choices?.[0]?.message?.content).trim() || '暂时没有生成内容，请稍后再试。';
         loadingNode.remove();
         appendMessage('assistant', answer);
       } catch (err) {
         loadingNode.remove();
-        appendMessage('assistant', `请求失败：${err.message}。请稍后重试。`);
+        const message = err?.name === 'AbortError' ? '请求超时，请稍后重试。' : `请求失败：${err.message}。请稍后重试。`;
+        appendMessage('assistant', message);
       } finally {
         pending = false;
         sendBtn.disabled = false;
