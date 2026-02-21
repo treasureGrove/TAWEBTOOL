@@ -4,15 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI补帧，高清放大</title>
+    <title>AI视频补帧 - 高帧率插值</title>
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/ai_draw.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
+    <link rel="stylesheet" href="../css/ai_frame_interpolation.css">
 </head>
 
 <body>
+    <script src="../third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js"></script>
+    <!-- mp4-muxer: 优先从 jsdelivr CDN 加载，如果失败则使用本地备用 -->
+    <script>
+        (function() {
+            var script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.min.js';
+            script.onload = function() {
+                console.log('✅ mp4-muxer从jsdelivr CDN加载成功');
+            };
+            script.onerror = function() {
+                console.warn('⚠️ CDN加载mp4-muxer失败，尝试unpkg...');
+                var fallback = document.createElement('script');
+                fallback.src = 'https://unpkg.com/mp4-muxer@5.2.2/build/mp4-muxer.min.js';
+                fallback.onload = function() {
+                    console.log('✅ mp4-muxer从unpkg CDN加载成功');
+                };
+                fallback.onerror = function() {
+                    console.warn('⚠️ unpkg CDN也失败了，使用本地备用文件...');
+                    var localFallback = document.createElement('script');
+                    localFallback.src = '../third_part/mp4-muxer.umd.js';
+                    localFallback.onload = function() {
+                        console.log('✅ mp4-muxer从本地加载成功');
+                    };
+                    localFallback.onerror = function() {
+                        console.error('❌ 所有加载方式都失败！');
+                        console.error('请手动下载到 third_part 文件夹');
+                        console.error('下载地址: https://cdn.jsdelivr.net/npm/mp4-muxer@5.2.2/build/mp4-muxer.min.js');
+                    };
+                    document.head.appendChild(localFallback);
+                };
+                document.head.appendChild(fallback);
+            };
+            document.head.appendChild(script);
+        })();
+    </script>
     <script src="../js/menu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
+    <script src="../js/ai_frame_interpolation.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu">
         <ul class="menu_root">
@@ -22,7 +56,7 @@
                 <ul class="sub_menu">
                     <li><a href="chatgpt.html">ChatGPT</a></li>
                     <li><a href="ai_upscale.html">AI高清放大</a></li>
-                    <li><a href="ai_frame_interpolation.html">AI插帧/分辨率</a></li>
+                    <li><a href="ai_frame_interpolation_simple.html">AI插帧/分辨率</a></li>
                     <li><a href="ai_draw.html">AI绘画</a></li>
                 </ul>
             </li>
@@ -36,7 +70,7 @@
                     <li><a href="hdr_editor.html">HDR编辑器</a></li>
                     <li><a href="ps_online.html">在线PS</a></li>
                     <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
+                    <li><a href="model_previewer.html">模型预览器</a></li>
                 </ul>
             </li>
             <li class="left_item">
@@ -72,7 +106,217 @@
     <div class="top_search">
         <input type="text" placeholder="搜索">
     </div>
-    <div id="panel" data-local-tool="ai_frame_interpolation" data-tool-title="AI补帧，高清放大"></div>
+    <div id="panel">
+        <div class="main-content">
+            <h1>AI视频补帧工具</h1>
+            
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <!-- 上传提示 -->
+                    <div class="upload-content" id="uploadContent">
+                        <p>拖拽视频到此处或点击选择文件</p>
+                        <p class="sub-text">支持 MP4, AVI, MOV, MKV 格式</p>
+                    </div>
+                    
+                    <!-- 单视频显示（上传后，处理前） -->
+                    <div id="singleVideoContainer" style="display: none;">
+                        <div class="video-container">
+                            <video id="inputVideoPreview" controls></video>
+                        </div>
+                        <div id="videoInfoDisplay" style="margin-top: 10px; font-size: 13px; color: #ddd; text-align: center;"></div>
+                        <button id="reuploadBtn" class="btn-secondary" style="margin-top: 15px;">重新上传</button>
+                    </div>
+                    
+                    <!-- 左右对比显示（处理后） -->
+                    <div id="compareContainer" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: #888; margin-bottom: 10px; text-align: center; font-size: 14px;">📹 原视频 ({{originalFps}} FPS)</h4>
+                                <div class="video-container">
+                                    <video id="compareOriginalMain" controls></video>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 style="color: #00ff88; margin-bottom: 10px; text-align: center; font-size: 14px;">✨ 处理后 ({{targetFps}} FPS)</h4>
+                                <div class="video-container">
+                                    <video id="compareProcessedMain" controls></video>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 10px; color: #888; font-size: 13px;">
+                            💡 提示：点击任意视频播放，两个视频会同步播放
+                        </div>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button id="downloadBtnMain" class="btn-primary">下载处理后的视频</button>
+                            <button id="reprocessBtn" class="btn-secondary">重新处理</button>
+                            <button id="reuploadBtn2" class="btn-secondary">重新上传</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <input type="file" id="fileInput" accept="video/*" hidden>
+            
+            <div class="settings-panel">
+                
+                <div class="setting-group">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="enableInterpolation" checked style="width: auto; margin-right: 8px;">
+                        启用AI补帧
+                    </label>
+                    <select id="frameMultiplierSelect" style="margin-top: 10px;">
+                        <option value="60" selected>60 FPS</option>
+                        <option value="120">120 FPS</option>
+                        <option value="144">144 FPS</option>
+                        <option value="240">240 FPS</option>
+                    </select>
+                    <div id="fpsInfo" style="margin-top: 8px; font-size: 12px; color: #888;">原视频: -- fps</div>
+                </div>
+                
+                <div class="setting-group">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="enableUpscale" style="width: auto; margin-right: 8px;">
+                        启用AI超分辨率
+                    </label>
+                    <select id="upscaleScale" style="margin-top: 10px;">
+                        <option value="2" selected>2倍放大</option>
+                        <option value="4">4倍放大</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>处理分辨率</label>
+                    <select id="resolutionLimit">
+                        <option value="original" selected>原始分辨率</option>
+                        <option value="3840">4K (2160p)</option>
+                        <option value="2560">2K (1440p)</option>
+                        <option value="1920">1080p</option>
+                        <option value="1280">720p</option>
+                        <option value="960">540p</option>
+                        <option value="640">480p</option>
+                    </select>
+                </div>
+                
+                <!-- 🎨 高级后处理增强 -->
+                <div class="setting-group" style="border: 1px solid #00d9ff; border-radius: 8px; padding: 15px; background: rgba(0,217,255,0.05);">
+                    <label style="color: #00d9ff; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                        <span>🎨</span> 高级后处理增强
+                    </label>
+                    
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 13px; display: flex; justify-content: space-between;">
+                            <span>🔪 自适应锐化（Theia）</span>
+                            <span id="sharpenValue" style="color: #00d9ff;">0</span>
+                        </label>
+                        <input type="range" id="sharpenStrength" min="0" max="100" value="0" step="5" style="width: 100%; margin-top: 5px;">
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 13px; display: flex; justify-content: space-between;">
+                            <span>🧹 智能降噪（Proteus）</span>
+                            <span id="denoiseValue" style="color: #00d9ff;">0</span>
+                        </label>
+                        <input type="range" id="denoiseStrength" min="0" max="100" value="0" step="5" style="width: 100%; margin-top: 5px;">
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 13px; display: flex; justify-content: space-between;">
+                            <span>📊 对比度增强</span>
+                            <span id="contrastValue" style="color: #00d9ff;">0</span>
+                        </label>
+                        <input type="range" id="contrastAdjust" min="-50" max="50" value="0" step="5" style="width: 100%; margin-top: 5px;">
+                    </div>
+                    
+                    <div style="margin-top: 12px;">
+                        <label style="font-size: 13px; display: flex; justify-content: space-between;">
+                            <span>🎞️ 胶片颗粒</span>
+                            <span id="grainValue" style="color: #00d9ff;">0</span>
+                        </label>
+                        <input type="range" id="filmGrain" min="0" max="100" value="0" step="5" style="width: 100%; margin-top: 5px;">
+                    </div>
+                    
+                    <div style="margin-top: 10px; font-size: 12px; color: #888;">
+                        💡 提示：增强处理会增加处理时间，建议根据视频质量按需启用
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label>GPU加速</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="executionMode" value="gpu" checked> 启用</label>
+                        <label><input type="radio" name="executionMode" value="cpu"> 禁用</label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label>补帧模型</label>
+                    <select id="modelSelect">
+                        <option value="rife-v4.18">🌟 RIFE v4.18 (最高质量 - 推荐)</option>
+                        <option value="rife-v4.6" selected>RIFE v4.6 (稳定)</option>
+                        <option value="rife-v4.15">RIFE v4.15 (动画)</option>
+                        <option value="rife-v4.15-lite">RIFE v4.15 Lite (快速)</option>
+                        <option value="rife-v4.9">RIFE v4.9 (兼容)</option>
+                    </select>
+                    <div style="font-size: 12px; color: #888; margin-top: 5px;">
+                        💡 v4.18质量最高但略慢，Lite版本速度快2倍
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="enableUpscale" style="width: auto; margin-right: 8px;">
+                        启用AI超分辨率
+                    </label>
+                    <select id="upscaleModel" style="margin-top: 10px;">
+                        <option value="realesrgan-x4plus" selected>Real-ESRGAN (通用场景)</option>
+                        <option value="realesrgan-anime">🎨 Real-ESRGAN Anime (动画专用)</option>
+                    </select>
+                    <select id="upscaleScale" style="margin-top: 10px;">
+                        <option value="2">2x 放大</option>
+                        <option value="4" selected>4x 放大</option>
+                    </select>
+                    <div style="font-size: 12px; color: #888; margin-top: 5px;">
+                        ⚠️ 超分会大幅增加处理时间
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label>GPU加速</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="executionMode" value="gpu" checked> 启用</label>
+                        <label><input type="radio" name="executionMode" value="cpu"> 禁用</label>
+                    </div>
+                </div>
+                
+                <div class="setting-group" style="border-top: 2px solid #333; padding-top: 15px;">
+                    <div class="model-status" id="modelStatus" style="font-size: 13px;">未加载</div>
+                    <button id="loadModelBtn" class="btn-primary" style="margin-top: 10px; width: 100%;">🚀 加载模型</button>
+                </div>
+                
+                <div class="setting-group">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="testMode" style="width: auto; margin-right: 8px;">
+                        测试模式（仅处理3秒）
+                    </label>
+                </div>
+            
+            <div class="action-buttons">
+                <button id="processBtn" class="btn-primary" disabled>开始处理</button>
+            </div>
+            
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">处理中...</div>
+            </div>
+            
+            <div class="processing-stats" id="processingStats" style="display: none; margin-top: 20px; padding: 20px; background: rgba(0, 217, 255, 0.05); border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.2);">
+                <h3 style="font-size: 16px; color: #00d9ff; margin-bottom: 10px;">📊 处理信息</h3>
+                <div id="statsContent" style="font-size: 13px; line-height: 1.8; color: #aaa;"></div>
+            </div>
+        </div>
+    </div>
 
 </body>
 

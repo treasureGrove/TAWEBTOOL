@@ -71,9 +71,17 @@
         <input type="text" placeholder="搜索">
     </div>
     <div id="panel">
-        <h1>AI图片高清放大工具</h1>
+        <!-- 左侧图片队列 -->
+        <div class="queue-sidebar">
+            <div class="queue-title">待处理队列</div>
+            <div class="file-list" id="fileList"></div>
+        </div>
         
-        <div class="upload-section">
+        <!-- 右侧主内容区 -->
+        <div class="main-content">
+            <h1>AI图片高清放大工具</h1>
+            
+            <div class="upload-section">
             <div class="upload-area" id="uploadArea">
                 <div class="upload-content">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -91,37 +99,76 @@
         
         <div class="settings-panel">
             <div class="setting-group">
-                <label>Scale</label>
+                <label>放大倍数</label>
                 <select id="scaleSelect">
-                    <option value="2">2x</option>
+                    <option value="1">1x (原尺寸增强)</option>
+                    <option value="2" selected>2x</option>
                     <option value="3">3x</option>
-                    <option value="4" selected>4x</option>
+                    <option value="4">4x</option>
                 </select>
             </div>
             
             <div class="setting-group">
-                <label>AI Model</label>
+                <label id="modelLabel">AI模型</label>
                 <select id="modelSelect">
-                    <option value="esrgan-medium" selected>ESRGAN Medium (Recommended)</option>
-                    <option value="esrgan-thick">ESRGAN Thick (High Quality)</option>
-                    <option value="esrgan-slim">ESRGAN Slim (Fast)</option>
+                    <option value="realesrgan-x4plus" selected>Real-ESRGAN x4plus（最强）</option>
+                    <option value="realesrgan-x4plus-anime">Real-ESRGAN x4 (AXERA)</option>
+                    <option value="realesrgan-general">Real-ESRGAN x2（速度快）</option>
                 </select>
+                <div class="model-hint">专业级 Real-ESRGAN 模型</div>
+                <div class="model-status" id="modelStatus">模型未加载</div>
+                <button id="loadModelBtn" class="btn-primary" style="margin-top: 10px; width: 100%;">点击加载模型</button>
+            </div>
+            
+            <div class="setting-group">
+                <label>执行模式</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="executionMode" value="gpu" checked> GPU加速 (WebGPU)</label>
+                    <label><input type="radio" name="executionMode" value="cpu"> CPU模式</label>
+                </div>
+                <div style="font-size: 11px; color: #888; margin-top: 5px;">注：GPU失败会提示切换到CPU</div>
+            </div>
+            
+            <div class="setting-group">
+                <label>输出方式</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="outputMode" value="download" checked> 下载到浏览器</label>
+                    <label><input type="radio" name="outputMode" value="zip"> 下载为ZIP</label>
+                    <label><input type="radio" name="outputMode" value="folder"> 输出到文件夹 <span style="font-size: 11px; color: #888;">(需Chrome/Edge)</span></label>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <label>文件命名</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="namingMode" value="suffix" checked> 添加后缀 
+                        <input type="text" id="namingSuffix" value="_upscaled" class="suffix-input" style="margin-left: 5px; padding: 4px 8px; border: 1px solid #555; background: #2a2a2a; color: #e0e0e0; border-radius: 4px; width: 100px;">
+                    </label>
+                    <label><input type="radio" name="namingMode" value="scale"> 自动添加倍数 (例: _2x)</label>
+                </div>
+            </div>
+            
+            <div class="setting-group" id="folderPathGroup" style="display: none;">
+                <label>输出文件夹</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="folderPath" readonly placeholder="点击选择文件夹" style="flex: 1; padding: 8px 12px; background: #2a2a2a; border: 1px solid #555; color: #e0e0e0; border-radius: 4px;">
+                    <button id="selectFolderBtn" class="btn-secondary" style="white-space: nowrap;">选择文件夹</button>
+                </div>
             </div>
         </div>
         
-        <div class="file-list" id="fileList"></div>
-        
         <div class="action-buttons">
-            <button id="clearBtn" class="btn-secondary">Clear All</button>
-            <button id="downloadAllBtn" class="btn-secondary" style="display: none;">Download All</button>
-            <button id="processBtn" class="btn-primary">Start Processing</button>
+            <button id="clearBtn" class="btn-secondary">清空</button>
+            <button id="downloadAllBtn" class="btn-secondary" style="display: none;">下载全部</button>
+            <button id="processBtn" class="btn-primary" disabled>开始处理</button>
         </div>
         
         <div class="progress-container" id="progressContainer" style="display: none;">
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <div class="progress-text" id="progressText">Processing... 0/0</div>
+            <div class="progress-text" id="progressText">处理中... 0/0</div>
+        </div>
         </div>
     </div>
     
@@ -129,12 +176,12 @@
     <div class="comparison-modal" id="comparisonModal" style="display: none;">
         <div class="comparison-modal-content">
             <div class="comparison-modal-header">
-                <button class="nav-btn" id="prevBtn" title="Previous">&lt;</button>
+                <button class="nav-btn" id="prevBtn" title="上一张">&lt;</button>
                 <div class="modal-title-group">
-                    <h2>Image Comparison</h2>
+                    <h2>对比查看</h2>
                     <div class="current-file-name" id="currentFileName"></div>
                 </div>
-                <button class="nav-btn" id="nextBtn" title="Next">&gt;</button>
+                <button class="nav-btn" id="nextBtn" title="下一张">&gt;</button>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="comparison-slider-container">
@@ -142,13 +189,13 @@
                     <div class="comparison-image comparison-before">
                         <canvas id="originalCanvas"></canvas>
                         <div class="image-label label-left">
-                            <span id="originalInfo">Original</span>
+                            <span id="originalInfo">原图</span>
                         </div>
                     </div>
                     <div class="comparison-image comparison-after">
                         <canvas id="upscaledCanvas"></canvas>
                         <div class="image-label label-right">
-                            <span id="upscaledInfo">Upscaled</span>
+                            <span id="upscaledInfo">放大后</span>
                         </div>
                     </div>
                     <div class="comparison-handle" id="comparisonHandle">
@@ -164,11 +211,7 @@
     </div>
     
     <script src="../js/menu.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/esrgan-slim@latest/dist/umd/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/esrgan-medium@latest/dist/umd/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@upscalerjs/esrgan-thick@latest/dist/umd/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/upscaler@1.0.0-beta.18/dist/browser/umd/upscaler.min.js"></script>
+    <script src="../third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js"></script>
     <script src="../js/ai_upscale.js"></script>
 
 </body>

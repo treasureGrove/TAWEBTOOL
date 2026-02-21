@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI视频补帧</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/ai_frame_interpolation.css">
+</head>
+
+<body>
+    <script src="../third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/ai_frame_interpolation.js" defer></script>
+    <div id="main_bg"></div>
+    <div class="left_menu">
+        <ul class="menu_root">
+            <li class="left_item">
+                <div class="item_context">AI工具箱</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href="ai_upscale.html">AI高清放大</a></li>
+                    <li><a href="ai_frame_interpolation_simple.html">AI视频补帧</a></li>
+                    <li><a href="ai_draw.html">AI绘画</a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="item_context">3D工具/图片处理</div>
+                <ul class="sub_menu">
+                    <li><a href="compress_image.html">图片压缩转换</a></li>
+                    <li><a href="3d_city.html">3D城市地形</a></li>
+                    <li><a href="combine_rgba.html">贴图通道合成</a></li>
+                    <li><a href="hdr_editor.html">HDR编辑器</a></li>
+                    <li><a href="ps_online.html">在线PS</a></li>
+                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
+                    <li><a href="model_previewer.html">模型预览器</a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="item_context">视频处理</div>
+                <ul class="sub_menu">
+                    <li><a href="video_cut.html">视频剪辑</a></li>
+                    <li><a href="video_format_cover.html">视频格式转换</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="top_search">
+        <input type="text" placeholder="搜索">
+    </div>
+    <div id="panel">
+        <div class="queue-sidebar">
+            <div class="queue-title">待处理队列</div>
+            <div class="file-list" id="fileList"></div>
+        </div>
+        
+        <div class="main-content">
+            <h1>AI视频补帧工具</h1>
+            <div class="subtitle">使用RIFE算法提升视频帧率和画质 ✨</div>
+            
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <p>拖拽视频到此处或点击选择</p>
+                        <p class="sub-text">支持 MP4, AVI, MOV, MKV 等格式</p>
+                    </div>
+                </div>
+            </div>
+            
+            <input type="file" id="fileInput" multiple accept="video/*" hidden>
+            
+            <div class="settings-panel">
+                
+                <div class="setting-group">
+                    <label style="font-weight: bold; color: #667eea; display: flex; align-items: center;">
+                        <input type="checkbox" id="enableInterpolation" checked style="width: auto; margin-right: 8px;">
+                        启用AI补帧
+                    </label>
+                    <label style="margin-top: 10px;">帧率倍数</label>
+                    <select id="frameMultiplierSelect">
+                        <option value="2" selected>2x (30fps → 60fps)</option>
+                        <option value="4">4x (30fps → 120fps)</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label style="font-weight: bold; color: #f093fb; display: flex; align-items: center;">
+                        <input type="checkbox" id="enableUpscale" style="width: auto; margin-right: 8px;">
+                        启用AI超分辨率
+                    </label>
+                    <label style="margin-top: 10px;">放大倍数</label>
+                    <select id="upscaleScale">
+                        <option value="2" selected>2x 放大</option>
+                        <option value="4">4x 放大</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>处理分辨率</label>
+                    <select id="resolutionLimit">
+                        <option value="1920">1080p（原画质）</option>
+                        <option value="1280" selected>720p（推荐）</option>
+                        <option value="960">540p（快速）</option>
+                        <option value="640">480p（极速）</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label>GPU加速</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="executionMode" value="gpu" checked> 启用</label>
+                        <label><input type="radio" name="executionMode" value="cpu"> 禁用</label>
+                    </div>
+                </div>
+                
+                <div class="setting-group">
+                    <label>AI模型</label>
+                    <select id="modelSelect">
+                        <option value="rife-v4.6" selected>RIFE v4.6</option>
+                        <option value="rife-v4.9">RIFE v4.9</option>
+                        <option value="rife-v4.15">RIFE v4.15</option>
+                    </select>
+                    <div class="model-status" id="modelStatus">未加载</div>
+                    <button id="loadModelBtn" class="btn-primary" style="margin-top: 10px; width: 100%;">加载模型</button>
+                </div>
+                
+                <div class="setting-group">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="testMode" style="width: auto; margin-right: 8px;">
+                        测试模式（3秒）
+                    </label>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="clearBtn" class="btn-secondary">清空队列</button>
+                <button id="processBtn" class="btn-primary" disabled>开始处理</button>
+            </div>
+            
+            <div class="progress-container" id="progressContainer" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">处理中...</div>
+            </div>
+            
+            <div class="video-preview" id="videoPreview">
+                <h3>预览</h3>
+                <video id="previewVideo" controls></video>
+                <div class="video-info-panel" id="videoInfo"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

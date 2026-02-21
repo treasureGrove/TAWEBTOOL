@@ -30,7 +30,8 @@
     URL.revokeObjectURL(url);
   }
 
-  function buildBase(panel, meta) {
+  function buildBase(panel, meta, includeNotes = true) {
+    const showNotes = includeNotes !== false;
     const noteTitle = panel.dataset.localTool === 'chatgpt' ? '问题排查（精简）' : '本地笔记';
     panel.innerHTML = `
       <div class="tool-shell">
@@ -39,6 +40,7 @@
           <p>${meta.intro}</p>
         </section>
         <section id="toolMain" class="card"></section>
+        ${showNotes ? `
         <section class="card">
           <h3>${noteTitle}</h3>
           <div class="workbench-toolbar">
@@ -48,24 +50,27 @@
           </div>
           <textarea id="localEditor" class="workbench-textarea" placeholder="记录参数、处理步骤、问题排查..."></textarea>
         </section>
+        ` : ''}
       </div>
     `;
 
-    const editor = $('localEditor');
-    const key = `tool-${panel.dataset.localTool || 'default'}-notes`;
-    editor.value = localStorage.getItem(key) || '';
-    editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
-    $('loadLocalFile').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      editor.value = await file.text();
-      localStorage.setItem(key, editor.value);
-    });
-    $('saveLocalFile').addEventListener('click', () => saveTextFile(`${panel.dataset.localTool || 'tool'}_notes.txt`, editor.value));
-    $('clearEditor').addEventListener('click', () => {
-      editor.value = '';
-      localStorage.removeItem(key);
-    });
+    if (showNotes) {
+      const editor = $('localEditor');
+      const key = `tool-${panel.dataset.localTool || 'default'}-notes`;
+      editor.value = localStorage.getItem(key) || '';
+      editor.addEventListener('input', () => localStorage.setItem(key, editor.value));
+      $('loadLocalFile').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        editor.value = await file.text();
+        localStorage.setItem(key, editor.value);
+      });
+      $('saveLocalFile').addEventListener('click', () => saveTextFile(`${panel.dataset.localTool || 'tool'}_notes.txt`, editor.value));
+      $('clearEditor').addEventListener('click', () => {
+        editor.value = '';
+        localStorage.removeItem(key);
+      });
+    }
 
     return $('toolMain');
   }
@@ -288,7 +293,7 @@
     const key = panel.dataset.localTool;
     panel.classList.toggle('chatgpt-panel', key === 'chatgpt');
     const meta = toolMeta[key] || { title: panel.dataset.toolTitle || '工具页', intro: '参考 designtool.site 风格提供开箱即用能力。' };
-    const main = buildBase(panel, meta);
+    const main = buildBase(panel, meta, key !== 'chatgpt');
 
     if (key === 'hdr_editor') return initHDR(main);
     if (key === 'combine_rgba') return initCombineRGBA(main);
