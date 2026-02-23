@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动漫 1080p30 → 4K120 导出</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/anime_4k120.css">
+</head>
+<body>
+  <script src="../js/menu.js"></script>
+  <script src="../js/config/models.js"></script>
+  <div id="main_bg"></div>
+  <div class="left_menu">
+    <ul class="menu_root">
+      <li class="left_item"><div class="item_context">AI工具箱</div><ul class="sub_menu">
+        <li><a href="chatgpt.html">ChatGPT</a></li>
+        <li><a href="ai_upscale.html">AI高清放大</a></li>
+        <li><a href="ai_frame_interpolation_simple.html">AI视频补帧</a></li>
+        <li><a href="anime_4k120_export.html">动漫 4K120 导出</a></li>
+      </ul></li>
+      <li class="left_item"><div class="item_context">视频处理</div><ul class="sub_menu">
+        <li><a href="video_cut.html">视频剪辑</a></li>
+        <li><a href="video_format_cover.html">视频格式转换</a></li>
+        <li><a href="anime_4k120_export.html">动漫 4K120 导出</a></li>
+      </ul></li>
+    </ul>
+  </div>
+
+  <main id="anime4k120App" class="topaz-shell">
+    <section class="hero-card">
+      <h1>动漫 1080p30 → 4K120 导出</h1>
+      <p>离线处理（非实时预览），固定输出 3840×2160 @ 120fps。默认 WebGPU 推理，支持 wasm/cpu 自动降级。</p>
+      <div class="tool-cards">
+        <article class="mini-card"><h3>超分阶段</h3><p>RealESRGAN_x4plus_anime_6B（分块推理 + overlap blend）</p></article>
+        <article class="mini-card"><h3>补帧阶段</h3><p>RIFE ensemble，30→60→120 两次递归插帧</p></article>
+        <article class="mini-card"><h3>字幕保护</h3><p>Sobel/Laplacian 高频 + 帧差运动 mask 约束融合</p></article>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="panel">
+        <h2>输入与导出</h2>
+        <input id="videoInput" type="file" accept="video/*">
+        <div id="videoMeta" class="meta"></div>
+        <div class="fixed-output">输出参数：3840 × 2160 @ 120fps</div>
+        <div class="warning">当前默认仅导出视频轨（无音频）。</div>
+        <div class="row">
+          <button id="initModelBtn">加载/校验模型</button>
+          <button id="clearCacheBtn" class="secondary">清除模型缓存</button>
+        </div>
+        <div id="modelStatus" class="status">模型未加载</div>
+        <div class="row">
+          <button id="startBtn" disabled>开始</button>
+          <button id="pauseBtn" disabled>暂停</button>
+          <button id="cancelBtn" disabled class="danger">取消</button>
+        </div>
+        <a id="downloadBtn" class="download disabled" download="anime_4k120.webm">导出下载</a>
+      </div>
+
+      <div class="panel">
+        <h2>高级选项</h2>
+        <label>Tile 大小
+          <select id="tileSize"><option>512</option><option selected>640</option></select>
+        </label>
+        <label>Overlap
+          <select id="overlap"><option>32</option><option selected>64</option></select>
+        </label>
+        <label>锐化强度 <span id="sharpenValue">0.2</span>
+          <input type="range" id="sharpen" min="0" max="1" value="0.2" step="0.05">
+        </label>
+        <label>字幕保护强度 <span id="subtitleProtectValue">0.7</span>
+          <input type="range" id="subtitleProtect" min="0" max="1" value="0.7" step="0.05">
+        </label>
+        <label>去闪烁强度 <span id="deflickerValue">0.25</span>
+          <input type="range" id="deflicker" min="0" max="1" value="0.25" step="0.05">
+        </label>
+      </div>
+
+      <div class="panel full">
+        <h2>进度与日志</h2>
+        <div class="progress-wrap"><div id="progressFill"></div></div>
+        <div id="progressText">等待任务…</div>
+        <div id="etaText">预计剩余时间：--</div>
+        <div id="stageStats" class="meta"></div>
+        <pre id="logPanel"></pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/tools/anime_4k120/main.js" defer></script>
+</body>
+</html>
