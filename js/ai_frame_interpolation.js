@@ -25,15 +25,21 @@
         this.modelCacheStore = "onnx_models_v1";
         this.verifiedModelUrls = {
             interp: {
-                // Verified downloadable ONNX bytes.
+                // Same-origin first (recommended for production), then remote mirrors.
                 rife: [
-                    "https://hf-mirror.com/TensorStack/RIFE/resolve/main/model.onnx"
+                    "https://tool-1316340567.cos.ap-guangzhou.myqcloud.com/models/rife/model.onnx",
+                    `${location.origin}/models/rife/model.onnx`,
+                    "https://hf-mirror.com/TensorStack/RIFE/resolve/main/model.onnx",
+                    "https://huggingface.co/TensorStack/RIFE/resolve/main/model.onnx"
                 ],
                 film: []
             },
             upscale: {
                 esrgan: [
-                    "https://hf-mirror.com/bukuroo/RealESRGAN-ONNX/resolve/main/real-esrgan-x4plus-128.onnx"
+                    "https://tool-1316340567.cos.ap-guangzhou.myqcloud.com/models/esrgan/real-esrgan-x4plus-128.onnx",
+                    `${location.origin}/models/esrgan/real-esrgan-x4plus-128.onnx`,
+                    "https://hf-mirror.com/bukuroo/RealESRGAN-ONNX/resolve/main/real-esrgan-x4plus-128.onnx",
+                    "https://huggingface.co/bukuroo/RealESRGAN-ONNX/resolve/main/real-esrgan-x4plus-128.onnx"
                 ]
             }
         };
@@ -470,6 +476,24 @@
         });
     }
 
+    async createOrtSessionFromCandidateUrls(urls, setStatus) {
+        const tried = [];
+        for (const url of urls) {
+            try {
+                setStatus(`尝试源: ${url}`);
+                const session = await this.createOrtSessionFromUrl(url, setStatus);
+                return { session, url };
+            } catch (error) {
+                const msg = (error && error.message) ? error.message : String(error);
+                tried.push(`${url} -> ${msg}`);
+            }
+        }
+        throw new Error(
+            `所有模型源均不可用。\n${tried.join("\n")}\n` +
+            `建议将模型文件部署到同源路径：/models/rife/model.onnx 与 /models/esrgan/real-esrgan-x4plus-128.onnx`
+        );
+    }
+
     detectInterpolationSignature(session, mode = "auto") {
         const inputNames = session.inputNames || [];
         if (mode === "rife") return "rife";
@@ -511,13 +535,14 @@
         try {
             this.setInterpStatus("加载补帧模型中...");
             const mode = this.interpModelType.value === "film" ? "film" : "rife";
-            const url = this.verifiedModelUrls.interp[mode][0];
-            if (!url) {
+            const urls = this.verifiedModelUrls.interp[mode];
+            if (!urls || !urls.length) {
                 throw new Error("当前模式没有可自动下载的已验证路径");
             }
             this.setInterpStatus("自动下载补帧模型...");
-            this.interpSession = await this.createOrtSessionFromUrl(url, (t) => this.setInterpStatus(t));
-            this.setInterpStatus(`补帧模型下载完成: ${url}`);
+            const loaded = await this.createOrtSessionFromCandidateUrls(urls, (t) => this.setInterpStatus(t));
+            this.interpSession = loaded.session;
+            this.setInterpStatus(`补帧模型下载完成: ${loaded.url}`);
             this.interpSignature = this.detectInterpolationSignature(this.interpSession, this.interpModelType.value);
             this.interpHasTimeInput = this.interpSession.inputNames.some((n) => /time|timestep|dt/i.test(n));
             this.setInterpStatus(`补帧模型已加载 (${this.interpSignature.toUpperCase()})`, "ok");
@@ -540,13 +565,14 @@
         try {
             this.setUpscaleStatus("加载放大模型中...");
             const mode = "esrgan";
-            const url = this.verifiedModelUrls.upscale[mode][0];
-            if (!url) {
+            const urls = this.verifiedModelUrls.upscale[mode];
+            if (!urls || !urls.length) {
                 throw new Error("没有可自动下载的放大模型路径");
             }
             this.setUpscaleStatus("自动下载放大模型...");
-            this.upscaleSession = await this.createOrtSessionFromUrl(url, (t) => this.setUpscaleStatus(t));
-            this.setUpscaleStatus(`放大模型下载完成: ${url}`);
+            const loaded = await this.createOrtSessionFromCandidateUrls(urls, (t) => this.setUpscaleStatus(t));
+            this.upscaleSession = loaded.session;
+            this.setUpscaleStatus(`放大模型下载完成: ${loaded.url}`);
             this.upscaleSignature = this.detectUpscaleSignature(this.upscaleSession, this.upscaleModelType.value);
             this.upscaleModelInfo = this.inspectUpscaleModel(this.upscaleSession);
             this.setUpscaleStatus(`放大模型已加载 (${this.upscaleSignature.toUpperCase()})`, "ok");
