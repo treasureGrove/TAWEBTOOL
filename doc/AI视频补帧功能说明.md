@@ -194,3 +194,24 @@ https://github.com/nihui/rife-ncnn-vulkan
 ---
 
 **最后更新**: 2026-02-18
+
+---
+
+## 动漫 1080p30 → 4K120 导出（离线）
+
+- 页面：`tools_html/anime_4k120_export.html`
+- JS：`js/tools/anime_4k120/`
+- 模型配置：`js/config/models.js`
+
+### 管线
+1. 1080p30 输入解码（离线）
+2. RealESRGAN x4 动漫超分（tile + overlap）
+3. RIFE 30→60
+4. RIFE 60→120
+5. subtitleMask 约束融合（减少硬字幕扭曲）
+6. 编码导出（当前默认视频轨）
+
+### 注意
+- 默认优先 WebGPU Execution Provider。
+- 模型首次下载后缓存到 IndexedDB，后续秒开。
+- 可在 UI 点击“清除模型缓存”强制重载模型。
