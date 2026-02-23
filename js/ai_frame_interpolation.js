@@ -4,7 +4,7 @@ class VideoFrameInterpolation {
         this.upscaleSession = null;        // Real-ESRGAN模型
         this.isModelLoaded = false;
         this.isUpscaleModelLoaded = false;
-        this.currentModel = 'rife-v4.26';
+        this.currentModel = 'rife-v4.9';
         this.loadedModelKey = null;
         this.currentExecutionMode = null;
         this.fileList = [];
@@ -35,30 +35,6 @@ class VideoFrameInterpolation {
                 name: '🌟 RIFE v4.18 (高质量)',
                 description: '2024年新版，质量明显提升，运动补偿更准确',
                 size: '32 MB',
-                type: 'interpolation'
-            },
-            'rife-v4.26': {
-                // Practical-RIFE 推荐的较新训练权重（远端优先）
-                urls: [
-                    // Google Drive shared file (direct download endpoint)
-                    'https://drive.google.com/uc?export=download&id=1gViYvvQrtETBgU1w8axZSsr7YUuw31uy',
-                    // 回退到 Kijai 的 v4.18 ONNX（HuggingFace）
-                    'https://huggingface.co/Kijai/RIFE_ONNX/resolve/main/rife_v4.18.onnx'
-                ],
-                name: 'Practical-RIFE v4.26 (远端)',
-                description: 'Practical-RIFE 推荐的新版权重，适合动画与渲染后处理，优先从远端下载并缓存到浏览器',
-                size: '未知',
-                type: 'interpolation'
-            },
-            'rife-latest': {
-                // 本地优先：如果在 third_part/models/rife/ 下放置 rife_latest.onnx，会优先使用本地文件。
-                urls: [
-                    '../third_part/models/rife/rife_latest.onnx',
-                    'https://huggingface.co/Kijai/RIFE_ONNX/resolve/main/rife_v4.18.onnx'
-                ],
-                name: 'RIFE Latest (本地优先)',
-                description: '优先使用本地 models/rife/rife_latest.onnx，否则回退到 v4.18 远程模型',
-                size: '未知',
                 type: 'interpolation'
             },
             'rife-v4.15-lite': {
