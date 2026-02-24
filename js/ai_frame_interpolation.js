@@ -23,17 +23,25 @@
         this.strictGpuMode = true;
         this.modelCacheDBName = "TAWebTool_AIModels";
         this.modelCacheStore = "onnx_models_v1";
+        // Optional CORS proxy prefix used as a fallback when direct downloads are blocked.
+        // Leave empty to avoid proxying by default. Example: "https://corsproxy.io/?"
+        this.modelDownloadProxy = "";
         this.verifiedModelUrls = {
             interp: {
                 // Verified downloadable ONNX bytes.
+                // Remote lightweight RIFE model (direct raw GitHub link)
                 rife: [
-                    "https://hf-mirror.com/TensorStack/RIFE/resolve/main/model.onnx"
+                    "https://raw.githubusercontent.com/hpc203/Real-Time-Frame-Interpolation-onnxrun/main/RIFE_HDv3.onnx"
                 ],
                 film: []
             },
             upscale: {
                 esrgan: [
-                    "https://hf-mirror.com/bukuroo/RealESRGAN-ONNX/resolve/main/real-esrgan-x4plus-128.onnx"
+                    // Remote Real-ESRGAN General model (Hugging Face resolve)
+                    // 指定到 commit 的精确下载链接（用户提供）
+                    "https://huggingface.co/qualcomm/Real-ESRGAN-General-x4v3/resolve/8afb649e7a9db2636188a040918af9811593b98e/Real-ESRGAN-General-x4v3.onnx?download=true",
+                    // 若上面链接失效，再尝试 main 分支的 resolve 链接
+                    "https://huggingface.co/qualcomm/Real-ESRGAN-General-x4v3/resolve/main/Real-ESRGAN-General-x4v3.onnx?download=true"
                 ]
             }
         };
@@ -54,12 +62,17 @@
         this.upscaleModelType = document.getElementById("upscaleModelType");
         this.loadInterpModelBtn = document.getElementById("loadInterpModelBtn");
         this.loadUpscaleModelBtn = document.getElementById("loadUpscaleModelBtn");
+        this.uploadInterpModelBtn = document.getElementById("uploadInterpModelBtn");
+        this.uploadUpscaleModelBtn = document.getElementById("uploadUpscaleModelBtn");
+        this.interpModelFileInput = document.getElementById("interpModelFileInput");
+        this.upscaleModelFileInput = document.getElementById("upscaleModelFileInput");
         this.interpModelStatus = document.getElementById("interpModelStatus");
         this.upscaleModelStatus = document.getElementById("upscaleModelStatus");
         this.frameMultiplier = document.getElementById("frameMultiplier");
         this.sourceFps = document.getElementById("sourceFps");
         this.upscaleFactor = document.getElementById("upscaleFactor");
         this.outputFormat = document.getElementById("outputFormat");
+        this.debug3s = document.getElementById("debug3s");
 
         this.denoiseStrength = document.getElementById("denoiseStrength");
         this.sharpenStrength = document.getElementById("sharpenStrength");
@@ -120,6 +133,14 @@
         this.downloadAllBtn.addEventListener("click", () => this.downloadAll());
         this.loadInterpModelBtn.addEventListener("click", () => this.loadInterpolationModel());
         this.loadUpscaleModelBtn.addEventListener("click", () => this.loadUpscaleModel());
+        if (this.uploadInterpModelBtn && this.interpModelFileInput) {
+            this.uploadInterpModelBtn.addEventListener("click", () => this.interpModelFileInput.click());
+            this.interpModelFileInput.addEventListener("change", (e) => this.handleInterpModelFile(e.target.files[0]));
+        }
+        if (this.uploadUpscaleModelBtn && this.upscaleModelFileInput) {
+            this.uploadUpscaleModelBtn.addEventListener("click", () => this.upscaleModelFileInput.click());
+            this.upscaleModelFileInput.addEventListener("change", (e) => this.handleUpscaleModelFile(e.target.files[0]));
+        }
 
         [this.denoiseStrength, this.sharpenStrength, this.detailStrength].forEach((slider) => {
             slider.addEventListener("input", () => this.syncSliderLabels());
@@ -132,6 +153,43 @@
                 this.previewMetrics.textContent = this.formatPreviewMetrics(selected);
             }
         });
+        // Ensure frame multiplier options reflect model capabilities and source fps
+        this.refreshFrameMultiplierOptions();
+        this.sourceFps.addEventListener("change", () => this.refreshFrameMultiplierOptions());
+    }
+
+    refreshFrameMultiplierOptions() {
+        // If interp model lacks time input, only present 1x/2x options (as target fps values)
+        const sel = this.frameMultiplier;
+        if (!sel) return;
+        const srcFps = Math.max(8, Math.min(120, Number(this.sourceFps.value) || 30));
+        sel.innerHTML = "";
+        if (!this.interpHasTimeInput) {
+            const opt1 = document.createElement("option");
+            opt1.value = String(Math.round(srcFps));
+            opt1.textContent = `原始 (${Math.round(srcFps)} fps, 1x)`;
+            const opt2 = document.createElement("option");
+            opt2.value = String(Math.round(srcFps * 2));
+            opt2.textContent = `2x (${Math.round(srcFps * 2)} fps, 稳定支持)`;
+            sel.appendChild(opt1);
+            sel.appendChild(opt2);
+            // default to 2x for models without time input
+            sel.value = String(Math.round(srcFps * 2));
+        } else {
+            // Model supports time input — show common target fps choices
+            const fpsOptions = [24, 25, 30, 60, 90, 120];
+            fpsOptions.forEach((f) => {
+                const o = document.createElement("option");
+                o.value = String(f);
+                o.textContent = `${f} fps`;
+                sel.appendChild(o);
+            });
+            // try to keep previous selection where reasonable
+            const prev = Number(sel.getAttribute("data-prev") || 0);
+            if (prev && fpsOptions.includes(prev)) sel.value = String(prev);
+            else sel.value = "30";
+        }
+        sel.setAttribute("data-prev", String(Number(sel.value) || 30));
     }
 
     bindPreviewSyncEvents() {
@@ -445,18 +503,54 @@
 
     async createOrtSessionFromUrl(url, setStatus) {
         await this.prepareOrtRuntime();
-        const cacheKey = `url:${url}`;
+        // Normalize Hugging Face URLs to force file download and use normalized URL as cache key.
+        let fetchUrl = url;
+        if (typeof url === "string" && url.includes("huggingface.co") && !/download=/.test(url)) {
+            fetchUrl = url + (url.includes("?") ? "&" : "?") + "download=true";
+        }
+        const cacheKey = `url:${fetchUrl}`;
         let data = await this.getModelFromCache(cacheKey);
         if (data) {
             setStatus("命中本地缓存，正在加载模型...");
         } else {
-            data = await this.downloadModelArrayBufferWithProgress(url, (loaded, total) => {
-                const percent = ((loaded / total) * 100).toFixed(1);
-                const loadedMB = (loaded / 1024 / 1024).toFixed(1);
-                const totalMB = (total / 1024 / 1024).toFixed(1);
-                setStatus(`下载中 ${loadedMB}MB/${totalMB}MB (${percent}%)`);
-            });
-            await this.saveModelToCache(cacheKey, data);
+            try {
+                data = await this.downloadModelArrayBufferWithProgress(fetchUrl, (loaded, total) => {
+                    const percent = ((loaded / total) * 100).toFixed(1);
+                    const loadedMB = (loaded / 1024 / 1024).toFixed(1);
+                    const totalMB = (total / 1024 / 1024).toFixed(1);
+                    setStatus(`下载中 ${loadedMB}MB/${totalMB}MB (${percent}%)`);
+                });
+                await this.saveModelToCache(cacheKey, data);
+            } catch (err) {
+                console.warn("直接下载模型失败，尝试代理重试：", err && err.message);
+                // If the source is huggingface and proxy is available, try proxying the request.
+                    const isHf = typeof url === "string" && url.includes("huggingface.co");
+                const proxyPrefix = this.modelDownloadProxy || "";
+                if (isHf && proxyPrefix) {
+                    const proxyUrl = proxyPrefix + encodeURIComponent(fetchUrl);
+                    setStatus("直接下载失败，正在通过代理重试...");
+                    data = await this.downloadModelArrayBufferWithProgress(proxyUrl, (loaded, total) => {
+                        const percent = ((loaded / total) * 100).toFixed(1);
+                        const loadedMB = (loaded / 1024 / 1024).toFixed(1);
+                        const totalMB = (total / 1024 / 1024).toFixed(1);
+                        setStatus(`代理下载中 ${loadedMB}MB/${totalMB}MB (${percent}%)`);
+                    });
+                    await this.saveModelToCache(cacheKey, data);
+                } else if (isHf && !proxyPrefix) {
+                    // try a sensible public proxy automatically
+                    const fallback = `https://corsproxy.io/?${encodeURIComponent(fetchUrl)}`;
+                    setStatus("直接下载失败，正在通过公共代理重试...");
+                    data = await this.downloadModelArrayBufferWithProgress(fallback, (loaded, total) => {
+                        const percent = ((loaded / total) * 100).toFixed(1);
+                        const loadedMB = (loaded / 1024 / 1024).toFixed(1);
+                        const totalMB = (total / 1024 / 1024).toFixed(1);
+                        setStatus(`公共代理下载中 ${loadedMB}MB/${totalMB}MB (${percent}%)`);
+                    });
+                    await this.saveModelToCache(cacheKey, data);
+                } else {
+                    throw err;
+                }
+            }
         }
         if (data.byteLength < 1024 * 1024) {
             throw new Error("模型文件异常（体积过小）");
@@ -520,6 +614,8 @@
             this.setInterpStatus(`补帧模型下载完成: ${url}`);
             this.interpSignature = this.detectInterpolationSignature(this.interpSession, this.interpModelType.value);
             this.interpHasTimeInput = this.interpSession.inputNames.some((n) => /time|timestep|dt/i.test(n));
+            // Refresh UI options that depend on whether model has time input
+            this.refreshFrameMultiplierOptions();
             this.setInterpStatus(`补帧模型已加载 (${this.interpSignature.toUpperCase()})`, "ok");
         } catch (error) {
             this.interpSession = null;
@@ -562,6 +658,52 @@
         }
     }
 
+    async handleInterpModelFile(file) {
+        if (!file) return;
+        try {
+            this.isInterpModelLoading = true;
+            this.loadInterpModelBtn.disabled = true;
+            this.setInterpStatus("从本地文件加载补帧模型...");
+            this.interpSession = await this.createOrtSessionFromFile(file, ["wasm"]);
+            this.interpSignature = this.detectInterpolationSignature(this.interpSession, this.interpModelType.value);
+            this.interpHasTimeInput = this.interpSession.inputNames.some((n) => /time|timestep|dt/i.test(n));
+            this.setInterpStatus(`本地补帧模型已加载 (${this.interpSignature.toUpperCase()})`, "ok");
+        } catch (e) {
+            this.interpSession = null;
+            this.interpSignature = null;
+            this.interpHasTimeInput = false;
+            this.setInterpStatus(`本地补帧模型加载失败: ${e.message}`, "error");
+        } finally {
+            this.isInterpModelLoading = false;
+            this.loadInterpModelBtn.disabled = false;
+            this.interpModelFileInput.value = "";
+            this.updateButtons();
+        }
+    }
+
+    async handleUpscaleModelFile(file) {
+        if (!file) return;
+        try {
+            this.isUpscaleModelLoading = true;
+            this.loadUpscaleModelBtn.disabled = true;
+            this.setUpscaleStatus("从本地文件加载放大模型...");
+            this.upscaleSession = await this.createOrtSessionFromFile(file, ["wasm"]);
+            this.upscaleSignature = this.detectUpscaleSignature(this.upscaleSession, this.upscaleModelType.value);
+            this.upscaleModelInfo = this.inspectUpscaleModel(this.upscaleSession);
+            this.setUpscaleStatus(`本地放大模型已加载 (${this.upscaleSignature.toUpperCase()})`, "ok");
+        } catch (e) {
+            this.upscaleSession = null;
+            this.upscaleSignature = null;
+            this.upscaleModelInfo = null;
+            this.setUpscaleStatus(`本地放大模型加载失败: ${e.message}`, "error");
+        } finally {
+            this.isUpscaleModelLoading = false;
+            this.loadUpscaleModelBtn.disabled = false;
+            this.upscaleModelFileInput.value = "";
+            this.updateButtons();
+        }
+    }
+
     async autoLoadModels() {
         this.setInterpStatus("启动时自动加载补帧模型...");
         this.setUpscaleStatus("启动时自动加载放大模型...");
@@ -575,8 +717,12 @@
             alert("请先加载补帧ONNX和放大ONNX模型");
             return;
         }
-        if (!this.interpHasTimeInput && Number(this.frameMultiplier.value) > 2) {
-            alert("当前补帧模型不含time输入，仅稳定支持2x。请将补帧倍率设为2x或换支持time的RIFE/FILM模型。");
+        // If interp model lacks time input, ensure requested multiplier <= 2x
+        const desiredTargetFps = Number(this.frameMultiplier.value);
+        const srcFpsEstimate = Number(this.sourceFps.value) || 30;
+        const desiredMultiplier = Math.max(1, Math.round(desiredTargetFps / srcFpsEstimate));
+        if (!this.interpHasTimeInput && desiredMultiplier > 2) {
+            alert("当前补帧模型不含time输入，仅稳定支持 2x。已将补帧设置为 2x 或请换支持 time 的模型。");
             return;
         }
         if (!this.fileList.some((f) => f.status === "pending" || f.status === "error")) {
@@ -640,17 +786,45 @@
 
         const settings = {
             modelPreset: this.modelPreset.value,
-            frameMultiplier: Number(this.frameMultiplier.value),
+            // `frameMultiplier` UI now holds the target fps (e.g. 30,60)
+            targetFps: Number(this.frameMultiplier.value),
             sourceFps: this.clamp(Number(this.sourceFps.value) || 30, 8, 120),
-            upscaleFactor: Number(this.upscaleFactor.value),
+            // `upscaleFactor` UI now holds presets (keep,1k,2k,4k)
+            upscaleTarget: this.upscaleFactor.value,
             denoise: Number(this.denoiseStrength.value) / 100,
             sharpen: Number(this.sharpenStrength.value) / 100,
             detail: Number(this.detailStrength.value) / 100,
             outputFormat: this.outputFormat.value
         };
+        // read debug flag (3s run)
+        settings.debug3s = !!(this.debug3s && this.debug3s.checked);
 
-        if (settings.frameMultiplier === 1 && settings.upscaleFactor <= 1.01) {
-            throw new Error("当前参数几乎无变化，请至少开启补帧或放大");
+        // determine numeric frameMultiplier used by internal algorithms (# of frames per source interval)
+        // will be adjusted below depending on whether user set a different target fps
+        settings.frameMultiplier = 1;
+
+        // compute upscale factor from preset
+        const upscaleMap = { "1k": 1280, "2k": 2048, "4k": 3840 };
+        let computedFactor = 1;
+        if (settings.upscaleTarget && settings.upscaleTarget !== "keep") {
+            const tgtW = upscaleMap[settings.upscaleTarget];
+            if (tgtW && meta && meta.width) {
+                computedFactor = Math.max(1, tgtW / meta.width);
+            }
+        }
+        settings.upscaleFactor = computedFactor;
+
+        // If target fps is not set or equals source, default to source fps (no change)
+        if (!settings.targetFps || Math.round(settings.targetFps) === Math.round(settings.sourceFps)) {
+            settings.targetFps = settings.sourceFps;
+            settings.frameMultiplier = 1;
+        } else {
+            settings.frameMultiplier = Math.max(1, Math.round(settings.targetFps / settings.sourceFps));
+        }
+
+        // If upscale preset is 'keep', ensure factor = 1
+        if (settings.upscaleTarget === "keep") {
+            settings.upscaleFactor = 1;
         }
 
         const profile = this.profilePresets[settings.modelPreset] || this.profilePresets.balanced;
@@ -662,6 +836,21 @@
         const height = meta.height;
         const outputWidth = this.makeEven(Math.max(2, Math.round(width * settings.upscaleFactor)));
         const outputHeight = this.makeEven(Math.max(2, Math.round(height * settings.upscaleFactor)));
+
+        // If user didn't request any meaningful change (no upscale and no fps change),
+        // skip heavy processing and return the original file as-is to avoid throwing errors.
+        if (settings.upscaleFactor === 1 && Math.round(settings.targetFps) === Math.round(settings.sourceFps)) {
+            onProgress(100, "未检测到需要处理的目标（跳过处理）");
+            return {
+                url: fileData.sourceUrl,
+                ext: fileData.outputExt || fileData.name.split('.').pop() || "mp4",
+                meta: {
+                    outputWidth: width,
+                    outputHeight: height,
+                    outputFps: settings.sourceFps
+                }
+            };
+        }
 
         const video = document.createElement("video");
         video.crossOrigin = "anonymous";
@@ -678,7 +867,12 @@
         await this.waitForVideoReady(video);
 
         let srcFrameCount = Math.max(2, Math.floor(meta.duration * settings.sourceFps));
-        let outputFps = this.clamp(Math.round(settings.sourceFps * settings.frameMultiplier), 8, 240);
+        // if debug 3s is enabled, limit to at most 3 seconds of source frames
+        if (settings.debug3s) {
+            const maxSrcFrames = Math.max(2, Math.floor(Math.min(3, meta.duration) * settings.sourceFps));
+            srcFrameCount = Math.min(srcFrameCount, maxSrcFrames);
+        }
+        let outputFps = this.clamp(Math.round(settings.targetFps || Math.round(settings.sourceFps * settings.frameMultiplier)), 8, 240);
         const totalOutputFrames = (srcFrameCount - 1) * settings.frameMultiplier + 1;
 
         const srcCanvasA = document.createElement("canvas");
@@ -1088,15 +1282,35 @@
             feeds[imageInputs[0]] = imageTensorA;
             feeds[imageInputs[1]] = imageTensorB;
         } else {
+            const inputMetaAll = this.interpSession.inputMetadata || {};
+            // Prefer inputs whose metadata indicate 4D tensors (N,C,H,W)
             const fourDInputs = inputNames.filter((n) => {
-                const m = this.interpSession.inputMetadata[n];
+                const m = inputMetaAll[n];
                 return m && Array.isArray(m.dimensions) && m.dimensions.length === 4;
             });
-            if (fourDInputs.length < 2) {
-                throw new Error("补帧模型输入签名不匹配（需要两路图像输入）");
+            if (fourDInputs.length >= 2) {
+                feeds[fourDInputs[0]] = imageTensorA;
+                feeds[fourDInputs[1]] = imageTensorB;
+            } else {
+                // Fallback: choose the two inputs with the largest estimated tensor size
+                const candidates = inputNames.map((n) => {
+                    const m = inputMetaAll[n] || {};
+                    const dims = Array.isArray(m.dimensions) ? m.dimensions.map((v) => Number(v) || 0) : [];
+                    const prod = dims.length ? dims.reduce((a, b) => a * (b || 1), 1) : 0;
+                    return { name: n, dims, prod };
+                });
+                candidates.sort((a, b) => b.prod - a.prod);
+                if (candidates.length >= 2 && candidates[0].prod > 1 && candidates[1].prod > 1) {
+                    feeds[candidates[0].name] = imageTensorA;
+                    feeds[candidates[1].name] = imageTensorB;
+                } else if (inputNames.length >= 2) {
+                    // As a last resort, use the first two inputs
+                    feeds[inputNames[0]] = imageTensorA;
+                    feeds[inputNames[1]] = imageTensorB;
+                } else {
+                    throw new Error("补帧模型输入签名不匹配（需要两路图像输入）");
+                }
             }
-            feeds[fourDInputs[0]] = imageTensorA;
-            feeds[fourDInputs[1]] = imageTensorB;
         }
 
         const tName = inputNames.find((n) => /time|timestep|dt/i.test(n));
@@ -1490,8 +1704,9 @@
 
     getOutputName(name, ext) {
         const base = name.replace(/\.[^/.]+$/, "");
-        const upscaleText = this.upscaleFactor.value.replace(".", "p");
-        return `${base}_ai_${this.frameMultiplier.value}xFPS_${upscaleText}x.${ext}`;
+        const fpsText = this.frameMultiplier.value;
+        const upscaleText = this.upscaleFactor.value;
+        return `${base}_ai_${fpsText}fps_${upscaleText}.${ext}`;
     }
 
     formatFileSize(bytes) {
