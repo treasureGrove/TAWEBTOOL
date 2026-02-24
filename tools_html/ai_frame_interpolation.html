@@ -102,7 +102,11 @@
                         <option value="rife">RIFE 签名</option>
                         <option value="film">FILM 签名</option>
                     </select>
-                    <button id="loadInterpModelBtn" class="btn-secondary" style="margin-top:6px;width:100%;">重新加载补帧模型</button>
+                    <div style="display:flex;gap:8px;margin-top:6px;">
+                        <button id="loadInterpModelBtn" class="btn-secondary" style="flex:1;">重新加载补帧模型</button>
+                        <button id="uploadInterpModelBtn" class="btn-secondary" style="flex:1;">上传本地补帧模型</button>
+                        <input id="interpModelFileInput" type="file" accept=".onnx" hidden>
+                    </div>
                     <div class="hint" id="interpModelStatus">未加载补帧模型</div>
                 </div>
 
@@ -112,7 +116,11 @@
                         <option value="auto" selected>Auto (ESRGAN类)</option>
                         <option value="esrgan">ESRGAN 签名</option>
                     </select>
-                    <button id="loadUpscaleModelBtn" class="btn-secondary" style="margin-top:6px;width:100%;">重新加载放大模型</button>
+                    <div style="display:flex;gap:8px;margin-top:6px;">
+                        <button id="loadUpscaleModelBtn" class="btn-secondary" style="flex:1;">重新加载放大模型</button>
+                        <button id="uploadUpscaleModelBtn" class="btn-secondary" style="flex:1;">上传本地放大模型</button>
+                        <input id="upscaleModelFileInput" type="file" accept=".onnx" hidden>
+                    </div>
                     <div class="hint" id="upscaleModelStatus">未加载放大模型</div>
                 </div>
 
@@ -126,13 +134,14 @@
                 </div>
 
                 <div class="setting-group">
-                    <label for="frameMultiplier">补帧倍率</label>
+                    <label for="frameMultiplier">目标帧率</label>
                     <select id="frameMultiplier">
-                        <option value="1">1x（仅增强）</option>
-                        <option value="2" selected>2x</option>
-                        <option value="3">3x</option>
-                        <option value="4">4x</option>
+                        <option value="30" selected>30 fps</option>
+                        <option value="60">60 fps</option>
+                        <option value="90">90 fps</option>
+                        <option value="120">120 fps</option>
                     </select>
+                    <div class="hint">选择目标输出帧率，系统会根据源帧率计算补帧数量</div>
                 </div>
 
                 <div class="setting-group">
@@ -142,12 +151,14 @@
                 </div>
 
                 <div class="setting-group">
-                    <label for="upscaleFactor">放大倍率</label>
+                    <label for="upscaleFactor">目标分辨率</label>
                     <select id="upscaleFactor">
-                        <option value="1">1x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2" selected>2x</option>
+                        <option value="keep">原始分辨率（保持）</option>
+                        <option value="1k">1K（约1280宽）</option>
+                        <option value="2k">2K（约2048宽）</option>
+                        <option value="4k" selected>4K（约3840宽）</option>
                     </select>
+                    <div class="hint">选择输出分辨率档位（按宽度近似），会按比例放大原视频</div>
                 </div>
 
                 <div class="setting-group slider-group">
@@ -173,6 +184,12 @@
                         <option value="auto">自动选择</option>
                     </select>
                     <div class="hint">MP4依赖浏览器支持 WebCodecs + H264/VP9</div>
+                </div>
+
+                <div class="setting-group">
+                    <label for="debug3s">调试：3s 快速运行</label>
+                    <input id="debug3s" type="checkbox">
+                    <div class="hint">开启后仅处理视频前 3 秒，便于快速调试参数和流程</div>
                 </div>
             </section>
 
@@ -210,7 +227,8 @@
     <script src="../js/menu.js"></script>
     <script src="https://fastly.jsdelivr.net/npm/onnxruntime-web@1.17.1/dist/ort.webgpu.min.js"></script>
     <script src="../third_part/mp4-muxer.umd.js"></script>
-    <script src="../js/ai_frame_interpolation.js"></script>
+    <!-- Cache-busted script to force clients to fetch updated JS -->
+    <script src="../js/ai_frame_interpolation.js?v=3"></script>
 </body>
 
 </html>
