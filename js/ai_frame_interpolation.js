@@ -1741,5 +1741,6 @@
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    new AIFrameInterpolationTool();
+    // Expose the tool instance to `window` for runtime inspection in the browser console
+    window.__aiFrameInterpolationTool = new AIFrameInterpolationTool();
 });
