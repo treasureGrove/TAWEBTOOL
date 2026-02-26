@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型预览器</title>
+    <title>在线PS</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/ps_online.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
+    <script src="../js/ps_online.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu">
         <ul class="menu_root">
@@ -73,7 +72,17 @@
     <div class="top_search">
         <input type="text" placeholder="搜索">
     </div>
-    <div id="panel" data-local-tool="ps_online" data-tool-title="模型预览器"></div>
+    <div id="panel" class="ps-panel">
+        <iframe
+            id="photopeaFrame"
+            class="ps-iframe"
+            title="在线PS编辑器"
+            referrerpolicy="no-referrer"
+            loading="eager"
+            allow="clipboard-read; clipboard-write"
+        ></iframe>
+        <a id="photopeaFallback" class="ps-fallback" href="https://www.photopea.com/" target="_blank" rel="noopener noreferrer">如果页面加载异常，点此直接打开 Photopea API 编辑器</a>
+    </div>
 
 </body>
 
