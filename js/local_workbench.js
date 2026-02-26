@@ -4,7 +4,6 @@
   const toolMeta = {
     chatgpt: { title: 'AI 对话助手', intro: '免登录开箱即用：直接在当前页面与 AI 进行多轮对话。' },
     hdr_editor: { title: 'HDR 编辑器', intro: '参考 DesignTool 的工作流：优先在线工具，附带本地快速调色。' },
-    combine_rgba: { title: 'RGBA 通道合成', intro: '本地合成 R/G/B/A 通道，输出 PNG。' },
     physics_light: { title: '物理光照计算器', intro: 'EV100 与曝光参数快速换算。' },
     shader_library: { title: 'Shader 函数库', intro: '常用 GLSL 片段检索与复制。' },
     model_previewer: { title: '模型预览器', intro: '本地 GLB/GLTF 预览（CDN: model-viewer）。' },
@@ -13,7 +12,6 @@
 
   const designToolLinks = {
     hdr_editor: 'https://designtool.site/hdr',
-    combine_rgba: 'https://designtool.site',
     ai_frame_interpolation: 'https://designtool.site',
     pbr_texture_generator: 'https://designtool.site',
     video_cut: 'https://designtool.site',
@@ -152,62 +150,7 @@
     });
   }
 
-  function initCombineRGBA(host) {
-    host.innerHTML = `
-      <div class="tool-actions">
-        <a class="btn-link" href="https://designtool.site" target="_blank" rel="noopener noreferrer">打开 DesignTool</a>
-      </div>
-      <div class="channel-grid">
-        <label>R<input type="file" id="rImg" accept="image/*"></label>
-        <label>G<input type="file" id="gImg" accept="image/*"></label>
-        <label>B<input type="file" id="bImg" accept="image/*"></label>
-        <label>A<input type="file" id="aImg" accept="image/*"></label>
-      </div>
-      <button id="mergeRGBA">合成并下载 PNG</button>
-      <canvas id="rgbaCanvas" width="512" height="512"></canvas>
-    `;
 
-    function loadImage(input) {
-      return new Promise((resolve, reject) => {
-        const file = input.files[0];
-        if (!file) return resolve(null);
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = reject;
-        img.src = URL.createObjectURL(file);
-      });
-    }
-
-    $('mergeRGBA').addEventListener('click', async () => {
-      const imgs = await Promise.all(['rImg', 'gImg', 'bImg', 'aImg'].map((id) => loadImage($(id))));
-      if (imgs.some((x) => !x)) return alert('请上传四张灰度通道图。');
-      const [r, g, b, a] = imgs;
-      const w = Math.min(r.width, g.width, b.width, a.width);
-      const h = Math.min(r.height, g.height, b.height, a.height);
-      const c = $('rgbaCanvas');
-      c.width = w;
-      c.height = h;
-      const ctx = c.getContext('2d');
-
-      const read = (img) => {
-        ctx.drawImage(img, 0, 0, w, h);
-        return ctx.getImageData(0, 0, w, h).data;
-      };
-      const rd = read(r), gd = read(g), bd = read(b), ad = read(a);
-      const out = ctx.createImageData(w, h);
-      for (let i = 0; i < out.data.length; i += 4) {
-        out.data[i] = rd[i];
-        out.data[i + 1] = gd[i];
-        out.data[i + 2] = bd[i];
-        out.data[i + 3] = ad[i];
-      }
-      ctx.putImageData(out, 0, 0);
-      const link = document.createElement('a');
-      link.download = 'combined_rgba.png';
-      link.href = c.toDataURL('image/png');
-      link.click();
-    });
-  }
 
   function initPhysics(host) {
     host.innerHTML = `
@@ -296,7 +239,6 @@
     const main = buildBase(panel, meta, key !== 'chatgpt');
 
     if (key === 'hdr_editor') return initHDR(main);
-    if (key === 'combine_rgba') return initCombineRGBA(main);
     if (key === 'physics_light') return initPhysics(main);
     if (key === 'shader_library') return initShaderLibrary(main);
     if (key === 'model_previewer') return initModelPreview(main);
