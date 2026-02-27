@@ -1,3 +1,21 @@
+#panel,
+.settings-panel,
+.queue-column,
+.upload-area,
+.progress-container,
+.file-item {
+    backdrop-filter: blur(6px);
+}
+
+:root {
+    --accent: #2fa888;
+    --accent-strong: #1f8e71;
+    --text-main: #233036;
+    --text-sub: #5e6e75;
+    --line-soft: rgba(47, 168, 136, 0.2);
+    --card-bg: rgba(255, 255, 255, 0.68);
+}
+
 #main_bg {
     background-image: url(../assets/images/background/pbr_bg.jpg);
     background-size: cover;
@@ -12,34 +30,42 @@
 
 #panel {
     font-family: "Yu Gothic UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(245, 252, 249, 0.62));
+    border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 #panel h1 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-    /* font-weight: 600; */
+    font-size: 23px;
+    color: var(--text-main);
+    margin-bottom: 12px;
+    letter-spacing: 0.2px;
     font-family: "Yu Gothic UI", sans-serif;
 }
 
 .upload-section {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .upload-area {
-    border: 2px dashed rgba(55, 177, 140, 0.5);
+    border: 1px dashed rgba(47, 168, 136, 0.55);
     border-radius: 12px;
-    padding: 40px 20px 50px 20px;
+    padding: 28px 16px 42px 16px;
     text-align: center;
-    background: rgba(255, 255, 255, 0.6);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(234, 248, 242, 0.72));
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.24s ease;
 }
 
 .upload-area:hover {
-    background: rgba(255, 255, 255, 0.75);
-    border-color: rgba(55, 177, 140, 0.7);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(227, 246, 239, 0.78));
+    border-color: rgba(47, 168, 136, 0.85);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(27, 102, 82, 0.1);
 }
 
 .upload-area.drag-over {
@@ -48,7 +74,7 @@
 }
 
 .upload-content svg {
-    color: rgba(55, 177, 140, 0.7);
+    color: rgba(47, 168, 136, 0.75);
     margin-bottom: 16px;
 }
 
@@ -62,7 +88,7 @@
 
 .upload-content .sub-text {
     font-size: 13px;
-    color: #666;
+    color: var(--text-sub);
     font-family: "Yu Gothic UI", sans-serif;
 }
 
@@ -72,7 +98,7 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 20px;
-    background: rgba(55, 177, 140, 0.75);
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
     border: none;
     border-radius: 8px;
@@ -82,25 +108,27 @@
     font-family: "Yu Gothic UI", sans-serif;
     transition: all 0.2s;
     z-index: 10;
-    box-shadow: 0 2px 6px rgba(55, 177, 140, 0.3);
+    box-shadow: 0 4px 12px rgba(35, 126, 102, 0.28);
 }
 
 .upload-folder-btn:hover {
-    background: rgba(55, 177, 140, 0.9);
+    background: linear-gradient(135deg, #34b996, #1e886c);
     transform: translateX(-50%) translateY(-1px);
-    box-shadow: 0 4px 10px rgba(55, 177, 140, 0.35);
+    box-shadow: 0 6px 14px rgba(26, 112, 90, 0.34);
 }
 
 .settings-panel {
-    background: rgba(255, 255, 255, 0.65);
+    background: var(--card-bg);
     border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(55, 177, 140, 0.15);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--line-soft);
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
 }
 
 .setting-group {
-    margin-bottom: 18px;
+    margin-bottom: 12px;
 }
 
 .setting-group:last-child {
@@ -111,20 +139,56 @@
     display: block;
     font-size: 14px;
     /* font-weight: 600; */
-    color: #2a2a2a;
-    margin-bottom: 10px;
+    color: var(--text-main);
+    margin-bottom: 6px;
     font-family: "Yu Gothic UI", sans-serif;
+}
+
+.workbench-layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(260px, 3fr) minmax(520px, 7fr);
+    gap: 14px;
+}
+
+.column-title {
+    font-size: 13px;
+    color: #2d6f5f;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.queue-column {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+}
+
+.control-column {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-right: 4px;
 }
 
 .setting-group select,
 .setting-group input[type="range"],
 .setting-group input[type="text"] {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid rgba(55, 177, 140, 0.25);
+    padding: 8px 10px;
+    border: 1px solid var(--line-soft);
     border-radius: 8px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: "Yu Gothic UI", sans-serif;
@@ -133,8 +197,8 @@
 .setting-group select:focus,
 .setting-group input[type="text"]:focus {
     outline: none;
-    border-color: rgba(55, 177, 140, 0.5);
-    box-shadow: 0 0 0 3px rgba(55, 177, 140, 0.08);
+    border-color: rgba(47, 168, 136, 0.55);
+    box-shadow: 0 0 0 3px rgba(47, 168, 136, 0.12);
 }
 
 .setting-group input[type="range"] {
@@ -152,16 +216,57 @@
 .radio-group label {
     display: flex;
     align-items: center;
-    /* font-weight: 400; */
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(47, 168, 136, 0.16);
+    border-radius: 999px;
+    padding: 5px 10px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-family: "Yu Gothic UI", sans-serif;
+    transition: all 0.2s ease;
+}
+
+.radio-group label:hover {
+    border-color: rgba(47, 168, 136, 0.35);
+    background: rgba(239, 250, 246, 0.95);
 }
 
 .radio-group input[type="radio"] {
     margin-right: 4px;
     cursor: pointer;
     accent-color: rgba(55, 177, 140, 0.8);
+}
+
+.target-size-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.target-size-row input {
+    width: 140px;
+    padding: 8px 10px;
+}
+
+.target-size-row span {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.setting-hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.file-note {
+    font-size: 12px;
+    color: #4f666f;
+    margin-top: 2px;
+    font-family: "Yu Gothic UI", sans-serif;
 }
 
 .suffix-option {
@@ -173,7 +278,7 @@
 .suffix-input {
     width: 110px;
     padding: 5px 8px;
-    border: 1px solid rgba(55, 177, 140, 0.3);
+    border: 1px solid rgba(47, 168, 136, 0.3);
     border-radius: 5px;
     font-size: 13px;
     background: rgba(255, 255, 255, 0.9);
@@ -183,8 +288,8 @@
 }
 
 .suffix-input:focus {
-    border-color: rgba(55, 177, 140, 0.6);
-    box-shadow: 0 0 0 2px rgba(55, 177, 140, 0.1);
+    border-color: rgba(47, 168, 136, 0.65);
+    box-shadow: 0 0 0 2px rgba(47, 168, 136, 0.12);
 }
 
 .folder-input {
@@ -198,7 +303,7 @@
 
 .folder-input button {
     padding: 8px 14px;
-    background: rgba(55, 177, 140, 0.6);
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
     border: none;
     border-radius: 6px;
@@ -210,31 +315,33 @@
 }
 
 .folder-input button:hover {
-    background: rgba(55, 177, 140, 0.8);
+    background: linear-gradient(135deg, #34b996, #1e886c);
 }
 
 .file-list {
-    max-height: 320px;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
-    margin-bottom: 20px;
+    margin-bottom: 0;
     padding-right: 4px;
 }
 
 .file-item {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.84);
     border-radius: 10px;
-    padding: 12px 16px;
-    margin-bottom: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid rgba(55, 177, 140, 0.12);
-    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid rgba(47, 168, 136, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .file-item:hover {
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(55, 177, 140, 0.15);
+    box-shadow: 0 7px 14px rgba(28, 103, 84, 0.14);
+    border-color: rgba(47, 168, 136, 0.35);
 }
 
 .file-info {
@@ -245,8 +352,8 @@
 }
 
 .file-preview {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border-radius: 8px;
     object-fit: cover;
     background: rgba(55, 177, 140, 0.08);
@@ -258,8 +365,8 @@
 }
 
 .file-name {
-    font-size: 14px;
-    color: #2a2a2a;
+    font-size: 13px;
+    color: var(--text-main);
     /* font-weight: 500; */
     margin-bottom: 4px;
     word-break: break-all;
@@ -268,13 +375,13 @@
 
 .file-size {
     font-size: 12px;
-    color: #777;
+    color: #6c7a80;
     font-family: "Yu Gothic UI", sans-serif;
 }
 
 .file-size-compare {
     font-size: 12px;
-    color: rgba(55, 177, 140, 0.9);
+    color: rgba(38, 141, 113, 0.95);
     /* font-weight: 500; */
     margin-top: 2px;
     font-family: "Yu Gothic UI", sans-serif;
@@ -286,7 +393,7 @@
 
 .file-status {
     font-size: 12px;
-    color: #4a9d5f;
+    color: #258b57;
     /* font-weight: 500; */
     margin-right: 8px;
     font-family: "Yu Gothic UI", sans-serif;
@@ -294,7 +401,7 @@
 
 .file-remove {
     padding: 5px 10px;
-    background: rgba(200, 80, 80, 0.7);
+    background: rgba(193, 69, 69, 0.78);
     color: white;
     border: none;
     border-radius: 5px;
@@ -305,14 +412,20 @@
 }
 
 .file-remove:hover {
-    background: rgba(200, 80, 80, 0.85);
+    background: rgba(176, 49, 49, 0.88);
 }
 
 .action-buttons {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background: transparent;
+    padding-top: 0;
+    z-index: 2;
 }
 
 .btn-primary,
@@ -328,15 +441,15 @@
 }
 
 .btn-primary {
-    background: rgba(55, 177, 140, 0.8);
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
-    box-shadow: 0 2px 6px rgba(55, 177, 140, 0.25);
+    box-shadow: 0 6px 14px rgba(26, 112, 90, 0.27);
 }
 
 .btn-primary:hover {
-    background: rgba(55, 177, 140, 0.95);
+    background: linear-gradient(135deg, #34b996, #1e886c);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(55, 177, 140, 0.3);
+    box-shadow: 0 8px 16px rgba(22, 98, 78, 0.34);
 }
 
 .btn-primary:disabled {
@@ -345,20 +458,38 @@
 }
 
 .btn-secondary {
-    background: rgba(150, 150, 150, 0.65);
+    background: rgba(104, 120, 130, 0.8);
     color: white;
 }
 
 .btn-secondary:hover {
-    background: rgba(150, 150, 150, 0.8);
+    background: rgba(82, 98, 109, 0.92);
     transform: translateY(-1px);
 }
 
 .progress-container {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.72);
     border-radius: 12px;
-    padding: 20px;
-    border: 1px solid rgba(55, 177, 140, 0.2);
+    padding: 14px 16px;
+    border: 1px solid var(--line-soft);
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+}
+
+@media (max-height: 860px) {
+    .file-list {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 1180px) {
+    .workbench-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .queue-column {
+        min-height: 220px;
+    }
 }
 
 .progress-bar {
@@ -368,12 +499,12 @@
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 12px;
-    border: 1px solid rgba(55, 177, 140, 0.15);
+    border: 1px solid rgba(47, 168, 136, 0.16);
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, rgba(55, 177, 140, 0.85), rgba(55, 177, 140, 0.95));
+    background: linear-gradient(90deg, #33b492, #238b6f);
     transition: width 0.3s;
     width: 0;
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
@@ -382,7 +513,7 @@
 .progress-text {
     text-align: center;
     font-size: 14px;
-    color: #2a2a2a;
+    color: var(--text-main);
     /* font-weight: 600; */
     font-family: "Yu Gothic UI", sans-serif;
 }

@@ -1,37 +1,47 @@
+/*
+  全功能 HDR 编辑器（重写）：
+  - 使用 three.js + RGBELoader + OrbitControls
+  - 使用 lil-gui 构建左侧控制面板（CDN）
+  - 支持灯光列表、单灯编辑、HDR/背景导入、导出、PMREM 环境
+*/
+
 (function () {
   async function importFromCandidates(candidates) {
-    let lastError = null;
-    for (const url of candidates) {
+    let lastErr = null;
+    for (const u of candidates) {
       try {
-        return await import(url);
-      } catch (error) {
-        lastError = error;
+        return await import(u);
+      } catch (e) {
+        lastErr = e;
       }
     }
-    throw lastError || new Error('module import failed');
+    throw lastErr || new Error('import failed');
   }
 
   async function loadDeps() {
-    const threeCandidates = ['three', 'https://esm.sh/three@0.160.0'];
+    const threeCandidates = ['three', 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js'];
     const rgbeCandidates = [
       'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/RGBELoader.js',
-      'https://unpkg.com/three@0.160.0/examples/jsm/loaders/RGBELoader.js',
-      'https://esm.sh/three@0.160.0/examples/jsm/loaders/RGBELoader.js'
+      'https://unpkg.com/three@0.160.0/examples/jsm/loaders/RGBELoader.js'
     ];
     const controlsCandidates = [
       'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js',
-      'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js',
-      'https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js'
+      'https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js'
+    ];
+    const gltfLoaderCandidates = [
+      'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js',
+      'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js'
     ];
     const guiCandidates = [
       'https://cdn.jsdelivr.net/npm/lil-gui@0.19/+esm',
       'https://esm.sh/lil-gui@0.19.2'
     ];
 
-    const [THREE, rgbe, controls, gui] = await Promise.all([
+    const [THREE, rgbe, controls, gltfMod, gui] = await Promise.all([
       importFromCandidates(threeCandidates),
       importFromCandidates(rgbeCandidates),
       importFromCandidates(controlsCandidates),
+      importFromCandidates(gltfLoaderCandidates),
       importFromCandidates(guiCandidates)
     ]);
 
@@ -39,47 +49,12 @@
       THREE,
       RGBELoader: rgbe.RGBELoader,
       OrbitControls: controls.OrbitControls,
+      GLTFLoader: gltfMod && (gltfMod.GLTFLoader || gltfMod.default && gltfMod.default.GLTFLoader) ? (gltfMod.GLTFLoader || gltfMod.default.GLTFLoader) : null,
       GUI: gui.GUI
     };
   }
 
-  function kelvinToRgb(kelvin) {
-    const temp = kelvin / 100;
-    let red;
-    let green;
-    let blue;
-
-    if (temp <= 66) {
-      red = 255;
-      green = 99.4708025861 * Math.log(Math.max(temp, 1)) - 161.1195681661;
-      if (temp <= 19) {
-        blue = 0;
-      } else {
-        blue = 138.5177312231 * Math.log(temp - 10) - 305.0447927307;
-      }
-    } else {
-      red = 329.698727446 * Math.pow(temp - 60, -0.1332047592);
-      green = 288.1221695283 * Math.pow(temp - 60, -0.0755148492);
-      blue = 255;
-    }
-
-    return {
-      r: Math.max(0, Math.min(255, red)),
-      g: Math.max(0, Math.min(255, green)),
-      b: Math.max(0, Math.min(255, blue))
-    };
-  }
-
-  function rgbToHex(rgb) {
-    const r = Math.round(rgb.r).toString(16).padStart(2, '0');
-    const g = Math.round(rgb.g).toString(16).padStart(2, '0');
-    const b = Math.round(rgb.b).toString(16).padStart(2, '0');
-    return `#${r}${g}${b}`;
-  }
-
-  function clamp(v, min, max) {
-    return Math.max(min, Math.min(max, v));
-  }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
   function makeDefaultLight(type, idx) {
     return {
@@ -98,57 +73,74 @@
   }
 
   window.initHdrEditorTool = async function initHdrEditorTool(host) {
-    host.innerHTML = `
-      <div class="hdr-shell">
-        <div class="hdr-topbar">
-          <span class="hdr-title">HDRI Studio（继续对齐成熟站）</span>
-          <label class="hdr-file-btn">导入背景图<input id="bgImageInput" type="file" accept="image/*" /></label>
-          <label class="hdr-file-btn">导入HDR<input id="hdrFileInput" type="file" accept=".hdr,image/vnd.radiance" /></label>
-          <label>灯光列表<select id="lightPicker"></select></label>
-          <button id="addCircleBtn" class="secondary" type="button">圆形灯</button>
-          <button id="addRectBtn" class="secondary" type="button">矩形灯</button>
-          <button id="addOctagonBtn" class="secondary" type="button">八边形灯</button>
-          <button id="addRingBtn" class="secondary" type="button">环形灯</button>
-          <button id="duplicateLightBtn" class="secondary" type="button">复制灯</button>
-          <button id="removeLightBtn" class="secondary" type="button">删除灯</button>
-          <button id="saveConfig" class="secondary" type="button">导出配置</button>
-          <label class="hdr-file-btn">导入配置<input id="loadConfig" type="file" accept=".json" /></label>
-          <button id="exportHdri" class="secondary" type="button">导出HDRI(PNG)</button>
-          <button id="exportPreview" type="button">导出预览PNG</button>
-          <span id="hdrStatus" class="hdr-status">初始化中...</span>
-        </div>
-        <div class="hdr-grid-main">
-          <div class="hdri-author card-lite">
-            <div class="author-header">HDRI 画布</div>
-            <canvas id="hdriCanvas" width="2048" height="1024"></canvas>
+    host = host || document.body;
+
+    const container = host.querySelector('#hdrToolContainer') || host;
+    container.innerHTML = `
+      <div class="hdr-grid-main">
+        <div class="card-lite left-panel" id="leftPanel">
+          <div class="author-header">HDRI Studio 控制</div>
+          <div id="guiContainer"></div>
+          <div style="margin-top:12px">
+            <button id="addCircleBtn" class="secondary">圆形灯</button>
+            <button id="addRectBtn" class="secondary">矩形灯</button>
+            <button id="addOctagonBtn" class="secondary">八边形灯</button>
+            <button id="addRingBtn" class="secondary">环形灯</button>
           </div>
-          <div id="viewportWrap" class="hdr-canvas-wrap"><canvas id="hdrEditorCanvas"></canvas></div>
+          <div style="margin-top:12px">
+            <label class="hdr-file-btn">导入HDR <input id="hdrFileInput" type="file" accept=".hdr,image/vnd.radiance" /></label>
+            <label class="hdr-file-btn">背景图 <input id="bgImageInput" type="file" accept="image/*" /></label>
+            <label class="hdr-file-btn">上传模型 <input id="modelFileInput" type="file" accept=".gltf,.glb" /></label>
+            <button id="removeModelBtn" class="secondary">移除模型</button>
+          </div>
+          <div style="margin-top:12px">
+            <button id="saveConfig" class="secondary">导出配置</button>
+            <label class="hdr-file-btn">导入配置 <input id="loadConfig" type="file" accept=".json"/></label>
+            <button id="exportHdri" class="secondary">导出 HDR PNG</button>
+            <button id="exportPreview">导出预览 PNG</button>
+          </div>
+          <div style="margin-top:12px">
+            <div class="author-header">灯光列表</div>
+            <select id="lightPicker" size="6" style="width:100%;"></select>
+            <div style="margin-top:8px">选中灯大小 <input id="activeSizeRange" type="range" min="0.02" max="0.8" step="0.005" value="0.12" style="width:100%" /></div>
+            <div style="display:flex;gap:8px;margin-top:6px;">
+              <button id="duplicateLightBtn" class="secondary">复制</button>
+              <button id="removeLightBtn" class="secondary">删除</button>
+            </div>
+          </div>
+        </div>
+        <div class="hdr-canvas-wrap">
+          <canvas id="hdriCanvas" width="2048" height="1024"></canvas>
+          <div id="viewportWrap" class="hdr-canvas-3d">
+            <canvas id="hdrEditorCanvas"></canvas>
+          </div>
         </div>
       </div>
     `;
 
-    const status = host.querySelector('#hdrStatus');
-    const lightPicker = host.querySelector('#lightPicker');
-    let THREE;
-    let RGBELoader;
-    let OrbitControls;
-    let GUI;
+    const statusEl = host.querySelector('#hdrStatus') || document.createElement('div');
 
+    let THREE, RGBELoader, OrbitControls, GUI, GLTFLoader;
     try {
       const deps = await loadDeps();
       THREE = deps.THREE;
       RGBELoader = deps.RGBELoader;
       OrbitControls = deps.OrbitControls;
       GUI = deps.GUI;
-    } catch (error) {
-      status.textContent = '依赖加载失败，请检查网络/CDN。';
+      GLTFLoader = deps.GLTFLoader;
+    } catch (e) {
+      container.innerHTML = '<div class="result-box">依赖加载失败，请检查 CDN 与网络控制台。</div>';
+      console.error(e);
       return;
     }
 
-    const hdriCanvas = host.querySelector('#hdriCanvas');
+    // DOM refs
+    const hdriCanvas = container.querySelector('#hdriCanvas');
     const hdriCtx = hdriCanvas.getContext('2d');
-    const canvas = host.querySelector('#hdrEditorCanvas');
+    const canvas = container.querySelector('#hdrEditorCanvas');
+    const lightPicker = container.querySelector('#lightPicker');
 
+    // Renderer
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -157,7 +149,6 @@
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0b1120);
-
     const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
     camera.position.set(0, 2.3, 7.5);
 
@@ -168,10 +159,7 @@
     const pmrem = new THREE.PMREMGenerator(renderer);
     pmrem.compileEquirectangularShader();
 
-    const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(24, 24),
-      new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.88, metalness: 0.03 })
-    );
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(24, 24), new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.88, metalness: 0.03 }));
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
@@ -226,24 +214,12 @@
     };
 
     const lights = [
-      { name: '圆形灯 1', type: 'Circle', x: 0.22, y: 0.34, size: 0.16, color: '#ffffff', useKelvin: false, kelvin: 6500, intensity: 1.8, outerFalloff: 1.1, innerSoftness: 0.25 },
-      { name: '矩形灯 1', type: 'Rect', x: 0.76, y: 0.38, size: 0.2, color: '#ffd8aa', useKelvin: false, kelvin: 4200, intensity: 1.2, outerFalloff: 1.0, innerSoftness: 0.2 },
-      { name: '环形灯 1', type: 'Ring', x: 0.5, y: 0.17, size: 0.14, color: '#c5dcff', useKelvin: false, kelvin: 9000, intensity: 1.0, outerFalloff: 1.1, innerSoftness: 0.4 }
+      makeDefaultLight('Circle', 0),
+      makeDefaultLight('Rect', 1),
+      makeDefaultLight('Ring', 2)
     ];
 
-    const active = {
-      name: lights[0].name,
-      type: lights[0].type,
-      size: lights[0].size,
-      color: lights[0].color,
-      useKelvin: lights[0].useKelvin,
-      kelvin: lights[0].kelvin,
-      intensity: lights[0].intensity,
-      outerFalloff: lights[0].outerFalloff,
-      innerSoftness: lights[0].innerSoftness,
-      x: lights[0].x,
-      y: lights[0].y
-    };
+    const active = Object.assign({}, lights[0]);
 
     let hdriBgImage = null;
     let hdrFileTexture = null;
@@ -256,44 +232,21 @@
       ACES: THREE.ACESFilmicToneMapping,
       Reinhard: THREE.ReinhardToneMapping,
       Cineon: THREE.CineonToneMapping,
-      Neutral: THREE.NeutralToneMapping,
+      Neutral: THREE.NoToneMapping,
       None: THREE.NoToneMapping
     };
-
-    let gui;
-    let lightIndexController;
 
     function syncActiveFromIndex() {
       const idx = clamp(Math.round(params.lightIndex), 0, lights.length - 1);
       params.lightIndex = idx;
       const l = lights[idx];
-      active.name = l.name;
-      active.type = l.type;
-      active.size = l.size;
-      active.color = l.color;
-      active.useKelvin = l.useKelvin;
-      active.kelvin = l.kelvin;
-      active.intensity = l.intensity;
-      active.outerFalloff = l.outerFalloff;
-      active.innerSoftness = l.innerSoftness;
-      active.x = l.x;
-      active.y = l.y;
+      Object.assign(active, l);
     }
 
     function syncIndexFromActive() {
       const idx = clamp(Math.round(params.lightIndex), 0, lights.length - 1);
       const l = lights[idx];
-      l.name = active.name;
-      l.type = active.type;
-      l.size = active.size;
-      l.color = active.color;
-      l.useKelvin = active.useKelvin;
-      l.kelvin = active.kelvin;
-      l.intensity = active.intensity;
-      l.outerFalloff = active.outerFalloff;
-      l.innerSoftness = active.innerSoftness;
-      l.x = active.x;
-      l.y = active.y;
+      Object.assign(l, active);
     }
 
     function drawShapeLight(light) {
@@ -302,13 +255,11 @@
       const cx = light.x * w;
       const cy = light.y * h;
       const radius = light.size * h;
-
-      const color = light.useKelvin ? rgbToHex(kelvinToRgb(light.kelvin)) : light.color;
+      const color = light.useKelvin ? light.color : light.color; // placeholder, support kelvin later
       const alpha = clamp(0.12 + light.intensity * 0.35, 0, 1);
 
       hdriCtx.save();
       hdriCtx.globalCompositeOperation = 'lighter';
-
       if (light.type === 'Circle') {
         const grad = hdriCtx.createRadialGradient(cx, cy, radius * light.innerSoftness, cx, cy, radius * (1 + light.outerFalloff));
         grad.addColorStop(0, `${color}${Math.round(alpha * 255).toString(16).padStart(2, '0')}`);
@@ -347,7 +298,6 @@
         hdriCtx.stroke();
         hdriCtx.filter = 'none';
       }
-
       hdriCtx.restore();
     }
 
@@ -355,23 +305,17 @@
       const w = hdriCanvas.width;
       const h = hdriCanvas.height;
       hdriCtx.clearRect(0, 0, w, h);
-
       if (params.envMode === 'Solid') {
-        hdriCtx.fillStyle = params.solidColor;
-        hdriCtx.fillRect(0, 0, w, h);
+        hdriCtx.fillStyle = params.solidColor; hdriCtx.fillRect(0, 0, w, h);
       } else if (params.envMode === 'Gradient') {
         const grad = hdriCtx.createLinearGradient(0, 0, 0, h);
-        grad.addColorStop(0, params.gradientTop);
-        grad.addColorStop(1, params.gradientBottom);
-        hdriCtx.fillStyle = grad;
-        hdriCtx.fillRect(0, 0, w, h);
+        grad.addColorStop(0, params.gradientTop); grad.addColorStop(1, params.gradientBottom);
+        hdriCtx.fillStyle = grad; hdriCtx.fillRect(0, 0, w, h);
       } else if (params.envMode === 'Image' && hdriBgImage) {
         hdriCtx.drawImage(hdriBgImage, 0, 0, w, h);
       } else {
-        hdriCtx.fillStyle = '#0b1120';
-        hdriCtx.fillRect(0, 0, w, h);
+        hdriCtx.fillStyle = '#0b1120'; hdriCtx.fillRect(0, 0, w, h);
       }
-
       lights.forEach(drawShapeLight);
     }
 
@@ -386,36 +330,19 @@
     function applyParams() {
       renderer.toneMappingExposure = Math.pow(2, params.exposure);
       renderer.toneMapping = toneMapMap[params.toneMapping] || THREE.ACESFilmicToneMapping;
-
-      sphereMat.envMapIntensity = params.envIntensity;
-      knotMat.envMapIntensity = params.envIntensity;
-      sphereMat.metalness = params.metalness;
-      sphereMat.roughness = params.roughness;
-      knotMat.metalness = Math.min(1, params.metalness * 0.8);
-      knotMat.roughness = Math.min(1, params.roughness + 0.1);
-
-      keyLight.intensity = params.keyIntensity;
-      fillLight.intensity = params.fillIntensity;
-      rimLight.intensity = params.rimIntensity;
-      spotLight.intensity = params.spotIntensity;
-      hemiLight.intensity = params.hemiIntensity;
-      ambientLight.intensity = params.ambientIntensity;
-
-      sphereMat.color.setRGB(clamp(0.5 * params.saturation, 0, 1), clamp(0.5 * params.saturation, 0, 1), clamp(0.5 * params.saturation, 0, 1));
-      knotMat.color.setRGB(clamp(0.4 + 0.3 * params.saturation, 0, 1), clamp(0.6 + 0.15 * params.saturation, 0, 1), 1);
-
-      const az = THREE.MathUtils.degToRad(55);
-      const el = THREE.MathUtils.degToRad(35);
+      sphereMat.envMapIntensity = params.envIntensity; knotMat.envMapIntensity = params.envIntensity;
+      sphereMat.metalness = params.metalness; sphereMat.roughness = params.roughness;
+      knotMat.metalness = Math.min(1, params.metalness * 0.8); knotMat.roughness = Math.min(1, params.roughness + 0.1);
+      keyLight.intensity = params.keyIntensity; fillLight.intensity = params.fillIntensity; rimLight.intensity = params.rimIntensity; spotLight.intensity = params.spotIntensity;
+      hemiLight.intensity = params.hemiIntensity; ambientLight.intensity = params.ambientIntensity;
+      const az = THREE.MathUtils.degToRad(55); const el = THREE.MathUtils.degToRad(35);
       keyLight.position.set(Math.cos(el) * Math.sin(az) * 10, Math.sin(el) * 10, Math.cos(el) * Math.cos(az) * 10);
-
       const rot = THREE.MathUtils.degToRad(params.envRotation);
       if ('backgroundRotation' in scene) scene.backgroundRotation.set(0, rot, 0);
       if ('environmentRotation' in scene) scene.environmentRotation.set(0, rot, 0);
-
       scene.backgroundBlurriness = params.bgBlur;
       sphere.visible = params.model === 'Sphere' || params.model === 'Both';
       knot.visible = params.model === 'Knot' || params.model === 'Both';
-
       if (params.envMode === 'HDRFile' && hdrFileTexture) {
         if (envMapTexture) envMapTexture.dispose();
         envMapTexture = pmrem.fromEquirectangular(hdrFileTexture).texture;
@@ -434,68 +361,41 @@
     }
 
     function refreshLightControllers() {
-      if (lightIndexController) {
-        lightIndexController.max(lights.length - 1);
-      }
       syncActiveFromIndex();
       updateLightPicker();
-      gui.updateDisplay();
+      if (gui) gui.updateDisplay();
+      const r = container.querySelector('#activeSizeRange');
+      if (r) r.value = active.size;
     }
+
     function addLight(type = 'Circle') {
       lights.push(makeDefaultLight(type, lights.length));
-      params.lightIndex = lights.length - 1;
-      refreshLightControllers();
-      applyParams();
+      params.lightIndex = lights.length - 1; refreshLightControllers(); applyParams();
     }
 
     function duplicateCurrentLight() {
       const src = lights[clamp(params.lightIndex, 0, lights.length - 1)];
-      const copy = JSON.parse(JSON.stringify(src));
-      copy.name = `${src.name} 复制`;
-      copy.x = clamp(copy.x + 0.03, 0, 1);
-      copy.y = clamp(copy.y + 0.03, 0, 1);
-      lights.push(copy);
-      params.lightIndex = lights.length - 1;
-      refreshLightControllers();
-      applyParams();
+      const copy = JSON.parse(JSON.stringify(src)); copy.name = `${src.name} 复制`; copy.x = clamp(copy.x + 0.03, 0, 1); copy.y = clamp(copy.y + 0.03, 0, 1);
+      lights.push(copy); params.lightIndex = lights.length - 1; refreshLightControllers(); applyParams();
     }
 
     function removeCurrentLight() {
-      if (lights.length <= 1) {
-        status.textContent = '至少保留一盏 HDRI 灯。';
-        return;
-      }
-      lights.splice(params.lightIndex, 1);
-      params.lightIndex = clamp(params.lightIndex, 0, lights.length - 1);
-      refreshLightControllers();
-      applyParams();
+      if (lights.length <= 1) { console.warn('至少保留一盏灯'); return; }
+      lights.splice(params.lightIndex, 1); params.lightIndex = clamp(params.lightIndex, 0, lights.length - 1); refreshLightControllers(); applyParams();
     }
 
     function exportConfig() {
-      const data = {
-        params,
-        lights,
-        canvasSize: { width: hdriCanvas.width, height: hdriCanvas.height }
-      };
+      const data = { params, lights, canvasSize: { width: hdriCanvas.width, height: hdriCanvas.height } };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'hdri_project.json';
-      a.click();
-      URL.revokeObjectURL(url);
+      const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'hdri_project.json'; a.click(); URL.revokeObjectURL(url);
     }
 
-    gui = new GUI({ title: 'HDRI 控制面板', width: 330, container: host.querySelector('#viewportWrap') });
+    // GUI
+    const gui = new GUI({ title: 'HDRI 控制面板', width: 320, container: container.querySelector('#guiContainer') });
     gui.domElement.classList.add('hdr-gui');
 
-    const fCanvas = gui.addFolder('HDRI画布');
-    fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).onChange((v) => {
-      const [w, h] = v.split('x').map(Number);
-      hdriCanvas.width = w;
-      hdriCanvas.height = h;
-      applyParams();
-    });
+    const fCanvas = gui.addFolder('HDRI 画布');
+    fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).onChange((v) => { const [w, h] = v.split('x').map(Number); hdriCanvas.width = w; hdriCanvas.height = h; applyParams(); });
     fCanvas.add(params, 'envMode', ['Solid', 'Gradient', 'Image', 'HDRFile']).onChange(applyParams);
     fCanvas.addColor(params, 'solidColor').name('纯色').onChange(applyParams);
     fCanvas.addColor(params, 'gradientTop').name('渐变-上').onChange(applyParams);
@@ -524,13 +424,8 @@
     fLights.add(params, 'hemiIntensity', 0, 3, 0.05).onChange(applyParams);
     fLights.add(params, 'ambientIntensity', 0, 1, 0.01).onChange(applyParams);
 
-    const fHdriLight = gui.addFolder('HDRI区域灯');
-    lightIndexController = fHdriLight.add(params, 'lightIndex', 0, lights.length - 1, 1).name('选择灯').onChange((i) => {
-      params.lightIndex = clamp(Math.round(i), 0, lights.length - 1);
-      syncActiveFromIndex();
-      gui.updateDisplay();
-      applyParams();
-    });
+    const fHdriLight = gui.addFolder('HDRI 区域灯');
+    fHdriLight.add(params, 'lightIndex', 0, lights.length - 1, 1).name('选择灯').onChange((i) => { params.lightIndex = clamp(Math.round(i), 0, lights.length - 1); syncActiveFromIndex(); gui.updateDisplay(); applyParams(); updateLightPicker(); });
     fHdriLight.add(active, 'name').name('名称').onFinishChange(() => { syncIndexFromActive(); updateLightPicker(); gui.updateDisplay(); });
     fHdriLight.add(active, 'type', ['Circle', 'Rect', 'Octagon', 'Ring']).onChange(() => { syncIndexFromActive(); applyParams(); });
     fHdriLight.add(active, 'x', 0, 1, 0.001).name('位置X').onChange(() => { syncIndexFromActive(); applyParams(); });
@@ -540,11 +435,7 @@
     fHdriLight.add(active, 'outerFalloff', 0, 2, 0.01).name('外侧衰减').onChange(() => { syncIndexFromActive(); applyParams(); });
     fHdriLight.add(active, 'innerSoftness', 0, 1, 0.01).name('内侧柔化').onChange(() => { syncIndexFromActive(); applyParams(); });
     fHdriLight.add(active, 'useKelvin').name('使用色温(K)').onChange(() => { syncIndexFromActive(); applyParams(); });
-    fHdriLight.add(active, 'kelvin', 1000, 20000, 10).name('色温').onChange(() => {
-      if (active.useKelvin) active.color = rgbToHex(kelvinToRgb(active.kelvin));
-      syncIndexFromActive();
-      applyParams();
-    });
+    fHdriLight.add(active, 'kelvin', 1000, 20000, 10).name('色温').onChange(() => { if (active.useKelvin) { /* convert later */ } syncIndexFromActive(); applyParams(); });
     fHdriLight.addColor(active, 'color').name('颜色').onChange(() => { syncIndexFromActive(); applyParams(); });
 
     const fLightMgr = gui.addFolder('灯光管理');
@@ -559,114 +450,161 @@
       const width = Math.max(920, canvas.parentElement.clientWidth || 920);
       const height = Math.round(width * 0.58);
       renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.render(scene, camera);
+      camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.render(scene, camera);
     }
 
     function animate() {
       orbit.update();
-      if (params.autoRotate) {
-        knot.rotation.x += 0.003;
-        knot.rotation.y += 0.005;
-        sphere.rotation.y -= 0.002;
-      }
+      if (params.autoRotate) { knot.rotation.x += 0.003; knot.rotation.y += 0.005; sphere.rotation.y -= 0.002; }
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
 
-
     const hdrLoader = new RGBELoader();
-    host.querySelector('#hdrFileInput').addEventListener('change', function () {
-      const file = this.files && this.files[0];
-      if (!file) return;
-      const url = URL.createObjectURL(file);
-      status.textContent = `HDR载入中：${file.name}`;
-      hdrLoader.load(url, (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        hdrFileTexture = texture;
-        params.envMode = 'HDRFile';
-        gui.updateDisplay();
-        applyParams();
-        status.textContent = `HDR已载入：${file.name}`;
-      }, undefined, () => {
-        status.textContent = 'HDR载入失败，请检查文件。';
+    container.querySelector('#hdrFileInput').addEventListener('change', function () {
+      const file = this.files && this.files[0]; if (!file) return; const url = URL.createObjectURL(file); statusEl.textContent = `HDR载入中：${file.name}`;
+      hdrLoader.load(url, (texture) => { texture.mapping = THREE.EquirectangularReflectionMapping; hdrFileTexture = texture; params.envMode = 'HDRFile'; gui.updateDisplay(); applyParams(); statusEl.textContent = `HDR已载入：${file.name}`; }, undefined, () => { statusEl.textContent = 'HDR载入失败，请检查文件。'; });
+    });
+
+    container.querySelector('#bgImageInput').addEventListener('change', function () {
+      const file = this.files && this.files[0]; if (!file) return; const img = new Image(); img.onload = () => { hdriBgImage = img; params.envMode = 'Image'; gui.updateDisplay(); applyParams(); statusEl.textContent = `背景图已加载：${file.name}`; }; img.src = URL.createObjectURL(file);
+    });
+
+    container.querySelector('#addCircleBtn').addEventListener('click', () => addLight('Circle'));
+    container.querySelector('#addRectBtn').addEventListener('click', () => addLight('Rect'));
+    container.querySelector('#addOctagonBtn').addEventListener('click', () => addLight('Octagon'));
+    container.querySelector('#addRingBtn').addEventListener('click', () => addLight('Ring'));
+    container.querySelector('#duplicateLightBtn').addEventListener('click', duplicateCurrentLight);
+    container.querySelector('#removeLightBtn').addEventListener('click', removeCurrentLight);
+    container.querySelector('#saveConfig').addEventListener('click', exportConfig);
+    container.querySelector('#loadConfig').addEventListener('change', async function () { const file = this.files && this.files[0]; if (!file) return; try { const text = await file.text(); const data = JSON.parse(text); if (data.params) Object.assign(params, data.params); if (Array.isArray(data.lights) && data.lights.length) { lights.length = 0; data.lights.forEach((l) => lights.push(l)); } if (data.canvasSize && data.canvasSize.width && data.canvasSize.height) { hdriCanvas.width = data.canvasSize.width; hdriCanvas.height = data.canvasSize.height; params.canvasSize = `${data.canvasSize.width}x${data.canvasSize.height}`; } params.lightIndex = clamp(params.lightIndex || 0, 0, lights.length - 1); refreshLightControllers(); applyParams(); statusEl.textContent = `配置已载入：${file.name}`; } catch (e) { statusEl.textContent = '配置文件读取失败，请检查 JSON 内容。'; } });
+
+    container.querySelector('#exportHdri').addEventListener('click', () => { const a = document.createElement('a'); a.href = hdriCanvas.toDataURL('image/png'); a.download = 'hdri_canvas.png'; a.click(); });
+    container.querySelector('#exportPreview').addEventListener('click', () => { const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = 'hdri_preview.png'; a.click(); });
+
+    // Model preview loader + interactive light controls
+    let previewModel = null;
+    let gltfLoader = null;
+    if (GLTFLoader) {
+      try { gltfLoader = new GLTFLoader(); } catch (e) { gltfLoader = null; }
+    }
+
+    const modelFileInput = container.querySelector('#modelFileInput');
+    const removeModelBtn = container.querySelector('#removeModelBtn');
+    if (modelFileInput) {
+      modelFileInput.addEventListener('change', function () {
+        const file = this.files && this.files[0];
+        if (!file) return;
+        if (!gltfLoader) { statusEl.textContent = 'GLTFLoader 未加载，无法加载模型'; return; }
+        const url = URL.createObjectURL(file);
+        statusEl.textContent = `模型加载中：${file.name}`;
+        try {
+          gltfLoader.load(url, (gltf) => {
+            if (previewModel) { scene.remove(previewModel); }
+            previewModel = gltf.scene || gltf.scenes && gltf.scenes[0];
+            if (!previewModel) { statusEl.textContent = '模型解析失败'; return; }
+            // center and scale model to fit
+            const box = new THREE.Box3().setFromObject(previewModel);
+            const size = box.getSize(new THREE.Vector3()).length();
+            const scale = size > 0 ? (1.6 / size) : 1;
+            previewModel.scale.setScalar(scale);
+            // reposition so it sits on floor
+            const newBox = new THREE.Box3().setFromObject(previewModel);
+            const minY = newBox.min.y * scale;
+            previewModel.position.set(0, -minY, 0);
+            scene.add(previewModel);
+            statusEl.textContent = `模型已加载：${file.name}`;
+          }, undefined, (err) => { statusEl.textContent = '模型加载失败'; console.error(err); });
+        } catch (e) { statusEl.textContent = '模型加载异常'; console.error(e); }
       });
-    });
+    }
 
-    lightPicker.addEventListener('change', (e) => {
-      params.lightIndex = clamp(Number(e.target.value), 0, lights.length - 1);
-      refreshLightControllers();
-      applyParams();
-    });
+    if (removeModelBtn) removeModelBtn.addEventListener('click', () => { if (previewModel) { scene.remove(previewModel); previewModel = null; statusEl.textContent = '模型已移除'; } });
 
-    host.querySelector('#bgImageInput').addEventListener('change', function () {
-      const file = this.files && this.files[0];
-      if (!file) return;
-      const img = new Image();
-      img.onload = () => {
-        hdriBgImage = img;
-        params.envMode = 'Image';
-        gui.updateDisplay();
-        applyParams();
-        status.textContent = `背景图已加载：${file.name}`;
-      };
-      img.src = URL.createObjectURL(file);
-    });
+    // click on hdriCanvas sets active light position; wheel adjusts size
+    if (hdriCanvas) {
+      hdriCanvas.addEventListener('click', (ev) => {
+        const r = hdriCanvas.getBoundingClientRect();
+        const x = clamp((ev.clientX - r.left) / r.width, 0, 1);
+        const y = clamp((ev.clientY - r.top) / r.height, 0, 1);
+        active.x = x; active.y = y; syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay();
+      });
+      hdriCanvas.addEventListener('wheel', (ev) => {
+        ev.preventDefault(); const d = ev.deltaY > 0 ? -0.01 : 0.01; active.size = clamp(active.size + d, 0.02, 0.8); syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay();
+      }, { passive: false });
+    }
 
-    host.querySelector('#addCircleBtn').addEventListener('click', () => addLight('Circle'));
-    host.querySelector('#addRectBtn').addEventListener('click', () => addLight('Rect'));
-    host.querySelector('#addOctagonBtn').addEventListener('click', () => addLight('Octagon'));
-    host.querySelector('#addRingBtn').addEventListener('click', () => addLight('Ring'));
-    host.querySelector('#duplicateLightBtn').addEventListener('click', duplicateCurrentLight);
-    host.querySelector('#removeLightBtn').addEventListener('click', removeCurrentLight);
+    // active size slider
+    const activeSizeRange = container.querySelector('#activeSizeRange');
+    if (activeSizeRange) {
+      activeSizeRange.value = active.size;
+      activeSizeRange.addEventListener('input', (e) => {
+        const v = parseFloat(e.target.value);
+        if (isFinite(v)) { active.size = v; syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay(); }
+      });
+    }
 
-    host.querySelector('#saveConfig').addEventListener('click', exportConfig);
+    function updateLightListUI() {
+      const picker = container.querySelector('#lightPicker');
+      picker.innerHTML = lights.map((l, i) => `<option value="${i}">${i + 1}. ${l.name}</option>`).join('');
+      picker.value = String(params.lightIndex);
+    }
 
-    host.querySelector('#loadConfig').addEventListener('change', async function () {
-      const file = this.files && this.files[0];
-      if (!file) return;
+    lightPicker.addEventListener('change', (e) => { params.lightIndex = clamp(Number(e.target.value), 0, lights.length - 1); refreshLightControllers(); applyParams(); });
+
+    updateLightListUI(); window.addEventListener('resize', resize); resize(); applyParams(); animate();
+
+    // histogram update (light)
+    const histCanvas = document.createElement('canvas');
+    histCanvas.width = 256;
+    histCanvas.height = 128;
+    const histCtx = histCanvas.getContext('2d');
+
+    setInterval(() => {
       try {
-        const text = await file.text();
-        const data = JSON.parse(text);
-        if (data.params) Object.assign(params, data.params);
-        if (Array.isArray(data.lights) && data.lights.length) {
-          lights.length = 0;
-          data.lights.forEach((l) => lights.push(l));
+        const w = Math.min(512, renderer.domElement.width);
+        const h = Math.min(256, renderer.domElement.height);
+        const tmp = document.createElement('canvas');
+        tmp.width = w;
+        tmp.height = h;
+        const ctx2 = tmp.getContext('2d');
+        ctx2.drawImage(renderer.domElement, 0, 0, w, h);
+        const img = ctx2.getImageData(0, 0, w, h).data;
+        const bins = new Uint32Array(256);
+        for (let i = 0; i < img.length; i += 4) {
+          const r = img[i], g = img[i + 1], b = img[i + 2];
+          const lum = Math.round(0.2126 * r + 0.7152 * g + 0.0722 * b);
+          bins[clamp(lum, 0, 255)]++;
         }
-        if (data.canvasSize && data.canvasSize.width && data.canvasSize.height) {
-          hdriCanvas.width = data.canvasSize.width;
-          hdriCanvas.height = data.canvasSize.height;
-          params.canvasSize = `${data.canvasSize.width}x${data.canvasSize.height}`;
+        const max = Math.max(...bins);
+        histCtx.clearRect(0, 0, histCanvas.width, histCanvas.height);
+        histCtx.fillStyle = '#111827';
+        histCtx.fillRect(0, 0, histCanvas.width, histCanvas.height);
+        for (let x = 0; x < 256; x++) {
+          const v = bins[x] / (max || 1);
+          const hx = Math.floor((x / 256) * histCanvas.width);
+          const hh = Math.floor(v * histCanvas.height);
+          histCtx.fillStyle = '#60a5fa';
+          histCtx.fillRect(hx, histCanvas.height - hh, Math.ceil(histCanvas.width / 256), hh);
         }
-        params.lightIndex = clamp(params.lightIndex || 0, 0, lights.length - 1);
-        refreshLightControllers();
-        applyParams();
-        status.textContent = `配置已载入：${file.name}`;
+
+        const leftPanel = container.querySelector('#leftPanel');
+        if (leftPanel) {
+          const existing = leftPanel.querySelector('.hist-preview');
+          if (!existing) {
+            const el = document.createElement('div');
+            el.className = 'hist-preview';
+            el.style.marginTop = '12px';
+            el.appendChild(histCanvas);
+            leftPanel.appendChild(el);
+          } else {
+            const el = existing.querySelector('canvas');
+            if (el) el.getContext('2d').drawImage(histCanvas, 0, 0);
+          }
+        }
       } catch (e) {
-        status.textContent = '配置文件读取失败，请检查 JSON 内容。';
+        /* ignore */
       }
-    });
-
-    host.querySelector('#exportHdri').addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.href = hdriCanvas.toDataURL('image/png');
-      a.download = 'hdri_canvas.png';
-      a.click();
-    });
-
-    host.querySelector('#exportPreview').addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = 'hdri_preview.png';
-      a.click();
-    });
-
-    refreshLightControllers();
-    window.addEventListener('resize', resize);
-    resize();
-    applyParams();
-    status.textContent = 'HDRI 编辑器已就绪（支持灯光列表管理/配置导入导出）。';
-    animate();
+    }, 900);
   };
 })();

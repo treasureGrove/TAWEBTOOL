@@ -119,3 +119,70 @@ button.secondary { background: #475569; }
 @media (max-width: 900px) {
   .hdr-gui { position: static; margin: 8px; }
 }
+
+/* Improved left-panel and canvas visuals for HDR editor */
+.left-panel {
+  background: linear-gradient(180deg, rgba(6,10,20,0.72), rgba(12,18,30,0.72));
+  border: 1px solid rgba(83, 100, 160, 0.06);
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+}
+.left-panel .author-header { color: #e6eefb; font-weight:700; margin-bottom:8px }
+.left-panel button.secondary { background: linear-gradient(90deg,#334155,#475569); color:#e6eefb; border-radius:8px; padding:8px 10px; border:1px solid rgba(255,255,255,0.03) }
+.left-panel .hdr-file-btn { display:inline-block; margin-right:6px }
+.left-panel .hdr-file-btn input { display:none }
+.left-panel select, .left-panel input[type='text'] { background:#071020; color:#dbeafe; border:1px solid #263347; border-radius:8px; padding:6px }
+.hist-preview canvas { width:100%; height:72px; border-radius:6px; border:1px solid rgba(255,255,255,0.04); display:block }
+
+.hdr-canvas-wrap { border-radius: 12px; overflow: hidden; border: 1px solid #152036; box-shadow: 0 12px 40px rgba(2,6,23,0.7); background: linear-gradient(180deg,#030712,#071422); }
+.hdr-canvas-wrap canvas { display:block; width:100%; height:auto }
+
+.hdr-tool-container .hdr-grid-main { gap: 14px }
+.hdr-tool-container h1 { color:#e6eefb }
+
+/* Make GUI container visually separate */
+.hdr-gui { box-shadow: 0 8px 20px rgba(2,6,23,0.6); border-radius:10px; overflow:hidden }
+
+@media (max-width: 900px) {
+  .left-panel { order: 2 }
+  .hdr-canvas-wrap { order: 1 }
+}
+
+/* Layout alignment with reference: fixed left panel + large preview */
+.hdr-grid-main {
+  grid-template-columns: 360px 1fr;
+  align-items: start;
+}
+.left-panel { width: 360px; box-sizing: border-box }
+.hdr-main-content { padding: 18px; color: #e6eefb }
+.hdr-grid-main .hdr-canvas-wrap { min-height: 560px; display:flex; align-items:center; justify-content:center }
+.hdr-canvas-wrap #hdriCanvas { max-width:100%; height:auto; display:block }
+.hdr-canvas-3d { position:relative; width:100%; }
+.hdr-canvas-3d canvas { width:100%; height:100%; display:block }
+
+/* Buttons and inputs polish */
+.left-panel .hdr-file-btn { background: linear-gradient(90deg,#06b6d4,#2563eb); color:#fff; padding:8px 10px; border-radius:8px; display:inline-block }
+.left-panel .hdr-file-btn:hover { filter:brightness(1.05) }
+.left-panel button.secondary { transition: transform .08s ease, box-shadow .08s ease }
+.left-panel button.secondary:active { transform: translateY(1px) }
+
+/* Make GUI slimmer on wide screens */
+.hdr-gui .lil-gui { width: 320px }
+
+/* Improve option list readability */
+.left-panel select, .left-panel option { color:#cfe7ff }
+
+/* Subtle separators */
+.left-panel > div { border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom:10px; margin-bottom:10px }
+
+/* Responsive fallback */
+@media (max-width: 1100px) {
+  .hdr-grid-main { grid-template-columns: 320px 1fr }
+  .left-panel { width: 320px }
+}
+
+@media (max-width: 760px) {
+  .hdr-grid-main { grid-template-columns: 1fr }
+  .left-panel { width: 100%; }
+  .hdr-gui .lil-gui { width: auto }
+}

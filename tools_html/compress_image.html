@@ -79,85 +79,105 @@
     </div>
     <div id="panel">
         <h1>图片压缩转换工具</h1>
-        
-        <div class="upload-section">
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-content">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <p>拖拽图片到此处或点击选择</p>
-                    <p class="sub-text">支持 JPG, PNG, WEBP, GIF, BMP, TGA, DDS 等格式</p>
-                </div>
-            </div>
-            <button type="button" id="selectFolderUpload" class="upload-folder-btn">选择文件夹上传</button>
-        </div>
-        
+
         <input type="file" id="fileInput" multiple accept="image/*,.tga,.dds,.bmp" hidden>
         <input type="file" id="folderInput" webkitdirectory directory multiple hidden>
-        
-        <div class="settings-panel">
-            <div class="setting-group">
-                <label>输出格式</label>
-                <select id="outputFormat">
-                    <option value="keep">保持原格式</option>
-                    <option value="jpeg">JPEG</option>
-                    <option value="png">PNG</option>
-                    <option value="webp" selected>WebP</option>
-                    <option value="bmp">BMP</option>
-                    <option value="tga">TGA</option>
-                    <option value="dds">DDS</option>
-                </select>
+
+        <div class="workbench-layout">
+            <div class="queue-column">
+                <div class="column-title">处理队列</div>
+                <div class="file-list" id="fileList"></div>
             </div>
 
-            <div class="setting-group">
-                <label>压缩质量 <span id="qualityValue">80</span>%</label>
-                <input type="range" id="quality" min="1" max="100" value="80">
-            </div>
+            <div class="control-column">
+                <div class="upload-section">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-content">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                            <p>拖拽图片到此处或点击选择</p>
+                            <p class="sub-text">支持 JPG, PNG, WEBP, GIF, BMP, TGA, DDS；也支持 Ctrl+V 粘贴图片</p>
+                        </div>
+                    </div>
+                    <button type="button" id="selectFolderUpload" class="upload-folder-btn">选择文件夹上传</button>
+                </div>
 
-            <div class="setting-group">
-                <label>输出方式</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="outputMode" value="download" checked> 下载到浏览器</label>
-                    <label><input type="radio" name="outputMode" value="zip"> 下载为ZIP</label>
-                    <label><input type="radio" name="outputMode" value="folder"> 输出到文件夹 <span style="font-size: 11px; color: #888;">(需Chrome/Edge)</span></label>
+                <div class="settings-panel">
+                    <div class="setting-group">
+                        <label>输出格式</label>
+                        <select id="outputFormat">
+                            <option value="keep">保持原格式</option>
+                            <option value="jpeg">JPEG</option>
+                            <option value="png">PNG</option>
+                            <option value="webp" selected>WebP</option>
+                            <option value="bmp">BMP</option>
+                            <option value="tga">TGA</option>
+                            <option value="dds">DDS</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>压缩质量 <span id="qualityValue">80</span>%</label>
+                        <input type="range" id="quality" min="1" max="100" value="80">
+                    </div>
+
+                    <div class="setting-group">
+                        <label>体积控制</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="sizeControlMode" value="quality" checked> 按压缩质量</label>
+                            <label><input type="radio" name="sizeControlMode" value="target"> 压缩到目标体积以内</label>
+                        </div>
+                        <div class="target-size-row">
+                            <input type="number" id="targetSizeMb" min="0.05" step="0.05" value="1.00" disabled>
+                            <span>MB / 每张</span>
+                        </div>
+                        <div class="setting-hint">说明：目标模式会尽量压到不超过目标体积（<= 目标值）。</div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>输出方式</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="outputMode" value="download" checked> 下载到浏览器</label>
+                            <label><input type="radio" name="outputMode" value="zip"> 下载为ZIP</label>
+                            <label><input type="radio" name="outputMode" value="folder"> 输出到文件夹 <span style="font-size: 11px; color: #888;">(需Chrome/Edge)</span></label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>文件命名</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="namingMode" value="original" checked> 保持原文件名</label>
+                            <label class="suffix-option">
+                                <input type="radio" name="namingMode" value="suffix"> 添加后缀
+                                <input type="text" id="namingSuffix" value="_compressed" class="suffix-input">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-group" id="folderPathGroup" style="display: none;">
+                        <label>输出文件夹</label>
+                        <div class="folder-input">
+                            <input type="text" id="folderPath" placeholder="选择输出文件夹" readonly>
+                            <button id="selectFolderBtn">选择文件夹</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="clearBtn" class="btn-secondary">清空列表</button>
+                    <button id="processBtn" class="btn-primary">开始处理</button>
+                </div>
+
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">处理中... 0/0</div>
                 </div>
             </div>
-
-            <div class="setting-group">
-                <label>文件命名</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="namingMode" value="original" checked> 保持原文件名</label>
-                    <label class="suffix-option">
-                        <input type="radio" name="namingMode" value="suffix"> 添加后缀
-                        <input type="text" id="namingSuffix" value="_compressed" class="suffix-input">
-                    </label>
-                </div>
-            </div>
-
-            <div class="setting-group" id="folderPathGroup" style="display: none;">
-                <label>输出文件夹</label>
-                <div class="folder-input">
-                    <input type="text" id="folderPath" placeholder="选择输出文件夹" readonly>
-                    <button id="selectFolderBtn">选择文件夹</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="file-list" id="fileList"></div>
-
-        <div class="action-buttons">
-            <button id="clearBtn" class="btn-secondary">清空列表</button>
-            <button id="processBtn" class="btn-primary">开始处理</button>
-        </div>
-
-        <div class="progress-container" id="progressContainer" style="display: none;">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="progress-text" id="progressText">处理中... 0/0</div>
         </div>
     </div>
 
