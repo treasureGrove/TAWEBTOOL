@@ -84,70 +84,14 @@
   }
 
   function initHDR(host) {
-    host.innerHTML = `
-      <div class="tool-actions">
-        <a class="btn-link" href="https://designtool.site/hdr" target="_blank" rel="noopener noreferrer">打开 DesignTool HDR</a>
-      </div>
-      <p class="hint">下方提供本地快速调色（LDR/HDR截图预处理），便于开箱即用。</p>
-      <input id="hdrFile" type="file" accept="image/*" />
-      <div class="calc-grid">
-        <label>曝光<input id="exposure" type="range" min="-2" max="2" step="0.1" value="0"></label>
-        <label>对比<input id="contrast" type="range" min="0.5" max="2" step="0.1" value="1"></label>
-        <label>饱和<input id="saturation" type="range" min="0" max="2" step="0.1" value="1"></label>
-      </div>
-      <button id="exportHdrTone">导出当前结果 PNG</button>
-      <canvas id="hdrCanvas" width="800" height="450"></canvas>
-    `;
-
-    let image = null;
-    const canvas = $('hdrCanvas');
-    const ctx = canvas.getContext('2d');
-
-    function render() {
-      if (!image) return;
-      canvas.width = image.width;
-      canvas.height = image.height;
-      ctx.drawImage(image, 0, 0);
-
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const d = imageData.data;
-      const exp = Math.pow(2, parseFloat($('exposure').value));
-      const con = parseFloat($('contrast').value);
-      const sat = parseFloat($('saturation').value);
-
-      for (let i = 0; i < d.length; i += 4) {
-        let r = d[i] * exp;
-        let g = d[i + 1] * exp;
-        let b = d[i + 2] * exp;
-        r = (r - 128) * con + 128;
-        g = (g - 128) * con + 128;
-        b = (b - 128) * con + 128;
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-        d[i] = Math.max(0, Math.min(255, gray + (r - gray) * sat));
-        d[i + 1] = Math.max(0, Math.min(255, gray + (g - gray) * sat));
-        d[i + 2] = Math.max(0, Math.min(255, gray + (b - gray) * sat));
-      }
-      ctx.putImageData(imageData, 0, 0);
+    if (typeof window.initHdrEditorTool === 'function') {
+      return window.initHdrEditorTool(host);
     }
 
-    $('hdrFile').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      image = new Image();
-      image.onload = render;
-      image.src = URL.createObjectURL(file);
-    });
-
-    ['exposure', 'contrast', 'saturation'].forEach((id) => {
-      $(id).addEventListener('input', render);
-    });
-
-    $('exportHdrTone').addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = 'hdr_toned.png';
-      a.click();
-    });
+    host.innerHTML = `
+      <p class="hint">HDR 编辑器脚本未加载，请检查本地脚本是否存在：js/hdr_editor.js。</p>
+      <div class="result-box">当前页面仅支持本地 HDR 编辑，不再回退到外部在线页面。</div>
+    `;
   }
 
 
