@@ -45,12 +45,20 @@
       importFromCandidates(guiCandidates)
     ]);
 
+    const guiCtor = gui && (
+      (typeof gui.GUI === 'function' && gui.GUI) ||
+      (gui.default && typeof gui.default.GUI === 'function' && gui.default.GUI) ||
+      (typeof gui.default === 'function' && gui.default) ||
+      (typeof gui === 'function' && gui) ||
+      null
+    );
+
     return {
       THREE,
       RGBELoader: rgbe.RGBELoader,
       OrbitControls: controls.OrbitControls,
       GLTFLoader: gltfMod && (gltfMod.GLTFLoader || gltfMod.default && gltfMod.default.GLTFLoader) ? (gltfMod.GLTFLoader || gltfMod.default.GLTFLoader) : null,
-      GUI: gui && (gui.GUI || gui.default || gui)
+      GUI: guiCtor
     };
   }
 
