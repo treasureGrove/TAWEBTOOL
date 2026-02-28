@@ -45,12 +45,20 @@
       importFromCandidates(guiCandidates)
     ]);
 
+    const guiCtor = gui && (
+      (typeof gui.GUI === 'function' && gui.GUI) ||
+      (gui.default && typeof gui.default.GUI === 'function' && gui.default.GUI) ||
+      (typeof gui.default === 'function' && gui.default) ||
+      (typeof gui === 'function' && gui) ||
+      null
+    );
+
     return {
       THREE,
       RGBELoader: rgbe.RGBELoader,
       OrbitControls: controls.OrbitControls,
       GLTFLoader: gltfMod && (gltfMod.GLTFLoader || gltfMod.default && gltfMod.default.GLTFLoader) ? (gltfMod.GLTFLoader || gltfMod.default.GLTFLoader) : null,
-      GUI: gui.GUI
+      GUI: guiCtor
     };
   }
 
@@ -80,43 +88,110 @@
       <div class="hdr-grid-main">
         <div class="card-lite left-panel" id="leftPanel">
           <div class="author-header">HDRI Studio 控制</div>
-          <div id="guiContainer"></div>
-          <div style="margin-top:12px">
+
+          <div class="panel-section quick-controls" data-section-title="快捷控制">
+            <label>环境模式
+              <select id="envModeQuick">
+                <option value="Solid">纯色</option>
+                <option value="Gradient">渐变</option>
+                <option value="Image">背景图</option>
+                <option value="HDRFile">HDR 文件</option>
+              </select>
+            </label>
+            <label>曝光
+              <input id="exposureQuick" type="range" min="-2" max="3" step="0.05" />
+            </label>
+            <label>主光强度
+              <input id="keyIntensityQuick" type="range" min="0" max="8" step="0.1" />
+            </label>
+            <label>渐变上色
+              <input id="gradientTopQuick" type="color" />
+            </label>
+            <label>渐变下色
+              <input id="gradientBottomQuick" type="color" />
+            </label>
+            <label class="quick-inline"><input id="useKelvinQuick" type="checkbox" /> 使用色温</label>
+            <label>色温(K)
+              <input id="kelvinQuick" type="range" min="1000" max="20000" step="10" />
+            </label>
+          </div>
+
+          <div class="panel-section gui-merged-panel" data-section-title="完整参数面板">
+            <div class="section-caption">完整参数面板（全部参数）</div>
+            <div id="guiDock"></div>
+          </div>
+
+          <div class="panel-section" data-section-title="灯光创建">
             <button id="addCircleBtn" class="secondary">圆形灯</button>
             <button id="addRectBtn" class="secondary">矩形灯</button>
             <button id="addOctagonBtn" class="secondary">八边形灯</button>
             <button id="addRingBtn" class="secondary">环形灯</button>
           </div>
-          <div style="margin-top:12px">
+
+          <div class="panel-section" data-section-title="资源导入">
             <label class="hdr-file-btn">导入HDR <input id="hdrFileInput" type="file" accept=".hdr,image/vnd.radiance" /></label>
             <label class="hdr-file-btn">背景图 <input id="bgImageInput" type="file" accept="image/*" /></label>
             <label class="hdr-file-btn">上传模型 <input id="modelFileInput" type="file" accept=".gltf,.glb" /></label>
             <button id="removeModelBtn" class="secondary">移除模型</button>
           </div>
-          <div style="margin-top:12px">
+
+          <div class="panel-section" data-section-title="工程与导出">
             <button id="saveConfig" class="secondary">导出配置</button>
             <label class="hdr-file-btn">导入配置 <input id="loadConfig" type="file" accept=".json"/></label>
             <button id="exportHdri" class="secondary">导出 HDR PNG</button>
             <button id="exportPreview">导出预览 PNG</button>
           </div>
-          <div style="margin-top:12px">
-            <div class="author-header">灯光列表</div>
-            <select id="lightPicker" size="6" style="width:100%;"></select>
-            <div style="margin-top:8px">选中灯大小 <input id="activeSizeRange" type="range" min="0.02" max="0.8" step="0.005" value="0.12" style="width:100%" /></div>
-            <div style="display:flex;gap:8px;margin-top:6px;">
+
+          <div class="panel-section light-list-block" data-section-title="灯光列表">
+            <select id="lightPicker" size="7"></select>
+            <div class="light-meta" id="activeLightMeta">当前灯：-</div>
+            <label class="size-label">选中灯大小 <span id="activeSizeValue">0.12</span>
+              <input id="activeSizeRange" type="range" min="0.02" max="0.8" step="0.005" value="0.12" />
+            </label>
+            <div class="inline-actions">
               <button id="duplicateLightBtn" class="secondary">复制</button>
               <button id="removeLightBtn" class="secondary">删除</button>
             </div>
           </div>
         </div>
+
         <div class="hdr-canvas-wrap">
-          <canvas id="hdriCanvas" width="2048" height="1024"></canvas>
-          <div id="viewportWrap" class="hdr-canvas-3d">
-            <canvas id="hdrEditorCanvas"></canvas>
+          <div class="canvas-card hdri-edit-card">
+            <canvas id="hdriCanvas" width="2048" height="1024"></canvas>
+          </div>
+          <div class="canvas-card preview-card">
+            <div id="viewportWrap" class="hdr-canvas-3d">
+              <canvas id="hdrEditorCanvas"></canvas>
+            </div>
           </div>
         </div>
+
       </div>
     `;
+
+    function enhanceLeftPanelUI() {
+      const sections = Array.from(container.querySelectorAll('.panel-section'));
+      sections.forEach((sec) => {
+        const title = sec.getAttribute('data-section-title');
+        if (!title) return;
+        const head = document.createElement('div');
+        head.className = 'panel-section-head';
+        const txt = document.createElement('span');
+        txt.textContent = title;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'panel-collapse-btn';
+        btn.textContent = '收起';
+        head.append(txt, btn);
+        sec.prepend(head);
+        btn.addEventListener('click', () => {
+          const collapsed = sec.classList.toggle('collapsed');
+          btn.textContent = collapsed ? '展开' : '收起';
+        });
+      });
+    }
+
+    enhanceLeftPanelUI();
 
     const statusEl = host.querySelector('#hdrStatus') || document.createElement('div');
 
@@ -317,6 +392,24 @@
         hdriCtx.fillStyle = '#0b1120'; hdriCtx.fillRect(0, 0, w, h);
       }
       lights.forEach(drawShapeLight);
+      drawLightHandles();
+    }
+
+    function drawLightHandles() {
+      const w = hdriCanvas.width;
+      const h = hdriCanvas.height;
+      hdriCtx.save();
+      lights.forEach((light, idx) => {
+        const x = light.x * w;
+        const y = light.y * h;
+        const selected = idx === params.lightIndex;
+        hdriCtx.beginPath();
+        hdriCtx.arc(x, y, selected ? 9 : 6, 0, Math.PI * 2);
+        hdriCtx.lineWidth = selected ? 3 : 2;
+        hdriCtx.strokeStyle = selected ? '#22d3ee' : 'rgba(226,232,240,0.75)';
+        hdriCtx.stroke();
+      });
+      hdriCtx.restore();
     }
 
     function rebuildEnvironmentFromCanvas() {
@@ -360,12 +453,60 @@
       lightPicker.value = String(params.lightIndex);
     }
 
+    let syncQuickControls = null;
+
     function refreshLightControllers() {
       syncActiveFromIndex();
       updateLightPicker();
+      updateActiveMeta();
+      if (syncQuickControls) syncQuickControls();
       if (gui) gui.updateDisplay();
       const r = container.querySelector('#activeSizeRange');
       if (r) r.value = active.size;
+      const rv = container.querySelector('#activeSizeValue');
+      if (rv) rv.textContent = Number(active.size).toFixed(3);
+    }
+
+    function updateActiveMeta() {
+      const meta = container.querySelector('#activeLightMeta');
+      if (!meta) return;
+      const picked = lights[clamp(params.lightIndex, 0, lights.length - 1)];
+      meta.textContent = picked ? `当前灯：${picked.name}（${picked.type}）` : '当前灯：-';
+    }
+
+
+    function bindQuickControls() {
+      const envModeQuick = container.querySelector('#envModeQuick');
+      const exposureQuick = container.querySelector('#exposureQuick');
+      const keyIntensityQuick = container.querySelector('#keyIntensityQuick');
+      const gradientTopQuick = container.querySelector('#gradientTopQuick');
+      const gradientBottomQuick = container.querySelector('#gradientBottomQuick');
+      const useKelvinQuick = container.querySelector('#useKelvinQuick');
+      const kelvinQuick = container.querySelector('#kelvinQuick');
+
+      function syncQuickControls() {
+        if (envModeQuick) envModeQuick.value = params.envMode;
+        if (exposureQuick) exposureQuick.value = String(params.exposure);
+        if (keyIntensityQuick) keyIntensityQuick.value = String(params.keyIntensity);
+        if (gradientTopQuick) gradientTopQuick.value = params.gradientTop;
+        if (gradientBottomQuick) gradientBottomQuick.value = params.gradientBottom;
+        if (useKelvinQuick) useKelvinQuick.checked = !!active.useKelvin;
+        if (kelvinQuick) {
+          kelvinQuick.value = String(active.kelvin);
+          kelvinQuick.disabled = !active.useKelvin;
+        }
+      }
+
+      if (envModeQuick) envModeQuick.addEventListener('change', (e) => { params.envMode = e.target.value; applyParams(); if (gui) gui.updateDisplay(); });
+      if (exposureQuick) exposureQuick.addEventListener('input', (e) => { params.exposure = parseFloat(e.target.value) || 0; applyParams(); if (gui) gui.updateDisplay(); });
+      if (keyIntensityQuick) keyIntensityQuick.addEventListener('input', (e) => { params.keyIntensity = parseFloat(e.target.value) || 0; applyParams(); if (gui) gui.updateDisplay(); });
+      if (gradientTopQuick) gradientTopQuick.addEventListener('input', (e) => { params.gradientTop = e.target.value; applyParams(); if (gui) gui.updateDisplay(); });
+      if (gradientBottomQuick) gradientBottomQuick.addEventListener('input', (e) => { params.gradientBottom = e.target.value; applyParams(); if (gui) gui.updateDisplay(); });
+      if (useKelvinQuick) useKelvinQuick.addEventListener('change', (e) => { active.useKelvin = !!e.target.checked; syncIndexFromActive(); applyParams(); if (kelvinQuick) kelvinQuick.disabled = !active.useKelvin; if (gui) gui.updateDisplay(); });
+      if (kelvinQuick) kelvinQuick.addEventListener('input', (e) => { active.kelvin = parseFloat(e.target.value) || active.kelvin; syncIndexFromActive(); applyParams(); if (gui) gui.updateDisplay(); });
+
+      syncQuickControls();
+      return syncQuickControls;
     }
 
     function addLight(type = 'Circle') {
@@ -391,10 +532,148 @@
     }
 
     // GUI
-    const gui = new GUI({ title: 'HDRI 控制面板', width: 320, container: container.querySelector('#guiContainer') });
-    gui.domElement.classList.add('hdr-gui');
+    function createNoopGui(host) {
+      const root = document.createElement('div');
+      root.className = 'fallback-gui';
+      const controllers = [];
+
+      function createController(el, getter, setter) {
+        let onChangeCb = null;
+        let onFinishCb = null;
+        const api = {
+          name(label) {
+            const labelEl = el.closest('.fallback-row')?.querySelector('.fallback-label');
+            if (labelEl) labelEl.textContent = label;
+            return api;
+          },
+          onChange(cb) { onChangeCb = cb; return api; },
+          onFinishChange(cb) { onFinishCb = cb; return api; },
+          refresh() {
+            const val = getter();
+            if (el.type === 'checkbox') el.checked = !!val;
+            else if (el.type === 'color') el.value = String(val || '#ffffff');
+            else el.value = String(val);
+          }
+        };
+
+        const fire = () => {
+          const raw = el.type === 'checkbox' ? !!el.checked : el.value;
+          const parsed = el.type === 'range' ? parseFloat(raw) : raw;
+          setter(parsed);
+          if (onChangeCb) onChangeCb(parsed);
+        };
+
+        el.addEventListener('input', fire);
+        el.addEventListener('change', () => {
+          fire();
+          const raw = el.type === 'checkbox' ? !!el.checked : el.value;
+          const parsed = el.type === 'range' ? parseFloat(raw) : raw;
+          if (onFinishCb) onFinishCb(parsed);
+        });
+
+        controllers.push(api);
+        return api;
+      }
+
+      function makeFolder(title) {
+        const folder = document.createElement('fieldset');
+        folder.className = 'fallback-folder';
+        const legend = document.createElement('legend');
+        legend.textContent = title;
+        folder.appendChild(legend);
+        root.appendChild(folder);
+
+        return {
+          open() { return this; },
+          add(obj, key, a, b, step) {
+            const row = document.createElement('div');
+            row.className = 'fallback-row';
+            const label = document.createElement('label');
+            label.className = 'fallback-label';
+            label.textContent = key;
+            row.appendChild(label);
+
+            let input;
+            if (Array.isArray(a)) {
+              input = document.createElement('select');
+              a.forEach((opt) => {
+                const o = document.createElement('option');
+                o.value = opt;
+                o.textContent = opt;
+                input.appendChild(o);
+              });
+            } else if (typeof obj[key] === 'boolean') {
+              input = document.createElement('input');
+              input.type = 'checkbox';
+            } else {
+              input = document.createElement('input');
+              if (typeof a === 'number' && typeof b === 'number') {
+                input.type = 'range';
+                input.min = String(a);
+                input.max = String(b);
+                if (typeof step === 'number') input.step = String(step);
+              } else {
+                input.type = 'text';
+              }
+            }
+
+            row.appendChild(input);
+            folder.appendChild(row);
+            const controller = createController(input, () => obj[key], (val) => { obj[key] = val; });
+            controller.refresh();
+            return controller;
+          },
+          addColor(obj, key) {
+            const row = document.createElement('div');
+            row.className = 'fallback-row';
+            const label = document.createElement('label');
+            label.className = 'fallback-label';
+            label.textContent = key;
+            row.appendChild(label);
+
+            const input = document.createElement('input');
+            input.type = 'color';
+            row.appendChild(input);
+            folder.appendChild(row);
+            const controller = createController(input, () => obj[key], (val) => { obj[key] = val; });
+            controller.refresh();
+            return controller;
+          }
+        };
+      }
+
+      if (host) {
+        host.innerHTML = '';
+        host.appendChild(root);
+      }
+
+      return {
+        domElement: root,
+        updateDisplay() { controllers.forEach((c) => c.refresh()); },
+        addFolder(name) { return makeFolder(name); }
+      };
+    }
+
+    const guiHost = container.querySelector('#guiDock');
+    let gui = createNoopGui(guiHost);
+    if (typeof GUI === 'function') {
+      try {
+        gui = new GUI({ title: 'HDRI 控制面板', width: 320, autoPlace: false });
+        gui.domElement.classList.add('hdr-gui');
+        gui.domElement.style.position = 'static';
+        gui.domElement.style.width = '100%';
+        gui.domElement.style.maxHeight = 'none';
+        if (guiHost) {
+          guiHost.innerHTML = '';
+          guiHost.appendChild(gui.domElement);
+        }
+      } catch (e) {
+        console.warn('GUI 初始化失败，使用简化控制界面。', e);
+      }
+    }
 
     const fCanvas = gui.addFolder('HDRI 画布');
+    if (fCanvas.open) fCanvas.open();
     fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).onChange((v) => { const [w, h] = v.split('x').map(Number); hdriCanvas.width = w; hdriCanvas.height = h; applyParams(); });
     fCanvas.add(params, 'envMode', ['Solid', 'Gradient', 'Image', 'HDRFile']).onChange(applyParams);
     fCanvas.addColor(params, 'solidColor').name('纯色').onChange(applyParams);
@@ -402,6 +681,7 @@
     fCanvas.addColor(params, 'gradientBottom').name('渐变-下').onChange(applyParams);
 
     const fEnv = gui.addFolder('环境参数');
+    if (fEnv.open) fEnv.open();
     fEnv.add(params, 'exposure', -2, 3, 0.05).onChange(applyParams);
     fEnv.add(params, 'saturation', 0, 2, 0.01).onChange(applyParams);
     fEnv.add(params, 'envIntensity', 0, 5, 0.05).onChange(applyParams);
@@ -411,12 +691,14 @@
     fEnv.add(params, 'toneMapping', ['ACES', 'Reinhard', 'Cineon', 'Neutral', 'None']).onChange(applyParams);
 
     const fModel = gui.addFolder('模型与材质');
+    if (fModel.open) fModel.open();
     fModel.add(params, 'model', ['Both', 'Sphere', 'Knot']).onChange(applyParams);
     fModel.add(params, 'autoRotate');
     fModel.add(params, 'metalness', 0, 1, 0.01).onChange(applyParams);
     fModel.add(params, 'roughness', 0.02, 1, 0.01).onChange(applyParams);
 
     const fLights = gui.addFolder('场景灯光');
+    if (fLights.open) fLights.open();
     fLights.add(params, 'keyIntensity', 0, 8, 0.1).onChange(applyParams);
     fLights.add(params, 'fillIntensity', 0, 4, 0.1).onChange(applyParams);
     fLights.add(params, 'rimIntensity', 0, 6, 0.1).onChange(applyParams);
@@ -425,6 +707,7 @@
     fLights.add(params, 'ambientIntensity', 0, 1, 0.01).onChange(applyParams);
 
     const fHdriLight = gui.addFolder('HDRI 区域灯');
+    if (fHdriLight.open) fHdriLight.open();
     fHdriLight.add(params, 'lightIndex', 0, lights.length - 1, 1).name('选择灯').onChange((i) => { params.lightIndex = clamp(Math.round(i), 0, lights.length - 1); syncActiveFromIndex(); gui.updateDisplay(); applyParams(); updateLightPicker(); });
     fHdriLight.add(active, 'name').name('名称').onFinishChange(() => { syncIndexFromActive(); updateLightPicker(); gui.updateDisplay(); });
     fHdriLight.add(active, 'type', ['Circle', 'Rect', 'Octagon', 'Ring']).onChange(() => { syncIndexFromActive(); applyParams(); });
@@ -438,7 +721,10 @@
     fHdriLight.add(active, 'kelvin', 1000, 20000, 10).name('色温').onChange(() => { if (active.useKelvin) { /* convert later */ } syncIndexFromActive(); applyParams(); });
     fHdriLight.addColor(active, 'color').name('颜色').onChange(() => { syncIndexFromActive(); applyParams(); });
 
+    syncQuickControls = bindQuickControls();
+
     const fLightMgr = gui.addFolder('灯光管理');
+    if (fLightMgr.open) fLightMgr.open();
     fLightMgr.add({ addCircle: () => addLight('Circle') }, 'addCircle').name('新增圆形灯');
     fLightMgr.add({ addRect: () => addLight('Rect') }, 'addRect').name('新增矩形灯');
     fLightMgr.add({ addOctagon: () => addLight('Octagon') }, 'addOctagon').name('新增八边形灯');
@@ -447,8 +733,9 @@
     fLightMgr.add({ remove: removeCurrentLight }, 'remove').name('删除当前灯');
 
     function resize() {
-      const width = Math.max(920, canvas.parentElement.clientWidth || 920);
-      const height = Math.round(width * 0.58);
+      const wrapWidth = canvas.parentElement.clientWidth || 960;
+      const width = Math.max(320, wrapWidth);
+      const height = clamp(Math.round(width * 0.58), 280, 720);
       renderer.setSize(width, height, false);
       camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.render(scene, camera);
     }
@@ -521,14 +808,73 @@
 
     if (removeModelBtn) removeModelBtn.addEventListener('click', () => { if (previewModel) { scene.remove(previewModel); previewModel = null; statusEl.textContent = '模型已移除'; } });
 
-    // click on hdriCanvas sets active light position; wheel adjusts size
+    // drag light on hdriCanvas; wheel adjusts active light size
     if (hdriCanvas) {
-      hdriCanvas.addEventListener('click', (ev) => {
+      let isDraggingLight = false;
+
+      function pointerToUv(ev) {
         const r = hdriCanvas.getBoundingClientRect();
-        const x = clamp((ev.clientX - r.left) / r.width, 0, 1);
-        const y = clamp((ev.clientY - r.top) / r.height, 0, 1);
-        active.x = x; active.y = y; syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay();
+        return {
+          x: clamp((ev.clientX - r.left) / r.width, 0, 1),
+          y: clamp((ev.clientY - r.top) / r.height, 0, 1)
+        };
+      }
+
+      function pickLightIndex(uv) {
+        let hit = -1;
+        let bestDist = Number.POSITIVE_INFINITY;
+        lights.forEach((light, idx) => {
+          const dx = uv.x - light.x;
+          const dy = uv.y - light.y;
+          const dist = Math.hypot(dx, dy);
+          const threshold = Math.max(0.03, light.size * 0.6);
+          if (dist <= threshold && dist < bestDist) {
+            bestDist = dist;
+            hit = idx;
+          }
+        });
+        return hit;
+      }
+
+      hdriCanvas.addEventListener('pointerdown', (ev) => {
+        const uv = pointerToUv(ev);
+        const pickedIndex = pickLightIndex(uv);
+        if (pickedIndex >= 0) params.lightIndex = pickedIndex;
+        refreshLightControllers();
+        active.x = uv.x;
+        active.y = uv.y;
+        syncIndexFromActive();
+        isDraggingLight = true;
+        hdriCanvas.setPointerCapture(ev.pointerId);
+        applyParams();
+        updateLightListUI();
+        if (gui) gui.updateDisplay();
       });
+
+      hdriCanvas.addEventListener('pointermove', (ev) => {
+        if (!isDraggingLight) return;
+        const uv = pointerToUv(ev);
+        active.x = uv.x;
+        active.y = uv.y;
+        syncIndexFromActive();
+        applyParams();
+        if (gui) gui.updateDisplay();
+      });
+
+      function stopDragging(ev) {
+        if (!isDraggingLight) return;
+        isDraggingLight = false;
+        if (typeof ev.pointerId === 'number' && hdriCanvas.hasPointerCapture(ev.pointerId)) {
+          hdriCanvas.releasePointerCapture(ev.pointerId);
+        }
+      }
+
+      hdriCanvas.addEventListener('pointerup', stopDragging);
+      hdriCanvas.addEventListener('pointercancel', stopDragging);
+      hdriCanvas.addEventListener('pointerleave', (ev) => {
+        if (ev.buttons === 0) stopDragging(ev);
+      });
+
       hdriCanvas.addEventListener('wheel', (ev) => {
         ev.preventDefault(); const d = ev.deltaY > 0 ? -0.01 : 0.01; active.size = clamp(active.size + d, 0.02, 0.8); syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay();
       }, { passive: false });
@@ -540,7 +886,7 @@
       activeSizeRange.value = active.size;
       activeSizeRange.addEventListener('input', (e) => {
         const v = parseFloat(e.target.value);
-        if (isFinite(v)) { active.size = v; syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay(); }
+        if (isFinite(v)) { active.size = v; const rv = container.querySelector('#activeSizeValue'); if (rv) rv.textContent = Number(v).toFixed(3); syncIndexFromActive(); applyParams(); drawHdriCanvas(); updateLightListUI(); if (gui) gui.updateDisplay(); }
       });
     }
 
@@ -548,9 +894,18 @@
       const picker = container.querySelector('#lightPicker');
       picker.innerHTML = lights.map((l, i) => `<option value="${i}">${i + 1}. ${l.name}</option>`).join('');
       picker.value = String(params.lightIndex);
+      updateActiveMeta();
     }
 
     lightPicker.addEventListener('change', (e) => { params.lightIndex = clamp(Number(e.target.value), 0, lights.length - 1); refreshLightControllers(); applyParams(); });
+    lightPicker.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      setTimeout(() => {
+        params.lightIndex = clamp(Number(lightPicker.value), 0, lights.length - 1);
+        refreshLightControllers();
+        applyParams();
+      }, 0);
+    });
 
     updateLightListUI(); window.addEventListener('resize', resize); resize(); applyParams(); animate();
 
