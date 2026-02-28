@@ -511,10 +511,15 @@
     }
 
     let gui = createNoopGui();
+    const guiHost = container.querySelector('#guiContainer');
     if (typeof GUI === 'function') {
       try {
-        gui = new GUI({ title: 'HDRI 控制面板', width: 320, container: container.querySelector('#guiContainer') });
+        gui = new GUI({ title: 'HDRI 控制面板', width: 320, autoPlace: false });
         gui.domElement.classList.add('hdr-gui');
+        if (guiHost) {
+          guiHost.innerHTML = '';
+          guiHost.appendChild(gui.domElement);
+        }
       } catch (e) {
         console.warn('GUI 初始化失败，使用简化控制界面。', e);
       }
