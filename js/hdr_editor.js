@@ -215,6 +215,31 @@
     const canvas = container.querySelector('#hdrEditorCanvas');
     const lightPicker = container.querySelector('#lightPicker');
 
+    let _hdri_dpr = window.devicePixelRatio || 1;
+    function syncHdriCanvasResolution() {
+      // ensure canvas internal bitmap matches displayed size * DPR so drawing and picking align
+      try {
+        const rect = hdriCanvas.getBoundingClientRect();
+        const clientW = Math.max(1, Math.round(rect.width));
+        const clientH = Math.max(1, Math.round(rect.height));
+        const dpr = window.devicePixelRatio || 1;
+        _hdri_dpr = dpr;
+        // set CSS size to keep layout, but adjust internal resolution
+        hdriCanvas.style.width = '100%';
+        hdriCanvas.style.height = 'auto';
+        hdriCanvas.style.aspectRatio = `${clientW} / ${clientH}`;
+        // set internal size in device pixels
+        hdriCanvas.width = Math.max(1, Math.round(clientW * dpr));
+        hdriCanvas.height = Math.max(1, Math.round(clientH * dpr));
+        // make drawing commands use CSS (client) pixel coords
+        hdriCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      } catch (e) {
+        // ignore
+      }
+    }
+    // initial sync after DOM insertion
+    setTimeout(syncHdriCanvasResolution, 0);
+
     // Renderer
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -325,8 +350,10 @@
     }
 
     function drawShapeLight(light) {
-      const w = hdriCanvas.width;
-      const h = hdriCanvas.height;
+      // operate in client (CSS) pixels; canvas transform already set to DPR so we must use client sizes
+      const dpr = _hdri_dpr || 1;
+      const w = hdriCanvas.width / dpr;
+      const h = hdriCanvas.height / dpr;
       const cx = light.x * w;
       const cy = light.y * h;
       const radius = light.size * h;
@@ -377,8 +404,9 @@
     }
 
     function drawHdriCanvas() {
-      const w = hdriCanvas.width;
-      const h = hdriCanvas.height;
+      const dpr = _hdri_dpr || 1;
+      const w = hdriCanvas.width / dpr;
+      const h = hdriCanvas.height / dpr;
       hdriCtx.clearRect(0, 0, w, h);
       if (params.envMode === 'Solid') {
         hdriCtx.fillStyle = params.solidColor; hdriCtx.fillRect(0, 0, w, h);
@@ -387,7 +415,30 @@
         grad.addColorStop(0, params.gradientTop); grad.addColorStop(1, params.gradientBottom);
         hdriCtx.fillStyle = grad; hdriCtx.fillRect(0, 0, w, h);
       } else if (params.envMode === 'Image' && hdriBgImage) {
-        hdriCtx.drawImage(hdriBgImage, 0, 0, w, h);
+        // draw background image without stretching: preserve aspect ratio and center (contain)
+        const imgW = hdriBgImage.naturalWidth || hdriBgImage.width;
+        const imgH = hdriBgImage.naturalHeight || hdriBgImage.height;
+        if (imgW > 0 && imgH > 0) {
+          const imgRatio = imgW / imgH;
+          const canvasRatio = w / h;
+          let drawW, drawH, dx, dy;
+          if (imgRatio > canvasRatio) {
+            // image wider than canvas -> fit by width
+            drawW = w;
+            drawH = Math.round(w / imgRatio);
+            dx = 0;
+            dy = Math.round((h - drawH) / 2);
+          } else {
+            // image taller or equal -> fit by height
+            drawH = h;
+            drawW = Math.round(h * imgRatio);
+            dx = Math.round((w - drawW) / 2);
+            dy = 0;
+          }
+          hdriCtx.drawImage(hdriBgImage, dx, dy, drawW, drawH);
+        } else {
+          hdriCtx.drawImage(hdriBgImage, 0, 0, w, h);
+        }
       } else {
         hdriCtx.fillStyle = '#0b1120'; hdriCtx.fillRect(0, 0, w, h);
       }
@@ -396,16 +447,23 @@
     }
 
     function drawLightHandles() {
-      const w = hdriCanvas.width;
-      const h = hdriCanvas.height;
+      const dpr = _hdri_dpr || 1;
+      const w = hdriCanvas.width / dpr;
+      const h = hdriCanvas.height / dpr;
       hdriCtx.save();
       lights.forEach((light, idx) => {
         const x = light.x * w;
         const y = light.y * h;
         const selected = idx === params.lightIndex;
+        // handle radius scales with light.size so selection box follows light scale
+        const base = Math.min(w, h);
+        const HANDLE_SCALE = selected ? 0.22 : 0.14;
+        const MIN_HANDLE_PX = 6;
+        const handleRadius = Math.max(MIN_HANDLE_PX, Math.round(light.size * base * HANDLE_SCALE));
+        const lineW = Math.max(1, Math.round(Math.max(1, handleRadius * 0.18)));
         hdriCtx.beginPath();
-        hdriCtx.arc(x, y, selected ? 9 : 6, 0, Math.PI * 2);
-        hdriCtx.lineWidth = selected ? 3 : 2;
+        hdriCtx.arc(x, y, handleRadius, 0, Math.PI * 2);
+        hdriCtx.lineWidth = lineW;
         hdriCtx.strokeStyle = selected ? '#22d3ee' : 'rgba(226,232,240,0.75)';
         hdriCtx.stroke();
       });
@@ -674,7 +732,7 @@
 
     const fCanvas = gui.addFolder('HDRI 画布');
     if (fCanvas.open) fCanvas.open();
-    fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).onChange((v) => { const [w, h] = v.split('x').map(Number); hdriCanvas.width = w; hdriCanvas.height = h; applyParams(); });
+    fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).onChange((v) => { const [w, h] = v.split('x').map(Number); hdriCanvas.width = w; hdriCanvas.height = h; params.canvasSize = v; updateHdriCanvasStyle(); applyParams(); });
     fCanvas.add(params, 'envMode', ['Solid', 'Gradient', 'Image', 'HDRFile']).onChange(applyParams);
     fCanvas.addColor(params, 'solidColor').name('纯色').onChange(applyParams);
     fCanvas.addColor(params, 'gradientTop').name('渐变-上').onChange(applyParams);
@@ -734,10 +792,15 @@
 
     function resize() {
       const wrapWidth = canvas.parentElement.clientWidth || 960;
-      const width = Math.max(320, wrapWidth);
-      const height = clamp(Math.round(width * 0.58), 280, 720);
+      const width = Math.max(240, wrapWidth);
+      // allow smaller preview heights so HDR canvas (top) can remain 2:1 without cropping
+      const height = clamp(Math.round(width * 0.58), 200, 720);
       renderer.setSize(width, height, false);
       camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.render(scene, camera);
+      // keep hdri canvas internal resolution in sync with its displayed size
+      syncHdriCanvasResolution();
+      // redraw environment canvas and update env texture
+      rebuildEnvironmentFromCanvas();
     }
 
     function animate() {
@@ -764,7 +827,7 @@
     container.querySelector('#duplicateLightBtn').addEventListener('click', duplicateCurrentLight);
     container.querySelector('#removeLightBtn').addEventListener('click', removeCurrentLight);
     container.querySelector('#saveConfig').addEventListener('click', exportConfig);
-    container.querySelector('#loadConfig').addEventListener('change', async function () { const file = this.files && this.files[0]; if (!file) return; try { const text = await file.text(); const data = JSON.parse(text); if (data.params) Object.assign(params, data.params); if (Array.isArray(data.lights) && data.lights.length) { lights.length = 0; data.lights.forEach((l) => lights.push(l)); } if (data.canvasSize && data.canvasSize.width && data.canvasSize.height) { hdriCanvas.width = data.canvasSize.width; hdriCanvas.height = data.canvasSize.height; params.canvasSize = `${data.canvasSize.width}x${data.canvasSize.height}`; } params.lightIndex = clamp(params.lightIndex || 0, 0, lights.length - 1); refreshLightControllers(); applyParams(); statusEl.textContent = `配置已载入：${file.name}`; } catch (e) { statusEl.textContent = '配置文件读取失败，请检查 JSON 内容。'; } });
+    container.querySelector('#loadConfig').addEventListener('change', async function () { const file = this.files && this.files[0]; if (!file) return; try { const text = await file.text(); const data = JSON.parse(text); if (data.params) Object.assign(params, data.params); if (Array.isArray(data.lights) && data.lights.length) { lights.length = 0; data.lights.forEach((l) => lights.push(l)); } if (data.canvasSize && data.canvasSize.width && data.canvasSize.height) { hdriCanvas.width = data.canvasSize.width; hdriCanvas.height = data.canvasSize.height; params.canvasSize = `${data.canvasSize.width}x${data.canvasSize.height}`; updateHdriCanvasStyle(); } params.lightIndex = clamp(params.lightIndex || 0, 0, lights.length - 1); refreshLightControllers(); applyParams(); statusEl.textContent = `配置已载入：${file.name}`; } catch (e) { statusEl.textContent = '配置文件读取失败，请检查 JSON 内容。'; } });
 
     container.querySelector('#exportHdri').addEventListener('click', () => { const a = document.createElement('a'); a.href = hdriCanvas.toDataURL('image/png'); a.download = 'hdri_canvas.png'; a.click(); });
     container.querySelector('#exportPreview').addEventListener('click', () => { const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = 'hdri_preview.png'; a.click(); });
@@ -821,34 +884,100 @@
       }
 
       function pickLightIndex(uv) {
-        let hit = -1;
-        let bestDist = Number.POSITIVE_INFINITY;
-        lights.forEach((light, idx) => {
-          const dx = uv.x - light.x;
-          const dy = uv.y - light.y;
-          const dist = Math.hypot(dx, dy);
-          const threshold = Math.max(0.03, light.size * 0.6);
-          if (dist <= threshold && dist < bestDist) {
-            bestDist = dist;
-            hit = idx;
-          }
-        });
-        return hit;
+          // compute in displayed (client) pixels and use each light's visible area (outer falloff)
+          const rect = hdriCanvas.getBoundingClientRect();
+          const w = rect.width;
+          const h = rect.height;
+          const px = uv.x * w;
+          const py = uv.y * h;
+          let hit = -1;
+          let bestDistPx = Number.POSITIVE_INFINITY;
+          const MIN_THRESHOLD_PX = 6;
+          lights.forEach((light, idx) => {
+            const lx = light.x * w;
+            const ly = light.y * h;
+            const dx = px - lx;
+            const dy = py - ly;
+            const distPx = Math.hypot(dx, dy);
+            // determine effective visible radius/extent depending on shape
+            let inside = false;
+            let effectiveDist = distPx;
+            if (light.type === 'Circle') {
+              // draw uses radius = light.size * h and outerFalloff multiplier
+              const radius = light.size * h * (1 + (parseFloat(light.outerFalloff) || 0));
+              if (distPx <= radius) inside = true;
+              effectiveDist = Math.max(0, distPx - radius);
+            } else if (light.type === 'Rect') {
+              // draw used rw = radius * 2.2, rh = radius * 1.2 (radius based on light.size*h)
+              const radius = light.size * h;
+              const rw = radius * 2.2;
+              const rh = radius * 1.2;
+              if (Math.abs(dx) <= rw / 2 && Math.abs(dy) <= rh / 2) inside = true;
+              // distance to rectangle edge (px)
+              const dxOutside = Math.max(0, Math.abs(dx) - rw / 2);
+              const dyOutside = Math.max(0, Math.abs(dy) - rh / 2);
+              effectiveDist = Math.hypot(dxOutside, dyOutside);
+            } else if (light.type === 'Octagon') {
+              // approximate octagon with circle of radius = light.size*h
+              const radius = light.size * h;
+              if (distPx <= radius * 1.05) inside = true;
+              effectiveDist = Math.max(0, distPx - radius);
+            } else if (light.type === 'Ring') {
+              const radius = light.size * h;
+              const lineWidth = Math.max(2, radius * 0.35);
+              // consider ring visible if within half line width + small tolerance
+              if (Math.abs(distPx - radius) <= (lineWidth * 0.7 + 6)) inside = true;
+              effectiveDist = Math.abs(distPx - radius);
+            }
+
+            // if inside visible area, prefer that hit; otherwise allow near misses within a small threshold
+            if (inside) {
+              // prefer the one with smallest effectiveDist (closest inside)
+              if (effectiveDist < bestDistPx) {
+                bestDistPx = effectiveDist;
+                hit = idx;
+              }
+            } else {
+              const thresholdPx = Math.max(MIN_THRESHOLD_PX, Math.round((light.size || 0.02) * Math.min(w, h) * 0.12));
+              if (effectiveDist <= thresholdPx && effectiveDist < bestDistPx) {
+                bestDistPx = effectiveDist;
+                hit = idx;
+              }
+            }
+          });
+          return hit;
       }
 
       hdriCanvas.addEventListener('pointerdown', (ev) => {
         const uv = pointerToUv(ev);
         const pickedIndex = pickLightIndex(uv);
-        if (pickedIndex >= 0) params.lightIndex = pickedIndex;
-        refreshLightControllers();
-        active.x = uv.x;
-        active.y = uv.y;
-        syncIndexFromActive();
-        isDraggingLight = true;
-        hdriCanvas.setPointerCapture(ev.pointerId);
-        applyParams();
-        updateLightListUI();
-        if (gui) gui.updateDisplay();
+        let finalPick = pickedIndex;
+        if (pickedIndex < 0) {
+          // fallback: pick nearest by normalized distance using previous heuristic
+          let best = -1; let bestDist = Number.POSITIVE_INFINITY;
+          lights.forEach((light, idx) => {
+            const dx = uv.x - light.x; const dy = uv.y - light.y; const dist = Math.hypot(dx, dy);
+            const threshold = Math.max(0.03, light.size * 0.6);
+            if (dist <= threshold && dist < bestDist) { bestDist = dist; best = idx; }
+          });
+          finalPick = best;
+        }
+        if (finalPick >= 0) {
+          // select and start dragging the picked handle
+          params.lightIndex = finalPick;
+          refreshLightControllers();
+          active.x = uv.x;
+          active.y = uv.y;
+          syncIndexFromActive();
+          isDraggingLight = true;
+          try { hdriCanvas.setPointerCapture(ev.pointerId); } catch (e) { /* ignore */ }
+          applyParams();
+          updateLightListUI();
+          if (gui) gui.updateDisplay();
+        } else {
+          // clicked empty area: do not move the active light, only clear potential dragging
+          isDraggingLight = false;
+        }
       });
 
       hdriCanvas.addEventListener('pointermove', (ev) => {

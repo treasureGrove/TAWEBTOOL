@@ -69,6 +69,8 @@
   gap: 10px;
   max-height: calc(100vh - 165px);
   overflow: auto;
+  position: relative;
+  z-index: 3;
 }
 
 .author-header {
@@ -184,7 +186,7 @@ button.secondary {
 .hdr-canvas-wrap {
   min-height: calc(100vh - 175px);
   display: grid;
-  grid-template-rows: 250px minmax(360px, 1fr);
+  grid-template-rows: auto minmax(280px, 1fr);
   gap: 12px;
 }
 
@@ -193,19 +195,24 @@ button.secondary {
   border: 1px solid rgba(71, 85, 105, 0.55);
   border-radius: 12px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .hdri-edit-card {
   padding: 0;
+  box-sizing: border-box;
 }
 
 #hdriCanvas {
   width: 100%;
-  height: 100%;
+  height: auto;
+  aspect-ratio: 2 / 1;
   display: block;
   border: none;
   background: #020617;
   cursor: grab;
+  position: relative;
+  z-index: 0;
 }
 
 #hdriCanvas:active {
