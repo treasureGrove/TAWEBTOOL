@@ -511,7 +511,7 @@ button.secondary {
 .utility-card {
   padding: 7px 10px;
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.92));
-  max-height: 132px;
+  max-height: 185px;
   overflow: auto;
 }
 
@@ -1212,4 +1212,484 @@ button.secondary {
 
 .hdr-file-btn {
   background: linear-gradient(90deg, #a1f7ed, #afe0ff);
+}
+
+/* ═══════════════════════════════════════════════
+   新控制行布局 (v2 重写)
+═══════════════════════════════════════════════ */
+
+/* 通用控制行 */
+.ctrl-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.ctrl-row.ctrl-checkbox {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ctrl-label {
+  color: #bceef4;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.val-badge {
+  color: #90f5e8;
+  background: rgba(62, 168, 165, 0.22);
+  border: 1px solid rgba(133, 236, 228, 0.5);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ctrl-range {
+  width: 100%;
+  accent-color: #72e6d9;
+  cursor: pointer;
+}
+
+.ctrl-select,
+.ctrl-text {
+  width: 100%;
+  box-sizing: border-box;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(145, 227, 229, 0.52);
+  background: rgba(7, 27, 42, 0.86);
+  color: #e1fcff;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.ctrl-color {
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid rgba(145, 227, 229, 0.52);
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Panel section — flex column, full width children */
+.panel-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Light list section */
+.light-add-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+}
+
+.light-add-btns button {
+  font-size: 12px;
+  padding: 5px 6px;
+}
+
+/* HDR 调整区提示 */
+.hdr-adj-info {
+  font-size: 11px;
+  color: rgba(144, 245, 232, 0.65);
+  border: 1px solid rgba(133, 236, 228, 0.22);
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: rgba(62, 168, 165, 0.1);
+}
+
+/* 球形网格切换标签 (画布顶部) */
+.sphere-grid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #90f5e8;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid rgba(133, 236, 228, 0.4);
+  border-radius: 6px;
+  background: rgba(62, 168, 165, 0.14);
+  flex-shrink: 0;
+}
+
+.sphere-grid-label input[type='checkbox'] {
+  accent-color: #72e6d9;
+  width: 13px;
+  height: 13px;
+}
+
+.canvas-help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 状态文本 */
+.hdr-status-text {
+  font-size: 12px;
+  color: #bceef4;
+  word-break: break-all;
+  padding: 4px 0;
+}
+
+/* Kelvin 色温预览 */
+.kelvin-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kelvin-swatch {
+  flex: 1;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid rgba(133, 236, 228, 0.4);
+}
+
+/* 亮度直方图 */
+.hist-wrap {
+  padding: 8px 6px 4px;
+  border-top: 1px solid rgba(133, 236, 228, 0.2);
+  margin-top: 4px;
+}
+
+.hist-title {
+  font-size: 11px;
+  color: rgba(188, 238, 244, 0.6);
+  margin-bottom: 4px;
+}
+
+.hist-canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}
+
+/* 强制 .panel-section > .hdr-file-btn, buttons 全宽 */
+.panel-section > .hdr-file-btn,
+.panel-section > button {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* light picker 全宽，浅色选中项 */
+#lightPicker {
+  width: 100%;
+  background: rgba(7, 27, 42, 0.86);
+  color: #e1fcff;
+  border: 1px solid rgba(145, 227, 229, 0.52);
+  border-radius: 8px;
+  padding: 4px;
+  font-size: 12px;
+  min-height: 130px;
+}
+
+#lightPicker option {
+  color: #e1fcff;
+  background: #0a253c;
+}
+
+#lightPicker option:checked {
+  background: linear-gradient(90deg, rgba(107, 229, 218, 0.72), rgba(121, 197, 255, 0.65));
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════
+   画布包裹层 & 像素检视器 & 上下文菜单 (v2.1)
+═══════════════════════════════════════════════ */
+
+/* 相对定位包裹层（用于绝对定位检视器 / 上下文菜单） */
+.hdri-wrap-rel {
+  position: relative;
+  overflow: hidden;
+  line-height: 0; /* 消除 canvas 下方空白 */
+}
+
+/* ─── float32 悬浮检视器 ─── */
+.hdr-inspector {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(2, 8, 20, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  border-radius: 9px;
+  padding: 6px 10px 7px;
+  font-size: 11px;
+  color: #cfe7ff;
+  min-width: 175px;
+  line-height: 1.65;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  z-index: 20;
+  backdrop-filter: blur(4px);
+}
+
+.insp-hex {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  font-weight: 700;
+  color: #7dd3fc;
+  font-size: 12px;
+}
+
+.insp-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  flex-shrink: 0;
+}
+
+.insp-row {
+  color: #94a3b8;
+  font-size: 10.5px;
+}
+
+.insp-row b {
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+/* ─── 右键上下文菜单 ─── */
+.hdr-ctx-menu {
+  position: absolute;
+  background: rgba(2, 10, 24, 0.97);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  border-radius: 10px;
+  padding: 8px 0 6px;
+  min-width: 265px;
+  font-size: 11px;
+  color: #cfe7ff;
+  z-index: 30;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+}
+
+.ctx-title {
+  color: #7dd3fc;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 0 12px 5px;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  margin-bottom: 4px;
+}
+
+.ctx-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px 5px;
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.ctx-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  flex-shrink: 0;
+}
+
+.ctx-row {
+  padding: 4px 14px 4px;
+  line-height: 1.65;
+  color: #94a3b8;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.ctx-copy-btn {
+  margin: 9px 10px 4px;
+  text-align: center;
+  background: linear-gradient(90deg, rgba(14, 116, 144, 0.7), rgba(37, 99, 235, 0.7));
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  border-radius: 7px;
+  padding: 7px 10px;
+  cursor: pointer;
+  color: #dbeafe;
+  font-size: 11px;
+  transition: background 0.15s;
+}
+
+.ctx-copy-btn:hover {
+  background: linear-gradient(90deg, rgba(14, 116, 144, 0.9), rgba(37, 99, 235, 0.9));
+}
+
+/* canvas-help 行：左侧提示 + 右侧复选框组 */
+.canvas-help {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ═══════════════════════════════════════════════
+   Range 控件（类 RenderDoc 浮点显示范围映射）
+═══════════════════════════════════════════════ */
+
+.range-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 9px;
+  background: rgba(5, 18, 34, 0.78);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+}
+
+.range-bar-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(147, 197, 253, 0.7);
+  letter-spacing: 0.3px;
+  min-width: 38px;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+}
+
+.range-num {
+  width: 60px;
+  height: 22px;
+  border: 1px solid rgba(56, 189, 248, 0.38);
+  border-radius: 5px;
+  background: rgba(5, 18, 34, 0.85);
+  color: #dbeafe;
+  font-size: 11px;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  padding: 0 5px;
+  box-sizing: border-box;
+  text-align: right;
+  -moz-appearance: textfield;
+}
+
+.range-num::-webkit-inner-spin-button,
+.range-num::-webkit-outer-spin-button {
+  opacity: 0.4;
+}
+
+.range-num:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.7);
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.15);
+}
+
+.range-bar-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(30, 58, 80, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.range-bar-fill {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 0%; width: 100%;
+  background: linear-gradient(90deg, rgba(34, 211, 238, 0.55), rgba(56, 189, 248, 0.7));
+  border-radius: 3px;
+  transition: left 0.08s, width 0.08s;
+}
+
+.range-reset-btn {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: 1px solid rgba(56, 189, 248, 0.38);
+  background: rgba(14, 116, 144, 0.35);
+  color: #7dd3fc;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.range-reset-btn:hover {
+  background: rgba(34, 211, 238, 0.25);
+  border-color: rgba(34, 211, 238, 0.6);
+  color: #e0f9ff;
+}
+
+/* ─── 亮度数字输入框（配合 range 使用，无上限） ─── */
+.ctrl-num-inline {
+  width: 58px;
+  height: 24px;
+  border: 1px solid rgba(56, 189, 248, 0.38);
+  border-radius: 5px;
+  background: rgba(5, 18, 34, 0.85);
+  color: #dbeafe;
+  font-size: 11.5px;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  padding: 0 5px;
+  box-sizing: border-box;
+  text-align: right;
+  flex-shrink: 0;
+  -moz-appearance: textfield;
+}
+.ctrl-num-inline::-webkit-inner-spin-button,
+.ctrl-num-inline::-webkit-outer-spin-button { opacity: 0.4; }
+.ctrl-num-inline:focus {
+  outline: none;
+  border-color: rgba(34, 211, 238, 0.7);
+  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.12);
+}
+
+/* 缩短版 range（与数字输入框并排时使用） */
+.ctrl-range-short {
+  min-width: 64px;
+  flex: 1;
+}
+
+/* 环境设置区的导入文件按钮 */
+.env-file-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ─── 右下角工具栏导出按钮 ─── */
+.util-export-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.util-export-btn {
+  flex: 1;
+  min-width: 72px;
+  font-size: 11.5px;
+  padding: 5px 8px;
+  border-radius: 7px;
+  text-align: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* hdr-ctx-menu 内距微调 */
+.hdr-ctx-menu {
+  padding: 10px 0 8px;
 }
