@@ -32,41 +32,42 @@
       'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js',
       'https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js'
     ];
-    const guiCandidates = [
-      'https://cdn.jsdelivr.net/npm/lil-gui@0.19/+esm',
-      'https://esm.sh/lil-gui@0.19.2'
+    const exrExporterCandidates = [
+      'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/exporters/EXRExporter.js',
+      'https://unpkg.com/three@0.160.0/examples/jsm/exporters/EXRExporter.js'
     ];
 
-    const [THREE, rgbe, controls, gltfMod, gui] = await Promise.all([
+    const [THREE, rgbe, controls, gltfMod, exrMod] = await Promise.all([
       importFromCandidates(threeCandidates),
       importFromCandidates(rgbeCandidates),
       importFromCandidates(controlsCandidates),
       importFromCandidates(gltfLoaderCandidates),
-      importFromCandidates(guiCandidates)
+      importFromCandidates(exrExporterCandidates)
     ]);
-
-    const guiCtor = gui && (
-      (typeof gui.GUI === 'function' && gui.GUI) ||
-      (gui.default && typeof gui.default.GUI === 'function' && gui.default.GUI) ||
-      (typeof gui.default === 'function' && gui.default) ||
-      (typeof gui === 'function' && gui) ||
-      null
-    );
 
     return {
       THREE,
       RGBELoader: rgbe.RGBELoader,
       OrbitControls: controls.OrbitControls,
       GLTFLoader: gltfMod && (gltfMod.GLTFLoader || gltfMod.default && gltfMod.default.GLTFLoader) ? (gltfMod.GLTFLoader || gltfMod.default.GLTFLoader) : null,
-      GUI: guiCtor
+      EXRExporter: exrMod && (exrMod.EXRExporter || exrMod.default && exrMod.default.EXRExporter) ? (exrMod.EXRExporter || exrMod.default.EXRExporter) : null
     };
   }
 
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
 
+  const TYPE_LABEL = { Circle: '圆形', Rect: '矩形', Octagon: '八边形', Ring: '环形' };
+  const ENV_MODE_LABEL = { Solid: '纯色', Gradient: '渐变', Image: '背景图', HDRFile: 'HDR 文件' };
+  const MODEL_LABEL = { Both: '双模型', Sphere: '球体', Knot: '扭结体' };
+  const TONE_LABEL = { ACES: 'ACES', Reinhard: 'Reinhard', Cineon: 'Cineon', Neutral: '中性', None: '关闭' };
+
+  function labelForValue(v) {
+    return TYPE_LABEL[v] || ENV_MODE_LABEL[v] || MODEL_LABEL[v] || TONE_LABEL[v] || v;
+  }
+
   function makeDefaultLight(type, idx) {
     return {
-      name: `${type} 灯 ${idx + 1}`,
+      name: `${TYPE_LABEL[type] || type}灯 ${idx + 1}`,
       type,
       x: 0.2 + (idx % 3) * 0.25,
       y: 0.25 + (idx % 2) * 0.15,
@@ -87,37 +88,8 @@
     container.innerHTML = `
       <div class="hdr-grid-main">
         <div class="card-lite left-panel" id="leftPanel">
-          <div class="author-header">HDRI Studio 控制</div>
 
-          <div class="panel-section quick-controls" data-section-title="快捷控制">
-            <label>环境模式
-              <select id="envModeQuick">
-                <option value="Solid">纯色</option>
-                <option value="Gradient">渐变</option>
-                <option value="Image">背景图</option>
-                <option value="HDRFile">HDR 文件</option>
-              </select>
-            </label>
-            <label>曝光
-              <input id="exposureQuick" type="range" min="-2" max="3" step="0.05" />
-            </label>
-            <label>主光强度
-              <input id="keyIntensityQuick" type="range" min="0" max="8" step="0.1" />
-            </label>
-            <label>渐变上色
-              <input id="gradientTopQuick" type="color" />
-            </label>
-            <label>渐变下色
-              <input id="gradientBottomQuick" type="color" />
-            </label>
-            <label class="quick-inline"><input id="useKelvinQuick" type="checkbox" /> 使用色温</label>
-            <label>色温(K)
-              <input id="kelvinQuick" type="range" min="1000" max="20000" step="10" />
-            </label>
-          </div>
-
-          <div class="panel-section gui-merged-panel" data-section-title="完整参数面板">
-            <div class="section-caption">完整参数面板（全部参数）</div>
+          <div class="panel-section gui-merged-panel" data-section-title="完整参数">
             <div id="guiDock"></div>
           </div>
 
@@ -135,14 +107,36 @@
             <button id="removeModelBtn" class="secondary">移除模型</button>
           </div>
 
-          <div class="panel-section" data-section-title="工程与导出">
-            <button id="saveConfig" class="secondary">导出配置</button>
-            <label class="hdr-file-btn">导入配置 <input id="loadConfig" type="file" accept=".json"/></label>
-            <button id="exportHdri" class="secondary">导出 HDR PNG</button>
-            <button id="exportPreview">导出预览 PNG</button>
+
+          <div class="panel-section active-light-editor" data-section-title="选中灯光调节">
+            <label>光源形状
+              <select id="activeLightType">
+                <option value="Circle">圆形光</option>
+                <option value="Rect">矩形光</option>
+                <option value="Octagon">八边光</option>
+                <option value="Ring">环形光</option>
+              </select>
+            </label>
+            <label>亮度 <span id="activeIntensityValue">1.40</span>
+              <input id="activeIntensityRange" type="range" min="0" max="5" step="0.01" />
+            </label>
+            <label>外侧衰减 <span id="activeFalloffValue">1.10</span>
+              <input id="activeFalloffRange" type="range" min="0" max="2" step="0.01" />
+            </label>
+            <label>内侧柔化 <span id="activeSoftnessValue">0.25</span>
+              <input id="activeSoftnessRange" type="range" min="0" max="1" step="0.01" />
+            </label>
+            <label>颜色
+              <input id="activeColorInput" type="color" />
+            </label>
+            <label class="active-inline-check"><input id="activeUseKelvin" type="checkbox" /> 使用色温</label>
+            <label>色温(K) <span id="activeKelvinValue">6500</span>
+              <input id="activeKelvinRange" type="range" min="1000" max="20000" step="10" />
+            </label>
           </div>
 
           <div class="panel-section light-list-block" data-section-title="灯光列表">
+            <div class="selection-hint">当前选中会在右侧画布显示 <span>青色高亮</span></div>
             <select id="lightPicker" size="7"></select>
             <div class="light-meta" id="activeLightMeta">当前灯：-</div>
             <label class="size-label">选中灯大小 <span id="activeSizeValue">0.12</span>
@@ -157,11 +151,34 @@
 
         <div class="hdr-canvas-wrap">
           <div class="canvas-card hdri-edit-card">
+            <div class="canvas-help">点击灯光手柄选中，拖动移动；滚轮调整大小</div>
             <canvas id="hdriCanvas" width="2048" height="1024"></canvas>
           </div>
           <div class="canvas-card preview-card">
             <div id="viewportWrap" class="hdr-canvas-3d">
               <canvas id="hdrEditorCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="canvas-card utility-card" data-section-title="提示与导出">
+            <div class="utility-grid">
+              <div class="panel-guide utility-guide">
+                <div class="guide-title">操作提示</div>
+                <ul>
+                  <li>① 先在左侧灯光列表选中灯，或直接点选 HDR 画布手柄。</li>
+                  <li>② 拖动手柄修改灯位，滚轮可快速调整当前灯大小。</li>
+                  <li>③ 用下方导出区域保存工程配置、HDR 贴图与预览图。</li>
+                </ul>
+              </div>
+              <div class="utility-actions">
+                <div class="utility-title">工程与导出</div>
+                <div class="utility-btns">
+                  <button id="saveConfig" class="secondary">导出配置</button>
+                  <label class="hdr-file-btn">导入配置 <input id="loadConfig" type="file" accept=".json"/></label>
+                  <button id="exportHdri" class="secondary">导出 HDR EXR</button>
+                  <button id="exportPreview">导出预览 PNG</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -171,6 +188,7 @@
 
     function enhanceLeftPanelUI() {
       const sections = Array.from(container.querySelectorAll('.panel-section'));
+      const collapsedByDefault = new Set();
       sections.forEach((sec) => {
         const title = sec.getAttribute('data-section-title');
         if (!title) return;
@@ -184,9 +202,16 @@
         btn.textContent = '收起';
         head.append(txt, btn);
         sec.prepend(head);
-        btn.addEventListener('click', () => {
-          const collapsed = sec.classList.toggle('collapsed');
+
+        const applyCollapsedState = (collapsed) => {
+          sec.classList.toggle('collapsed', collapsed);
           btn.textContent = collapsed ? '展开' : '收起';
+          btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+        };
+
+        applyCollapsedState(collapsedByDefault.has(title));
+        btn.addEventListener('click', () => {
+          applyCollapsedState(!sec.classList.contains('collapsed'));
         });
       });
     }
@@ -195,14 +220,14 @@
 
     const statusEl = host.querySelector('#hdrStatus') || document.createElement('div');
 
-    let THREE, RGBELoader, OrbitControls, GUI, GLTFLoader;
+    let THREE, RGBELoader, OrbitControls, GLTFLoader, EXRExporter;
     try {
       const deps = await loadDeps();
       THREE = deps.THREE;
       RGBELoader = deps.RGBELoader;
       OrbitControls = deps.OrbitControls;
-      GUI = deps.GUI;
       GLTFLoader = deps.GLTFLoader;
+      EXRExporter = deps.EXRExporter;
     } catch (e) {
       container.innerHTML = '<div class="result-box">依赖加载失败，请检查 CDN 与网络控制台。</div>';
       console.error(e);
@@ -455,16 +480,25 @@
         const x = light.x * w;
         const y = light.y * h;
         const selected = idx === params.lightIndex;
+        const hovered = idx === hoveredLightIndex;
         // handle radius scales with light.size so selection box follows light scale
         const base = Math.min(w, h);
         const HANDLE_SCALE = selected ? 0.22 : 0.14;
         const MIN_HANDLE_PX = 6;
         const handleRadius = Math.max(MIN_HANDLE_PX, Math.round(light.size * base * HANDLE_SCALE));
         const lineW = Math.max(1, Math.round(Math.max(1, handleRadius * 0.18)));
+
+        if (selected || hovered) {
+          hdriCtx.beginPath();
+          hdriCtx.arc(x, y, handleRadius + (selected ? 5 : 3), 0, Math.PI * 2);
+          hdriCtx.fillStyle = selected ? 'rgba(34, 211, 238, 0.16)' : 'rgba(148, 163, 184, 0.12)';
+          hdriCtx.fill();
+        }
+
         hdriCtx.beginPath();
         hdriCtx.arc(x, y, handleRadius, 0, Math.PI * 2);
         hdriCtx.lineWidth = lineW;
-        hdriCtx.strokeStyle = selected ? '#22d3ee' : 'rgba(226,232,240,0.75)';
+        hdriCtx.strokeStyle = selected ? '#22d3ee' : (hovered ? '#f8fafc' : 'rgba(226,232,240,0.75)');
         hdriCtx.stroke();
       });
       hdriCtx.restore();
@@ -511,13 +545,14 @@
       lightPicker.value = String(params.lightIndex);
     }
 
-    let syncQuickControls = null;
+    let hoveredLightIndex = -1;
+    let syncActiveLightEditor = null;
 
     function refreshLightControllers() {
       syncActiveFromIndex();
       updateLightPicker();
       updateActiveMeta();
-      if (syncQuickControls) syncQuickControls();
+      if (syncActiveLightEditor) syncActiveLightEditor();
       if (gui) gui.updateDisplay();
       const r = container.querySelector('#activeSizeRange');
       if (r) r.value = active.size;
@@ -529,42 +564,66 @@
       const meta = container.querySelector('#activeLightMeta');
       if (!meta) return;
       const picked = lights[clamp(params.lightIndex, 0, lights.length - 1)];
-      meta.textContent = picked ? `当前灯：${picked.name}（${picked.type}）` : '当前灯：-';
+      if (!picked) {
+        meta.textContent = '当前灯：-';
+        return;
+      }
+      const x = Math.round((picked.x || 0) * 100);
+      const y = Math.round((picked.y || 0) * 100);
+      meta.textContent = `当前灯：${picked.name}（${TYPE_LABEL[picked.type] || picked.type}） · 位置 ${x}%, ${y}%`;
     }
 
+    function bindActiveLightEditor() {
+      const typeEl = container.querySelector('#activeLightType');
+      const intensityEl = container.querySelector('#activeIntensityRange');
+      const falloffEl = container.querySelector('#activeFalloffRange');
+      const softnessEl = container.querySelector('#activeSoftnessRange');
+      const colorEl = container.querySelector('#activeColorInput');
+      const useKelvinEl = container.querySelector('#activeUseKelvin');
+      const kelvinEl = container.querySelector('#activeKelvinRange');
 
-    function bindQuickControls() {
-      const envModeQuick = container.querySelector('#envModeQuick');
-      const exposureQuick = container.querySelector('#exposureQuick');
-      const keyIntensityQuick = container.querySelector('#keyIntensityQuick');
-      const gradientTopQuick = container.querySelector('#gradientTopQuick');
-      const gradientBottomQuick = container.querySelector('#gradientBottomQuick');
-      const useKelvinQuick = container.querySelector('#useKelvinQuick');
-      const kelvinQuick = container.querySelector('#kelvinQuick');
+      const mapValue = [
+        [intensityEl, '#activeIntensityValue', (v) => Number(v).toFixed(2)],
+        [falloffEl, '#activeFalloffValue', (v) => Number(v).toFixed(2)],
+        [softnessEl, '#activeSoftnessValue', (v) => Number(v).toFixed(2)],
+        [kelvinEl, '#activeKelvinValue', (v) => String(Math.round(v))]
+      ];
 
-      function syncQuickControls() {
-        if (envModeQuick) envModeQuick.value = params.envMode;
-        if (exposureQuick) exposureQuick.value = String(params.exposure);
-        if (keyIntensityQuick) keyIntensityQuick.value = String(params.keyIntensity);
-        if (gradientTopQuick) gradientTopQuick.value = params.gradientTop;
-        if (gradientBottomQuick) gradientBottomQuick.value = params.gradientBottom;
-        if (useKelvinQuick) useKelvinQuick.checked = !!active.useKelvin;
-        if (kelvinQuick) {
-          kelvinQuick.value = String(active.kelvin);
-          kelvinQuick.disabled = !active.useKelvin;
+      const commit = () => {
+        syncIndexFromActive();
+        applyParams();
+        updateLightListUI();
+        if (gui) gui.updateDisplay();
+      };
+
+      function syncEditor() {
+        if (typeEl) typeEl.value = active.type;
+        if (intensityEl) intensityEl.value = String(active.intensity);
+        if (falloffEl) falloffEl.value = String(active.outerFalloff);
+        if (softnessEl) softnessEl.value = String(active.innerSoftness);
+        if (colorEl) colorEl.value = active.color || '#ffffff';
+        if (useKelvinEl) useKelvinEl.checked = !!active.useKelvin;
+        if (kelvinEl) {
+          kelvinEl.value = String(active.kelvin || 6500);
+          kelvinEl.disabled = !active.useKelvin;
         }
+        mapValue.forEach(([input, selector, fmt]) => {
+          if (!input) return;
+          const label = container.querySelector(selector);
+          if (label) label.textContent = fmt(input.value);
+        });
       }
 
-      if (envModeQuick) envModeQuick.addEventListener('change', (e) => { params.envMode = e.target.value; applyParams(); if (gui) gui.updateDisplay(); });
-      if (exposureQuick) exposureQuick.addEventListener('input', (e) => { params.exposure = parseFloat(e.target.value) || 0; applyParams(); if (gui) gui.updateDisplay(); });
-      if (keyIntensityQuick) keyIntensityQuick.addEventListener('input', (e) => { params.keyIntensity = parseFloat(e.target.value) || 0; applyParams(); if (gui) gui.updateDisplay(); });
-      if (gradientTopQuick) gradientTopQuick.addEventListener('input', (e) => { params.gradientTop = e.target.value; applyParams(); if (gui) gui.updateDisplay(); });
-      if (gradientBottomQuick) gradientBottomQuick.addEventListener('input', (e) => { params.gradientBottom = e.target.value; applyParams(); if (gui) gui.updateDisplay(); });
-      if (useKelvinQuick) useKelvinQuick.addEventListener('change', (e) => { active.useKelvin = !!e.target.checked; syncIndexFromActive(); applyParams(); if (kelvinQuick) kelvinQuick.disabled = !active.useKelvin; if (gui) gui.updateDisplay(); });
-      if (kelvinQuick) kelvinQuick.addEventListener('input', (e) => { active.kelvin = parseFloat(e.target.value) || active.kelvin; syncIndexFromActive(); applyParams(); if (gui) gui.updateDisplay(); });
+      if (typeEl) typeEl.addEventListener('change', (e) => { active.type = e.target.value; commit(); });
+      if (intensityEl) intensityEl.addEventListener('input', (e) => { active.intensity = parseFloat(e.target.value) || 0; commit(); });
+      if (falloffEl) falloffEl.addEventListener('input', (e) => { active.outerFalloff = parseFloat(e.target.value) || 0; commit(); });
+      if (softnessEl) softnessEl.addEventListener('input', (e) => { active.innerSoftness = parseFloat(e.target.value) || 0; commit(); });
+      if (colorEl) colorEl.addEventListener('input', (e) => { active.color = e.target.value; commit(); });
+      if (useKelvinEl) useKelvinEl.addEventListener('change', (e) => { active.useKelvin = !!e.target.checked; if (kelvinEl) kelvinEl.disabled = !active.useKelvin; commit(); });
+      if (kelvinEl) kelvinEl.addEventListener('input', (e) => { active.kelvin = parseFloat(e.target.value) || 6500; commit(); });
 
-      syncQuickControls();
-      return syncQuickControls;
+      syncEditor();
+      return syncEditor;
     }
 
     function addLight(type = 'Circle') {
@@ -592,12 +651,31 @@
     // GUI
     function createNoopGui(host) {
       const root = document.createElement('div');
-      root.className = 'fallback-gui';
+      root.className = 'fallback-gui custom-param-panel';
       const controllers = [];
 
-      function createController(el, getter, setter) {
+      function createController(el, getter, setter, valueEl) {
         let onChangeCb = null;
         let onFinishCb = null;
+
+        function parseByInput(raw) {
+          if (el.type === 'checkbox') return !!el.checked;
+          if (el.type === 'range' || el.type === 'number') {
+            const num = parseFloat(raw);
+            return Number.isFinite(num) ? num : getter();
+          }
+          return raw;
+        }
+
+        function updateValueBadge(v) {
+          if (!valueEl) return;
+          if (typeof v === 'number' && Number.isFinite(v)) {
+            valueEl.textContent = Math.abs(v) >= 100 ? String(Math.round(v)) : v.toFixed(2).replace(/\.00$/, '');
+          } else {
+            valueEl.textContent = String(v);
+          }
+        }
+
         const api = {
           name(label) {
             const labelEl = el.closest('.fallback-row')?.querySelector('.fallback-label');
@@ -611,21 +689,21 @@
             if (el.type === 'checkbox') el.checked = !!val;
             else if (el.type === 'color') el.value = String(val || '#ffffff');
             else el.value = String(val);
+            updateValueBadge(val);
           }
         };
 
         const fire = () => {
-          const raw = el.type === 'checkbox' ? !!el.checked : el.value;
-          const parsed = el.type === 'range' ? parseFloat(raw) : raw;
+          const parsed = parseByInput(el.value);
           setter(parsed);
+          updateValueBadge(parsed);
           if (onChangeCb) onChangeCb(parsed);
         };
 
         el.addEventListener('input', fire);
         el.addEventListener('change', () => {
           fire();
-          const raw = el.type === 'checkbox' ? !!el.checked : el.value;
-          const parsed = el.type === 'range' ? parseFloat(raw) : raw;
+          const parsed = parseByInput(el.value);
           if (onFinishCb) onFinishCb(parsed);
         });
 
@@ -646,10 +724,16 @@
           add(obj, key, a, b, step) {
             const row = document.createElement('div');
             row.className = 'fallback-row';
+
+            const labelWrap = document.createElement('div');
+            labelWrap.className = 'fallback-label-wrap';
             const label = document.createElement('label');
             label.className = 'fallback-label';
             label.textContent = key;
-            row.appendChild(label);
+            labelWrap.appendChild(label);
+
+            const valueEl = document.createElement('span');
+            valueEl.className = 'fallback-value';
 
             let input;
             if (Array.isArray(a)) {
@@ -657,12 +741,13 @@
               a.forEach((opt) => {
                 const o = document.createElement('option');
                 o.value = opt;
-                o.textContent = opt;
+                o.textContent = labelForValue(opt);
                 input.appendChild(o);
               });
             } else if (typeof obj[key] === 'boolean') {
               input = document.createElement('input');
               input.type = 'checkbox';
+              row.classList.add('is-checkbox');
             } else {
               input = document.createElement('input');
               if (typeof a === 'number' && typeof b === 'number') {
@@ -675,9 +760,11 @@
               }
             }
 
+            if (input.type === 'range') labelWrap.appendChild(valueEl);
+            row.appendChild(labelWrap);
             row.appendChild(input);
             folder.appendChild(row);
-            const controller = createController(input, () => obj[key], (val) => { obj[key] = val; });
+            const controller = createController(input, () => obj[key], (val) => { obj[key] = val; }, input.type === 'range' ? valueEl : null);
             controller.refresh();
             return controller;
           },
@@ -713,47 +800,32 @@
     }
 
     const guiHost = container.querySelector('#guiDock');
-    let gui = createNoopGui(guiHost);
-    if (typeof GUI === 'function') {
-      try {
-        gui = new GUI({ title: 'HDRI 控制面板', width: 320, autoPlace: false });
-        gui.domElement.classList.add('hdr-gui');
-        gui.domElement.style.position = 'static';
-        gui.domElement.style.width = '100%';
-        gui.domElement.style.maxHeight = 'none';
-        if (guiHost) {
-          guiHost.innerHTML = '';
-          guiHost.appendChild(gui.domElement);
-        }
-      } catch (e) {
-        console.warn('GUI 初始化失败，使用简化控制界面。', e);
-      }
-    }
+    const gui = createNoopGui(guiHost);
 
-    const fCanvas = gui.addFolder('HDRI 画布');
+    const fCanvas = gui.addFolder('环境画布');
     if (fCanvas.open) fCanvas.open();
-    fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).onChange((v) => { const [w, h] = v.split('x').map(Number); hdriCanvas.width = w; hdriCanvas.height = h; params.canvasSize = v; updateHdriCanvasStyle(); applyParams(); });
-    fCanvas.add(params, 'envMode', ['Solid', 'Gradient', 'Image', 'HDRFile']).onChange(applyParams);
+    fCanvas.add(params, 'canvasSize', ['1024x512', '2048x1024', '4096x2048']).name('分辨率').onChange((v) => { const [w, h] = v.split('x').map(Number); hdriCanvas.width = w; hdriCanvas.height = h; params.canvasSize = v; updateHdriCanvasStyle(); applyParams(); });
+    fCanvas.add(params, 'envMode', ['Solid', 'Gradient', 'Image', 'HDRFile']).name('环境模式').onChange(applyParams);
     fCanvas.addColor(params, 'solidColor').name('纯色').onChange(applyParams);
     fCanvas.addColor(params, 'gradientTop').name('渐变-上').onChange(applyParams);
     fCanvas.addColor(params, 'gradientBottom').name('渐变-下').onChange(applyParams);
 
-    const fEnv = gui.addFolder('环境参数');
+    const fEnv = gui.addFolder('渲染参数');
     if (fEnv.open) fEnv.open();
-    fEnv.add(params, 'exposure', -2, 3, 0.05).onChange(applyParams);
-    fEnv.add(params, 'saturation', 0, 2, 0.01).onChange(applyParams);
-    fEnv.add(params, 'envIntensity', 0, 5, 0.05).onChange(applyParams);
-    fEnv.add(params, 'envRotation', -180, 180, 1).onChange(applyParams);
-    fEnv.add(params, 'bgBlur', 0, 1, 0.01).onChange(applyParams);
-    fEnv.add(params, 'showBackground').onChange(applyParams);
-    fEnv.add(params, 'toneMapping', ['ACES', 'Reinhard', 'Cineon', 'Neutral', 'None']).onChange(applyParams);
+    fEnv.add(params, 'exposure', -2, 3, 0.05).name('曝光').onChange(applyParams);
+    fEnv.add(params, 'saturation', 0, 2, 0.01).name('饱和度').onChange(applyParams);
+    fEnv.add(params, 'envIntensity', 0, 5, 0.05).name('环境强度').onChange(applyParams);
+    fEnv.add(params, 'envRotation', -180, 180, 1).name('环境旋转').onChange(applyParams);
+    fEnv.add(params, 'bgBlur', 0, 1, 0.01).name('背景模糊').onChange(applyParams);
+    fEnv.add(params, 'showBackground').name('显示背景').onChange(applyParams);
+    fEnv.add(params, 'toneMapping', ['ACES', 'Reinhard', 'Cineon', 'Neutral', 'None']).name('色调映射').onChange(applyParams);
 
-    const fModel = gui.addFolder('模型与材质');
+    const fModel = gui.addFolder('模型材质');
     if (fModel.open) fModel.open();
-    fModel.add(params, 'model', ['Both', 'Sphere', 'Knot']).onChange(applyParams);
-    fModel.add(params, 'autoRotate');
-    fModel.add(params, 'metalness', 0, 1, 0.01).onChange(applyParams);
-    fModel.add(params, 'roughness', 0.02, 1, 0.01).onChange(applyParams);
+    fModel.add(params, 'model', ['Both', 'Sphere', 'Knot']).name('预览模型').onChange(applyParams);
+    fModel.add(params, 'autoRotate').name('自动旋转');
+    fModel.add(params, 'metalness', 0, 1, 0.01).name('金属度').onChange(applyParams);
+    fModel.add(params, 'roughness', 0.02, 1, 0.01).name('粗糙度').onChange(applyParams);
 
     const fLights = gui.addFolder('场景灯光');
     if (fLights.open) fLights.open();
@@ -768,7 +840,7 @@
     if (fHdriLight.open) fHdriLight.open();
     fHdriLight.add(params, 'lightIndex', 0, lights.length - 1, 1).name('选择灯').onChange((i) => { params.lightIndex = clamp(Math.round(i), 0, lights.length - 1); syncActiveFromIndex(); gui.updateDisplay(); applyParams(); updateLightPicker(); });
     fHdriLight.add(active, 'name').name('名称').onFinishChange(() => { syncIndexFromActive(); updateLightPicker(); gui.updateDisplay(); });
-    fHdriLight.add(active, 'type', ['Circle', 'Rect', 'Octagon', 'Ring']).onChange(() => { syncIndexFromActive(); applyParams(); });
+    fHdriLight.add(active, 'type', ['Circle', 'Rect', 'Octagon', 'Ring']).name('光源形状').onChange(() => { syncIndexFromActive(); applyParams(); });
     fHdriLight.add(active, 'x', 0, 1, 0.001).name('位置X').onChange(() => { syncIndexFromActive(); applyParams(); });
     fHdriLight.add(active, 'y', 0, 1, 0.001).name('位置Y').onChange(() => { syncIndexFromActive(); applyParams(); });
     fHdriLight.add(active, 'size', 0.02, 0.5, 0.001).name('大小').onChange(() => { syncIndexFromActive(); applyParams(); });
@@ -779,7 +851,8 @@
     fHdriLight.add(active, 'kelvin', 1000, 20000, 10).name('色温').onChange(() => { if (active.useKelvin) { /* convert later */ } syncIndexFromActive(); applyParams(); });
     fHdriLight.addColor(active, 'color').name('颜色').onChange(() => { syncIndexFromActive(); applyParams(); });
 
-    syncQuickControls = bindQuickControls();
+
+    syncActiveLightEditor = bindActiveLightEditor();
 
     const fLightMgr = gui.addFolder('灯光管理');
     if (fLightMgr.open) fLightMgr.open();
@@ -793,8 +866,12 @@
     function resize() {
       const wrapWidth = canvas.parentElement.clientWidth || 960;
       const width = Math.max(240, wrapWidth);
-      // allow smaller preview heights so HDR canvas (top) can remain 2:1 without cropping
-      const height = clamp(Math.round(width * 0.58), 200, 720);
+      const previewCard = container.querySelector('.preview-card');
+      const maxHeightFromLayout = previewCard ? previewCard.clientHeight : 0;
+      const autoHeight = Math.round(width * 0.58);
+      const height = maxHeightFromLayout > 0
+        ? clamp(maxHeightFromLayout - 2, 240, 860)
+        : clamp(autoHeight, 240, 860);
       renderer.setSize(width, height, false);
       camera.aspect = width / height; camera.updateProjectionMatrix(); renderer.render(scene, camera);
       // keep hdri canvas internal resolution in sync with its displayed size
@@ -829,7 +906,43 @@
     container.querySelector('#saveConfig').addEventListener('click', exportConfig);
     container.querySelector('#loadConfig').addEventListener('change', async function () { const file = this.files && this.files[0]; if (!file) return; try { const text = await file.text(); const data = JSON.parse(text); if (data.params) Object.assign(params, data.params); if (Array.isArray(data.lights) && data.lights.length) { lights.length = 0; data.lights.forEach((l) => lights.push(l)); } if (data.canvasSize && data.canvasSize.width && data.canvasSize.height) { hdriCanvas.width = data.canvasSize.width; hdriCanvas.height = data.canvasSize.height; params.canvasSize = `${data.canvasSize.width}x${data.canvasSize.height}`; updateHdriCanvasStyle(); } params.lightIndex = clamp(params.lightIndex || 0, 0, lights.length - 1); refreshLightControllers(); applyParams(); statusEl.textContent = `配置已载入：${file.name}`; } catch (e) { statusEl.textContent = '配置文件读取失败，请检查 JSON 内容。'; } });
 
-    container.querySelector('#exportHdri').addEventListener('click', () => { const a = document.createElement('a'); a.href = hdriCanvas.toDataURL('image/png'); a.download = 'hdri_canvas.png'; a.click(); });
+    container.querySelector('#exportHdri').addEventListener('click', async () => {
+      try {
+        if (!EXRExporter) {
+          statusEl.textContent = 'EXR 导出器未加载，无法导出 .exr';
+          return;
+        }
+        const dpr = _hdri_dpr || 1;
+        const w = Math.max(1, Math.round(hdriCanvas.width / dpr));
+        const h = Math.max(1, Math.round(hdriCanvas.height / dpr));
+        const pixels = hdriCtx.getImageData(0, 0, w, h).data;
+        const data = new Float32Array(w * h * 4);
+        for (let i = 0; i < w * h; i += 1) {
+          const r = pixels[i * 4] / 255;
+          const g = pixels[i * 4 + 1] / 255;
+          const b = pixels[i * 4 + 2] / 255;
+          data[i * 4] = Math.pow(r, 2.2);
+          data[i * 4 + 1] = Math.pow(g, 2.2);
+          data[i * 4 + 2] = Math.pow(b, 2.2);
+          data[i * 4 + 3] = 1;
+        }
+        const tex = new THREE.DataTexture(data, w, h, THREE.RGBAFormat, THREE.FloatType);
+        tex.needsUpdate = true;
+        tex.colorSpace = THREE.LinearSRGBColorSpace;
+        const exrExporter = new EXRExporter();
+        const out = exrExporter.parse(tex, { type: THREE.FloatType });
+        const blob = new Blob([out], { type: 'image/x-exr' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'hdri_canvas.exr';
+        a.click();
+        URL.revokeObjectURL(a.href);
+        tex.dispose();
+      } catch (e) {
+        console.error(e);
+        statusEl.textContent = '导出 EXR 失败，请查看控制台。';
+      }
+    });
     container.querySelector('#exportPreview').addEventListener('click', () => { const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download = 'hdri_preview.png'; a.click(); });
 
     // Model preview loader + interactive light controls
@@ -874,6 +987,9 @@
     // drag light on hdriCanvas; wheel adjusts active light size
     if (hdriCanvas) {
       let isDraggingLight = false;
+      let pendingPickIndex = -1;
+      let pointerDownUv = null;
+      const DRAG_START_THRESHOLD = 0.008;
 
       function pointerToUv(ev) {
         const r = hdriCanvas.getBoundingClientRect();
@@ -951,56 +1067,59 @@
       hdriCanvas.addEventListener('pointerdown', (ev) => {
         const uv = pointerToUv(ev);
         const pickedIndex = pickLightIndex(uv);
-        let finalPick = pickedIndex;
-        if (pickedIndex < 0) {
-          // fallback: pick nearest by normalized distance using previous heuristic
-          let best = -1; let bestDist = Number.POSITIVE_INFINITY;
-          lights.forEach((light, idx) => {
-            const dx = uv.x - light.x; const dy = uv.y - light.y; const dist = Math.hypot(dx, dy);
-            const threshold = Math.max(0.03, light.size * 0.6);
-            if (dist <= threshold && dist < bestDist) { bestDist = dist; best = idx; }
-          });
-          finalPick = best;
-        }
-        if (finalPick >= 0) {
-          // select and start dragging the picked handle
-          params.lightIndex = finalPick;
-          refreshLightControllers();
-          active.x = uv.x;
-          active.y = uv.y;
-          syncIndexFromActive();
-          isDraggingLight = true;
+        pointerDownUv = uv;
+        pendingPickIndex = pickedIndex;
+        isDraggingLight = false;
+
+        if (pickedIndex >= 0) {
+          if (params.lightIndex !== pickedIndex) {
+            params.lightIndex = pickedIndex;
+            refreshLightControllers();
+            applyParams();
+            updateLightListUI();
+          }
           try { hdriCanvas.setPointerCapture(ev.pointerId); } catch (e) { /* ignore */ }
-          applyParams();
-          updateLightListUI();
-          if (gui) gui.updateDisplay();
-        } else {
-          // clicked empty area: do not move the active light, only clear potential dragging
-          isDraggingLight = false;
         }
       });
 
       hdriCanvas.addEventListener('pointermove', (ev) => {
-        if (!isDraggingLight) return;
         const uv = pointerToUv(ev);
+
+        if (!isDraggingLight) {
+          hoveredLightIndex = pickLightIndex(uv);
+          drawHdriCanvas();
+        }
+
+        if (pendingPickIndex < 0) return;
+
+        const moved = pointerDownUv ? Math.hypot(uv.x - pointerDownUv.x, uv.y - pointerDownUv.y) : 0;
+        if (!isDraggingLight && moved < DRAG_START_THRESHOLD) return;
+
+        isDraggingLight = true;
+        params.lightIndex = pendingPickIndex;
         active.x = uv.x;
         active.y = uv.y;
         syncIndexFromActive();
+        refreshLightControllers();
         applyParams();
+        updateLightListUI();
         if (gui) gui.updateDisplay();
       });
 
       function stopDragging(ev) {
-        if (!isDraggingLight) return;
-        isDraggingLight = false;
+        pendingPickIndex = -1;
+        pointerDownUv = null;
         if (typeof ev.pointerId === 'number' && hdriCanvas.hasPointerCapture(ev.pointerId)) {
           hdriCanvas.releasePointerCapture(ev.pointerId);
         }
+        isDraggingLight = false;
       }
 
       hdriCanvas.addEventListener('pointerup', stopDragging);
       hdriCanvas.addEventListener('pointercancel', stopDragging);
       hdriCanvas.addEventListener('pointerleave', (ev) => {
+        hoveredLightIndex = -1;
+        drawHdriCanvas();
         if (ev.buttons === 0) stopDragging(ev);
       });
 
@@ -1024,6 +1143,7 @@
       picker.innerHTML = lights.map((l, i) => `<option value="${i}">${i + 1}. ${l.name}</option>`).join('');
       picker.value = String(params.lightIndex);
       updateActiveMeta();
+      if (syncActiveLightEditor) syncActiveLightEditor();
     }
 
     lightPicker.addEventListener('change', (e) => { params.lightIndex = clamp(Number(e.target.value), 0, lights.length - 1); refreshLightControllers(); applyParams(); });
