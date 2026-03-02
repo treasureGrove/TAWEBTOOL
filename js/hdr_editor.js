@@ -132,10 +132,12 @@
         <input id="sphereGridCheck" type="checkbox" checked />
       </div>
       <div class="ctrl-row">
-        <label class="hdr-file-btn env-file-btn">导入 HDR 文件 <input id="hdrFileInput" type="file" accept=".hdr,image/vnd.radiance" /></label>
+        <button id="hdrFileBtn" class="hdr-file-btn env-file-btn">导入 HDR 文件</button>
+        <input id="hdrFileInput" type="file" accept=".hdr,image/vnd.radiance" style="display:none" />
       </div>
       <div class="ctrl-row">
-        <label class="hdr-file-btn env-file-btn">导入背景图片 <input id="bgImageInput" type="file" accept="image/*" /></label>
+        <button id="bgImageBtn" class="hdr-file-btn env-file-btn">导入背景图片</button>
+        <input id="bgImageInput" type="file" accept="image/*" style="display:none" />
       </div>
     </div>
 
@@ -325,9 +327,9 @@
       </div>
       <div class="range-bar">
         <span class="range-bar-label">Range</span>
-        <input id="rangeMinInput" type="number" class="range-num" value="0.00" step="0.1" min="-999" max="999" />
+        <input id="rangeMinInput" type="number" class="range-num" value="0.000" step="any" min="0" title="HDR 黑场（float）" />
         <div class="range-bar-track" id="rangeBarTrack"><div class="range-bar-fill" id="rangeBarFill"></div></div>
-        <input id="rangeMaxInput" type="number" class="range-num" value="1.00" step="0.1" min="-999" max="999" />
+        <input id="rangeMaxInput" type="number" class="range-num" value="1.000" step="any" min="0" title="HDR 白场（float，可输入 999 等超高值）" />
         <button id="rangeResetBtn" class="range-reset-btn" title="重置 Range">↺</button>
       </div>
       <div class="hdri-wrap-rel">
@@ -488,6 +490,15 @@
 
     /*  Canvas HDR 绘制  */
     let hdriBgImage = null, hdrFileTexture = null, _dpr = window.devicePixelRatio || 1;
+    // HDR 浮点缓冲区，分辨率跟随画布实际物理尺寸，与 canvas 像素 1:1 对应，防止拉伸导致的像素块
+    let _fb_w = 0, _fb_h = 0;
+    let _hdrFloatBuf = new Float32Array(0);
+    function ensureFloatBuf(pw, ph) {
+      if (_fb_w !== pw || _fb_h !== ph) {
+        _fb_w = pw; _fb_h = ph;
+        _hdrFloatBuf = new Float32Array(pw * ph * 3);
+      }
+    }
     // 使用纯净 canvas 构建环境贴图，避免球面格线/手柄出现在 3D 预览背景中
     const envCanvasTexture = new THREE.CanvasTexture(_envCanvas);
     envCanvasTexture.mapping = THREE.EquirectangularReflectionMapping;
@@ -654,47 +665,123 @@
         if (light.type === 'Circle') {
           const falloff  = Math.max(0, light.outerFalloff || 0);
           const softness = clamp(light.innerSoftness, 0, 0.97);
-          const outerR   = ry * (1 + falloff);
-          const innerR   = ry * softness;
-          const outerTh  = outerR * Math.PI / h;
+          const outerTh  = ry * (1 + falloff) * Math.PI / h;  // angular outer radius (rad)
+          const innerTh  = ry * softness       * Math.PI / h;  // angular inner radius (rad)
 
-          capPath(outerTh);
-          hdriCtx.save();
-          hdriCtx.clip();
-          // After scale(xs0,1), radialGradient iso-circles == spherical iso-angular-distance:
-          //   angular_dist = (PI/h) * sqrt( dy^2 + (dx/xs0)^2 ) = gradient_r * (PI/h)
-          hdriCtx.translate(ox, cy);
-          hdriCtx.scale(xs0, 1);
-          const grad = hdriCtx.createRadialGradient(0, 0, innerR, 0, 0, outerR);
-          grad.addColorStop(0,   col + a8(alpha));
-          grad.addColorStop(0.7, col + a8(alpha * 0.55));
-          grad.addColorStop(1,   col + '00');
-          hdriCtx.fillStyle = grad;
-          hdriCtx.fillRect(-outerR * xs0, -outerR, outerR * xs0 * 2, outerR * 2);
-          hdriCtx.restore();
+          // Per-pixel scan-line fill: compute exact spherical angular distance at each pixel.
+          // IMPORTANT: getImageData / putImageData always operate in PHYSICAL canvas pixels,
+          // completely ignoring the hdriCtx.setTransform(dpr,...) scale.  All bounding-box
+          // coordinates and the inner loop must therefore use physical pixel values.
+          const rcol = parseInt(col.slice(1, 3), 16);
+          const gcol = parseInt(col.slice(3, 5), 16);
+          const bcol = parseInt(col.slice(5, 7), 16);
+
+          const pw  = hdriCanvas.width,  ph  = hdriCanvas.height; // physical dimensions
+          const pox = ox * dpr,          pcy = cy * dpr;          // physical light centre
+          // Outer cap radius in physical pixels (vertical)
+          const outerPhy = outerTh * ph / Math.PI;
+          // Exact maximum horizontal extent across all rows in the cap.
+          // At the latitude of maximum extent: sin(φ)=sin(φ₀)/cos(θ),
+          //   dLam_max = acos( √(cos²θ − sin²φ₀) / cosφ₀ )
+          // If cos²θ ≤ sin²φ₀ some inner rows wrap the full 360° → use full-width.
+          const cosOuter   = Math.cos(outerTh);
+          const sin2phi0   = sinPhi0 * sinPhi0;
+          const cos2outer  = cosOuter * cosOuter;
+          let hExtPhy;
+          if (cos2outer <= sin2phi0) {
+            hExtPhy = pw / 2 + 2 * dpr;           // full-width wrap
+          } else {
+            const dLam_max = Math.acos(Math.min(1, Math.sqrt(cos2outer - sin2phi0) / Math.max(0.001, cosPhi0)));
+            hExtPhy = Math.ceil(dLam_max * pw / (2 * Math.PI)) + 2 * dpr;
+          }
+
+          const pyT = Math.max(0,      Math.floor(pcy - outerPhy) - dpr);
+          const pyB = Math.min(ph - 1, Math.ceil (pcy + outerPhy) + dpr);
+          const pxL = Math.max(0,      Math.floor(pox - hExtPhy));
+          const pxR = Math.min(pw - 1, Math.ceil (pox + hExtPhy));
+          if (pxL > pxR || pyT > pyB) return;
+
+          const bw = pxR - pxL + 1, bh = pyB - pyT + 1;
+          const imgd = hdriCtx.getImageData(pxL, pyT, bw, bh);
+          const id   = imgd.data;
+
+          for (let py = pyT; py <= pyB; py++) {
+            const phi    = (0.5 - py / ph) * Math.PI;   // latitude from physical row
+            const sinPhi = Math.sin(phi), cosPhi = Math.cos(phi);
+            for (let px = pxL; px <= pxR; px++) {
+              const dLam  = (px - pox) * 2 * Math.PI / pw; // lon delta from physical col
+              const cosAD = sinPhi * sinPhi0 + cosPhi * cosPhi0 * Math.cos(dLam);
+              const angD  = Math.acos(Math.max(-1, Math.min(1, cosAD)));
+              if (angD >= outerTh) continue;
+              let ga;
+              if (angD <= innerTh) {
+                ga = alpha;
+              } else {
+                const t = (angD - innerTh) / (outerTh - innerTh); // 0=inner edge, 1=outer edge
+                ga = alpha * (1 - t) * (1 - t); // smooth quadratic falloff to zero
+              }
+              const ii = ((py - pyT) * bw + (px - pxL)) * 4;
+              id[ii]     = Math.min(255, id[ii]     + Math.round(rcol * ga));
+              id[ii + 1] = Math.min(255, id[ii + 1] + Math.round(gcol * ga));
+              id[ii + 2] = Math.min(255, id[ii + 2] + Math.round(bcol * ga));
+            }
+          }
+          hdriCtx.putImageData(imgd, pxL, pyT);
 
         } else if (light.type === 'Rect') {
+          // Per-pixel spherical rect: check |Δφ| ≤ rhOuter AND |Δλ| ≤ rwOuter
+          // This produces a true rectangle on the sphere surface (curved trapezoid in equirectangular).
           const falloff  = Math.max(0, light.outerFalloff || 0);
-          const softness = Math.max(0, light.innerSoftness || 0);
-          const rw    = ry * 1.2 * (1 + falloff * 0.65);
-          const rh    = ry * 0.65 * (1 + falloff * 0.40);
-          const xsTop = xs(cy - rh);
-          const xsBot = xs(cy + rh);
-          const blurR = ry * (0.22 + softness * 0.45 + falloff * 0.35);
+          const softness = clamp(light.innerSoftness || 0, 0, 0.97);
+          const rhOuter  = ry * 0.65 * (1 + falloff * 0.40) * Math.PI / h;  // angular half-height
+          const rwOuter  = ry * 1.2  * (1 + falloff * 0.65) * Math.PI / h;  // angular half-width
+          const rhInner  = rhOuter * softness;
+          const rwInner  = rwOuter * softness;
 
-          hdriCtx.beginPath();
-          hdriCtx.moveTo(ox - rw * xsTop, cy - rh);
-          hdriCtx.lineTo(ox + rw * xsTop, cy - rh);
-          hdriCtx.lineTo(ox + rw * xsBot, cy + rh);
-          hdriCtx.lineTo(ox - rw * xsBot, cy + rh);
-          hdriCtx.closePath();
-          hdriCtx.filter = `blur(${blurR}px)`;
-          const cg = hdriCtx.createRadialGradient(ox, cy, 0, ox, cy, Math.hypot(rw * xs0, rh));
-          cg.addColorStop(0, col + a8(alpha));
-          cg.addColorStop(1, col + '00');
-          hdriCtx.fillStyle = cg;
-          hdriCtx.fill();
-          hdriCtx.filter = 'none';
+          const rcol = parseInt(col.slice(1, 3), 16);
+          const gcol = parseInt(col.slice(3, 5), 16);
+          const bcol = parseInt(col.slice(5, 7), 16);
+
+          const pw = hdriCanvas.width, ph2 = hdriCanvas.height;
+          const pox = ox * dpr, pcy = cy * dpr;
+          const pyT = Math.max(0,       Math.floor(pcy - rhOuter * ph2 / Math.PI) - dpr);
+          const pyB = Math.min(ph2 - 1, Math.ceil (pcy + rhOuter * ph2 / Math.PI) + dpr);
+          const hExt = rwOuter * xs0 * pw / (2 * Math.PI) + 2 * dpr;
+          const pxL = Math.max(0,      Math.floor(pox - hExt));
+          const pxR = Math.min(pw - 1, Math.ceil (pox + hExt));
+          if (pxL > pxR || pyT > pyB) return;
+
+          const bw = pxR - pxL + 1, bh = pyB - pyT + 1;
+          const imgd = hdriCtx.getImageData(pxL, pyT, bw, bh);
+          const id   = imgd.data;
+
+          for (let py = pyT; py <= pyB; py++) {
+            const phi  = (0.5 - py / ph2) * Math.PI;
+            const dPhi = Math.abs(phi - phi0);
+            if (dPhi > rhOuter) continue;
+            for (let px = pxL; px <= pxR; px++) {
+              // True angular longitude delta (consider wrap-around)
+              let dLam = Infinity;
+              for (const du of [0, -1, 1]) {
+                const dl = Math.abs((px - pox + du * pw) * 2 * Math.PI / pw);
+                if (dl < dLam) dLam = dl;
+              }
+              if (dLam > rwOuter) continue;
+
+              // Normalised distance in each axis (0=centre, 1=outer edge)
+              const tPhi = rhInner > 0 && dPhi <= rhInner ? 0 : (dPhi - rhInner) / (rhOuter - rhInner);
+              const tLam = rwInner > 0 && dLam <= rwInner ? 0 : (dLam - rwInner) / (rwOuter - rwInner);
+              const t    = Math.max(tPhi, tLam); // Chebyshev = rect distance
+              const ga   = alpha * (1 - t) * (1 - t);
+              if (ga <= 0) continue;
+
+              const ii = ((py - pyT) * bw + (px - pxL)) * 4;
+              id[ii]     = Math.min(255, id[ii]     + Math.round(rcol * ga));
+              id[ii + 1] = Math.min(255, id[ii + 1] + Math.round(gcol * ga));
+              id[ii + 2] = Math.min(255, id[ii + 2] + Math.round(bcol * ga));
+            }
+          }
+          hdriCtx.putImageData(imgd, pxL, pyT);
 
         } else if (light.type === 'Octagon') {
           const falloff  = Math.max(0, light.outerFalloff || 0);
@@ -872,21 +959,161 @@
     }
 
     /**
+     * 构建 HDR 浮点缓冲区（分辨率与物理 canvas 相同，无拉伸失真）
+     * 对所有灯光做解析计算，存储真实 HDR float 值（可超出 1，例如 intensity=999）。
+     * 背景使用纯色/渐变的 sRGB 值；Image 模式回退到默认暗背景。
+     */
+    function buildHdrFloatBuf() {
+      // 使用物理像素尺寸，与 canvas 1:1 对应
+      const pw = hdriCanvas.width, ph = hdriCanvas.height;
+      ensureFloatBuf(pw, ph);
+      const buf = _hdrFloatBuf;
+      buf.fill(0); // 清零
+
+      // --- 填充背景基色（float，sRGB 分量，值域 0-1） ---
+      function hex2f(hex) {
+        return [parseInt(hex.slice(1,3),16)/255, parseInt(hex.slice(3,5),16)/255, parseInt(hex.slice(5,7),16)/255];
+      }
+      for (let row = 0; row < ph; row++) {
+        const v = (row + 0.5) / ph;
+        let bgR, bgG, bgB;
+        if (params.envMode === 'Solid') {
+          [bgR, bgG, bgB] = hex2f(params.solidColor || '#0b1120');
+        } else if (params.envMode === 'Gradient') {
+          const [tr, tg, tb] = hex2f(params.gradientTop    || '#1c3461');
+          const [br, bg, bb] = hex2f(params.gradientBottom || '#050c1a');
+          bgR = tr*(1-v)+br*v; bgG = tg*(1-v)+bg*v; bgB = tb*(1-v)+bb*v;
+        } else {
+          bgR = 11/255; bgG = 17/255; bgB = 32/255; // '#0b1120'
+        }
+        const rowBase = row * pw;
+        for (let col = 0; col < pw; col++) {
+          const idx = (rowBase + col) * 3;
+          buf[idx] = bgR; buf[idx+1] = bgG; buf[idx+2] = bgB;
+        }
+      }
+
+      // --- 叠加每个光源的 HDR 贡献 ---
+      for (const lt of lights) {
+        if (lt.hidden) continue;
+        const phi0_l = (0.5 - lt.y) * Math.PI;
+        const sinP0 = Math.sin(phi0_l), cosP0 = Math.cos(phi0_l);
+        const hexCol = lt.useKelvin ? kelvinToHex(lt.kelvin || 6500) : (lt.color || '#ffffff');
+        const cr = parseInt(hexCol.slice(1,3),16)/255;
+        const cg = parseInt(hexCol.slice(3,5),16)/255;
+        const cb = parseInt(hexCol.slice(5,7),16)/255;
+        const inten = lt.intensity || 1;
+        const fo = Math.max(0, lt.outerFalloff || 0);
+        const so = clamp(lt.innerSoftness || 0, 0, 0.97);
+
+        // 垂直+水平包围盒（物理像素）—— 大幅减少无效像素检查
+        let maxAngR;
+        if (lt.type === 'Circle' || lt.type === 'Octagon') maxAngR = lt.size * Math.PI * (1 + fo);
+        else if (lt.type === 'Ring') maxAngR = lt.size * Math.PI * (1 + fo*0.65) + lt.size * Math.PI * (0.28 + so*0.60) * 0.5;
+        else maxAngR = lt.size * Math.PI * 1.2 * (1 + fo);
+
+        const pyC   = lt.y * ph;
+        const pyRad = maxAngR * ph / Math.PI + 1;
+        const pyT = Math.max(0, Math.floor(pyC - pyRad));
+        const pyB = Math.min(ph - 1, Math.ceil(pyC + pyRad));
+
+        // 水平包围盒（含 360° 边界溢出处理）
+        // 精确公式：球面帽在纬度 φ₀ 处最大经度跨度 dLam_max = acos(√(cos²θ−sin²φ₀)/cosφ₀)
+        // 当 cos²θ ≤ sin²φ₀ 时，帽内存在整行覆盖的纬度，取全宽。
+        const cosP0abs = Math.max(0.001, Math.abs(cosP0));
+        const cosMaxR   = Math.cos(maxAngR);
+        const sin2phi0b = sinP0 * sinP0;
+        const cos2maxR  = cosMaxR * cosMaxR;
+        let hExtPhy;
+        if (cos2maxR <= sin2phi0b) {
+          hExtPhy = Math.ceil(pw / 2) + 2;
+        } else {
+          const dLam_max = Math.acos(Math.min(1, Math.sqrt(cos2maxR - sin2phi0b) / cosP0abs));
+          hExtPhy = Math.ceil(dLam_max * pw / (2 * Math.PI)) + 2;
+        }
+        const pxC  = Math.round(lt.x * pw);
+        // 算出两段扫描范围（支持环形贴图左右溢出）
+        let scanRanges;
+        if (hExtPhy * 2 >= pw) {
+          scanRanges = [[0, pw - 1]]; // 光源极大（覆盖全图），直接全扫
+        } else {
+          const lo = pxC - hExtPhy, hi = pxC + hExtPhy;
+          if (lo < 0)      scanRanges = [[0, hi], [pw + lo, pw - 1]];
+          else if (hi >= pw) scanRanges = [[lo, pw - 1], [0, hi - pw]];
+          else               scanRanges = [[lo, hi]];
+        }
+
+        for (let row = pyT; row <= pyB; row++) {
+          const v = (row + 0.5) / ph;
+          const phi = (0.5 - v) * Math.PI;
+          const sinPhi = Math.sin(phi), cosPhi = Math.cos(phi);
+          const rowBase = row * pw;
+
+          for (const [colL, colR] of scanRanges) {
+          for (let col = colL; col <= colR; col++) {
+            const u = (col + 0.5) / pw;
+            // 最小球面角距（考虑 360° 左右循环）
+            let minAngD = Infinity;
+            for (let du = -1; du <= 1; du++) {
+              const dLam = (u - lt.x + du) * 2 * Math.PI;
+              const cosAD = sinPhi*sinP0 + cosPhi*cosP0*Math.cos(dLam);
+              const angD = Math.acos(Math.max(-1, Math.min(1, cosAD)));
+              if (angD < minAngD) minAngD = angD;
+            }
+
+            let factor = 0;
+            if (lt.type === 'Circle' || lt.type === 'Octagon') {
+              const oTh = lt.size * Math.PI * (1 + fo);
+              const iTh = lt.size * Math.PI * so;
+              if (minAngD < oTh) {
+                if (minAngD <= iTh) { factor = 1.0; }
+                else { const t = (minAngD - iTh) / (oTh - iTh); factor = (1-t)*(1-t); }
+              }
+            } else if (lt.type === 'Ring') {
+              const ringTh = lt.size * Math.PI * (1 + fo*0.65);
+              const lwTh   = Math.max(0.001, lt.size * Math.PI * (0.28 + so*0.60) * 0.5);
+              const dist   = Math.abs(minAngD - ringTh);
+              if (dist < lwTh) factor = 1 - dist / lwTh;
+            } else if (lt.type === 'Rect') {
+              const rwTh = lt.size * Math.PI * 1.2 * (1 + fo*0.65);
+              const rhTh = lt.size * Math.PI * 0.65 * (1 + fo*0.40);
+              const maxR = Math.max(rwTh, rhTh);
+              if (minAngD < maxR) {
+                const blurN = lt.size * Math.PI * (0.22 + so*0.45 + fo*0.35);
+                factor = Math.max(0, 1 - (minAngD - maxR*(1 - blurN/maxR)) / blurN);
+              }
+            }
+
+            if (factor <= 0) continue;
+            const idx = (rowBase + col) * 3;
+            buf[idx]   += cr * inten * factor;
+            buf[idx+1] += cg * inten * factor;
+            buf[idx+2] += cb * inten * factor;
+          }
+          } // end scanRanges
+        }
+      }
+    }
+
+    /**
      * 范围重映射（仅显示用，不影响 _envCanvas）
-     * 类似 RenderDoc Range：[rangeMin, rangeMax] 线性映射到显示 [0,1]。
-     * rangeMin/Max 可超出 [0,1]（负数或 >1）用来缩奏/放大资产的近曝光细节。
+     * 从 HDR 浮点缓冲区读取真实值，将 [rangeMin, rangeMax] 映射到显示 [0, 255]。
+     * 浮点缓冲区与 canvas 物理像素 1:1，无插值/拉伸，保持平滑。
      */
     function applyRangeRemap() {
+      const rMin = params.rangeMin, rMax = params.rangeMax;
+      if (rMax <= rMin) return;
+      const scale = 255 / (rMax - rMin);
+
       const pw = hdriCanvas.width, ph = hdriCanvas.height;
       const imgd = hdriCtx.getImageData(0, 0, pw, ph);
       const d = imgd.data;
-      const rMin = params.rangeMin, rMax = params.rangeMax;
-      const invR = (rMax !== rMin) ? 255 / (rMax - rMin) : 255;
-      const off  = -rMin * invR;
-      for (let i = 0; i < d.length; i += 4) {
-        d[i]   = clamp(Math.round(d[i]   / 255 * invR + off), 0, 255);
-        d[i+1] = clamp(Math.round(d[i+1] / 255 * invR + off), 0, 255);
-        d[i+2] = clamp(Math.round(d[i+2] / 255 * invR + off), 0, 255);
+
+      // 1:1 直接映射，无需行列换算
+      for (let i = 0, fi = 0, di = 0; i < pw * ph; i++, fi += 3, di += 4) {
+        d[di]   = clamp(Math.round((_hdrFloatBuf[fi]   - rMin) * scale), 0, 255);
+        d[di+1] = clamp(Math.round((_hdrFloatBuf[fi+1] - rMin) * scale), 0, 255);
+        d[di+2] = clamp(Math.round((_hdrFloatBuf[fi+2] - rMin) * scale), 0, 255);
       }
       hdriCtx.putImageData(imgd, 0, 0);
     }
@@ -928,8 +1155,9 @@
       _envCtx.drawImage(hdriCanvas, 0, 0, _envCanvas.width, _envCanvas.height);
       envCanvasTexture.needsUpdate = true;
 
-      /* 范围重映射（仅显示画布，不影响 env） */
-      if (params.rangeMin !== 0 || params.rangeMax !== 1) applyRangeRemap();
+      /* 构建 HDR 浮点缓冲区 & 范围重映射（仅显示画布，不影响 env） */
+      buildHdrFloatBuf();
+      applyRangeRemap(); // 始终从 HDR float 值渲染显示层，确保超出 1.0 的光源也能正确表示
       /* 伪彩色（仅显示） */
       if (params.falseColor) applyFalseColor();
       /* 球形经纬网格 */
@@ -1223,6 +1451,10 @@
     }
 
     /*  资源导入 & 导出  */
+    // 按钮触发隐藏 file input（比 label-wrapping 更可靠的跨浏览器方案）
+    if ($id('hdrFileBtn')) $id('hdrFileBtn').addEventListener('click', () => { const el = $id('hdrFileInput'); if (el) el.click(); });
+    if ($id('bgImageBtn'))  $id('bgImageBtn').addEventListener('click',  () => { const el = $id('bgImageInput'); if (el) el.click(); });
+
     const hdrLoader = new RGBELoader();
     if ($id('hdrFileInput')) $id('hdrFileInput').addEventListener('change', function () {
       const file = this.files && this.files[0];
@@ -1320,61 +1552,254 @@
       } catch (e) { setStatus('配置读取失败'); console.error(e); }
     });
 
-    /* 导出 EXR */
-    if ($id('exportHdri')) $id('exportHdri').addEventListener('click', async () => {
-      if (!EXRExporter) { setStatus('EXRExporter 未加载'); return; }
-      try {
-        setStatus('导出 EXR 中');
-        const w = _envCanvas.width, h = _envCanvas.height;
-        const px = _envCtx.getImageData(0, 0, w, h).data;
-        const data = new Float32Array(w * h * 4);
-        for (let i = 0; i < w * h; i++) {
-          data[i * 4]     = Math.pow(px[i * 4] / 255, 2.2);
-          data[i * 4 + 1] = Math.pow(px[i * 4 + 1] / 255, 2.2);
-          data[i * 4 + 2] = Math.pow(px[i * 4 + 2] / 255, 2.2);
-          data[i * 4 + 3] = 1;
+    /* ================================================================
+     * 导出 HDR 数据（EXR / Radiance HDR）
+     * 完全绕过 8-bit canvas 和 Three.js 颜色空间变换，直接从灯光参数和
+     * 背景原始数据计算 float32 精度值，intensity=999 等超高值完整保留。
+     * ================================================================ */
+
+    /**
+     * 构建导出用线性光照 float32 缓冲区（RGBA，resolution = ew×eh）。
+     * – 背景 HDRFile：直接双线性采样 hdrFileTexture.image.data（RGBELoader 已解码为线性float）
+     * – 背景 Image  ：从 hdriBgImage 读取 8-bit → gamma-2.2 解码 → 线性
+     * – 背景 Solid/Gradient：hex→gamma-2.2→线性
+     * – 灯光          ：color_linear × intensity × factor，intensity 可 > 1（如 999）
+     */
+    function buildExportHdrLinear(ew, eh) {
+      const buf = new Float32Array(ew * eh * 4);
+      function hex2lin(hex) {
+        return [
+          Math.pow(parseInt(hex.slice(1,3),16)/255, 2.2),
+          Math.pow(parseInt(hex.slice(3,5),16)/255, 2.2),
+          Math.pow(parseInt(hex.slice(5,7),16)/255, 2.2),
+        ];
+      }
+      // --- 背景 ---
+      if (params.envMode === 'HDRFile' && hdrFileTexture && hdrFileTexture.image && hdrFileTexture.image.data) {
+        // 直接双线性采样 HDR float 纹理：值可以超过 1，完整保留
+        const src = hdrFileTexture.image.data;  // Float32Array RGBA，已是线性
+        const sw = hdrFileTexture.image.width, sh = hdrFileTexture.image.height;
+        for (let row = 0; row < eh; row++) {
+          for (let col = 0; col < ew; col++) {
+            const sx = (col + 0.5) / ew * sw - 0.5;
+            const sy = (row + 0.5) / eh * sh - 0.5;
+            const x0 = Math.max(0, Math.min(sw-1, Math.floor(sx))), x1 = Math.min(sw-1, x0+1);
+            const y0 = Math.max(0, Math.min(sh-1, Math.floor(sy))), y1 = Math.min(sh-1, y0+1);
+            const fx = sx - Math.floor(sx), fy = sy - Math.floor(sy);
+            const o = (row*ew+col)*4;
+            for (let c = 0; c < 3; c++) {
+              const v00=src[(y0*sw+x0)*4+c], v10=src[(y0*sw+x1)*4+c];
+              const v01=src[(y1*sw+x0)*4+c], v11=src[(y1*sw+x1)*4+c];
+              buf[o+c] = v00*(1-fx)*(1-fy) + v10*fx*(1-fy) + v01*(1-fx)*fy + v11*fx*fy;
+            }
+            buf[o+3] = 1;
+          }
         }
-        const tex = new THREE.DataTexture(data, w, h, THREE.RGBAFormat, THREE.FloatType);
-        tex.needsUpdate = true; tex.colorSpace = THREE.LinearSRGBColorSpace;
-        const out = new EXRExporter().parse(tex, { type: THREE.FloatType });
+      } else if (params.envMode === 'Image' && hdriBgImage) {
+        const oc = document.createElement('canvas');
+        oc.width = ew; oc.height = eh;
+        const octx = oc.getContext('2d');
+        octx.drawImage(hdriBgImage, 0, 0, ew, eh);
+        const px = octx.getImageData(0, 0, ew, eh).data;
+        for (let i = 0, pi = 0; i < ew * eh; i++, pi += 4) {
+          buf[pi]   = Math.pow(px[pi]   /255, 2.2);
+          buf[pi+1] = Math.pow(px[pi+1] /255, 2.2);
+          buf[pi+2] = Math.pow(px[pi+2] /255, 2.2);
+          buf[pi+3] = 1;
+        }
+      } else {
+        for (let row = 0; row < eh; row++) {
+          const v = (row + 0.5) / eh;
+          let bgR, bgG, bgB;
+          if (params.envMode === 'Solid') {
+            [bgR, bgG, bgB] = hex2lin(params.solidColor || '#0b1120');
+          } else {
+            const [tr, tg, tb] = hex2lin(params.gradientTop    || '#1c3461');
+            const [br, bg, bb] = hex2lin(params.gradientBottom || '#050c1a');
+            bgR = tr*(1-v)+br*v; bgG = tg*(1-v)+bg*v; bgB = tb*(1-v)+bb*v;
+          }
+          for (let col = 0; col < ew; col++) {
+            const o = (row*ew+col)*4;
+            buf[o] = bgR; buf[o+1] = bgG; buf[o+2] = bgB; buf[o+3] = 1;
+          }
+        }
+      }
+      // --- 灯光（线性光照，intensity 可 >> 1）---
+      for (const lt of lights) {
+        if (lt.hidden) continue;
+        const phi0_l = (0.5 - lt.y) * Math.PI;
+        const sinP0 = Math.sin(phi0_l), cosP0 = Math.cos(phi0_l);
+        const hexCol = lt.useKelvin ? kelvinToHex(lt.kelvin || 6500) : (lt.color || '#ffffff');
+        const [cr, cg, cb] = hex2lin(hexCol);   // 线性 RGB ∈ [0, 1]
+        const inten = lt.intensity || 1;         // 可以是 999 等超高值
+        const fo = Math.max(0, lt.outerFalloff || 0);
+        const so = clamp(lt.innerSoftness || 0, 0, 0.97);
+        let maxAngR;
+        if (lt.type === 'Circle' || lt.type === 'Octagon') maxAngR = lt.size * Math.PI * (1 + fo);
+        else if (lt.type === 'Ring') maxAngR = lt.size * Math.PI * (1 + fo*0.65) + lt.size * Math.PI * (0.28 + so*0.60) * 0.5;
+        else maxAngR = lt.size * Math.PI * 1.2 * (1 + fo);
+        const pyT = Math.max(0,      Math.floor(lt.y * eh - maxAngR * eh / Math.PI) - 1);
+        const pyB = Math.min(eh - 1, Math.ceil (lt.y * eh + maxAngR * eh / Math.PI) + 1);
+        for (let row = pyT; row <= pyB; row++) {
+          const v = (row + 0.5) / eh;
+          const phi = (0.5 - v) * Math.PI;
+          const sinPhi = Math.sin(phi), cosPhi = Math.cos(phi);
+          for (let col = 0; col < ew; col++) {
+            const u = (col + 0.5) / ew;
+            let minAngD = Infinity;
+            for (let du = -1; du <= 1; du++) {
+              const dLam = (u - lt.x + du) * 2 * Math.PI;
+              const c = sinPhi*sinP0 + cosPhi*cosP0*Math.cos(dLam);
+              const d = Math.acos(Math.max(-1, Math.min(1, c)));
+              if (d < minAngD) minAngD = d;
+            }
+            let factor = 0;
+            if (lt.type === 'Circle' || lt.type === 'Octagon') {
+              const oTh = lt.size * Math.PI * (1 + fo), iTh = lt.size * Math.PI * so;
+              if (minAngD < oTh) { const t = minAngD <= iTh ? 0 : (minAngD-iTh)/(oTh-iTh); factor = (1-t)*(1-t); }
+            } else if (lt.type === 'Ring') {
+              const ringTh = lt.size * Math.PI * (1 + fo*0.65);
+              const lwTh = Math.max(1e-6, lt.size * Math.PI * (0.28 + so*0.60) * 0.5);
+              const dist = Math.abs(minAngD - ringTh);
+              if (dist < lwTh) factor = 1 - dist / lwTh;
+            } else if (lt.type === 'Rect') {
+              const rhO = lt.size * 0.65 * Math.PI * (1 + fo*0.40);
+              const rwO = lt.size * 1.2  * Math.PI * (1 + fo*0.65);
+              const dPhi = Math.abs((0.5-v)*Math.PI - phi0_l);
+              let dLam2 = Infinity;
+              for (let du = -1; du <= 1; du++) { const dl = Math.abs((u-lt.x+du)*2*Math.PI); if (dl < dLam2) dLam2 = dl; }
+              if (dPhi <= rhO && dLam2 <= rwO) {
+                const tP = so > 0 && dPhi  <= rhO*so ? 0 : (dPhi  - rhO*so) / Math.max(1e-10, rhO*(1-so));
+                const tL = so > 0 && dLam2 <= rwO*so ? 0 : (dLam2 - rwO*so) / Math.max(1e-10, rwO*(1-so));
+                factor = (1 - Math.max(tP, tL)) ** 2;
+              }
+            }
+            if (factor <= 0) continue;
+            const o = (row * ew + col) * 4;
+            buf[o]   += cr * inten * factor;  // 白光 intensity=999 → 约 999.0，远超 1
+            buf[o+1] += cg * inten * factor;
+            buf[o+2] += cb * inten * factor;
+          }
+        }
+      }
+      return buf;
+    }
+
+    /**
+     * 将 float32 RGBA 缓冲区写成最小化 OpenEXR（无压缩 scanline，B/G/R float32 通道）。
+     * 完全不经过 Three.js，无任何颜色空间变换，写入的就是原始 float32 值。
+     */
+    function writeEXR(buf, ew, eh) {
+      const enc = new TextEncoder();
+      function i32(n)  { const b=new Uint8Array(4); new DataView(b.buffer).setInt32(0,n,true); return b; }
+      function f32(n)  { const b=new Uint8Array(4); new DataView(b.buffer).setFloat32(0,n,true); return b; }
+      function str0(s) { return new Uint8Array([...enc.encode(s), 0]); }
+      function cat(arrays) {
+        const tot = arrays.reduce((s,a)=>s+a.length,0);
+        const out = new Uint8Array(tot); let off=0;
+        for (const a of arrays) { out.set(a,off); off+=a.length; }
+        return out;
+      }
+      function attr(name, type, val) { return cat([str0(name), str0(type), i32(val.length), val]); }
+
+      // chlist: channels must be alphabetical → B, G, R
+      const chls = [['B',2],['G',1],['R',0]]; // [name, buf_offset]
+      const chlistParts = [];
+      for (const [nm] of chls) {
+        chlistParts.push(str0(nm), i32(2), new Uint8Array(4), i32(1), i32(1));
+        // name\0, type=FLOAT(2), pLinear+reserved(4bytes), xSamp, ySamp
+      }
+      chlistParts.push(new Uint8Array([0])); // chlist terminator
+      const chlist = cat(chlistParts);
+
+      const box = cat([i32(0),i32(0),i32(ew-1),i32(eh-1)]);
+      const header = cat([
+        attr('channels',          'chlist',       chlist),
+        attr('compression',       'compression',  new Uint8Array([0])), // NO_COMPRESSION
+        attr('dataWindow',        'box2i',        box),
+        attr('displayWindow',     'box2i',        box),
+        attr('lineOrder',         'lineOrder',    new Uint8Array([0])), // INCREASING_Y
+        attr('pixelAspectRatio',  'float',        f32(1)),
+        attr('screenWindowCenter','v2f',           cat([f32(0),f32(0)])),
+        attr('screenWindowWidth', 'float',        f32(1)),
+        new Uint8Array([0]), // end-of-header
+      ]);
+
+      const magic   = new Uint8Array([0x76,0x2F,0x31,0x01]); // magic LE
+      const version = new Uint8Array([2,0,0,0]);              // v2, single-part scanline
+
+      const offsetTableSize    = eh * 8; // one uint64 per row
+      const bytesPerRow        = ew * 4 * chls.length; // float32 × 3ch × ew pixels
+      const scanRecordSize     = 8 + bytesPerRow;       // y(4) + dataSize(4) + data
+      const firstScanlineOffset = magic.length + version.length + header.length + offsetTableSize;
+
+      // Offset table (uint64 LE)
+      const otBuf = new ArrayBuffer(offsetTableSize);
+      const otView = new DataView(otBuf);
+      for (let row = 0; row < eh; row++)
+        otView.setBigUint64(row*8, BigInt(firstScanlineOffset + row*scanRecordSize), true);
+
+      // Scanline data
+      const scanBuf = new ArrayBuffer(eh * scanRecordSize);
+      const sv = new DataView(scanBuf);
+      for (let row = 0; row < eh; row++) {
+        const base = row * scanRecordSize;
+        sv.setInt32(base,   row,          true); // y
+        sv.setInt32(base+4, bytesPerRow,  true); // dataSize
+        let doff = base + 8;
+        for (const [, ci] of chls) {             // B then G then R (alphabetical)
+          for (let col = 0; col < ew; col++, doff += 4)
+            sv.setFloat32(doff, buf[(row*ew+col)*4 + ci], true);
+        }
+      }
+
+      return cat([magic, version, header, new Uint8Array(otBuf), new Uint8Array(scanBuf)]);
+    }
+
+    /* 导出 OpenEXR（float32，B/G/R 通道，intensity=999 → 文件中值为 999.0）*/
+    if ($id('exportHdri')) $id('exportHdri').addEventListener('click', () => {
+      try {
+        setStatus('正在生成 EXR…');
+        const ew = _envCanvas.width, eh = _envCanvas.height;
+        const data = buildExportHdrLinear(ew, eh);
+        const exr  = writeEXR(data, ew, eh);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([out], { type: 'image/x-exr' }));
+        a.href = URL.createObjectURL(new Blob([exr], { type: 'image/x-exr' }));
         a.download = 'hdri_canvas.exr'; a.click(); URL.revokeObjectURL(a.href);
-        tex.dispose(); setStatus('EXR 已导出');
+        setStatus(`EXR 已导出（${ew}×${eh}，float32，无截幅）`);
       } catch (e) { setStatus('导出 EXR 失败'); console.error(e); }
     });
 
-    /* 导出 Radiance HDR (.hdr) */
+    /* 导出 Radiance HDR (.hdr，RGBE 编码，intensity=999 → exp+mantissa 完整保留）*/
     if ($id('exportHdr')) $id('exportHdr').addEventListener('click', () => {
       try {
-        setStatus('导出 HDR 中');
-        const w = _envCanvas.width, h = _envCanvas.height;
-        const px = _envCtx.getImageData(0, 0, w, h).data;
-        const enc = new TextEncoder();
-        const header = enc.encode(`#?RADIANCE\nFORMAT=32-bit_rle_rgbe\nEXPOSURE=1.0\n\n-Y ${h} +X ${w}\n`);
-        const scan = new Uint8Array(w * h * 4);
-        for (let i = 0; i < w * h; i++) {
-          const r = px[i * 4] / 255, g = px[i * 4 + 1] / 255, b = px[i * 4 + 2] / 255;
-          const max = Math.max(r, g, b);
-          if (max <= 1e-9) { scan.set([0, 0, 0, 0], i * 4); continue; }
-          const exp = Math.ceil(Math.log2(max));
-          const scale = Math.pow(2, -exp) * 256;
-          scan[i * 4]     = clamp(Math.round(r * scale), 0, 255);
-          scan[i * 4 + 1] = clamp(Math.round(g * scale), 0, 255);
-          scan[i * 4 + 2] = clamp(Math.round(b * scale), 0, 255);
-          scan[i * 4 + 3] = clamp(exp + 128, 0, 255);
+        setStatus('正在生成 HDR…');
+        const ew = _envCanvas.width, eh = _envCanvas.height;
+        const data = buildExportHdrLinear(ew, eh);
+        const enc  = new TextEncoder();
+        const header = enc.encode(`#?RADIANCE\nFORMAT=32-bit_rle_rgbe\nEXPOSURE=1.0\n\n-Y ${eh} +X ${ew}\n`);
+        const scan = new Uint8Array(ew * eh * 4);
+        for (let i = 0; i < ew * eh; i++) {
+          const r = data[i*4], g = data[i*4+1], b = data[i*4+2];
+          const mx = Math.max(r, g, b);
+          if (mx <= 1e-32) { scan[i*4]=scan[i*4+1]=scan[i*4+2]=scan[i*4+3]=0; continue; }
+          // RGBE: mantissa = value / 2^(exp-128-8+1),  decode: (m+0.5)/256 * 2^(e-128)
+          const exp = Math.floor(Math.log2(mx)) + 1;    // exponent
+          const scale = Math.pow(2, 8 - exp);            // scale mantissa to [128,255]
+          scan[i*4]   = clamp(Math.round(r * scale), 0, 255);
+          scan[i*4+1] = clamp(Math.round(g * scale), 0, 255);
+          scan[i*4+2] = clamp(Math.round(b * scale), 0, 255);
+          scan[i*4+3] = clamp(exp + 128, 0, 255);
         }
         const a = document.createElement('a');
         a.href = URL.createObjectURL(new Blob([header, scan], { type: 'application/octet-stream' }));
         a.download = 'hdri_canvas.hdr'; a.click(); URL.revokeObjectURL(a.href);
-        setStatus('HDR 已导出');
+        setStatus(`HDR 已导出（${ew}×${eh}，RGBE，无截幅）`);
       } catch (e) { setStatus('导出 HDR 失败'); console.error(e); }
     });
 
-    if ($id('exportPreview')) $id('exportPreview').addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.href = glCanvas.toDataURL('image/png'); a.download = 'hdri_preview.png'; a.click();
-    });
+    // PNG 导出已移除（8-bit 无法保存 HDR 精度，请使用 EXR 或 HDR 格式）
+    if ($id('exportPreview')) $id('exportPreview').style.display = 'none';
 
     /*  画布交互：拖动灯光（保留抓取偏移，防止灯光跳位）、滚轮调大小  */
     function pointerToUV(ev) {
@@ -1453,16 +1878,84 @@
     const ctxMenuEl   = $id('hdrCtxMenu');
 
     /**
-     * 读取画布当前像素并返回 sRGB + linear float32 值。
-     * canvas 已通过 hdriCtx.filter 烘焙了 brightness/contrast/saturate，
-     * 所以读出的 8-bit 值代表 "视觉上看到的" 颜色；
-     * Linear 解码还原 sRGB γ2.2；HDR×EV 再乘以 2^brightness 估算真实 HDR 强度。
+     * 逐灯光解析取样：在 (u,v) 处对所有灯光求解析和，返回真正的 HDR float 值。
+     * 不受 canvas 8-bit 截幅限制，intensity=999 时会返回 999。
+     */
+    function sampleHdrAt(u, v) {
+      const phi    = (0.5 - v) * Math.PI;
+      const sinPhi = Math.sin(phi), cosPhi = Math.cos(phi);
+      let hr = 0, hg = 0, hb = 0;
+
+      for (const lt of lights) {
+        if (lt.hidden) continue;
+
+        const phi0_l  = (0.5 - lt.y) * Math.PI;
+        const sinP0   = Math.sin(phi0_l), cosP0 = Math.cos(phi0_l);
+
+        // Find angular distance, considering horizontal wrap-around (360°)
+        let minAngD = Infinity;
+        for (const du of [0, -1, 1]) {
+          const dLam  = (u - lt.x + du) * 2 * Math.PI;
+          const cosAD = sinPhi * sinP0 + cosPhi * cosP0 * Math.cos(dLam);
+          const angD  = Math.acos(Math.max(-1, Math.min(1, cosAD)));
+          if (angD < minAngD) minAngD = angD;
+        }
+
+        let factor = 0;
+        const lry = lt.size;
+
+        if (lt.type === 'Circle' || lt.type === 'Octagon') {
+          const fo  = Math.max(0, lt.outerFalloff || 0);
+          const so  = Math.max(0, lt.innerSoftness || 0);
+          const oTh = lry * Math.PI * (1 + fo);
+          const iTh = lry * Math.PI * so;
+          if (minAngD < oTh) {
+            if (minAngD <= iTh) {
+              factor = 1.0;
+            } else {
+              const t = (minAngD - iTh) / (oTh - iTh);
+              factor = (t <= 0.7) ? (1 - 0.45 * t / 0.7) : 0.55 * (1 - (t - 0.7) / 0.3);
+            }
+          }
+        } else if (lt.type === 'Ring') {
+          const fo     = Math.max(0, lt.outerFalloff || 0);
+          const so     = Math.max(0, lt.innerSoftness || 0);
+          const ringTh = lry * Math.PI * (1 + fo * 0.65);
+          const lwTh   = Math.max(0.001, lry * Math.PI * (0.28 + so * 0.60) * 0.5);
+          const dist   = Math.abs(minAngD - ringTh);
+          if (dist < lwTh) factor = 1 - dist / lwTh;
+        } else if (lt.type === 'Rect') {
+          const fo  = Math.max(0, lt.outerFalloff || 0);
+          const so  = Math.max(0, lt.innerSoftness || 0);
+          const rwTh = lry * Math.PI * 1.2 * (1 + fo * 0.65);
+          const rhTh = lry * Math.PI * 0.65 * (1 + fo * 0.40);
+          const maxR = Math.max(rwTh, rhTh);
+          if (minAngD < maxR) {
+            const blurNorm = lry * Math.PI * (0.22 + so * 0.45 + fo * 0.35);
+            factor = Math.max(0, 1 - (minAngD - maxR * (1 - blurNorm / maxR)) / blurNorm);
+          }
+        }
+
+        if (factor <= 0) continue;
+        const hexCol = lt.useKelvin ? kelvinToHex(lt.kelvin || 6500) : (lt.color || '#ffffff');
+        const cr = parseInt(hexCol.slice(1, 3), 16) / 255;
+        const cg = parseInt(hexCol.slice(3, 5), 16) / 255;
+        const cb = parseInt(hexCol.slice(5, 7), 16) / 255;
+        const inten = lt.intensity || 1;
+        hr += cr * inten * factor;
+        hg += cg * inten * factor;
+        hb += cb * inten * factor;
+      }
+      return { hr, hg, hb };
+    }
+
+    /**
+     * 读取画布当前像素并返回 sRGB 8-bit、linear float 及解析 HDR float。
      */
     function getPixelInfo(ev) {
       const r  = hdriCanvas.getBoundingClientRect();
       const u  = clamp((ev.clientX - r.left) / r.width,  0, 1);
       const v  = clamp((ev.clientY - r.top)  / r.height, 0, 1);
-      // Read from _envCanvas (raw float values, unaffected by Range/FalseColor display overlay)
       const pw = _envCanvas.width, ph = _envCanvas.height;
       const px = clamp(Math.round(u * pw), 0, pw - 1);
       const py = clamp(Math.round(v * ph), 0, ph - 1);
@@ -1470,25 +1963,24 @@
       const toLin = (b) => Math.pow(b / 255, 2.2);
       const [r8, g8, b8] = [d[0], d[1], d[2]];
       const [rl, gl, bl] = [toLin(r8), toLin(g8), toLin(b8)];
-      const evMult = Math.pow(2, params.brightness);
       const lon = Math.round(u * 360);
       const lat = Math.round((0.5 - v) * 180);
       const hex = '#' + [r8, g8, b8].map((x) => x.toString(16).padStart(2, '0')).join('');
-      return { r8, g8, b8, rl, gl, bl, evMult, lon, lat, hex, u, v };
+      const hdr = sampleHdrAt(u, v);
+      return { r8, g8, b8, rl, gl, bl, lon, lat, hex, u, v, hdr };
     }
 
     hdriCanvas.addEventListener('mousemove', (ev) => {
       if (!inspectorEl) return;
       const p = getPixelInfo(ev);
       const f3 = (v) => v.toFixed(3);
-      const f4 = (v) => v.toFixed(4);
+      const fH = (v) => v < 10 ? v.toFixed(3) : v.toFixed(1);  // HDR: 3 decimals for <10, 1 for big values
       inspectorEl.innerHTML =
         `<div class="insp-hex"><div class="insp-swatch" style="background:${p.hex}"></div>${p.hex}</div>` +
         `<div class="insp-row">sRGB <b>${p.r8},${p.g8},${p.b8}</b></div>` +
         `<div class="insp-row">Linear <b>${f3(p.rl)}, ${f3(p.gl)}, ${f3(p.bl)}</b></div>` +
-        `<div class="insp-row">HDR×EV <b>${f3(p.rl*p.evMult)}, ${f3(p.gl*p.evMult)}, ${f3(p.bl*p.evMult)}</b></div>` +
+        `<div class="insp-row">HDR <b>${fH(p.hdr.hr)}, ${fH(p.hdr.hg)}, ${fH(p.hdr.hb)}</b></div>` +
         `<div class="insp-row">经 ${p.lon}°  纬 ${p.lat}°</div>`;
-      // 鼠标右侧/左侧自动切换
       const wr = inspectorEl.parentElement.getBoundingClientRect();
       const relX = ev.clientX - wr.left + 14;
       const relY = ev.clientY - wr.top  + 14;
@@ -1506,13 +1998,13 @@
       ev.preventDefault();
       const p = getPixelInfo(ev);
       const f4 = (v) => v.toFixed(4);
+      const fH = (v) => v < 10 ? v.toFixed(4) : v.toFixed(2);
       const lumL = 0.2126 * p.rl + 0.7152 * p.gl + 0.0722 * p.bl;
       const rows = [
         `sRGB (8-bit):  R=${p.r8}  G=${p.g8}  B=${p.b8}`,
         `sRGB (0-1):    R=${f4(p.r8/255)}  G=${f4(p.g8/255)}  B=${f4(p.b8/255)}`,
         `Linear:        R=${f4(p.rl)}  G=${f4(p.gl)}  B=${f4(p.bl)}`,
-        `HDR (×EV ${params.brightness >= 0 ? '+' : ''}${params.brightness.toFixed(1)}):  ` +
-          `R=${f4(p.rl*p.evMult)}  G=${f4(p.gl*p.evMult)}  B=${f4(p.bl*p.evMult)}`,
+        `HDR (float):   R=${fH(p.hdr.hr)}  G=${fH(p.hdr.hg)}  B=${fH(p.hdr.hb)}`,
         `亮度 (linear): ${f4(lumL)}`,
         `经 ${p.lon}°  纬 ${p.lat}°`,
       ];
@@ -1546,22 +2038,41 @@
 
     /* 显示范围重映射（Range 控件） */
     const rmInEl = $id('rangeMinInput'), rmaxEl = $id('rangeMaxInput');
+
+    // 动态上限：取所有灯光最大亮度 × 1.5，确保拖动条能覆盖整个 HDR 范围
+    function getAutoMax() {
+      const maxI = lights.reduce((m, l) => Math.max(m, l.intensity || 1), 1);
+      // 取一个「整齐」的上限：10 的幂次附近
+      const raw = Math.max(1, maxI * 1.5);
+      const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+      return Math.ceil(raw / mag) * mag;
+    }
+
     function updateRangeBar() {
       const fill = $id('rangeBarFill');
       if (!fill) return;
-      const lo = Math.max(0, Math.min(1, params.rangeMin));
-      const hi = Math.max(0, Math.min(1, params.rangeMax));
+      const autoMax = getAutoMax();
+      // thumb / fill 位置按 [0, autoMax] 归一化到 [0%, 100%]
+      const lo = clamp(params.rangeMin / autoMax, 0, 1);
+      const hi = clamp(params.rangeMax / autoMax, 0, 1);
       fill.style.left  = `${lo * 100}%`;
       fill.style.width = `${Math.max(0, hi - lo) * 100}%`;
+      const tl = $id('rangThumbL'), tr = $id('rangThumbR');
+      if (tl) tl.style.left = `${lo * 100}%`;
+      if (tr) tr.style.left = `${hi * 100}%`;
     }
     const applyRange = () => {
-      params.rangeMin = parseFloat(rmInEl ? rmInEl.value : 0) || 0;
-      params.rangeMax = parseFloat(rmaxEl ? rmaxEl.value : 1) || 1;
+      let minV = parseFloat(rmInEl ? rmInEl.value : '0');
+      let maxV = parseFloat(rmaxEl ? rmaxEl.value : '1');
+      if (isNaN(minV)) minV = 0;
+      if (isNaN(maxV)) maxV = 1;
+      params.rangeMin = Math.max(0, minV);
+      params.rangeMax = Math.max(params.rangeMin + 0.001, maxV);
       updateRangeBar();
       drawHdriCanvas();
     };
-    if (rmInEl)  rmInEl.addEventListener('change', applyRange);
-    if (rmaxEl)  rmaxEl.addEventListener('change', applyRange);
+    if (rmInEl) { rmInEl.addEventListener('change', applyRange); rmInEl.addEventListener('input', applyRange); }
+    if (rmaxEl) { rmaxEl.addEventListener('change', applyRange); rmaxEl.addEventListener('input', applyRange); }
     const rrBtn = $id('rangeResetBtn');
     if (rrBtn) rrBtn.addEventListener('click', () => {
       params.rangeMin = 0; params.rangeMax = 1;
@@ -1569,6 +2080,64 @@
       if (rmaxEl) rmaxEl.value = '1.00';
       updateRangeBar(); drawHdriCanvas();
     });
+
+    /* Range bar 拖动滑块 */
+    const rTrack = $id('rangeBarTrack');
+    if (rTrack) {
+      // Inject two draggable thumb handles
+      const thumbL = document.createElement('div');
+      const thumbR = document.createElement('div');
+      thumbL.id = 'rangThumbL'; thumbL.className = 'range-thumb range-thumb-l'; thumbL.title = '拖动最小值';
+      thumbR.id = 'rangThumbR'; thumbR.className = 'range-thumb range-thumb-r'; thumbR.title = '拖动最大值';
+      rTrack.appendChild(thumbL); rTrack.appendChild(thumbR);
+
+      let _dh = null; // drag handle: 'min' | 'max'
+
+      function getTrackU(clientX) {
+        const r = rTrack.getBoundingClientRect();
+        return Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+      }
+
+      function commitRangeDrag(u) {
+        // u ∈ [0,1]（轨道归一化），乘以 autoMax 得到真实 HDR float 值
+        const autoMax = getAutoMax();
+        const val = u * autoMax;
+        if (_dh === 'min') {
+          params.rangeMin = clamp(val, 0, params.rangeMax - 0.001);
+          if (rmInEl) rmInEl.value = params.rangeMin.toFixed(3);
+        } else {
+          params.rangeMax = Math.max(params.rangeMin + 0.001, val);
+          if (rmaxEl) rmaxEl.value = params.rangeMax.toFixed(3);
+        }
+        updateRangeBar(); drawHdriCanvas();
+      }
+
+      function startDrag(e, handle) {
+        _dh = handle;
+        (e.currentTarget || rTrack).setPointerCapture(e.pointerId);
+        commitRangeDrag(getTrackU(e.clientX));
+        e.preventDefault(); e.stopPropagation();
+      }
+      function onPM(e) { if (_dh) { commitRangeDrag(getTrackU(e.clientX)); e.preventDefault(); } }
+      function onPU()  { _dh = null; }
+
+      thumbL.addEventListener('pointerdown', (e) => startDrag(e, 'min'));
+      thumbR.addEventListener('pointerdown', (e) => startDrag(e, 'max'));
+      thumbL.addEventListener('pointermove', onPM);
+      thumbR.addEventListener('pointermove', onPM);
+      thumbL.addEventListener('pointerup', onPU);
+      thumbR.addEventListener('pointerup', onPU);
+
+      // Click on track (not on thumb) → set whichever end is closer
+      rTrack.addEventListener('pointerdown', (e) => {
+        if (e.target === thumbL || e.target === thumbR) return;
+        const u  = getTrackU(e.clientX);
+        const lo = clamp(params.rangeMin, 0, 1), hi = clamp(params.rangeMax, 0, 1);
+        startDrag(e, Math.abs(u - lo) < Math.abs(u - hi) ? 'min' : 'max');
+      });
+      rTrack.addEventListener('pointermove', onPM);
+      rTrack.addEventListener('pointerup',   onPU);
+    }
     updateRangeBar();
 
     /*  响应式尺寸  */

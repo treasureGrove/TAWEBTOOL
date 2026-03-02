@@ -1388,10 +1388,13 @@ button.secondary {
 /* 强制 .panel-section > .hdr-file-btn, buttons 全宽 */
 .panel-section > .hdr-file-btn,
 .panel-section > button {
+  display: flex;
   width: 100%;
+  max-width: 100%;
   justify-content: center;
   text-align: center;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* light picker 全宽，浅色选中项 */
@@ -1602,7 +1605,7 @@ button.secondary {
   background: rgba(30, 58, 80, 0.9);
   border: 1px solid rgba(56, 189, 248, 0.2);
   position: relative;
-  overflow: hidden;
+  cursor: pointer;
 }
 
 .range-bar-fill {
@@ -1611,7 +1614,30 @@ button.secondary {
   left: 0%; width: 100%;
   background: linear-gradient(90deg, rgba(34, 211, 238, 0.55), rgba(56, 189, 248, 0.7));
   border-radius: 3px;
-  transition: left 0.08s, width 0.08s;
+  pointer-events: none;
+}
+
+/* Draggable thumb handles on the range bar */
+.range-thumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.92);
+  border: 1.5px solid rgba(186, 230, 253, 0.85);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  cursor: ew-resize;
+  touch-action: none;
+  z-index: 2;
+  transition: background 0.1s;
+}
+
+.range-thumb:hover,
+.range-thumb:active {
+  background: rgba(186, 230, 253, 0.98);
+  border-color: #fff;
 }
 
 .range-reset-btn {
