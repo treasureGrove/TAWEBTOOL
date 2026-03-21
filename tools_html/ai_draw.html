@@ -7,12 +7,12 @@
     <title>AI绘画</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/ai_draw.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
+    <script src="../js/ai_draw.js" defer></script>
+
     <div id="main_bg"></div>
     <div class="left_menu">
         <ul class="menu_root">
@@ -36,7 +36,7 @@
                     <li><a href="hdr_editor.html">HDR编辑器</a></li>
                     <li><a href="ps_online.html">在线PS</a></li>
                     <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
+                    <li><a href="model_previewer.html">模型预览器</a></li>
                 </ul>
             </li>
             <li class="left_item">
@@ -64,16 +64,15 @@
                     <li><a href="cloud_music.html">网易云音乐</a></li>
                 </ul>
             </li>
-            <li class="left_item">关于
-
-            </li>
+            <li class="left_item">关于</li>
         </ul>
     </div>
+
     <div class="top_search">
         <input type="text" placeholder="搜索">
     </div>
-    <div id="panel" data-local-tool="ai_draw" data-tool-title="AI绘画"></div>
 
+    <main id="aiDrawApp" class="ai-draw-page"></main>
 </body>
 
 </html>
