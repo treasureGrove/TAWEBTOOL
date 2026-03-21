@@ -142,6 +142,7 @@
   }
 
 
+
   function initChatTool(host) {
     if (typeof window.initChatgptTool === 'function') {
       return window.initChatgptTool(host);
