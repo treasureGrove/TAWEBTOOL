@@ -1,0 +1,149 @@
+#main_bg {
+  background-image: url('../assets/images/background/index_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: fixed;
+  min-height: 100vh;
+  width: 100%;
+  z-index: -1;
+}
+
+.cloud-panel {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.cm-layout {
+  display: grid;
+  gap: 12px;
+}
+
+.cm-hero {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 12px;
+  align-items: center;
+  background: linear-gradient(135deg, #fb7185, #ef4444 55%, #991b1b);
+  border-radius: 12px;
+  padding: 16px;
+  color: #fff;
+}
+
+.cm-hero h1 {
+  margin-bottom: 4px;
+}
+
+.cm-status-line {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #ffe4e6;
+}
+
+.cm-account {
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+}
+
+.cm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cm-card {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.cm-card h3 {
+  margin-bottom: 8px;
+  color: #991b1b;
+}
+
+.cm-input,
+.cm-textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 13px;
+  margin: 6px 0 10px;
+}
+
+.cm-textarea {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.cm-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cm-row button {
+  border: none;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #fff;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.cm-tip {
+  margin-top: 10px;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cm-list,
+.cm-track-list {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cm-list li,
+.cm-track-list li {
+  display: grid;
+  grid-template-columns: 1.3fr .9fr auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px;
+  font-size: 13px;
+}
+
+.cm-list li {
+  cursor: pointer;
+}
+
+.cm-list li.active,
+.cm-track-list li.active {
+  background: #ffe4e6;
+  border-color: #fda4af;
+}
+
+.cm-now {
+  font-size: 18px;
+  font-weight: 700;
+  color: #b91c1c;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 1100px) {
+  .cm-hero,
+  .cm-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
