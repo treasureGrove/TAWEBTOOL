@@ -4,15 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型预览器</title>
+    <title>TA知识库</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/TA_wiki.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu">
         <ul class="menu_root">
@@ -36,7 +34,7 @@
                     <li><a href="hdr_editor.html">HDR编辑器</a></li>
                     <li><a href="ps_online.html">在线PS</a></li>
                     <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
+                    <li><a href="model_previewer.html">模型预览器</a></li>
                 </ul>
             </li>
             <li class="left_item">
@@ -47,7 +45,7 @@
                     <li><a href="video_format_cover.html">视频格式转换</a></li>
                 </ul>
             </li>
-            <li class="left_item">
+            <li class="left_item open">
                 <div class="left_icon" id="left_icon1"></div>
                 <div class="item_context">TA工具</div>
                 <ul class="sub_menu">
@@ -55,7 +53,7 @@
                     <li><a href="ue_material_picture.html">UE材质库</a></li>
                     <li><a href="physics_light.html">物理光照计算器</a></li>
                     <li><a href="TA_wiki.html">TA知识库</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
+                    <li><a href="TA_wiki_admin.html">TA知识库后台</a></li>
                 </ul>
             </li>
             <li class="left_item">
@@ -65,16 +63,35 @@
                     <li><a href="cloud_music.html">网易云音乐</a></li>
                 </ul>
             </li>
-            <li class="left_item">关于
-
-            </li>
+            <li class="left_item">关于</li>
         </ul>
     </div>
-    <div class="top_search">
-        <input type="text" placeholder="搜索">
-    </div>
-    <div id="panel" data-local-tool="TA_wiki" data-tool-title="模型预览器"></div>
 
+    <div id="panel" class="wiki-panel">
+        <header class="wiki-header">
+            <div>
+                <h1>TA 知识库</h1>
+                <p>使用开源 <strong>Fuse.js</strong> + <strong>Marked</strong> 构建可搜索知识库，支持后台持续新增内容。</p>
+            </div>
+            <a class="admin-link" href="TA_wiki_admin.html">进入后台维护</a>
+        </header>
+
+        <div class="wiki-toolbar">
+            <input id="wikiSearch" type="search" placeholder="搜索关键词，例如：roughness、后处理、drawcall" />
+            <select id="wikiCategory"></select>
+            <span id="resultHint"></span>
+        </div>
+
+        <section class="wiki-layout">
+            <aside class="wiki-list" id="wikiList"></aside>
+            <article class="wiki-content" id="wikiContent">请选择左侧知识条目。</article>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="../js/ta_wiki_data.js"></script>
+    <script src="../js/ta_wiki.js"></script>
 </body>
 
 </html>
