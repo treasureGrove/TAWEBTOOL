@@ -255,6 +255,29 @@
     render();
   }
 
+  async function syncInlinePlayer() {
+    const audio = document.getElementById('inlineAudio');
+    const cur = state.tracks[state.activeIndex];
+    if (!audio || !cur) return;
+
+    try {
+      const url = await ensureTrackUrl(cur);
+      if (audio.dataset.trackId !== String(cur.id) || audio.src !== url) {
+        audio.src = url;
+        audio.dataset.trackId = String(cur.id);
+      }
+      if (state.playing) {
+        await audio.play();
+      } else {
+        audio.pause();
+      }
+    } catch (error) {
+      state.playing = false;
+      state.statusText = error.message;
+      render();
+    }
+  }
+
   function getFilteredTracks() {
     const input = document.getElementById('cloudSearchInput');
     const keyword = (input?.value || '').trim().toLowerCase();
@@ -276,8 +299,8 @@
       <section class="cm-layout">
         <header class="cm-hero">
           <div>
-            <h1>网易云音乐 · 一起听（API版）</h1>
-            <p>支持读取账号歌单、最近播放，并弹出悬浮播放器离开页面后继续听。</p>
+            <h1>网易云音乐（API版）</h1>
+            <p>支持读取账号歌单、最近播放，点击歌曲即可直接播放。</p>
             <p class="cm-status-line">${state.loading ? '加载中...' : state.statusText}</p>
           </div>
           <div class="cm-account">${me ? `账号：${me.nickname} (uid=${me.userId})` : '账号：未登录'}</div>
@@ -301,7 +324,7 @@
             <h3>2) 我的数据</h3>
             <div class="cm-row">
               <button id="loadRecentBtn">读取最近播放</button>
-              <button id="openPopupBtn">${state.popupOnline ? '聚焦悬浮窗' : '打开悬浮窗'}</button>
+              <button id="openPopupBtn">${state.popupOnline ? '聚焦悬浮窗' : '打开悬浮窗(可选)'}</button>
             </div>
             <ul id="playlistList" class="cm-list"></ul>
           </div>
@@ -316,13 +339,14 @@
             <h3>正在播放（页面控制）</h3>
             <div class="cm-now">${cur.name}</div>
             <div>${cur.artist} · ${msToClock(cur.duration)}</div>
+            <audio id="inlineAudio" class="cm-inline-audio" controls></audio>
             <div class="cm-row">
               <button id="prevBtn">上一首</button>
               <button id="toggleBtn">${state.playing ? '暂停' : '播放'}</button>
               <button id="nextBtn">下一首</button>
-              <button id="syncPopupBtn">同步到悬浮窗</button>
+              <button id="syncPopupBtn">同步到悬浮窗(可选)</button>
             </div>
-            <p class="cm-tip">提示：网易云“当前正在播放”官方接口并不公开，页面用“最近播放 + 当前控制状态”做近似同步。</p>
+            <p class="cm-tip">提示：点击左侧歌曲会立即切换并在本页面播放；悬浮窗仅作为可选扩展。</p>
           </div>
         </section>
       </section>
@@ -351,7 +375,8 @@
         state.playing = true;
         saveLocal();
         render();
-        await syncPopup('sync', true);
+        await syncInlinePlayer();
+        if (popupExists()) await syncPopup('sync', false);
       });
     });
 
@@ -376,25 +401,61 @@
       state.activeIndex = (state.activeIndex - 1 + state.tracks.length) % state.tracks.length;
       state.playing = true;
       saveLocal();
-      await syncPopup('prev', true);
+      render();
+      await syncInlinePlayer();
+      if (popupExists()) await syncPopup('prev', false);
     });
 
     document.getElementById('nextBtn').addEventListener('click', async () => {
       state.activeIndex = (state.activeIndex + 1) % state.tracks.length;
       state.playing = true;
       saveLocal();
-      await syncPopup('next', true);
+      render();
+      await syncInlinePlayer();
+      if (popupExists()) await syncPopup('next', false);
     });
 
     document.getElementById('toggleBtn').addEventListener('click', async () => {
       state.playing = !state.playing;
       saveLocal();
-      await syncPopup('toggle', true);
+      render();
+      await syncInlinePlayer();
+      if (popupExists()) await syncPopup('toggle', false);
     });
 
     document.getElementById('syncPopupBtn').addEventListener('click', async () => {
       await syncPopup('sync', true);
     });
+
+    const inlineAudio = document.getElementById('inlineAudio');
+    if (inlineAudio) {
+      inlineAudio.onplay = async () => {
+        if (!state.playing) {
+          state.playing = true;
+          saveLocal();
+          render();
+          if (popupExists()) await syncPopup('play', false);
+        }
+      };
+      inlineAudio.onpause = async () => {
+        if (state.playing) {
+          state.playing = false;
+          saveLocal();
+          render();
+          if (popupExists()) await syncPopup('pause', false);
+        }
+      };
+      inlineAudio.onended = async () => {
+        state.activeIndex = (state.activeIndex + 1) % state.tracks.length;
+        state.playing = true;
+        saveLocal();
+        render();
+        await syncInlinePlayer();
+        if (popupExists()) await syncPopup('ended', false);
+      };
+    }
+
+    syncInlinePlayer();
   }
 
   function bindEvents() {
@@ -409,6 +470,7 @@
       if (d.action === 'pause') state.playing = false;
       saveLocal();
       render();
+      await syncInlinePlayer();
       await syncPopup('sync', false);
     });
 
