@@ -15,6 +15,11 @@
     detail: { label: '细节优先', steps: 40, cfg: 8, sampler: 'dpm++_2m' }
   };
 
+  const API_BASE_CANDIDATES = [
+    'https://image.pollinations.ai/prompt/',
+    'https://pollinations.ai/prompt/'
+  ];
+
   function initAiDrawPage(host) {
     host.innerHTML = `
       <section class="ai-draw-wrap">
@@ -146,7 +151,7 @@
       </section>
     `;
 
-    const state = { lastResults: [], history: [] };
+    const state = { lastResults: [], history: [], workingBase: API_BASE_CANDIDATES[0] };
 
     const promptEl = $('drawPrompt');
     const negativeEl = $('drawNegative');
@@ -216,12 +221,54 @@
       });
     }
 
-    function buildImageUrl(params) {
+    function buildImageUrl(params, baseUrl) {
       const mergedPrompt = [params.prompt, params.negative ? `Negative prompt: ${params.negative}` : '']
         .filter(Boolean)
         .join(', ');
       const encoded = encodeURIComponent(mergedPrompt);
-      return `https://image.pollinations.ai/prompt/${encoded}?model=${encodeURIComponent(params.model)}&width=${params.width}&height=${params.height}&seed=${params.seed}&steps=${params.steps}&guidance=${params.cfg}&sampler=${encodeURIComponent(params.sampler)}&nologo=true`;
+      const base = baseUrl || state.workingBase || API_BASE_CANDIDATES[0];
+      return `${base}${encoded}?model=${encodeURIComponent(params.model)}&width=${params.width}&height=${params.height}&seed=${params.seed}&steps=${params.steps}&guidance=${params.cfg}&sampler=${encodeURIComponent(params.sampler)}&nologo=true`;
+    }
+
+    function preloadImage(url, timeoutMs) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const timer = window.setTimeout(() => {
+          img.src = '';
+          reject(new Error('请求超时'));
+        }, timeoutMs || 18000);
+
+        img.onload = () => {
+          window.clearTimeout(timer);
+          resolve();
+        };
+        img.onerror = () => {
+          window.clearTimeout(timer);
+          reject(new Error('图片加载失败'));
+        };
+        img.referrerPolicy = 'no-referrer';
+        img.src = url;
+      });
+    }
+
+    async function resolveWorkingBase(params, seed) {
+      const orderedBases = [state.workingBase].concat(API_BASE_CANDIDATES)
+        .filter(Boolean)
+        .filter((value, index, arr) => arr.indexOf(value) === index);
+
+      for (let i = 0; i < orderedBases.length; i += 1) {
+        const base = orderedBases[i];
+        const probeUrl = buildImageUrl({ ...params, seed }, base);
+        try {
+          await preloadImage(probeUrl, 12000);
+          state.workingBase = base;
+          return base;
+        } catch (_) {
+          // 尝试下一候选地址
+        }
+      }
+
+      throw new Error('当前网络无法连接绘图服务地址，请稍后重试');
     }
 
     function renderResults() {
@@ -285,16 +332,11 @@
 
       try {
         const baseSeed = getSeed();
+        const workingBase = await resolveWorkingBase(params, baseSeed);
         for (let i = 0; i < count; i += 1) {
           const seed = lockSeedEl.checked ? baseSeed : baseSeed + i;
-          const url = buildImageUrl({ ...params, seed });
-          await new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = resolve;
-            img.onerror = reject;
-            img.referrerPolicy = 'no-referrer';
-            img.src = url;
-          });
+          const url = buildImageUrl({ ...params, seed }, workingBase);
+          await preloadImage(url);
           state.lastResults.push({ url, seed });
           renderResults();
           setStatus(`已生成 ${i + 1}/${count} 张`);
@@ -384,6 +426,8 @@
     if (!host) return;
     initAiDrawPage(host);
   }
+
+  window.initAiDrawPage = initAiDrawPage;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);

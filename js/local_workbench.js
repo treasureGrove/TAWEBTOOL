@@ -8,7 +8,8 @@
     shader_library: { title: 'Shader 函数库', intro: '常用 GLSL 片段检索与复制。' },
     model_previewer: { title: '模型预览器', intro: '本地 GLB/GLTF 预览（CDN: model-viewer）。' },
     ps_online: { title: '在线 PS', intro: '开箱即用 Photopea。' },
-    video_cut: { title: '视频剪辑工作台', intro: '基于开源 FFmpeg.wasm 的浏览器本地剪辑与多模式导出。' }
+    video_cut: { title: '视频剪辑工作台', intro: '基于开源 FFmpeg.wasm 的浏览器本地剪辑与多模式导出。' },
+    ai_draw: { title: 'AI 绘画工作台', intro: 'Prompt 驱动的快速出图工作流，支持预设、历史和参数复制。' }
   };
 
   const designToolLinks = {
@@ -151,6 +152,14 @@
     host.innerHTML = '<p class="hint">ChatGPT 工具脚本未加载，请刷新页面重试。</p>';
   }
 
+  function initAiDrawTool(host) {
+    if (typeof window.initAiDrawPage === 'function') {
+      return window.initAiDrawPage(host);
+    }
+
+    host.innerHTML = '<p class="hint">AI 绘画工具脚本未加载，请刷新页面重试。</p>';
+  }
+
   function renderDefault(host, key) {
     const url = designToolLinks[key];
     if (url) return renderDesignToolSection(host, url);
@@ -174,6 +183,7 @@
     if (key === 'ps_online') return initPsOnline(main);
     if (key === 'video_cut') return initVideoCut(main);
     if (key === 'chatgpt') return initChatTool(main);
+    if (key === 'ai_draw') return initAiDrawTool(main);
 
     renderDefault(main, key);
   }
