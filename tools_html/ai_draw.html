@@ -6,12 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI绘画</title>
     <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/local_workbench.css">
     <link rel="stylesheet" href="../css/ai_draw.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
     <script src="../js/ai_draw.js" defer></script>
+    <script src="../js/local_workbench.js" defer></script>
 
     <div id="main_bg"></div>
     <div class="left_menu">
@@ -72,7 +74,7 @@
         <input type="text" placeholder="搜索">
     </div>
 
-    <main id="aiDrawApp" class="ai-draw-page"></main>
+    <div id="panel" data-local-tool="ai_draw" data-tool-title="AI绘画"></div>
 </body>
 
 </html>

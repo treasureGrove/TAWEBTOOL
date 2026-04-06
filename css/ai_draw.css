@@ -10,11 +10,6 @@
     z-index: -1;
 }
 
-.ai-draw-page {
-    margin-left: 220px;
-    padding: 72px 20px 20px;
-}
-
 .ai-draw-wrap {
     width: 100%;
 }
@@ -210,11 +205,6 @@
 }
 
 @media (max-width: 1180px) {
-    .ai-draw-page {
-        margin-left: 0;
-        padding-top: 110px;
-    }
-
     .ai-draw-grid {
         grid-template-columns: 1fr;
     }
