@@ -243,9 +243,9 @@
         const i = (y * w + x) * 4;
         const u = x / Math.max(1, w - 1);
         const v = y / Math.max(1, h - 1);
-        out.data[i] = channels.r ? sampleComponent(channels.r.src, u * channels.r.tx, v * channels.r.ty, channels.r.wrap, 'lum') : 0;
-        out.data[i + 1] = channels.g ? sampleComponent(channels.g.src, u * channels.g.tx, v * channels.g.ty, channels.g.wrap, 'lum') : 0;
-        out.data[i + 2] = channels.b ? sampleComponent(channels.b.src, u * channels.b.tx, v * channels.b.ty, channels.b.wrap, 'lum') : 0;
+        out.data[i] = channels.r ? sampleComponent(channels.r.src, u * channels.r.tx, v * channels.r.ty, channels.r.wrap, 0) : 0;
+        out.data[i + 1] = channels.g ? sampleComponent(channels.g.src, u * channels.g.tx, v * channels.g.ty, channels.g.wrap, 1) : 0;
+        out.data[i + 2] = channels.b ? sampleComponent(channels.b.src, u * channels.b.tx, v * channels.b.ty, channels.b.wrap, 2) : 0;
         out.data[i + 3] = channels.a ? sampleComponent(channels.a.src, u * channels.a.tx, v * channels.a.ty, channels.a.wrap, 3) : 255;
       }
     }
