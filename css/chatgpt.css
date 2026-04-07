@@ -11,21 +11,24 @@
 }
 
 #panel.chatgpt-panel {
-    --chat-surface: rgba(15, 23, 42, 0.92);
-    --chat-surface-2: rgba(30, 41, 59, 0.96);
-    --chat-border: rgba(148, 163, 184, 0.24);
+    --chat-surface: rgba(15, 23, 42, 0.55);
+    --chat-surface-2: rgba(30, 41, 59, 0.6);
+    --chat-border: rgba(148, 163, 184, 0.2);
     --chat-text: #e2e8f0;
     --chat-muted: #94a3b8;
     --chat-accent: #2563eb;
     --chat-accent-strong: #1d4ed8;
     overflow: hidden;
+    padding: 0 !important;
+    background: var(--chat-surface) !important;
+    backdrop-filter: blur(12px);
 }
 
 #panel.chatgpt-panel .tool-shell {
-    gap: 12px;
+    gap: 0;
     height: 100%;
     min-height: 0;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr;
 }
 
 #panel.chatgpt-panel .tool-head {
@@ -56,10 +59,10 @@
     max-width: none;
     margin: 0;
     background: var(--chat-surface);
-    border: 1px solid var(--chat-border);
-    border-radius: 16px;
+    border: none;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+    box-shadow: none;
 }
 
 .chat-messages {
@@ -79,13 +82,16 @@
     justify-content: center;
     text-align: center;
     color: var(--chat-muted);
-    padding: 48px 18px 36px;
+    padding: 20px 18px;
+    min-height: 0;
 }
 
 .chat-home {
     width: 100%;
     max-width: 720px;
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 22px;
 }
 
@@ -273,7 +279,7 @@
 
 .chat-input-wrap {
     border-top: 1px solid var(--chat-border);
-    background: rgba(15, 23, 42, 0.96);
+    background: rgba(15, 23, 42, 0.5);
     padding: 14px;
 }
 
@@ -283,7 +289,7 @@
     gap: 10px;
     border: 1px solid var(--chat-border);
     border-radius: 14px;
-    background: #0b1120;
+    background: rgba(11, 17, 32, 0.6);
     padding: 10px 12px;
 }
 
