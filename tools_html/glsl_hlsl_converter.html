@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLSL / HLSL 转换器</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/glsl_hlsl_converter.css">
+</head>
+
+<body>
+    <div id="main_bg"></div>
+    <div class="left_menu">
+        <ul class="menu_root">
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">AI工具箱</div>
+                <ul class="sub_menu">
+                    <li><a href="chatgpt.html">ChatGPT</a></li>
+                    <li><a href="ai_upscale.html">AI高清放大</a></li>
+                    <li><a href="ai_frame_interpolation.html">AI插帧/分辨率</a></li>
+                    <li><a href="ai_draw.html">AI绘画</a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">3D工具/图片处理</div>
+                <ul class="sub_menu">
+                    <li><a href="compress_image.html">图片压缩转换</a></li>
+                    <li><a href="3d_city.html">3D城市地形筑下载</a></li>
+                    <li><a href="combine_rgba.html">贴图通道合成</a></li>
+                    <li><a href="hdr_editor.html">HDR编辑器</a></li>
+                    <li><a href="ps_online.html">在线PS</a></li>
+                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
+                    <li><a href="model_previewer.html">模型预览器</a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">视频处理</div>
+                <ul class="sub_menu">
+                    <li><a href="video_cut.html">视频剪辑</a></li>
+                    <li><a href="video_format_cover.html">视频格式转换</a></li>
+                </ul>
+            </li>
+            <li class="left_item open">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">TA工具</div>
+                <ul class="sub_menu">
+                    <li><a href="shader_library.html">shader函数库</a></li>
+                    <li><a href="glsl_hlsl_converter.html">GLSL/HLSL转换器</a></li>
+                    <li><a href="ue_material_picture.html">UE材质库</a></li>
+                    <li><a href="physics_light.html">物理光照计算器</a></li>
+                    <li><a href="TA_wiki.html">TA知识库</a></li>
+                </ul>
+            </li>
+            <li class="left_item">
+                <div class="left_icon" id="left_icon1"></div>
+                <div class="item_context">和我一起听</div>
+                <ul class="sub_menu">
+                    <li><a href="cloud_music.html">网易云音乐</a></li>
+                </ul>
+            </li>
+            <li class="left_item">关于</li>
+        </ul>
+    </div>
+
+    <div class="top_search">
+        <input type="text" placeholder="搜索">
+    </div>
+
+    <div id="panel">
+        <section class="converter-shell">
+            <header class="compact-header">
+                <div class="header-main">
+                    <p class="eyebrow">TA工具</p>
+                    <h1>GLSL / HLSL 转换器</h1>
+                </div>
+                <div class="status-inline">
+                    <span class="status-label">状态</span>
+                    <strong id="convertStatus">等待输入代码</strong>
+                    <span id="convertMeta">双向转换已启用</span>
+                </div>
+            </header>
+
+            <section class="toolbar">
+                <div class="toolbar-group">
+                    <div class="direction-switch" id="directionSwitch">
+                        <button id="glslToHlslBtn" class="direction-btn active" type="button">GLSL → HLSL</button>
+                        <button id="hlslToGlslBtn" class="direction-btn" type="button">HLSL → GLSL</button>
+                    </div>
+                    <button id="exampleBtn" class="btn-secondary" type="button">载入示例</button>
+                    <button id="convertBtn" class="btn-primary" type="button">执行转换</button>
+                    <button id="swapBtn" class="btn-secondary" type="button">交换内容</button>
+                </div>
+                <div class="toolbar-group toolbar-actions">
+                    <button id="copyBtn" class="btn-secondary" type="button">复制结果</button>
+                    <button id="clearBtn" class="btn-secondary danger" type="button">清空</button>
+                </div>
+            </section>
+
+            <section class="workspace">
+                <article class="editor-panel">
+                    <div class="panel-header">
+                        <div>
+                            <span class="panel-tag">Input</span>
+                            <h2 id="inputTitle">GLSL</h2>
+                        </div>
+                        <span id="inputStats" class="panel-meta">0 行 / 0 字符</span>
+                    </div>
+                    <textarea id="sourceInput" spellcheck="false" placeholder=""></textarea>
+                </article>
+
+                <article class="editor-panel">
+                    <div class="panel-header">
+                        <div>
+                            <span class="panel-tag">Output</span>
+                            <h2 id="outputTitle">HLSL</h2>
+                        </div>
+                        <span id="outputStats" class="panel-meta">0 行 / 0 字符</span>
+                    </div>
+                    <textarea id="targetOutput" spellcheck="false" placeholder=""></textarea>
+                </article>
+            </section>
+
+            <section class="insight-grid">
+                <article class="info-card">
+                    <div class="info-head">
+                        <h3>转换说明</h3>
+                    </div>
+                    <ul id="notesList" class="info-list"></ul>
+                </article>
+                <article class="info-card">
+                    <div class="info-head">
+                        <h3>当前规则</h3>
+                    </div>
+                    <ul id="ruleList" class="rule-list"></ul>
+                </article>
+            </section>
+        </section>
+    </div>
+
+    <script src="../js/menu.js"></script>
+    <script src="../js/glsl_hlsl_converter.js"></script>
+</body>
+
+</html>
