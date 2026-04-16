@@ -1,3 +1,15 @@
+// Official live2d-widget models list
+const WAIFU_MODELS = [
+    'tororo',
+    'epsilon2.1',
+    'pio',
+    'izumi',
+    'koharu',
+    'shizuku',
+    'Pio',
+    'z16'
+];
+
 // Auto-inject waifu element to the page
 function initWaifu() {
     console.log('[waifu.js] Initializing waifu...');
@@ -27,6 +39,20 @@ function initWaifu() {
     // Append to body
     document.body.appendChild(waifuContainer);
     console.log('[waifu.js] Waifu elements injected successfully');
+
+    // Check if current page is index.html and set model
+    const isIndexPage = window.location.pathname.endsWith('index.html') ||
+                        window.location.pathname.endsWith('/') ||
+                        window.location.pathname === '';
+
+    if (isIndexPage) {
+        // Random select a model for index page
+        const randomModel = WAIFU_MODELS[Math.floor(Math.random() * WAIFU_MODELS.length)];
+        console.log('[waifu.js] Index page detected, loading random model: ' + randomModel);
+        window.waifuPath = `https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/assets/${randomModel}.model.json`;
+    } else {
+        console.log('[waifu.js] Non-index page, using default model');
+    }
 
     // Load live2d-widget autoload script
     console.log('[waifu.js] Loading live2d-widget autoload...');
