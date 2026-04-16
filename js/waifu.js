@@ -23,6 +23,13 @@ function initWaifu() {
 
     // Append to body
     document.body.appendChild(waifuContainer);
+
+    // Load live2d-widget if not already loaded
+    if (!window.live2d) {
+        const script = document.createElement('script');
+        script.src = 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js';
+        document.body.appendChild(script);
+    }
 }
 
 // Initialize on DOMContentLoaded
