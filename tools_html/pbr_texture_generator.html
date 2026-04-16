@@ -4,81 +4,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型预览器</title>
+    <title>PBR贴图生成器</title>
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/model_previewer.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
+    <link rel="stylesheet" href="../css/pbr_texture_generator.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
     <script src="../js/waifu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu">
         <ul class="menu_root">
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">AI工具箱</div>
-                <ul class="sub_menu">
-                    <li><a href="chatgpt.html">ChatGPT</a></li>
-                    <li><a href="ai_upscale.html">AI高清放大</a></li>
-                    <li><a href="ai_frame_interpolation.html">AI插帧/分辨率</a></li>
-                    <li><a href="ai_draw.html">AI绘画</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">3D工具/图片处理</div>
-                <ul class="sub_menu">
-                    <li><a href="compress_image.html">图片压缩转换</a></li>
-                    <li><a href="3d_city.html">3D城市地形筑下载</a></li>
-                    <li><a href="combine_rgba.html">贴图通道合成</a></li>
-                    <li><a href="hdr_editor.html">HDR编辑器</a></li>
-                    <li><a href="ps_online.html">在线PS</a></li>
-                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">视频处理</div>
-                <ul class="sub_menu">
-                    <li><a href="video_cut.html">视频剪辑</a></li>
-                    <li><a href="video_format_cover.html">视频格式转换</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">TA工具</div>
-                <ul class="sub_menu">
-                    <li><a href="shader_library.html">shader函数库</a></li>
-                    <li><a href="glsl_hlsl_converter.html">GLSL/HLSL转换器</a></li>
-                    <li><a href="ue_material_picture.html">UE材质库</a></li>
-                    <li><a href="physics_light.html">物理光照计算器</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">和我一起听</div>
-                <ul class="sub_menu">
-                    <li><a href="cloud_music.html">网易云音乐</a></li>
-                </ul>
-            </li>
-            <li class="left_item">关于
-
-            </li>
+            <li class="left_item"><div class="left_icon" id="left_icon1"></div><div class="item_context">AI工具箱</div><ul class="sub_menu"><li><a href="chatgpt.html">ChatGPT</a></li><li><a href="ai_upscale.html">AI高清放大</a></li><li><a href="ai_frame_interpolation.html">AI插帧/分辨率</a></li><li><a href="ai_draw.html">AI绘画</a></li></ul></li>
+            <li class="left_item"><div class="left_icon" id="left_icon1"></div><div class="item_context">3D工具/图片处理</div><ul class="sub_menu"><li><a href="compress_image.html">图片压缩转换</a></li><li><a href="3d_city.html">3D城市地形筑下载</a></li><li><a href="combine_rgba.html">贴图通道合成</a></li><li><a href="hdr_editor.html">HDR编辑器</a></li><li><a href="ps_online.html">在线PS</a></li><li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li><li><a href="model_previewer.html">模型预览器</a></li></ul></li>
+            <li class="left_item"><div class="left_icon" id="left_icon1"></div><div class="item_context">视频处理</div><ul class="sub_menu"><li><a href="video_cut.html">视频剪辑</a></li><li><a href="video_format_cover.html">视频格式转换</a></li></ul></li>
+            <li class="left_item"><div class="left_icon" id="left_icon1"></div><div class="item_context">TA工具</div><ul class="sub_menu"><li><a href="shader_library.html">shader函数库</a></li><li><a href="glsl_hlsl_converter.html">GLSL/HLSL转换器</a></li><li><a href="ue_material_picture.html">UE材质库</a></li><li><a href="physics_light.html">物理光照计算器</a></li><li><a href="TA_wiki.html">TA知识库</a></li></ul></li>
+            <li class="left_item"><div class="left_icon" id="left_icon1"></div><div class="item_context">和我一起听</div><ul class="sub_menu"><li><a href="cloud_music.html">网易云音乐</a></li></ul></li>
+            <li class="left_item">关于</li>
         </ul>
     </div>
-    <div class="top_search">
-        <input type="text" placeholder="搜索">
-    </div>
-    <div id="panel" data-local-tool="pbr_texture_generator" data-tool-title="模型预览器"></div>
 
-        <div id="waifu-tool"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <div class="pbr-head">
+            <h1>PBR 全流程贴图生成器</h1>
+            <p>上传灰度图，一键生成法线/置换/AO等多种PBR贴图。法线/AO支持GPU加速，法线支持3D预览。</p>
+        </div>
+
+        <div class="pbr-layout">
+            <!-- Left: Controls -->
+            <div class="pbr-left">
+                <!-- Mode Toggle -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">处理模式</div>
+                    <div class="mode-toggle">
+                        <button class="mode-btn" id="btnCpu">CPU模式 (高精)</button>
+                        <button class="mode-btn active" id="btnGpu">GPU模式 (超快)</button>
+                    </div>
+                    <div class="status-bar" id="statusBar">当前模式：GPU模式 | 等待上传图像</div>
+                </div>
+
+                <!-- Input Image -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">输入图像</div>
+                    <p class="pbr-hint">上传灰度或彩色图像</p>
+                    <label class="pbr-dropzone" for="inputFile" id="inputDrop">
+                        <div class="dropzone-content">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(74,222,128,0.8)" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>点击选择文件或拖放图像到此处</span>
+                            <small>支持 JPG, PNG, BMP, TIFF, WEBP 等格式</small>
+                        </div>
+                        <canvas id="inputPreview" class="dropzone-preview"></canvas>
+                    </label>
+                    <input type="file" id="inputFile" accept="image/*" style="display:none">
+                    <div class="sample-row">
+                        <span class="pbr-hint">示例图像</span>
+                        <button class="sample-btn" data-sample="bricks">砖块</button>
+                        <button class="sample-btn" data-sample="cobblestone">鹅卵石</button>
+                        <button class="sample-btn" data-sample="metal">金属板</button>
+                        <button class="sample-btn" data-sample="rock">岩石</button>
+                    </div>
+                </div>
+
+                <!-- Normal Parameters -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">法线参数设置</div>
+                    <p class="pbr-hint">强度和方向调节</p>
+                    <div class="ctrl-row">
+                        <label>法线强度:</label>
+                        <input type="range" id="normalStrength" min="0.01" max="5" step="0.01" value="1.0">
+                        <span class="val-badge" id="normalStrengthVal">1.00</span>
+                    </div>
+                    <div class="ctrl-labels"><span>柔和</span><span>强烈</span></div>
+                    <div class="ctrl-row">
+                        <label>模糊程度:</label>
+                        <input type="range" id="normalBlur" min="0" max="10" step="0.1" value="0">
+                        <span class="val-badge" id="normalBlurVal">0.0</span>
+                    </div>
+                    <div class="ctrl-labels"><span>锐利</span><span>模糊</span></div>
+                    <div class="check-row">
+                        <label class="check-label"><input type="checkbox" id="invertX"> 反转X方向</label>
+                        <label class="check-label"><input type="checkbox" id="invertY"> 反转Y方向</label>
+                        <label class="check-label"><input type="checkbox" id="hqMode"> 高质量模式</label>
+                    </div>
+                    <button class="btn-secondary" id="btnResetNormal">重置参数</button>
+                </div>
+
+                <!-- Displacement Parameters -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">置换参数</div>
+                    <div class="ctrl-row">
+                        <label>对比度:</label>
+                        <input type="range" id="dispContrast" min="0.1" max="3" step="0.01" value="1.0">
+                        <span class="val-badge" id="dispContrastVal">1.00</span>
+                    </div>
+                </div>
+
+                <!-- AO Parameters -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">AO参数</div>
+                    <div class="ctrl-row">
+                        <label>AO强度:</label>
+                        <input type="range" id="aoStrength" min="0" max="3" step="0.01" value="1.0">
+                        <span class="val-badge" id="aoStrengthVal">1.00</span>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>AO半径:</label>
+                        <input type="range" id="aoRadius" min="1" max="20" step="1" value="5">
+                        <span class="val-badge" id="aoRadiusVal">5</span>
+                    </div>
+                </div>
+
+                <!-- Reverse Normal -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">反推灰度图</div>
+                    <p class="pbr-hint">拖拽上传法线图反推出灰度图</p>
+                    <label class="pbr-dropzone pbr-dropzone-sm" for="reverseFile" id="reverseDrop">
+                        <div class="dropzone-content">
+                            <span>拖拽法线图到此处</span>
+                        </div>
+                        <canvas id="reversePreview" class="dropzone-preview"></canvas>
+                    </label>
+                    <input type="file" id="reverseFile" accept="image/*" style="display:none">
+                    <div class="ctrl-row">
+                        <label>反推算法</label>
+                        <select id="reverseAlgo">
+                            <option value="poisson" selected>Poisson重建算法 (推荐)</option>
+                            <option value="simple">简单累加算法 (旧版)</option>
+                        </select>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>迭代次数:</label>
+                        <input type="range" id="reverseIter" min="10" max="200" step="10" value="80">
+                        <span class="val-badge" id="reverseIterVal">80</span>
+                    </div>
+                    <button class="btn-primary" id="btnReverse">一键反推</button>
+                    <canvas id="reverseResult" width="256" height="256" style="display:none"></canvas>
+                    <button class="btn-secondary" id="btnDownloadReverse" style="display:none">下载反推灰度图</button>
+                </div>
+
+                <!-- Export -->
+                <div class="pbr-section">
+                    <div class="pbr-section-title">批量导出</div>
+                    <button class="btn-primary" id="btnDownloadAll">下载全部贴图 (ZIP)</button>
+                    <div class="pbr-ref-table">
+                        <div class="pbr-section-title" style="margin-top:8px">通道贴图对应关系</div>
+                        <div class="ref-item"><b>diff</b> - 漫反射（COL）</div>
+                        <div class="ref-item"><b>nor</b> - 法线（NRM）</div>
+                        <div class="ref-item"><b>disp</b> - 置换（DIS）</div>
+                        <div class="ref-item"><b>AO</b> - 环境吸收（OCC）</div>
+                        <div class="ref-item"><b>reflection</b> - 反射/高光（REF）</div>
+                        <div class="ref-item"><b>glossiness</b> - 光泽度</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Output -->
+            <div class="pbr-right">
+                <div class="pbr-tabs">
+                    <button class="tab-btn active" data-tab="2d">2D预览</button>
+                    <button class="tab-btn" data-tab="3d">3D模型预览</button>
+                    <div class="tab-spacer"></div>
+                    <button class="size-btn active" data-size="small" id="btnSmall">小图</button>
+                    <button class="size-btn" data-size="large" id="btnLarge">大图</button>
+                </div>
+
+                <!-- 2D Map Grid -->
+                <div class="pbr-map-grid" id="mapGrid2D">
+                    <div class="pbr-map-card">
+                        <div class="map-header"><h4>灰度图</h4><button class="btn-dl" data-map="grayscale">下载</button></div>
+                        <canvas id="mapGrayscale" width="512" height="512"></canvas>
+                    </div>
+                    <div class="pbr-map-card">
+                        <div class="map-header"><h4>法线</h4><button class="btn-dl" data-map="normal">下载</button></div>
+                        <canvas id="mapNormal" width="512" height="512"></canvas>
+                    </div>
+                    <div class="pbr-map-card">
+                        <div class="map-header"><h4>置换/凹凸</h4><button class="btn-dl" data-map="displacement">下载</button></div>
+                        <canvas id="mapDisplacement" width="512" height="512"></canvas>
+                    </div>
+                    <div class="pbr-map-card">
+                        <div class="map-header"><h4>AO(OCC)</h4><button class="btn-dl" data-map="ao">下载</button></div>
+                        <canvas id="mapAo" width="512" height="512"></canvas>
+                    </div>
+                    <div class="pbr-map-card">
+                        <div class="map-header"><h4>反射</h4><button class="btn-dl" data-map="reflection">下载</button></div>
+                        <canvas id="mapReflection" width="512" height="512"></canvas>
+                    </div>
+                    <div class="pbr-map-card">
+                        <div class="map-header"><h4>光泽度</h4><button class="btn-dl" data-map="glossiness">下载</button></div>
+                        <canvas id="mapGlossiness" width="512" height="512"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3D Preview -->
+                <div class="pbr-3d-wrap" id="preview3D" style="display:none">
+                    <canvas id="canvas3D"></canvas>
+                    <div class="pbr-3d-hint">鼠标拖拽旋转 | 滚轮缩放 | 右键平移</div>
+                    <div class="pbr-3d-controls">
+                        <label>模型:
+                            <select id="previewModel">
+                                <option value="plane" selected>平面</option>
+                                <option value="sphere">球体</option>
+                                <option value="cube">立方体</option>
+                            </select>
+                        </label>
+                        <label>置换强度:
+                            <input type="range" id="dispScale3D" min="0" max="0.5" step="0.01" value="0.1">
+                            <span class="val-badge" id="dispScale3DVal">0.10</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+          }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="../js/pbr_texture_generator.js"></script>
 </body>
 
 </html>

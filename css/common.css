@@ -221,7 +221,7 @@
     z-index: 998;
 }
 
-#waifu-tips.active {
+#waifu-tips.waifu-tips-active {
     opacity: 1;
     transition: opacity 0.3s;
 }
