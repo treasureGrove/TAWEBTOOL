@@ -112,6 +112,17 @@
     });
   }
 
+  function bindTileSlider(channel, axis) {
+    const slider = $(`${channel}Tile${axis}`);
+    const num = $(`${channel}Tile${axis}Num`);
+    if (!slider || !num) return;
+    slider.addEventListener('input', () => { num.value = slider.value; updateCanvasPreview(); });
+    num.addEventListener('input', () => {
+      const v = Math.max(-10, Math.min(10, parseFloat(num.value) || 1));
+      slider.value = v; num.value = v; updateCanvasPreview();
+    });
+  }
+
   function bindDropzone(channel) {
     const input = $(`${channel}Img`);
     const dropzone = $(`${channel}Drop`);
@@ -119,12 +130,12 @@
     input.addEventListener('change', () => updatePreviewByInput(channel));
 
     // update preview when tiling or wrap changes for this channel
-    const tx = $(`${channel}TileX`);
-    const ty = $(`${channel}TileY`);
     const wrap = $(`${channel}Wrap`);
-    if (tx) tx.addEventListener('input', updateCanvasPreview);
-    if (ty) ty.addEventListener('input', updateCanvasPreview);
+    const srcCh = $(`${channel}SrcCh`);
+    bindTileSlider(channel, 'X');
+    bindTileSlider(channel, 'Y');
     if (wrap) wrap.addEventListener('change', updateCanvasPreview);
+    if (srcCh) srcCh.addEventListener('change', updateCanvasPreview);
 
     ['dragenter', 'dragover'].forEach((evt) => {
       dropzone.addEventListener(evt, (e) => {
@@ -229,12 +240,14 @@
   function composeToCanvas(imgs, outCanvas) {
     const outCtx = outCanvas.getContext('2d');
     const w = outCanvas.width, h = outCanvas.height;
+    const alphaMult = Math.max(0, Math.min(1, parseFloat($('alphaMult').value) || 1));
 
+    function parseSrcCh(val) { return val === 'lum' ? 'lum' : parseInt(val, 10); }
     const channels = {
-      r: imgs.r ? { src: readSourceData(imgs.r), tx: parseFloat($('rTileX').value) || 1, ty: parseFloat($('rTileY').value) || 1, wrap: $('rWrap').value } : null,
-      g: imgs.g ? { src: readSourceData(imgs.g), tx: parseFloat($('gTileX').value) || 1, ty: parseFloat($('gTileY').value) || 1, wrap: $('gWrap').value } : null,
-      b: imgs.b ? { src: readSourceData(imgs.b), tx: parseFloat($('bTileX').value) || 1, ty: parseFloat($('bTileY').value) || 1, wrap: $('bWrap').value } : null,
-      a: imgs.a ? { src: readSourceData(imgs.a), tx: parseFloat($('aTileX').value) || 1, ty: parseFloat($('aTileY').value) || 1, wrap: $('aWrap').value } : null
+      r: imgs.r ? { src: readSourceData(imgs.r), tx: parseFloat($('rTileX').value) || 1, ty: parseFloat($('rTileY').value) || 1, wrap: $('rWrap').value, comp: parseSrcCh($('rSrcCh').value) } : null,
+      g: imgs.g ? { src: readSourceData(imgs.g), tx: parseFloat($('gTileX').value) || 1, ty: parseFloat($('gTileY').value) || 1, wrap: $('gWrap').value, comp: parseSrcCh($('gSrcCh').value) } : null,
+      b: imgs.b ? { src: readSourceData(imgs.b), tx: parseFloat($('bTileX').value) || 1, ty: parseFloat($('bTileY').value) || 1, wrap: $('bWrap').value, comp: parseSrcCh($('bSrcCh').value) } : null,
+      a: imgs.a ? { src: readSourceData(imgs.a), tx: parseFloat($('aTileX').value) || 1, ty: parseFloat($('aTileY').value) || 1, wrap: $('aWrap').value, comp: parseSrcCh($('aSrcCh').value) } : null
     };
 
     const out = outCtx.createImageData(w, h);
@@ -243,10 +256,11 @@
         const i = (y * w + x) * 4;
         const u = x / Math.max(1, w - 1);
         const v = y / Math.max(1, h - 1);
-        out.data[i] = channels.r ? sampleComponent(channels.r.src, u * channels.r.tx, v * channels.r.ty, channels.r.wrap, 0) : 0;
-        out.data[i + 1] = channels.g ? sampleComponent(channels.g.src, u * channels.g.tx, v * channels.g.ty, channels.g.wrap, 1) : 0;
-        out.data[i + 2] = channels.b ? sampleComponent(channels.b.src, u * channels.b.tx, v * channels.b.ty, channels.b.wrap, 2) : 0;
-        out.data[i + 3] = channels.a ? sampleComponent(channels.a.src, u * channels.a.tx, v * channels.a.ty, channels.a.wrap, 3) : 255;
+        out.data[i] = channels.r ? sampleComponent(channels.r.src, u * channels.r.tx, v * channels.r.ty, channels.r.wrap, channels.r.comp) : 0;
+        out.data[i + 1] = channels.g ? sampleComponent(channels.g.src, u * channels.g.tx, v * channels.g.ty, channels.g.wrap, channels.g.comp) : 0;
+        out.data[i + 2] = channels.b ? sampleComponent(channels.b.src, u * channels.b.tx, v * channels.b.ty, channels.b.wrap, channels.b.comp) : 0;
+        const rawA = channels.a ? sampleComponent(channels.a.src, u * channels.a.tx, v * channels.a.ty, channels.a.wrap, channels.a.comp) : 255;
+        out.data[i + 3] = Math.round(rawA * alphaMult);
       }
     }
     outCtx.putImageData(out, 0, 0);
@@ -272,6 +286,17 @@
       const v = Math.max(0.1, Math.min(1, parseFloat(e.target.value) || 1));
       $('rgbaQuality').value = v;
       $('rgbaQualityNumber').value = v;
+    });
+
+    $('alphaMult').addEventListener('input', (e) => {
+      $('alphaMultNum').value = e.target.value;
+      updateCanvasPreview();
+    });
+    $('alphaMultNum').addEventListener('input', (e) => {
+      const v = Math.max(0, Math.min(1, parseFloat(e.target.value) || 1));
+      $('alphaMult').value = v;
+      $('alphaMultNum').value = v;
+      updateCanvasPreview();
     });
 
     $('mergeRGBA').addEventListener('click', mergeAndDownload);
