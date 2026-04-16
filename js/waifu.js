@@ -35,33 +35,29 @@ function initWaifu() {
     document.body.appendChild(waifuContainer);
     console.log('[waifu.js] Waifu elements injected successfully');
 
-    // Load live2d-widget if not already loaded
-    if (!window.live2d && !document.querySelector('script[src*="live2d"]')) {
-        console.log('[waifu.js] Loading live2d-widget...');
-        const script = document.createElement('script');
-        script.src = 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js';
-        script.onerror = function() {
-            console.error('[waifu.js] Failed to load live2d-widget');
-        };
-        script.onload = function() {
-            console.log('[waifu.js] live2d-widget loaded successfully');
-        };
-        document.body.appendChild(script);
-    } else {
-        console.log('[waifu.js] live2d-widget already loaded or being loaded');
-    }
+    // Load live2d-widget autoload script
+    console.log('[waifu.js] Loading live2d-widget autoload...');
+    const script = document.createElement('script');
+    script.src = 'https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js?t=' + Date.now();
+    script.onerror = function() {
+        console.error('[waifu.js] Failed to load live2d-widget');
+    };
+    script.onload = function() {
+        console.log('[waifu.js] live2d-widget loaded successfully');
+    };
+    document.body.appendChild(script);
 }
 
 // Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('[waifu.js] DOMContentLoaded triggered');
-    initWaifu();
+    setTimeout(initWaifu, 100);
 });
 
 // If script loads after DOMContentLoaded, initialize immediately
 if (document.readyState === 'interactive' || document.readyState === 'complete') {
     console.log('[waifu.js] Script loaded after DOMContentLoaded, initializing immediately');
-    initWaifu();
+    setTimeout(initWaifu, 100);
 }
 
 console.log('[waifu.js] Script loaded');
