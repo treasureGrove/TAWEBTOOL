@@ -11,6 +11,8 @@ function initWaifu() {
     // Create waifu container
     const waifuContainer = document.createElement('div');
     waifuContainer.id = 'waifu';
+    waifuContainer.style.width = '150px';
+    waifuContainer.style.overflow = 'hidden';
 
     // Create waifu-tips
     const waifuTips = document.createElement('div');
@@ -19,8 +21,10 @@ function initWaifu() {
     // Create canvas for live2d
     const canvas = document.createElement('canvas');
     canvas.id = 'live2d';
-    canvas.width = 280;
-    canvas.height = 250;
+    canvas.width = 150;
+    canvas.height = 150;
+    canvas.style.display = 'block';
+    canvas.style.maxWidth = '150px';
 
     // Create waifu-tool
     const waifuTool = document.createElement('div');
