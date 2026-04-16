@@ -1,0 +1,327 @@
+#panel,
+.settings-panel,
+.preview-box,
+.upload-area,
+.progress-container {
+    backdrop-filter: blur(6px);
+}
+
+:root {
+    --accent: #2fa888;
+    --accent-strong: #1f8e71;
+    --text-main: #233036;
+    --text-sub: #5e6e75;
+    --line-soft: rgba(47, 168, 136, 0.2);
+    --card-bg: rgba(255, 255, 255, 0.68);
+}
+
+#main_bg {
+    background-image: url(../assets/images/background/pbr_bg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    width: 100%;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+#panel {
+    font-family: "Yu Gothic UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(245, 252, 249, 0.62));
+    border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+#panel h1 {
+    font-size: 23px;
+    color: var(--text-main);
+    margin-bottom: 12px;
+    letter-spacing: 0.2px;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.workbench-layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(400px, 5fr) minmax(360px, 5fr);
+    gap: 14px;
+}
+
+.preview-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+}
+
+.preview-box {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border: 1px solid var(--line-soft);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+}
+
+.column-title {
+    font-size: 13px;
+    color: #2d6f5f;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.preview-area {
+    flex: 1;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    border: 1px dashed rgba(47, 168, 136, 0.3);
+    overflow: hidden;
+}
+
+.preview-area img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.preview-placeholder {
+    font-size: 14px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.preview-info {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+    min-height: 20px;
+}
+
+.preview-info .size-reduced {
+    color: rgba(38, 141, 113, 0.95);
+    font-weight: 500;
+}
+
+.preview-info .size-increased {
+    color: #d97f3e;
+    font-weight: 500;
+}
+
+.control-column {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.upload-section {
+    position: relative;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.upload-area {
+    border: 1px dashed rgba(47, 168, 136, 0.55);
+    border-radius: 12px;
+    padding: 28px 16px;
+    text-align: center;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(234, 248, 242, 0.72));
+    cursor: pointer;
+    transition: all 0.24s ease;
+}
+
+.upload-area:hover {
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(227, 246, 239, 0.78));
+    border-color: rgba(47, 168, 136, 0.85);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(27, 102, 82, 0.1);
+}
+
+.upload-area.drag-over {
+    border-color: rgba(55, 177, 140, 0.8);
+    background: rgba(55, 177, 140, 0.15);
+}
+
+.upload-content svg {
+    color: rgba(47, 168, 136, 0.75);
+    margin-bottom: 16px;
+}
+
+.upload-content p {
+    font-size: 16px;
+    color: #333;
+    margin: 8px 0;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.upload-content .sub-text {
+    font-size: 13px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.settings-panel {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    border: 1px solid var(--line-soft);
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+}
+
+.setting-group {
+    margin-bottom: 12px;
+}
+
+.setting-group:last-child {
+    margin-bottom: 0;
+}
+
+.setting-group label {
+    display: block;
+    font-size: 14px;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.setting-group select,
+.setting-group input[type="range"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.92);
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.setting-group select:focus {
+    outline: none;
+    border-color: rgba(47, 168, 136, 0.55);
+    box-shadow: 0 0 0 3px rgba(47, 168, 136, 0.12);
+}
+
+.setting-group input[type="range"] {
+    padding: 0;
+    cursor: pointer;
+}
+
+.setting-hint {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+    color: white;
+    box-shadow: 0 6px 14px rgba(26, 112, 90, 0.27);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #34b996, #1e886c);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(22, 98, 78, 0.34);
+}
+
+.btn-primary:disabled {
+    background: rgba(150, 150, 150, 0.6);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: rgba(104, 120, 130, 0.8);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: rgba(82, 98, 109, 0.92);
+    transform: translateY(-1px);
+}
+
+.progress-container {
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--line-soft);
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 24px;
+    background: rgba(220, 220, 220, 0.5);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+    border-radius: 12px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-sub);
+    font-family: "Yu Gothic UI", sans-serif;
+}
+
+@media (max-width: 1000px) {
+    .workbench-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-column {
+        flex-direction: row;
+        min-height: 250px;
+    }
+}

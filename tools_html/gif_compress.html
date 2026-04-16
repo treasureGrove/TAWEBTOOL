@@ -4,21 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>图片压缩转换工具</title>
+    <title>GIF压缩器</title>
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/compress_image.css">
+    <link rel="stylesheet" href="../css/gif_compress.css">
 </head>
 
 <body>
     <script src="https://fastly.jsdelivr.net/gh/stevenjoezhang/live2d-widget@latest/autoload.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/waifu.js"></script>
-    <script src="../third_part/tga-decoder.js"></script>
-    <script src="../third_part/bmp-encoder.js"></script>
-    <script src="../third_part/tga-encoder.js"></script>
-    <script src="../third_part/dds-encoder.js"></script>
-    <script src="../js/compress_image.js" defer></script>
+    <script src="../js/gif_compress.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu">
         <ul class="menu_root">
@@ -43,7 +38,7 @@
                     <li><a href="hdr_editor.html">HDR编辑器</a></li>
                     <li><a href="ps_online.html">在线PS</a></li>
                     <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
+                    <li><a href="model_previewer.html">模型预览器</a></li>
                 </ul>
             </li>
             <li class="left_item">
@@ -80,15 +75,28 @@
         <input type="text" placeholder="搜索">
     </div>
     <div id="panel">
-        <h1>图片压缩转换工具</h1>
+        <h1>GIF压缩器</h1>
 
-        <input type="file" id="fileInput" multiple accept="image/*,.tga,.dds,.bmp" hidden>
-        <input type="file" id="folderInput" webkitdirectory directory multiple hidden>
+        <input type="file" id="fileInput" accept="image/gif" hidden>
 
         <div class="workbench-layout">
-            <div class="queue-column">
-                <div class="column-title">处理队列</div>
-                <div class="file-list" id="fileList"></div>
+            <div class="preview-column">
+                <div class="preview-box">
+                    <div class="column-title">原始GIF</div>
+                    <div class="preview-area" id="originalPreview">
+                        <img id="originalImg" style="display:none;">
+                        <span class="preview-placeholder">上传GIF后预览</span>
+                    </div>
+                    <div class="preview-info" id="originalInfo"></div>
+                </div>
+                <div class="preview-box">
+                    <div class="column-title">压缩后</div>
+                    <div class="preview-area" id="compressedPreview">
+                        <img id="compressedImg" style="display:none;">
+                        <span class="preview-placeholder">压缩后预览</span>
+                    </div>
+                    <div class="preview-info" id="compressedInfo"></div>
+                </div>
             </div>
 
             <div class="control-column">
@@ -100,84 +108,53 @@
                                 <polyline points="17 8 12 3 7 8"></polyline>
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
-                            <p>拖拽图片到此处或点击选择</p>
-                            <p class="sub-text">支持 JPG, PNG, WEBP, GIF, BMP, TGA, DDS；也支持 Ctrl+V 粘贴图片</p>
+                            <p>拖拽GIF文件到此处或点击选择</p>
+                            <p class="sub-text">仅支持 GIF 格式</p>
                         </div>
                     </div>
-                    <button type="button" id="selectFolderUpload" class="upload-folder-btn">选择文件夹上传</button>
                 </div>
 
                 <div class="settings-panel">
                     <div class="setting-group">
-                        <label>输出格式</label>
-                        <select id="outputFormat">
-                            <option value="keep">保持原格式</option>
-                            <option value="jpeg">JPEG</option>
-                            <option value="png">PNG</option>
-                            <option value="webp" selected>WebP</option>
-                            <option value="bmp">BMP</option>
-                            <option value="tga">TGA</option>
-                            <option value="dds">DDS</option>
+                        <label>缩放比例 <span id="scaleValue">100</span>%</label>
+                        <input type="range" id="scale" min="10" max="100" value="100" step="5">
+                    </div>
+
+                    <div class="setting-group">
+                        <label>颜色数量 <span id="colorValue">256</span></label>
+                        <input type="range" id="colors" min="2" max="256" value="256" step="2">
+                        <div class="setting-hint">减少颜色数量可大幅降低体积，但可能影响画质</div>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>抽帧间隔</label>
+                        <select id="frameSkip">
+                            <option value="1">保留所有帧</option>
+                            <option value="2">每2帧保留1帧</option>
+                            <option value="3">每3帧保留1帧</option>
+                            <option value="4">每4帧保留1帧</option>
                         </select>
+                        <div class="setting-hint">跳帧会减小帧数并同时调整帧延时以保持动画时长</div>
                     </div>
 
                     <div class="setting-group">
-                        <label>压缩质量 <span id="qualityValue">80</span>%</label>
-                        <input type="range" id="quality" min="1" max="100" value="80">
-                    </div>
-
-                    <div class="setting-group">
-                        <label>体积控制</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="sizeControlMode" value="quality" checked> 按压缩质量</label>
-                            <label><input type="radio" name="sizeControlMode" value="target"> 压缩到目标体积以内</label>
-                        </div>
-                        <div class="target-size-row">
-                            <input type="number" id="targetSizeMb" min="0.05" step="0.05" value="1.00" disabled>
-                            <span>MB / 每张</span>
-                        </div>
-                        <div class="setting-hint">说明：目标模式会尽量压到不超过目标体积（<= 目标值）。</div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>输出方式</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="outputMode" value="download" checked> 下载到浏览器</label>
-                            <label><input type="radio" name="outputMode" value="zip"> 下载为ZIP</label>
-                            <label><input type="radio" name="outputMode" value="folder"> 输出到文件夹 <span style="font-size: 11px; color: #888;">(需Chrome/Edge)</span></label>
-                        </div>
-                    </div>
-
-                    <div class="setting-group">
-                        <label>文件命名</label>
-                        <div class="radio-group">
-                            <label><input type="radio" name="namingMode" value="original" checked> 保持原文件名</label>
-                            <label class="suffix-option">
-                                <input type="radio" name="namingMode" value="suffix"> 添加后缀
-                                <input type="text" id="namingSuffix" value="_compressed" class="suffix-input">
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="setting-group" id="folderPathGroup" style="display: none;">
-                        <label>输出文件夹</label>
-                        <div class="folder-input">
-                            <input type="text" id="folderPath" placeholder="选择输出文件夹" readonly>
-                            <button id="selectFolderBtn">选择文件夹</button>
-                        </div>
+                        <label>有损压缩级别 <span id="lossyValue">0</span></label>
+                        <input type="range" id="lossy" min="0" max="200" value="0" step="10">
+                        <div class="setting-hint">0 = 无损, 数值越大压缩越强但画质越差</div>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button id="clearBtn" class="btn-secondary">清空列表</button>
-                    <button id="processBtn" class="btn-primary">开始处理</button>
+                    <button id="clearBtn" class="btn-secondary">清空</button>
+                    <button id="compressBtn" class="btn-primary" disabled>开始压缩</button>
+                    <button id="downloadBtn" class="btn-primary" style="display:none;">下载</button>
                 </div>
 
                 <div class="progress-container" id="progressContainer" style="display: none;">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progressFill"></div>
                     </div>
-                    <div class="progress-text" id="progressText">处理中... 0/0</div>
+                    <div class="progress-text" id="progressText">处理中...</div>
                 </div>
             </div>
         </div>
