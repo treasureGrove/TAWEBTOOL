@@ -4,79 +4,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型预览器</title>
+    <title>3D模型预览器</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/model_previewer.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
     <script src="../js/waifu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
     <div id="main_bg"></div>
-    <div class="left_menu">
-        <ul class="menu_root">
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">AI工具箱</div>
-                <ul class="sub_menu">
-                    <li><a href="chatgpt.html">ChatGPT</a></li>
-                    <li><a href="ai_upscale.html">AI高清放大</a></li>
-                    <li><a href="ai_frame_interpolation.html">AI插帧/分辨率</a></li>
-                    <li><a href="ai_draw.html">AI绘画</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">3D工具/图片处理</div>
-                <ul class="sub_menu">
-                    <li><a href="compress_image.html">图片压缩转换</a></li>
-                    <li><a href="3d_city.html">3D城市地形筑下载</a></li>
-                    <li><a href="combine_rgba.html">贴图通道合成</a></li>
-                    <li><a href="hdr_editor.html">HDR编辑器</a></li>
-                    <li><a href="ps_online.html">在线PS</a></li>
-                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">视频处理</div>
-                <ul class="sub_menu">
-                    <li><a href="video_cut.html">视频剪辑</a></li>
-                    <li><a href="video_format_cover.html">视频格式转换</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">TA工具</div>
-                <ul class="sub_menu">
-                    <li><a href="shader_library.html">shader函数库</a></li>
-                    <li><a href="glsl_hlsl_converter.html">GLSL/HLSL转换器</a></li>
-                    <li><a href="ue_material_picture.html">UE材质库</a></li>
-                    <li><a href="physics_light.html">物理光照计算器</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">和我一起听</div>
-                <ul class="sub_menu">
-                    <li><a href="cloud_music.html">网易云音乐</a></li>
-                </ul>
-            </li>
-            <li class="left_item">关于
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
 
-            </li>
-        </ul>
-    </div>
-    <div class="top_search">
-        <input type="text" placeholder="搜索">
-    </div>
-    <div id="panel" data-local-tool="model_previewer" data-tool-title="模型预览器"></div>
+    <div id="panel">
+        <div class="mp-head">
+            <h1>3D 模型预览器</h1>
+            <p>支持 GLB / GLTF / FBX / OBJ 格式，拖拽上传即可预览。提供线框、骨骼、动画、材质检查、PBR贴图替换、多模型对比等功能。</p>
+        </div>
 
+        <div class="mp-layout">
+            <!-- Left: Controls -->
+            <div class="mp-left">
+                <!-- Upload -->
+                <div class="mp-section">
+                    <div class="mp-section-title">上传模型</div>
+                    <label class="mp-dropzone" for="modelFile" id="uploadDrop">
+                        <div class="dropzone-content">
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(74,222,128,0.8)" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <span>点击选择或拖拽模型文件</span>
+                            <small>GLB / GLTF / FBX / OBJ</small>
+                        </div>
+                    </label>
+                    <input type="file" id="modelFile" accept=".glb,.gltf,.fbx,.obj" style="display:none">
+                    <div class="status-bar" id="statusBar">等待上传模型文件</div>
+                </div>
+
+                <!-- Model Info -->
+                <div class="mp-section" id="sectionInfo" style="display:none">
+                    <div class="mp-section-title">模型信息</div>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">顶点数</span><span class="info-value" id="infoVerts">-</span></div>
+                        <div class="info-item"><span class="info-label">面数</span><span class="info-value" id="infoFaces">-</span></div>
+                        <div class="info-item"><span class="info-label">材质数</span><span class="info-value" id="infoMats">-</span></div>
+                        <div class="info-item"><span class="info-label">贴图数</span><span class="info-value" id="infoTexs">-</span></div>
+                        <div class="info-item info-wide"><span class="info-label">包围盒</span><span class="info-value" id="infoBBox">-</span></div>
+                    </div>
+                </div>
+
+                <!-- Display Options -->
+                <div class="mp-section">
+                    <div class="mp-section-title">显示选项</div>
+                    <div class="check-row">
+                        <label class="check-label"><input type="checkbox" id="chkWireframe"> 线框模式</label>
+                        <label class="check-label"><input type="checkbox" id="chkSkeleton"> 骨骼显示</label>
+                        <label class="check-label"><input type="checkbox" id="chkGrid" checked> 网格地面</label>
+                        <label class="check-label"><input type="checkbox" id="chkAutoRotate"> 自动旋转</label>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>背景色:</label>
+                        <input type="color" id="bgColor" value="#1a1a2e">
+                        <span class="val-badge" id="bgColorVal">#1a1a2e</span>
+                    </div>
+                </div>
+
+                <!-- Environment -->
+                <div class="mp-section">
+                    <div class="mp-section-title">环境光照</div>
+                    <div class="ctrl-row">
+                        <label>环境预设:</label>
+                        <select id="envPreset">
+                            <option value="default">默认灯光</option>
+                            <option value="studio">工作室</option>
+                            <option value="outdoor">户外</option>
+                            <option value="night">夜景</option>
+                        </select>
+                    </div>
+                    <div class="check-row">
+                        <label class="check-label"><input type="checkbox" id="chkEnvBg"> 环境作为背景</label>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>HDR文件:</label>
+                        <button class="btn-secondary btn-sm" id="btnLoadHdr">上传 HDR</button>
+                        <input type="file" id="hdrFile" accept=".hdr" style="display:none">
+                    </div>
+                </div>
+
+                <!-- Animation -->
+                <div class="mp-section" id="sectionAnim" style="display:none">
+                    <div class="mp-section-title">动画播放</div>
+                    <div class="ctrl-row">
+                        <label>动画片段:</label>
+                        <select id="animClip"></select>
+                    </div>
+                    <div class="anim-controls">
+                        <button class="btn-icon" id="btnPlayPause" title="播放/暂停">▶</button>
+                        <button class="btn-icon" id="btnStop" title="停止">⏹</button>
+                        <input type="range" id="animTimeline" min="0" max="1" step="0.001" value="0" class="anim-slider">
+                        <span class="val-badge" id="animTimeVal">0.00s</span>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>播放速度:</label>
+                        <input type="range" id="animSpeed" min="0.1" max="3" step="0.1" value="1">
+                        <span class="val-badge" id="animSpeedVal">1.0x</span>
+                    </div>
+                </div>
+
+                <!-- Comparison -->
+                <div class="mp-section">
+                    <div class="mp-section-title">模型对比</div>
+                    <div class="ctrl-row">
+                        <button class="btn-secondary btn-sm" id="btnLoadCompare">加载对比模型</button>
+                        <input type="file" id="compareFile" accept=".glb,.gltf,.fbx,.obj" style="display:none">
+                        <button class="btn-secondary btn-sm" id="btnClearCompare" style="display:none">清除对比</button>
+                    </div>
+                    <div class="ctrl-row" id="compareModeRow" style="display:none">
+                        <label>对比模式:</label>
+                        <select id="compareMode">
+                            <option value="sideBySide">并排</option>
+                            <option value="overlay">叠加</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Export -->
+                <div class="mp-section">
+                    <div class="mp-section-title">导出</div>
+                    <button class="btn-primary" id="btnScreenshot">截图导出 (PNG)</button>
+                </div>
+            </div>
+
+            <!-- Center: Viewport -->
+            <div class="mp-center">
+                <div class="mp-viewport" id="viewport">
+                    <canvas id="renderCanvas"></canvas>
+                    <div class="drop-overlay" id="dropOverlay">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(74,222,128,0.9)" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span>释放文件以加载模型</span>
+                    </div>
+                    <div class="viewport-hint">鼠标拖拽旋转 | 滚轮缩放 | 右键平移</div>
+                    <div class="loading-overlay" id="loadingOverlay" style="display:none">
+                        <div class="loading-spinner"></div>
+                        <span>模型加载中...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Materials -->
+            <div class="mp-right">
+                <!-- Material Inspector -->
+                <div class="mp-section">
+                    <div class="mp-section-title">材质检查器</div>
+                    <div class="mp-hint" id="matHint">加载模型后显示材质列表</div>
+                    <div class="mat-list" id="matList"></div>
+                </div>
+
+                <!-- PBR Texture Replacement -->
+                <div class="mp-section" id="sectionTexReplace" style="display:none">
+                    <div class="mp-section-title">PBR 贴图替换</div>
+                    <div class="ctrl-row">
+                        <label>目标材质:</label>
+                        <select id="texTargetMat"></select>
+                    </div>
+                    <div class="tex-slots">
+                        <div class="tex-slot">
+                            <span>Albedo</span>
+                            <button class="btn-secondary btn-sm" data-channel="map">上传</button>
+                            <input type="file" accept="image/*" style="display:none" data-channel="map">
+                        </div>
+                        <div class="tex-slot">
+                            <span>法线</span>
+                            <button class="btn-secondary btn-sm" data-channel="normalMap">上传</button>
+                            <input type="file" accept="image/*" style="display:none" data-channel="normalMap">
+                        </div>
+                        <div class="tex-slot">
+                            <span>粗糙度</span>
+                            <button class="btn-secondary btn-sm" data-channel="roughnessMap">上传</button>
+                            <input type="file" accept="image/*" style="display:none" data-channel="roughnessMap">
+                        </div>
+                        <div class="tex-slot">
+                            <span>金属度</span>
+                            <button class="btn-secondary btn-sm" data-channel="metalnessMap">上传</button>
+                            <input type="file" accept="image/*" style="display:none" data-channel="metalnessMap">
+                        </div>
+                        <div class="tex-slot">
+                            <span>AO</span>
+                            <button class="btn-secondary btn-sm" data-channel="aoMap">上传</button>
+                            <input type="file" accept="image/*" style="display:none" data-channel="aoMap">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+          }
+        }
+    </script>
+    <script src="../js/model_previewer.js"></script>
 </body>
 
 </html>

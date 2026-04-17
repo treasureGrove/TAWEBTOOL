@@ -7,76 +7,144 @@
     <title>物理光照计算器</title>
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/physics_light.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
     <script src="../js/waifu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
     <div id="main_bg"></div>
-    <div class="left_menu">
-        <ul class="menu_root">
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">AI工具箱</div>
-                <ul class="sub_menu">
-                    <li><a href="chatgpt.html">ChatGPT</a></li>
-                    <li><a href="ai_upscale.html">AI高清放大</a></li>
-                    <li><a href="ai_frame_interpolation.html">AI插帧/分辨率</a></li>
-                    <li><a href="ai_draw.html">AI绘画</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">3D工具/图片处理</div>
-                <ul class="sub_menu">
-                    <li><a href="compress_image.html">图片压缩转换</a></li>
-                    <li><a href="3d_city.html">3D城市地形筑下载</a></li>
-                    <li><a href="combine_rgba.html">贴图通道合成</a></li>
-                    <li><a href="hdr_editor.html">HDR编辑器</a></li>
-                    <li><a href="ps_online.html">在线PS</a></li>
-                    <li><a href="pbr_texture_generator.html">PBR贴图生成器</a></li>
-                <li><a href="model_previewer.html">模型预览器</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">视频处理</div>
-                <ul class="sub_menu">
-                    <li><a href="video_cut.html">视频剪辑</a></li>
-                    <li><a href="video_format_cover.html">视频格式转换</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">TA工具</div>
-                <ul class="sub_menu">
-                    <li><a href="shader_library.html">shader函数库</a></li>
-                    <li><a href="glsl_hlsl_converter.html">GLSL/HLSL转换器</a></li>
-                    <li><a href="ue_material_picture.html">UE材质库</a></li>
-                    <li><a href="physics_light.html">物理光照计算器</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
-                    <li><a href="TA_wiki.html">TA知识库</a></li>
-                </ul>
-            </li>
-            <li class="left_item">
-                <div class="left_icon" id="left_icon1"></div>
-                <div class="item_context">和我一起听</div>
-                <ul class="sub_menu">
-                    <li><a href="cloud_music.html">网易云音乐</a></li>
-                </ul>
-            </li>
-            <li class="left_item">关于
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
 
-            </li>
-        </ul>
-    </div>
-    <div class="top_search">
-        <input type="text" placeholder="搜索">
-    </div>
-    <div id="panel" data-local-tool="physics_light" data-tool-title="物理光照计算器"></div>
+    <div id="panel">
+        <div class="pl-head">
+            <h1>物理光照计算器</h1>
+            <p>真实物理光照参数计算与可视化：曝光三角、瑞利/米氏大气散射、色温转换、光照衰减。用于复刻真实物理光照效果。</p>
+        </div>
 
+        <div class="pl-layout">
+            <!-- Left: Controls -->
+            <div class="pl-left">
+                <!-- 1. Exposure -->
+                <div class="pl-section">
+                    <div class="pl-section-title">曝光三角计算</div>
+                    <div class="ctrl-row">
+                        <label>光圈 f/</label>
+                        <input type="number" id="fStop" step="0.1" value="2.8" min="1" max="64">
+                    </div>
+                    <div class="ctrl-row">
+                        <label>快门 (s)</label>
+                        <input type="number" id="shutter" step="0.001" value="0.0167" min="0.00001" max="30">
+                    </div>
+                    <div class="ctrl-row">
+                        <label>ISO</label>
+                        <input type="number" id="iso" step="100" value="100" min="50" max="102400">
+                    </div>
+                    <div class="pl-result" id="exposureResult">等待计算...</div>
+                    <div class="pl-hint">常见 EV 参考</div>
+                    <div class="pl-ref-table" id="evRefTable"></div>
+                </div>
+
+                <!-- 2. Atmospheric Scattering -->
+                <div class="pl-section">
+                    <div class="pl-section-title">大气散射参数</div>
+                    <div class="ctrl-row">
+                        <label>时段预设:</label>
+                        <select id="scatterPreset">
+                            <option value="noon">正午晴天</option>
+                            <option value="golden">黄金时段</option>
+                            <option value="sunset" selected>日出/日落</option>
+                            <option value="overcast">阴天</option>
+                            <option value="haze">薄雾</option>
+                            <option value="fog">雾天</option>
+                        </select>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>太阳高度角:</label>
+                        <input type="range" id="sunAngle" min="0" max="90" step="1" value="5">
+                        <span class="val-badge" id="sunAngleVal">5°</span>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>浑浊度:</label>
+                        <input type="range" id="turbidity" min="1" max="40" step="0.5" value="2.5">
+                        <span class="val-badge" id="turbidityVal">2.5</span>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>Mie 方向性 g:</label>
+                        <input type="range" id="mieG" min="0.5" max="0.999" step="0.001" value="0.76">
+                        <span class="val-badge" id="mieGVal">0.76</span>
+                    </div>
+                    <div class="ctrl-row">
+                        <label>海拔高度 (km):</label>
+                        <input type="range" id="altitude" min="0" max="10" step="0.1" value="0">
+                        <span class="val-badge" id="altitudeVal">0 km</span>
+                    </div>
+                    <div class="pl-result" id="scatterResult">瑞利/米氏散射系数将显示在此</div>
+                </div>
+
+                <!-- 3. Color Temperature -->
+                <div class="pl-section">
+                    <div class="pl-section-title">色温转 RGB</div>
+                    <div class="ctrl-row">
+                        <label>色温 (K):</label>
+                        <input type="range" id="kelvin" min="1000" max="12000" step="100" value="5500">
+                        <span class="val-badge" id="kelvinVal">5500K</span>
+                    </div>
+                    <div class="color-preview-row">
+                        <div class="color-swatch" id="kelvinSwatch"></div>
+                        <div class="color-values" id="kelvinRGB">R: 255 G: 255 B: 255 | #FFFFFF</div>
+                    </div>
+                    <div class="pl-hint">常见光源色温</div>
+                    <div class="pl-ref-table" id="kelvinRefTable"></div>
+                </div>
+
+                <!-- 4. Light Falloff -->
+                <div class="pl-section">
+                    <div class="pl-section-title">光照衰减计算</div>
+                    <div class="ctrl-row">
+                        <label>光源强度 (cd):</label>
+                        <input type="number" id="lightIntensity" step="10" value="1000" min="1">
+                    </div>
+                    <div class="ctrl-row">
+                        <label>距离 (m):</label>
+                        <input type="number" id="lightDistance" step="0.1" value="2" min="0.1">
+                    </div>
+                    <div class="pl-result" id="falloffResult">照度: - lux</div>
+                </div>
+            </div>
+
+            <!-- Right: Visualization -->
+            <div class="pl-right">
+                <!-- Sky Preview -->
+                <div class="pl-section pl-viz-section">
+                    <div class="pl-section-title">天空散射预览</div>
+                    <canvas id="skyCanvas" width="600" height="240"></canvas>
+                    <div class="pl-hint" style="text-align:center">基于瑞利+米氏散射实时计算的天空颜色</div>
+                </div>
+
+                <!-- Color Temp Band -->
+                <div class="pl-section pl-viz-section">
+                    <div class="pl-section-title">色温色带</div>
+                    <canvas id="kelvinBand" width="600" height="40"></canvas>
+                    <div class="kelvin-markers" id="kelvinMarkers"></div>
+                </div>
+
+                <!-- Falloff Chart -->
+                <div class="pl-section pl-viz-section">
+                    <div class="pl-section-title">光照衰减曲线（平方反比定律）</div>
+                    <canvas id="falloffChart" width="600" height="200"></canvas>
+                </div>
+
+                <!-- Light Reference -->
+                <div class="pl-section">
+                    <div class="pl-section-title">真实光照强度参考</div>
+                    <div class="pl-ref-table pl-ref-large" id="lightRefTable"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/physics_light.js"></script>
 </body>
 
 </html>
