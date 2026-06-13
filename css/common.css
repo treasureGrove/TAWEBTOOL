@@ -309,3 +309,74 @@
     background: linear-gradient(180deg, rgba(55, 177, 140, 0.9), rgba(55, 177, 140, 0.7));
     box-shadow: 0 0 8px rgba(55, 177, 140, 0.6);
 }
+
+/* 顶部全局工具搜索 */
+.top_search_results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 10px;
+    right: 10px;
+    max-height: 56vh;
+    overflow-y: auto;
+    padding: 8px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(55, 177, 140, 0.25);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(10px);
+}
+
+.top_search_results[hidden] {
+    display: none;
+}
+
+.top_search_result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    color: #1f2937;
+    text-decoration: none;
+    transition: background-color .18s ease, transform .18s ease;
+}
+
+.top_search_result:hover,
+.top_search_result:focus {
+    background: rgba(55, 177, 140, 0.14);
+    transform: translateX(2px);
+    outline: none;
+}
+
+.top_search_result_title {
+    font-weight: 700;
+}
+
+.top_search_result_title mark {
+    color: #0f766e;
+    background: rgba(55, 177, 140, 0.22);
+    border-radius: 4px;
+    padding: 0 2px;
+}
+
+.top_search_result_meta {
+    flex: 0 0 auto;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.top_search_empty {
+    padding: 14px 12px;
+    color: #6b7280;
+    text-align: center;
+}
+
+.left_item.search-match {
+    background-color: rgba(55, 177, 140, 0.36);
+}
+
+.left_item.search-hidden,
+.left_menu .sub_menu li.search-hidden {
+    display: none;
+}
