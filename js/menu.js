@@ -10,7 +10,9 @@ var MENU_DATA = [
         { label: '图片压缩转换', href: 'compress_image.html', keywords: ['格式转换', 'jpg', 'png', 'webp', 'dds', 'tga'] },
         { label: 'GIF压缩器', href: 'gif_compress.html', keywords: ['动图', '压缩'] },
         { label: '贴图通道合成', href: 'combine_rgba.html', keywords: ['RGBA', '通道', '合并'] },
+        { label: '贴图通道分离', href: 'texture_channel_splitter.html', keywords: ['通道分离', '通道拆分', 'RGBA分离', '直方图'] },
         { label: 'PBR贴图生成器', href: 'pbr_texture_generator.html', keywords: ['法线', '粗糙度', '金属度', '材质'] },
+        { label: 'Tiling贴图预览', href: 'tiling_texture.html', keywords: ['无缝', '平铺', 'UV', '接缝', 'tiling'] },
         { label: 'HDR编辑器', href: 'hdr_editor.html', keywords: ['hdr', '环境贴图', 'exr'] },
         { label: '在线PS', href: 'ps_online.html', keywords: ['Photoshop', '图片编辑'] },
     ]},
@@ -22,11 +24,16 @@ var MENU_DATA = [
         { label: '视频剪辑', href: 'video_cut.html', keywords: ['裁剪', '截取', 'mp4'] },
         { label: '视频格式转换', href: 'video_format_cover.html', keywords: ['转码', '格式', 'mp4', 'webm'] },
     ]},
+    { name: '游戏工具', icon: 'icon-game', items: [
+        { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集'] },
+    ]},
     { name: 'TA工具', icon: 'icon-ta', items: [
         { label: 'Shader函数库', href: 'shader_library.html', keywords: ['着色器', 'HLSL', '函数'] },
         { label: 'GLSL/HLSL转换器', href: 'glsl_hlsl_converter.html', keywords: ['shader转换', '着色器转换'] },
         { label: 'UE材质库', href: 'ue_material_picture.html', keywords: ['Unreal', '虚幻', '材质节点'] },
         { label: '物理光照计算器', href: 'physics_light.html', keywords: ['光照', '曝光', 'lux', 'ev'] },
+        { label: '色彩空间转换器', href: 'color_space_converter.html', keywords: ['Linear', 'sRGB', 'Gamma', '色彩空间'] },
+        { label: '贴图信息查看器', href: 'image_metadata_inspector.html', keywords: ['贴图信息', 'POT', '显存', 'VRAM', '直方图'] },
         { label: 'TA知识库', href: 'TA_wiki.html', keywords: ['wiki', '知识', '技术美术'] },
     ]},
     { name: '和我一起听', icon: 'icon-music', items: [

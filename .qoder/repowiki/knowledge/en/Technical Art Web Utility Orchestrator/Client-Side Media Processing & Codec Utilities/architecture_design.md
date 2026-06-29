@@ -1,0 +1,4 @@
+- **WebAssembly Runtimes**: Bundles `ffmpeg.wasm` (via `ffmpeg.js`, `ffmpeg-core.wasm`) for general-purpose media processing and `onnxruntime-web` (via `ort-*.wasm`, `ort.webgpu.min.js`) for AI inference acceleration.
+- **Pure JS Codec Implementations**: Standalone classes (`BMPEncoder`, `DDSEncoder`, `TGADecoder`, `TGAEncoder`) handle specific image format conversions using `ArrayBuffer` and `DataView` for binary manipulation.
+- **Stream Muxing**: `mp4-muxer.umd.js` provides a high-level API for constructing MP4 containers from encoded video/audio chunks, supporting various output targets like `ArrayBuffer` and `FileSystemWritableFileStream`.
+- **Integration Layer**: `ffmpeg-util.js` offers helper functions for fetching resources, handling download progress, and converting URLs to Blob URLs, bridging the gap between network resources and the WASM runtime.

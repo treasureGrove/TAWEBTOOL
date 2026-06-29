@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: error_handling
+title: Client-Side Error Handling & Resilience Patterns
+scope: []
+source_files:
+    - js/ai_draw.js
+    - js/ai_frame_interpolation.js
+    - js/ai_upscale.js
+    - js/3d_city.js
+depends_on: []
+related_to: []

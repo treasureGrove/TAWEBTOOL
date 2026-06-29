@@ -1,0 +1,3 @@
+- Static method pattern: Image codecs (BMP, DDS, TGA) expose functionality exclusively through static methods on utility classes (e.g., `BMPEncoder.encode`, `TGADecoder.decode`).
+- Binary data handling: All codec implementations use `Uint8Array`, `ArrayBuffer`, and `DataView` for direct binary manipulation and header construction.
+- Universal Module Definition (UMD): Libraries like `ffmpeg.js`, `mp4-muxer.umd.js`, and `ffmpeg-util.js` use UMD wrappers to support CommonJS, AMD, and global browser environments.
