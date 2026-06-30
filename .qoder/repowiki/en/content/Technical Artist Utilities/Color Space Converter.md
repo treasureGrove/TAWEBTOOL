@@ -2,9 +2,10 @@
 
 <cite>
 **Referenced Files in This Document**
+- [color_space_converter.html](file://tools_html/color_space_converter.html)
 - [color_space_converter.js](file://js/color_space_converter.js)
 - [color_space_converter.css](file://css/color_space_converter.css)
-- [color_space_converter.html](file://tools_html/color_space_converter.html)
+- [common.css](file://css/common.css)
 </cite>
 
 ## Table of Contents
@@ -17,393 +18,465 @@
 7. [Performance Considerations](#performance-considerations)
 8. [Troubleshooting Guide](#troubleshooting-guide)
 9. [Conclusion](#conclusion)
-10. [Appendices](#appendices)
 
 ## Introduction
-This document explains the Color Space Converter tool that transforms colors between RGB color spaces commonly used in games, film, and digital imaging. It covers the underlying mathematics of gamma correction and sRGB-to-linear conversions, the workflow for converting textures and images, and practical guidance for choosing color spaces across engines and devices. It also provides examples for texture preparation, HDR workflows, and display calibration, along with best practices for visual quality, performance, and cross-platform compatibility.
+The Color Space Converter is a specialized web-based tool designed for game artists and developers to work with color spaces and gamma encoding. This utility provides two primary functions: manual color value conversion and batch image color space transformation. It supports the three major color spaces used in game development: Linear, sRGB, and Gamma (with configurable gamma values of 1.8 and 2.2).
+
+The tool serves as an essential resource for understanding and converting between different color representation systems commonly encountered in game engines and digital art workflows. It bridges the gap between artistic creation and engine rendering by providing precise mathematical conversions and visual demonstrations of color space transformations.
 
 ## Project Structure
-The Color Space Converter is a self-contained web tool composed of:
-- A single HTML page that defines the UI layout and controls
-- A JavaScript module that implements color math, UI event handlers, and image processing
-- A CSS module that styles the interface and responsive layout
+The Color Space Converter follows a modular HTML/CSS/JavaScript architecture with clear separation of concerns:
 
 ```mermaid
 graph TB
-HTML["color_space_converter.html"] --> JS["color_space_converter.js"]
-HTML --> CSS["color_space_converter.css"]
-JS --> HTML
-CSS --> HTML
+subgraph "HTML Structure"
+A[color_space_converter.html] --> B[Main Panel Layout]
+B --> C[Manual Converter Section]
+B --> D[Image Converter Section]
+B --> E[Visual Reference Section]
+end
+subgraph "JavaScript Implementation"
+F[color_space_converter.js] --> G[Mathematical Functions]
+F --> H[UI Event Handlers]
+F --> I[Canvas Rendering]
+F --> J[Image Processing]
+end
+subgraph "CSS Styling"
+K[color_space_converter.css] --> L[Component Styles]
+M[common.css] --> N[Global Layout]
+L --> O[Responsive Design]
+N --> P[Menu Integration]
+end
+A --> F
+A --> K
+A --> M
 ```
 
 **Diagram sources**
-- [color_space_converter.html:1-138](file://tools_html/color_space_converter.html#L1-L138)
-- [color_space_converter.js:1-328](file://js/color_space_converter.js#L1-L328)
-- [color_space_converter.css:1-320](file://css/color_space_converter.css#L1-L320)
+- [color_space_converter.html:19-133](file://tools_html/color_space_converter.html#L19-L133)
+- [color_space_converter.js:1-329](file://js/color_space_converter.js#L1-L329)
+- [color_space_converter.css:1-321](file://css/color_space_converter.css#L1-L321)
+
+The project consists of three main components:
+- **HTML Template**: Defines the user interface structure with responsive layout
+- **JavaScript Logic**: Implements color space mathematics and interactive features
+- **CSS Styling**: Provides visual design and responsive behavior
 
 **Section sources**
-- [color_space_converter.html:1-138](file://tools_html/color_space_converter.html#L1-L138)
-- [color_space_converter.js:1-328](file://js/color_space_converter.js#L1-L328)
-- [color_space_converter.css:1-320](file://css/color_space_converter.css#L1-L320)
+- [color_space_converter.html:1-139](file://tools_html/color_space_converter.html#L1-L139)
+- [color_space_converter.js:1-329](file://js/color_space_converter.js#L1-L329)
+- [color_space_converter.css:1-321](file://css/color_space_converter.css#L1-L321)
 
 ## Core Components
-- Color math utilities:
-  - sRGB to linear conversion
-  - Linear to sRGB conversion
-  - Gamma encoding/decoding helpers
-  - Hex-to-RGB and RGB-to-Hex conversions
-  - Luminance calculation
-- UI components:
-  - Manual color converter (Hex/R/G/B inputs, live preview, computed results)
-  - Transfer curve visualization (Linear, sRGB, Gamma 2.2, Gamma 1.8)
-  - Gamma gradient preview slider
-  - Image converter (drag-and-drop upload, batch conversion, download)
-- Engine compatibility quick reference (Unreal Engine and Unity)
 
-Key implementation references:
-- Color math functions and luminance: [color_space_converter.js:7-43](file://js/color_space_converter.js#L7-L43)
-- Manual converter UI and results rendering: [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176), [color_space_converter.html:28-42](file://tools_html/color_space_converter.html#L28-L42)
-- Transfer curve chart drawing: [color_space_converter.js:46-114](file://js/color_space_converter.js#L46-L114)
-- Gamma preview slider: [color_space_converter.js:191-216](file://js/color_space_converter.js#L191-L216), [color_space_converter.html:52-66](file://tools_html/color_space_converter.html#L52-L66)
-- Image converter pipeline: [color_space_converter.js:218-319](file://js/color_space_converter.js#L218-L319), [color_space_converter.html:71-112](file://tools_html/color_space_converter.html#L71-L112)
-- Engine quick reference: [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
+### Mathematical Foundation
+The converter implements precise color space conversion algorithms based on industry-standard formulas:
+
+**Linear to sRGB Conversion:**
+- Uses piecewise function with threshold at 0.04045
+- Applies gamma correction with exponent 2.4 for values above threshold
+- Handles the linear segment below threshold with factor 12.92
+
+**sRGB to Linear Conversion:**
+- Reverses the linear-to-sRGB process
+- Applies inverse gamma function with exponent 1/2.4
+- Maintains precision through careful floating-point arithmetic
+
+**Gamma Encoding/Decoding:**
+- Configurable gamma values (1.8, 2.2)
+- Supports arbitrary gamma values through parameterized functions
+- Essential for legacy engine compatibility
+
+### Interactive Features
+The tool provides multiple modes of operation:
+
+**Manual Color Value Converter:**
+- Real-time Hex color input with live preview
+- Individual R, G, B channel adjustment
+- Comprehensive conversion results display
+- Luminance calculation and HSL conversion
+
+**Transfer Curve Visualization:**
+- Interactive canvas-based curve plotting
+- Comparison of Linear, sRGB, and Gamma curves
+- Dynamic legend and axis labeling
+- Real-time curve updates
+
+**Image Color Space Converter:**
+- Drag-and-drop image upload
+- Batch processing of pixel data
+- Real-time preview of original and converted images
+- Downloadable PNG results
 
 **Section sources**
-- [color_space_converter.js:7-43](file://js/color_space_converter.js#L7-L43)
+- [color_space_converter.js:6-43](file://js/color_space_converter.js#L6-L43)
 - [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
-- [color_space_converter.js:46-114](file://js/color_space_converter.js#L46-L114)
-- [color_space_converter.js:191-216](file://js/color_space_converter.js#L191-L216)
-- [color_space_converter.js:218-319](file://js/color_space_converter.js#L218-L319)
-- [color_space_converter.html:28-42](file://tools_html/color_space_converter.html#L28-L42)
-- [color_space_converter.html:52-66](file://tools_html/color_space_converter.html#L52-L66)
-- [color_space_converter.html:71-112](file://tools_html/color_space_converter.html#L71-L112)
-- [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
+- [color_space_converter.js:218-311](file://js/color_space_converter.js#L218-L311)
 
 ## Architecture Overview
-The tool follows a modular client-side architecture:
-- UI is declarative in HTML with interactive controls
-- Event-driven logic updates previews and results
-- Canvas-based image processing performs pixel-wise color space conversions
-- Mathematical functions encapsulate gamma and sRGB transfer curves
 
 ```mermaid
 sequenceDiagram
-participant U as "User"
-participant UI as "HTML Controls"
-participant JS as "color_space_converter.js"
-participant C as "Canvas"
-U->>UI : "Enter Hex/R/G/B or upload image"
-UI->>JS : "Event : input/change/drop/click"
-JS->>JS : "Compute conversions (sRGB↔Linear, Gamma)"
-JS->>C : "Draw preview / render converted image"
-JS-->>UI : "Update results / enable download"
-U->>UI : "Click Download"
-UI->>JS : "Trigger download"
-JS-->>U : "Save PNG"
+participant User as User Interface
+participant JS as JavaScript Engine
+participant Canvas as Canvas API
+participant Math as Math Library
+User->>JS : Input Color Values
+JS->>Math : Apply Color Space Conversion
+Math-->>JS : Converted Values
+JS->>Canvas : Update Preview Display
+Canvas-->>User : Visual Feedback
+User->>JS : Upload Image File
+JS->>JS : Parse Image Data
+JS->>Math : Convert Each Pixel
+Math-->>JS : Processed Pixel Values
+JS->>Canvas : Render Converted Image
+Canvas-->>User : Download Result
 ```
 
 **Diagram sources**
 - [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
-- [color_space_converter.js:218-319](file://js/color_space_converter.js#L218-L319)
-- [color_space_converter.html:28-42](file://tools_html/color_space_converter.html#L28-L42)
-- [color_space_converter.html:71-112](file://tools_html/color_space_converter.html#L71-L112)
+- [color_space_converter.js:218-311](file://js/color_space_converter.js#L218-L311)
+
+The architecture employs a clean separation between presentation logic and computational algorithms:
+
+1. **Event-Driven UI Layer**: Handles user interactions and updates visual feedback
+2. **Mathematical Processing Layer**: Contains precise color space conversion algorithms
+3. **Canvas Rendering Layer**: Manages visual output and image manipulation
+4. **File Processing Layer**: Handles image loading and data extraction
+
+**Section sources**
+- [color_space_converter.js:321-327](file://js/color_space_converter.js#L321-L327)
 
 ## Detailed Component Analysis
 
-### Color Math Utilities
-The core of the tool is a set of precise color-space conversion functions:
-- sRGB to linear: applies the standard piecewise sRGB transfer curve
-- Linear to sRGB: inverse of the above
-- Gamma encode/decode: raises values to power for gamma encoding/decoding
-- Hex/RGB conversions: convenience utilities for UI
-- Luminance: weighted sum for perceived brightness
-
-Implementation references:
-- sRGB ↔ linear conversions: [color_space_converter.js:7-15](file://js/color_space_converter.js#L7-L15)
-- Gamma encode/decode: [color_space_converter.js:17-23](file://js/color_space_converter.js#L17-L23)
-- Hex/RGB conversions: [color_space_converter.js:25-39](file://js/color_space_converter.js#L25-L39)
-- Luminance: [color_space_converter.js:41-43](file://js/color_space_converter.js#L41-L43)
+### Manual Color Converter Component
 
 ```mermaid
 flowchart TD
-Start(["Input RGB (0–255)"]) --> Normalize["Normalize to (0–1)"]
-Normalize --> FromSpace{"From Space?"}
-FromSpace --> |sRGB| SRGBtoLinear["Apply sRGB transfer curve<br/>piecewise"]
-FromSpace --> |Gamma| GammaDecode["Raise to 1/gamma"]
-FromSpace --> |Linear| PassThrough["Use as-is"]
-SRGBtoLinear --> Compute["Compute luminance / HSL"]
-GammaDecode --> Compute
-PassThrough --> Compute
-Compute --> ToSpace{"To Space?"}
-ToSpace --> |sRGB| LinearToSRGB["Apply sRGB inverse transfer"]
-ToSpace --> |Gamma| GammaEncode["Raise to gamma"]
-ToSpace --> |Linear| OutputLinear["Scale to 0–255"]
-LinearToSRGB --> OutputSRGB["Clamp and scale to 0–255"]
-GammaEncode --> OutputGamma["Clamp and scale to 0–255"]
-OutputLinear --> End(["Output"])
-OutputSRGB --> End
-OutputGamma --> End
+A[User Input] --> B{Input Type}
+B --> |Hex Input| C[Parse Hex Value]
+B --> |RGB Inputs| D[Validate RGB Values]
+C --> E[Update Preview]
+D --> E
+E --> F[Apply sRGB→Linear Conversion]
+F --> G[Calculate Luminance]
+G --> H[Generate Gamma Values]
+H --> I[Display Results]
+J[Real-time Updates] --> A
+K[Live Preview] --> E
 ```
 
 **Diagram sources**
-- [color_space_converter.js:7-15](file://js/color_space_converter.js#L7-L15)
-- [color_space_converter.js:17-23](file://js/color_space_converter.js#L17-L23)
-- [color_space_converter.js:41-43](file://js/color_space_converter.js#L41-L43)
+- [color_space_converter.js:117-159](file://js/color_space_converter.js#L117-L159)
+- [color_space_converter.js:161-176](file://js/color_space_converter.js#L161-L176)
 
-**Section sources**
-- [color_space_converter.js:7-15](file://js/color_space_converter.js#L7-L15)
-- [color_space_converter.js:17-23](file://js/color_space_converter.js#L17-L23)
-- [color_space_converter.js:25-39](file://js/color_space_converter.js#L25-L39)
-- [color_space_converter.js:41-43](file://js/color_space_converter.js#L41-L43)
+The manual converter provides immediate feedback through several interconnected processes:
 
-### Manual Color Converter
-This component allows real-time conversion of a single color:
-- Inputs: Hex (#RRGGBB) or separate R/G/B channels
-- Live preview: background color updates instantly
-- Results: sRGB (0–255), Hex, Linear (0–1 and 0–255), luminance, gamma 2.2, normalized sRGB, HSL
+**Input Validation and Normalization:**
+- Hex color parsing with automatic format detection
+- RGB value range validation (0-255)
+- Real-time coordinate system updates
 
-Implementation references:
-- UI inputs and preview: [color_space_converter.html:28-42](file://tools_html/color_space_converter.html#L28-L42)
-- Update logic and results rendering: [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
+**Conversion Pipeline:**
+- sRGB to Linear conversion using industry-standard formulas
+- Luminance calculation using standard coefficients
+- Gamma encoding for various gamma values
+- HSL conversion for color theory applications
+
+**Result Presentation:**
+- Grid-based result display with categorized values
+- Real-time color preview updates
+- Comprehensive conversion metrics
+
+### Transfer Curve Visualization Component
 
 ```mermaid
-sequenceDiagram
-participant U as "User"
-participant Hex as "Hex Input"
-participant RGB as "R/G/B Inputs"
-participant JS as "Manual Converter"
-participant Preview as "Preview Box"
-participant Results as "Results Grid"
-U->>Hex : "Type Hex"
-Hex->>JS : "oninput"
-U->>RGB : "Edit R/G/B"
-RGB->>JS : "oninput"
-JS->>Preview : "Set background color"
-JS->>Results : "Render conversions"
-JS-->>U : "Live updates"
+classDiagram
+class CurveRenderer {
++number width
++number height
++Array curves
++drawGrid() void
++drawReferenceLine() void
++plotCurves() void
++renderAxes() void
+}
+class CurveDefinition {
++string name
++string color
++function fn
+}
+class CanvasContext {
++fillRect(x, y, w, h) void
++beginPath() void
++moveTo(x, y) void
++lineTo(x, y) void
++stroke() void
++fillText(text, x, y) void
+}
+CurveRenderer --> CurveDefinition : renders
+CurveRenderer --> CanvasContext : uses
+CurveDefinition --> CanvasContext : applies
 ```
 
 **Diagram sources**
-- [color_space_converter.html:28-42](file://tools_html/color_space_converter.html#L28-L42)
-- [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
+- [color_space_converter.js:46-114](file://js/color_space_converter.js#L46-L114)
+
+The curve visualization component creates an educational tool for understanding color space relationships:
+
+**Rendering Architecture:**
+- Dark-themed canvas with grid overlay
+- Multi-colored curve plotting with precise mathematical functions
+- Interactive legend with color-coded curve identification
+- Axis labeling with scientific notation
+
+**Mathematical Accuracy:**
+- Linear curve as identity function
+- sRGB curve using piecewise gamma transformation
+- Gamma curves with configurable exponents
+- Precise coordinate mapping for visual accuracy
+
+### Image Processing Component
+
+```mermaid
+flowchart TD
+A[Image Upload] --> B[File Reader]
+B --> C[Image Loading]
+C --> D[Canvas Rendering]
+D --> E[Pixel Data Extraction]
+E --> F{From Space}
+F --> |sRGB| G[sRGB→Linear Conversion]
+F --> |Gamma| H[Gamma→Linear Conversion]
+F --> |Linear| I[Direct Processing]
+G --> J[To Space Conversion]
+H --> J
+I --> J
+J --> |sRGB| K[Linear→sRGB Conversion]
+J --> |Gamma| L[Linear→Gamma Conversion]
+J --> |Linear| M[Direct Output]
+K --> N[Render Result]
+L --> N
+M --> N
+N --> O[Download PNG]
+```
+
+**Diagram sources**
+- [color_space_converter.js:242-311](file://js/color_space_converter.js#L242-L311)
+
+The image processing pipeline handles large-scale color space transformations efficiently:
+
+**File Handling:**
+- Drag-and-drop interface with visual feedback
+- MIME type validation for supported formats
+- Asynchronous file reading with error handling
+
+**Pixel Processing:**
+- Direct pixel manipulation using ImageData API
+- Optimized loop structure for performance
+- Preserved alpha channel during conversions
+- Real-time progress indication
+
+**Quality Assurance:**
+- Input validation for gamma values
+- Range clamping to prevent overflow
+- Progressive enhancement for browser compatibility
 
 **Section sources**
-- [color_space_converter.html:28-42](file://tools_html/color_space_converter.html#L28-L42)
-- [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
+- [color_space_converter.js:218-311](file://js/color_space_converter.js#L218-L311)
 
-### Transfer Curve Visualization
-This feature draws and compares transfer curves for Linear, sRGB, Gamma 2.2, and Gamma 1.8, aiding understanding of how values map under different color spaces.
+### Visual Design System
 
-Implementation references:
-- Chart drawing and legend: [color_space_converter.js:46-114](file://js/color_space_converter.js#L46-L114), [color_space_converter.html:44-50](file://tools_html/color_space_converter.html#L44-L50)
+The color space converter employs a cohesive design language that enhances usability:
+
+**Color Scheme:**
+- Primary accent color (#2fa888) for interactive elements
+- Dark theme (#0f172a) for canvas areas
+- Semi-transparent backgrounds for depth perception
+- Consistent typography with Japanese Gothic UI font
+
+**Layout Architecture:**
+- Responsive two-column layout for desktop
+- Single-column adaptation for mobile devices
+- Card-based sections with subtle borders
+- Consistent spacing and alignment
+
+**Interactive Elements:**
+- Gradient buttons with hover effects
+- Animated transitions for state changes
+- Visual feedback for drag-and-drop operations
+- Disabled state indicators for inactive controls
+
+**Section sources**
+- [color_space_converter.css:1-321](file://css/color_space_converter.css#L1-L321)
+- [common.css:1-386](file://css/common.css#L1-L386)
+
+## Dependency Analysis
 
 ```mermaid
 graph LR
-Linear["Linear"] --> Curve["Canvas Curves"]
-SRGB["sRGB"] --> Curve
-G22["Gamma 2.2"] --> Curve
-G18["Gamma 1.8"] --> Curve
+subgraph "External Dependencies"
+A[Browser Canvas API]
+B[FileReader API]
+C[DOM Manipulation]
+D[Event Handling]
+end
+subgraph "Internal Dependencies"
+E[Utility Functions]
+F[UI Components]
+G[Canvas Operations]
+H[Image Processing]
+end
+subgraph "Mathematical Functions"
+I[sRGB↔Linear Conversion]
+J[Gamma Encoding/Decoding]
+K[Luminance Calculation]
+L[HSL Conversion]
+end
+A --> G
+B --> H
+C --> F
+D --> F
+E --> I
+E --> J
+E --> K
+E --> L
+F --> E
+G --> I
+H --> J
 ```
 
 **Diagram sources**
-- [color_space_converter.js:46-114](file://js/color_space_converter.js#L46-L114)
-- [color_space_converter.html:44-50](file://tools_html/color_space_converter.html#L44-L50)
+- [color_space_converter.js:1-329](file://js/color_space_converter.js#L1-L329)
+
+The tool maintains minimal external dependencies while leveraging modern browser capabilities:
+
+**Core Browser APIs:**
+- Canvas 2D context for rendering and image processing
+- FileReader API for asynchronous file handling
+- DOM manipulation for dynamic UI updates
+- Event system for user interaction handling
+
+**Internal Module Organization:**
+- Utility functions encapsulated in closure scope
+- Component initialization separated from event handlers
+- Mathematical functions isolated from UI logic
+- Canvas operations abstracted behind rendering functions
+
+**Cross-Component Communication:**
+- Event-driven architecture prevents tight coupling
+- Shared utility functions reduce code duplication
+- Modular initialization allows independent testing
+- Clear separation enables easy maintenance
 
 **Section sources**
-- [color_space_converter.js:46-114](file://js/color_space_converter.js#L46-L114)
-- [color_space_converter.html:44-50](file://tools_html/color_space_converter.html#L44-L50)
-
-### Gamma Gradient Preview
-A slider adjusts gamma dynamically and renders a grayscale gradient to visualize the effect.
-
-Implementation references:
-- Slider and canvas drawing: [color_space_converter.js:191-216](file://js/color_space_converter.js#L191-L216), [color_space_converter.html:52-66](file://tools_html/color_space_converter.html#L52-L66)
-
-```mermaid
-sequenceDiagram
-participant U as "User"
-participant Slider as "Gamma Slider"
-participant JS as "Gamma Preview"
-participant Canvas as "Gamma Bar Canvas"
-U->>Slider : "Drag slider"
-Slider->>JS : "oninput"
-JS->>Canvas : "Fill gradient pixels"
-JS-->>U : "Real-time preview"
-```
-
-**Diagram sources**
-- [color_space_converter.js:191-216](file://js/color_space_converter.js#L191-L216)
-- [color_space_converter.html:52-66](file://tools_html/color_space_converter.html#L52-L66)
-
-**Section sources**
-- [color_space_converter.js:191-216](file://js/color_space_converter.js#L191-L216)
-- [color_space_converter.html:52-66](file://tools_html/color_space_converter.html#L52-L66)
-
-### Image Color Space Converter
-Batch converts uploaded images between color spaces:
-- Drag-and-drop or click-to-upload
-- Select source and target color spaces (sRGB, Linear, Gamma)
-- Adjust gamma for Gamma conversions
-- Renders original and converted canvases
-- Downloads converted PNG
-
-Implementation references:
-- Upload and drag events: [color_space_converter.js:221-259](file://js/color_space_converter.js#L221-L259)
-- Conversion loop and pixel processing: [color_space_converter.js:261-311](file://js/color_space_converter.js#L261-L311)
-- Download handler: [color_space_converter.js:313-319](file://js/color_space_converter.js#L313-L319)
-- UI controls: [color_space_converter.html:71-112](file://tools_html/color_space_converter.html#L71-L112)
-
-```mermaid
-sequenceDiagram
-participant U as "User"
-participant Drop as "Drop Zone/File Input"
-participant JS as "Image Converter"
-participant Src as "Source Canvas"
-participant Out as "Output Canvas"
-U->>Drop : "Upload image"
-Drop->>JS : "handleFile()"
-JS->>Src : "Draw uploaded image"
-U->>JS : "Click Convert"
-JS->>JS : "Decode to linear (fromSpace)"
-JS->>JS : "Encode from linear (toSpace)"
-JS->>Out : "putImageData()"
-U->>JS : "Click Download"
-JS-->>U : "Save PNG"
-```
-
-**Diagram sources**
-- [color_space_converter.js:221-259](file://js/color_space_converter.js#L221-L259)
-- [color_space_converter.js:261-311](file://js/color_space_converter.js#L261-L311)
-- [color_space_converter.js:313-319](file://js/color_space_converter.js#L313-L319)
-- [color_space_converter.html:71-112](file://tools_html/color_space_converter.html#L71-L112)
-
-**Section sources**
-- [color_space_converter.js:221-259](file://js/color_space_converter.js#L221-L259)
-- [color_space_converter.js:261-311](file://js/color_space_converter.js#L261-L311)
-- [color_space_converter.js:313-319](file://js/color_space_converter.js#L313-L319)
-- [color_space_converter.html:71-112](file://tools_html/color_space_converter.html#L71-L112)
-
-### Engine Compatibility Quick Reference
-The tool includes a quick reference for Unreal Engine and Unity color space workflows, including common pitfalls.
-
-References:
-- [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
-
-**Section sources**
-- [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
-
-## Dependency Analysis
-- HTML depends on CSS and JS for presentation and behavior
-- JS depends on browser APIs (Canvas, FileReader, Image) and DOM APIs
-- No external libraries are used; all logic is self-contained
-
-```mermaid
-graph TB
-HTML["color_space_converter.html"] --> CSS["color_space_converter.css"]
-HTML --> JS["color_space_converter.js"]
-JS --> Browser["Browser APIs (Canvas, FileReader, Image)"]
-```
-
-**Diagram sources**
-- [color_space_converter.html:1-138](file://tools_html/color_space_converter.html#L1-L138)
-- [color_space_converter.js:1-328](file://js/color_space_converter.js#L1-L328)
-- [color_space_converter.css:1-320](file://css/color_space_converter.css#L1-L320)
-
-**Section sources**
-- [color_space_converter.html:1-138](file://tools_html/color_space_converter.html#L1-L138)
-- [color_space_converter.js:1-328](file://js/color_space_converter.js#L1-L328)
-- [color_space_converter.css:1-320](file://css/color_space_converter.css#L1-L320)
+- [color_space_converter.js:1-329](file://js/color_space_converter.js#L1-L329)
 
 ## Performance Considerations
-- Pixel loop complexity: O(N) over all pixels; typical images process quickly in modern browsers
-- Canvas operations: getImageData/putImageData are synchronous and can block the UI thread for large images
-- Recommendations:
-  - Prefer smaller images for interactive previews
-  - Consider worker threads for very large images
-  - Limit frequent re-conversion during user interaction (debounce inputs)
-  - Use nearest-neighbor scaling if resampling is needed to avoid extra color shifts
 
-[No sources needed since this section provides general guidance]
+### Memory Management
+The converter implements several strategies to minimize memory usage:
+
+**Image Processing Optimization:**
+- Single-pass pixel manipulation reduces memory overhead
+- Direct ImageData manipulation avoids intermediate arrays
+- Canvas reuse prevents memory leaks from multiple canvases
+- Efficient loop structures minimize garbage collection pressure
+
+**DOM Manipulation Efficiency:**
+- Batch DOM updates to reduce reflow operations
+- Event delegation for dynamic elements
+- CSS transforms for animations instead of layout changes
+- Lazy initialization of heavy components
+
+### Computational Efficiency
+**Mathematical Optimizations:**
+- Pre-computed constants eliminate repeated calculations
+- Early termination conditions in validation logic
+- Vectorized operations where possible
+- Approximation methods for frequently used calculations
+
+**Rendering Performance:**
+- Canvas drawing optimized with efficient path construction
+- Minimal redraw operations through selective updates
+- Hardware acceleration leverage through canvas usage
+- Debounced input handling for real-time updates
+
+### Scalability Factors
+**Large Image Handling:**
+- Progressive loading for large images
+- Memory-aware processing limits
+- Background processing for heavy operations
+- User feedback during long computations
+
+**Browser Compatibility:**
+- Feature detection for modern APIs
+- Graceful degradation for older browsers
+- Polyfills for missing functionality
+- Performance monitoring across different environments
 
 ## Troubleshooting Guide
-Common issues and resolutions:
-- Unexpected dark or washed-out results:
-  - Verify the source color space selection matches the image’s storage format
-  - Ensure gamma values are correct for the target engine
-- Incorrect luminance/HSL:
-  - Confirm conversions are performed in the intended space (sRGB vs Linear)
-- UI not updating:
-  - Check that inputs are valid numeric ranges and Hex format
-- Download button disabled:
-  - Ensure an image was uploaded and conversion completed
 
-References:
-- Manual converter update and validation: [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
-- Image conversion logic: [color_space_converter.js:261-311](file://js/color_space_converter.js#L261-L311)
-- Engine quick reference for common pitfalls: [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
+### Common Issues and Solutions
+
+**Image Conversion Problems:**
+- **Issue**: Images not converting or displaying incorrectly
+  - **Solution**: Verify image format support (JPG, PNG, BMP, WEBP)
+  - **Solution**: Check browser console for CORS-related errors
+  - **Solution**: Ensure image dimensions are within browser limits
+
+**Performance Issues:**
+- **Issue**: Slow conversion of large images
+  - **Solution**: Reduce image resolution before processing
+  - **Solution**: Close other tabs to free up memory
+  - **Solution**: Use browser with better canvas performance
+
+**UI Responsiveness Problems:**
+- **Issue**: Interface becomes unresponsive during operations
+  - **Solution**: Wait for processing to complete before new actions
+  - **Solution**: Refresh page if stuck in loading state
+  - **Solution**: Clear browser cache and cookies
+
+**Visual Display Issues:**
+- **Issue**: Incorrect color appearance in previews
+  - **Solution**: Calibrate monitor color settings
+  - **Solution**: Check browser color management settings
+  - **Solution**: Verify gamma settings match display calibration
+
+### Error Prevention Strategies
+
+**Input Validation:**
+- Always validate numeric inputs within expected ranges
+- Check file types before attempting to process
+- Monitor for null or undefined values in calculations
+- Implement bounds checking for all mathematical operations
+
+**Resource Management:**
+- Clean up event listeners when components are destroyed
+- Release canvas resources when no longer needed
+- Monitor memory usage for large image processing
+- Implement timeout mechanisms for long operations
+
+**Cross-Browser Compatibility:**
+- Test functionality across supported browser versions
+- Verify canvas API availability before use
+- Check for FileReader API support in target browsers
+- Validate CSS property support across different engines
 
 **Section sources**
-- [color_space_converter.js:117-176](file://js/color_space_converter.js#L117-L176)
-- [color_space_converter.js:261-311](file://js/color_space_converter.js#L261-L311)
-- [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
+- [color_space_converter.js:242-311](file://js/color_space_converter.js#L242-L311)
 
 ## Conclusion
-The Color Space Converter provides a practical, mathematically sound toolkit for converting between sRGB, Linear, and Gamma color spaces. It supports both single-color calculations and batch image conversions, with visual aids to help understand transfer curves and gamma effects. By selecting the correct color space and adhering to engine-specific workflows, artists and developers can achieve consistent visual quality across platforms while minimizing artifacts.
 
-[No sources needed since this section summarizes without analyzing specific files]
+The Color Space Converter represents a sophisticated yet accessible solution for game artists and developers working with color space conversions. Its modular architecture, precise mathematical implementations, and intuitive user interface combine to create a powerful tool for both learning and practical application.
 
-## Appendices
+The tool's strength lies in its comprehensive coverage of color space fundamentals while maintaining simplicity of use. Through real-time visual feedback, educational curve displays, and practical batch processing capabilities, it serves as both a learning resource and a production utility.
 
-### Mathematical Principles and Practical Guidance
-- sRGB transfer curve:
-  - Nonlinear mapping designed for CRT displays; used widely for storage and transmission
-  - Apply piecewise sRGB forward/inverse transforms when moving to/from linear
-- Linear color space:
-  - Physically meaningful for lighting computations; preferred in modern engines
-  - Use for PBR materials, HDR workflows, and compositing
-- Gamma encoding:
-  - Approximates sRGB; historically used in older pipelines
-  - Ensure consistent gamma across tools and engines to avoid mismatches
-- Luminance:
-  - Perceived brightness using standard coefficients; useful for quick checks
-- HSL:
-  - Good for hue-based adjustments; keep in mind that saturation/lightness can appear differently in Linear vs sRGB
+Key achievements include:
+- **Educational Value**: Clear visualization of color space relationships
+- **Practical Utility**: Efficient batch processing for professional workflows  
+- **Technical Precision**: Industry-standard mathematical implementations
+- **User Experience**: Intuitive interface with immediate feedback
+- **Performance**: Optimized algorithms for smooth operation
 
-References:
-- sRGB ↔ linear conversions: [color_space_converter.js:7-15](file://js/color_space_converter.js#L7-L15)
-- Luminance: [color_space_converter.js:41-43](file://js/color_space_converter.js#L41-L43)
-- HSL computation: [color_space_converter.js:161-176](file://js/color_space_converter.js#L161-L176)
-
-**Section sources**
-- [color_space_converter.js:7-15](file://js/color_space_converter.js#L7-L15)
-- [color_space_converter.js:41-43](file://js/color_space_converter.js#L41-L43)
-- [color_space_converter.js:161-176](file://js/color_space_converter.js#L161-L176)
-
-### Example Workflows
-- Texture preparation:
-  - Store base/metallic/roughness/normal AO textures as Linear (or disable sRGB in importers)
-  - Keep emissive/specular maps in Linear
-  - UI/overlay textures: keep sRGB enabled so they appear correctly on screen
-- HDR workflows:
-  - Work in Linear for lighting and compositing
-  - Tone map to sRGB for display
-- Display calibration:
-  - Match monitor gamma to 2.2 or 2.4 for sRGB-like appearance
-  - Use transfer curve visualization to confirm perceptual uniformity
-
-[No sources needed since this section provides general guidance]
-
-### Choosing Color Spaces by Use Case
-- Game engines:
-  - Unreal Engine: default sRGB for textures; engine converts to Linear for lighting; output to sRGB for display
-  - Unity: choose Linear workflow; ensure non-color data (ORM/AO) disables sRGB
-- Film/Digital Imaging:
-  - Use Linear for internal processing; apply appropriate display primaries/transfers for output
-- Cross-engine portability:
-  - Standardize on sRGB for interchange; adjust gamma consistently across tools
-
-References:
-- Engine quick reference: [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
-
-**Section sources**
-- [color_space_converter.html:114-129](file://tools_html/color_space_converter.html#L114-L129)
+Future enhancements could include additional color space support, export format options, and advanced color theory features. However, the current implementation provides a solid foundation for color space conversion needs in game development workflows.

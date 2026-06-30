@@ -3,11 +3,11 @@ schema_version: 1
 locale: en-US
 branch: main
 nodes_managed: true
-exported_at: "2026-06-26T04:24:50Z"
+exported_at: "2026-06-29T03:42:51Z"
 modules:
     "":
-        dir_name: Technical Art Web Utility Orchestrator
-        title: Technical Art Web Utility Orchestrator
+        dir_name: Technical Artist Web Workbench
+        title: Technical Artist Web Workbench
         scope:
             - index.html
             - tokens.json
@@ -209,6 +209,18 @@ modules:
         children: []
         depends_on: []
         related_to: []
+    logging_system:
+        dir_name: Browser-Native Logging via Console API
+        title: Browser-Native Logging via Console API
+        scope: []
+        source_files:
+            - js/ai_upscale.js
+            - js/ai_frame_interpolation.js
+            - js/3d_city.js
+            - third_part/ort-wasm-simd-threaded.js
+        children: []
+        depends_on: []
+        related_to: []
     third_party_libs:
         dir_name: Client-Side Media Processing & Codec Utilities
         title: Client-Side Media Processing & Codec Utilities
@@ -220,8 +232,8 @@ modules:
         related_to:
             - path: tools
     tools:
-        dir_name: Web-based Technical Art & AI Utility Suite
-        title: Web-based Technical Art & AI Utility Suite
+        dir_name: Technical Artist Web Workbench
+        title: Technical Artist Web Workbench
         scope:
             - tools_html/
             - js/

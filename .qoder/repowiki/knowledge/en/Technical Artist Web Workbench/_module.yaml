@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: Technical Art Web Utility Orchestrator
+title: Technical Artist Web Workbench
 scope:
     - index.html
     - tokens.json

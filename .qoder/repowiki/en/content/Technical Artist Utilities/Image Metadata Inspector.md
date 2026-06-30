@@ -2,10 +2,12 @@
 
 <cite>
 **Referenced Files in This Document**
-- [image_metadata_inspector.html](file://tools_html/image_metadata_inspector.html)
 - [image_metadata_inspector.js](file://js/image_metadata_inspector.js)
 - [image_metadata_inspector.css](file://css/image_metadata_inspector.css)
+- [image_metadata_inspector.html](file://tools_html/image_metadata_inspector.html)
+- [common.css](file://css/common.css)
 - [menu.js](file://js/menu.js)
+- [index.html](file://index.html)
 </cite>
 
 ## Table of Contents
@@ -14,280 +16,456 @@
 3. [Core Components](#core-components)
 4. [Architecture Overview](#architecture-overview)
 5. [Detailed Component Analysis](#detailed-component-analysis)
-6. [Dependency Analysis](#dependency-analysis)
+6. [Feature Implementation](#feature-implementation)
 7. [Performance Considerations](#performance-considerations)
-8. [Troubleshooting Guide](#troubleshooting-guide)
-9. [Conclusion](#conclusion)
-10. [Appendices](#appendices)
+8. [User Interface Design](#user-interface-design)
+9. [Integration with Tool Ecosystem](#integration-with-tool-ecosystem)
+10. [Troubleshooting Guide](#troubleshooting-guide)
+11. [Conclusion](#conclusion)
 
 ## Introduction
-The Image Metadata Inspector is a browser-based tool designed to analyze image assets for game development workflows. It extracts and interprets image metadata, performs basic format analysis, estimates VRAM usage under various GPU texture formats, and provides visual diagnostics such as histograms and color picking. The tool focuses on practical asset preparation tasks including:
-- Identifying POT/NPOT dimensions
-- Detecting transparency channels
-- Estimating memory footprint across common GPU texture formats
-- Analyzing color distribution and luminance
-- Providing quick color sampling for quality assessment
 
-It is integrated into the larger toolkit as a dedicated utility accessible from the main navigation menu.
+The Image Metadata Inspector is a specialized web-based tool designed for game developers and technical artists to analyze image metadata and properties. This utility provides comprehensive analysis of image files including dimensions, aspect ratios, memory usage estimation, histogram analysis, and real-time color picking capabilities.
+
+The tool serves as part of the larger TA Tool Box ecosystem, specifically targeting the "贴图信息查看器" (Texture Information Inspector) functionality within the "游戏工具" (Game Tools) category. It offers essential insights for texture optimization and asset preparation workflows in game development environments.
 
 ## Project Structure
-The tool consists of a minimal HTML page, a JavaScript controller, and a stylesheet. It is self-contained and does not rely on external libraries beyond the browser’s built-in APIs.
+
+The Image Metadata Inspector follows a modular architecture with clear separation between presentation, logic, and styling components:
 
 ```mermaid
 graph TB
-HTML["tools_html/image_metadata_inspector.html"] --> JS["js/image_metadata_inspector.js"]
-HTML --> CSS["css/image_metadata_inspector.css"]
-Menu["js/menu.js"] --> HTML
+subgraph "Application Structure"
+A[index.html] --> B[menu.js]
+C[tools_html/image_metadata_inspector.html] --> D[image_metadata_inspector.js]
+C --> E[image_metadata_inspector.css]
+F[css/common.css] --> G[Shared Styling]
+H[js/menu.js] --> I[Navigation System]
+end
+subgraph "Tool Categories"
+J[AI工具箱]
+K[图片处理]
+L[3D工具]
+M[视频处理]
+N[游戏工具]
+O[TA工具]
+P[和我一起听]
+Q[关于]
+end
+N --> R[贴图信息查看器]
+O --> R
 ```
 
 **Diagram sources**
 - [image_metadata_inspector.html:1-95](file://tools_html/image_metadata_inspector.html#L1-L95)
-- [image_metadata_inspector.js:1-237](file://js/image_metadata_inspector.js#L1-L237)
-- [image_metadata_inspector.css:1-251](file://css/image_metadata_inspector.css#L1-L251)
-- [menu.js:30-40](file://js/menu.js#L30-L40)
+- [menu.js:2-43](file://js/menu.js#L2-L43)
+
+The tool is organized as a standalone HTML page with embedded JavaScript and CSS, designed to integrate seamlessly with the broader TA Tool Box navigation system.
 
 **Section sources**
 - [image_metadata_inspector.html:1-95](file://tools_html/image_metadata_inspector.html#L1-L95)
-- [image_metadata_inspector.js:1-237](file://js/image_metadata_inspector.js#L1-L237)
-- [image_metadata_inspector.css:1-251](file://css/image_metadata_inspector.css#L1-L251)
-- [menu.js:30-40](file://js/menu.js#L30-L40)
+- [menu.js:2-43](file://js/menu.js#L2-L43)
 
 ## Core Components
-- Input and Drag-and-Drop Zone: Provides a labeled drop zone and hidden file input to accept images.
-- Preview Canvas: Renders the uploaded image and enables interactive color sampling.
-- Information Grid: Displays file metadata such as filename, MIME type, dimensions, aspect ratio, megapixels, alpha presence, and modification date.
-- Memory Estimate Grid: Shows estimated VRAM usage for several GPU texture formats.
-- Histogram Canvas: Computes and renders per-channel and luminance histograms.
-- Color Picker: Allows mouse movement over the preview to sample pixel color values and display RGBA and linear RGB components.
 
-Key capabilities:
-- File format support: JPG, PNG, BMP, WEBP, GIF (as accepted by the file input).
-- Dimension checks: POT/NPOT detection and aspect ratio labeling against common ratios.
-- Transparency detection: Scans pixel alpha channel to determine if the image contains translucent pixels.
-- VRAM estimation: Computes memory usage for RGBA32 (raw), RGB565, DXT1/BC1, DXT5/BC3, ASTC 4×4, and ETC2 formats.
-- Histogram analysis: Builds red, green, blue, and luminance histograms for exposure and contrast insights.
-- Color sampling: Real-time crosshair cursor over the preview to show pixel color values.
+The Image Metadata Inspector consists of several interconnected components that work together to provide comprehensive image analysis:
+
+### Main Application Container
+The primary HTML structure establishes the layout with responsive two-column design, featuring input area on the left and analysis results on the right.
+
+### Interactive Canvas System
+A sophisticated canvas-based rendering system handles image preview, histogram generation, and real-time color sampling with crosshair cursor functionality.
+
+### Data Processing Engine
+JavaScript-based image analysis engine performs pixel-level operations, memory calculations, and statistical analysis without external dependencies.
+
+### Styling Framework
+Custom CSS framework provides consistent theming with gradient backgrounds, glass-morphism cards, and responsive design for various screen sizes.
 
 **Section sources**
 - [image_metadata_inspector.html:25-88](file://tools_html/image_metadata_inspector.html#L25-L88)
-- [image_metadata_inspector.js:9-89](file://js/image_metadata_inspector.js#L9-L89)
-- [image_metadata_inspector.js:91-139](file://js/image_metadata_inspector.js#L91-L139)
-- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
-- [image_metadata_inspector.js:192-231](file://js/image_metadata_inspector.js#L192-L231)
-- [image_metadata_inspector.css:69-251](file://css/image_metadata_inspector.css#L69-L251)
+- [image_metadata_inspector.js:1-237](file://js/image_metadata_inspector.js#L1-L237)
 
 ## Architecture Overview
-The tool follows a straightforward client-side architecture:
-- HTML defines the layout and placeholders for dynamic content.
-- JavaScript handles file selection, image loading, pixel data extraction, histogram computation, and VRAM estimation.
-- CSS styles the UI and ensures responsive layout.
+
+The application follows a client-side architecture pattern with clear separation of concerns:
 
 ```mermaid
 sequenceDiagram
-participant U as "User"
-participant HTML as "image_metadata_inspector.html"
-participant JS as "image_metadata_inspector.js"
-participant CAN as "Canvas API"
-participant DOM as "DOM"
-U->>HTML : "Drag/Drop or click upload"
-HTML->>JS : "handleFile(file)"
-JS->>CAN : "Create Image and load via FileReader"
-CAN-->>JS : "onload -> Image ready"
-JS->>CAN : "Draw image to preview canvas"
-JS->>CAN : "getImageData()"
-JS->>JS : "Detect alpha presence"
-JS->>JS : "Compute VRAM estimates"
-JS->>DOM : "Render info grid, memory grid, histogram"
-U->>HTML : "Move mouse over preview"
-HTML->>JS : "initColorPicker() events"
-JS->>DOM : "Update color swatch and values"
+participant User as User
+participant UI as HTML Interface
+participant JS as JavaScript Engine
+participant Canvas as Canvas API
+participant FileReader as File Reader
+participant DOM as DOM Manipulation
+User->>UI : Upload Image File
+UI->>JS : handleFile(file)
+JS->>FileReader : readAsDataURL(file)
+FileReader-->>JS : Image Data URL
+JS->>Canvas : Create Image Object
+Canvas->>Canvas : Load Image Data
+Canvas-->>JS : Image Loaded Event
+JS->>Canvas : drawImage(img, 0, 0)
+JS->>Canvas : getImageData(0, 0, width, height)
+JS->>DOM : renderInfo(fileInfo)
+JS->>DOM : renderHistogram(imageData)
+JS->>DOM : initColorPicker(img)
+User->>Canvas : Mouse Move
+Canvas->>JS : mousemove event
+JS->>DOM : Update color swatch
+JS->>DOM : Update color values
 ```
 
 **Diagram sources**
-- [image_metadata_inspector.html:25-88](file://tools_html/image_metadata_inspector.html#L25-L88)
 - [image_metadata_inspector.js:41-89](file://js/image_metadata_inspector.js#L41-L89)
-- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
 - [image_metadata_inspector.js:192-231](file://js/image_metadata_inspector.js#L192-L231)
+
+The architecture emphasizes client-side processing, eliminating server dependencies while maintaining responsive performance through efficient canvas operations.
+
+**Section sources**
+- [image_metadata_inspector.js:1-237](file://js/image_metadata_inspector.js#L1-L237)
 
 ## Detailed Component Analysis
 
-### Input and Drop Zone
-- Purpose: Accepts image uploads via drag-and-drop or file input.
-- Behavior: Adds visual feedback during drag-over, triggers file selection, and delegates to the handler.
+### File Upload and Drag-and-Drop System
 
-Implementation highlights:
-- Event listeners for dragover/dragleave/drop and change.
-- Uses FileReader to convert the selected file to a data URL for immediate rendering.
+The upload mechanism implements modern web APIs for seamless file handling:
 
-**Section sources**
+```mermaid
+flowchart TD
+A[User Interaction] --> B{Drag or Click?}
+B --> |Click| C[Open File Dialog]
+B --> |Drag| D[Show Drag Over State]
+D --> E{File Type Valid?}
+E --> |Yes| F[Process File]
+E --> |No| G[Show Error Message]
+C --> H{File Selected?}
+H --> |Yes| F
+H --> |No| A
+F --> I[FileReader.readAsDataURL]
+I --> J[Image.onload Handler]
+J --> K[Extract Image Properties]
+K --> L[Render Analysis Results]
+```
+
+**Diagram sources**
 - [image_metadata_inspector.js:9-24](file://js/image_metadata_inspector.js#L9-L24)
-- [image_metadata_inspector.html:28-35](file://tools_html/image_metadata_inspector.html#L28-L35)
-
-### File Handling and Image Loading
-- Extracts file metadata (name, size, type, lastModified).
-- Loads the image into an Image element and draws it onto a preview canvas.
-- Captures pixel data for subsequent analysis.
-
-Processing logic:
-- On image load, computes width, height, and megapixels.
-- Draws the image to a canvas and retrieves ImageData for analysis.
-
-**Section sources**
 - [image_metadata_inspector.js:41-89](file://js/image_metadata_inspector.js#L41-L89)
-- [image_metadata_inspector.html:38-46](file://tools_html/image_metadata_inspector.html#L38-L46)
 
-### Alpha Channel Detection
-- Scans the alpha channel of the captured ImageData to determine if any translucent pixels exist.
-- Updates the info grid with a simple “has alpha” indicator.
+The system supports multiple image formats including JPG, PNG, BMP, WEBP, and GIF through the accept attribute configuration.
 
-Algorithm:
-- Iterates through every fourth pixel (alpha channel) and sets a flag upon finding any alpha below full opacity.
+### Image Analysis Engine
 
-**Section sources**
-- [image_metadata_inspector.js:67-73](file://js/image_metadata_inspector.js#L67-L73)
-- [image_metadata_inspector.js:107](file://js/image_metadata_inspector.js#L107)
+The core analysis engine performs comprehensive pixel-level operations:
 
-### VRAM Memory Estimation
-- Computes memory usage for multiple GPU texture formats:
-  - RGBA32 (raw): width × height × 4 bytes
-  - RGB565: width × height × 2 bytes (rounded up)
-  - DXT1/BC1: width × height ÷ 2 bytes (rounded up)
-  - DXT5/BC3: width × height bytes
-  - ASTC 4×4: width × height × 0.89 bytes (rounded up)
-  - ETC2: width × height ÷ 2 bytes (rounded up)
-- Displays formatted sizes in the memory grid.
+```mermaid
+classDiagram
+class ImageAnalyzer {
++fileInfo : Object
++imgData : ImageData
++previewCanvas : Canvas
++analyzeImage(file) : void
++checkAlpha() : boolean
++calculateMemory() : Object
++generateHistogram() : void
++formatSize(bytes) : string
++isPOT(value) : boolean
++gcd(a, b) : number
+}
+class FileInfo {
++name : string
++size : number
++type : string
++width : number
++height : number
++megapixels : string
++hasAlpha : boolean
++memoryRaw : number
++memoryRGB565 : number
++memoryDXT1 : number
++memoryDXT5 : number
++memoryASTC4x4 : number
+}
+class HistogramData {
++histR : Array
++histG : Array
++histB : Array
++histL : Array
++maxVal : number
+}
+ImageAnalyzer --> FileInfo : creates
+ImageAnalyzer --> HistogramData : generates
+```
 
-Notes:
-- These estimates reflect GPU texture memory usage and are useful for asset pipeline decisions.
-- Formats like ASTC and ETC2 are approximated; actual compression ratios depend on content and encoder settings.
+**Diagram sources**
+- [image_metadata_inspector.js:41-89](file://js/image_metadata_inspector.js#L41-L89)
+- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
+
+The analyzer extracts metadata including file properties, dimension analysis, aspect ratio calculation, and comprehensive memory footprint estimation across multiple compression formats.
+
+### Real-time Color Picker System
+
+The interactive color picker provides precise pixel-level color analysis:
+
+```mermaid
+sequenceDiagram
+participant User as User
+participant Canvas as Preview Canvas
+participant Analyzer as Color Analyzer
+participant UI as Color Display
+User->>Canvas : Move Mouse
+Canvas->>Analyzer : getPixelColor(x, y)
+Analyzer->>Analyzer : Calculate RGBA Values
+Analyzer->>UI : Update Swatch Background
+Analyzer->>UI : Update RGB Values
+Analyzer->>UI : Update Alpha Percentage
+Analyzer->>UI : Update Linear Values
+User->>Canvas : Hover Out
+Canvas->>UI : Reset to Default Message
+```
+
+**Diagram sources**
+- [image_metadata_inspector.js:192-231](file://js/image_metadata_inspector.js#L192-L231)
+
+The system calculates color values in multiple formats including hexadecimal, RGB, alpha channel percentage, and linear color space representation.
+
+### Memory Estimation and Compression Analysis
+
+The tool provides comprehensive memory usage analysis across multiple compression formats:
+
+| Format | Description | Memory Calculation |
+|--------|-------------|-------------------|
+| RGBA32 (原始) | Uncompressed 32-bit RGBA | Width × Height × 4 bytes |
+| RGB565 | 16-bit RGB format | Width × Height × 2 bytes |
+| DXT1/BC1 | Block compression 1:8 | Width × Height ÷ 8 bytes |
+| DXT5/BC3 | Block compression 1:4 | Width × Height bytes |
+| ASTC 4×4 | Advanced compression | Width × Height × 0.89 bytes |
 
 **Section sources**
 - [image_metadata_inspector.js:75-81](file://js/image_metadata_inspector.js#L75-L81)
 - [image_metadata_inspector.js:119-129](file://js/image_metadata_inspector.js#L119-L129)
 
-### Aspect Ratio and POT/NPOT Checks
-- Calculates GCD to reduce width/height to simplest form and displays the aspect ratio.
-- Flags whether width and height are powers-of-two (POT) or not (NPOT).
-- Highlights common aspect ratios (1:1, 4:3, 3:2, 16:9, 16:10, 21:9, 2:1, 3:1) against the detected ratio.
+## Feature Implementation
 
-**Section sources**
-- [image_metadata_inspector.js:32-39](file://js/image_metadata_inspector.js#L32-L39)
-- [image_metadata_inspector.js:92-109](file://js/image_metadata_inspector.js#L92-L109)
-- [image_metadata_inspector.js:131-139](file://js/image_metadata_inspector.js#L131-L139)
+### Responsive Layout System
 
-### Histogram Analysis
-- Builds four histograms: R, G, B, and Luminance.
-- Luminance computed using standard luminance weights.
-- Renders a dark-themed chart with semi-transparent overlays for each channel.
-
-Algorithm:
-- Initialize arrays for counts per intensity level.
-- Iterate through ImageData, incrementing counts for each channel and luminance.
-- Normalize by the maximum bin to scale bars proportionally.
-- Draw filled polygons for each channel.
-
-**Section sources**
-- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
-
-### Color Picker and Pixel Sampling
-- Enables crosshair cursor over the preview canvas.
-- On mousemove, reads the pixel at the cursor position and displays:
-  - Position coordinates
-  - Hex color
-  - RGB values
-  - Alpha value and percentage
-  - Linear RGB approximation
-
-**Section sources**
-- [image_metadata_inspector.js:192-231](file://js/image_metadata_inspector.js#L192-L231)
-- [image_metadata_inspector.html:42-46](file://tools_html/image_metadata_inspector.html#L42-L46)
-
-### UI Rendering and Formatting
-- Formats file sizes into human-readable units (bytes, KB, MB).
-- Renders info grid items and memory grid items dynamically.
-- Applies POT/NPOT badges and highlights matching aspect ratios.
-
-**Section sources**
-- [image_metadata_inspector.js:26-30](file://js/image_metadata_inspector.js#L26-L30)
-- [image_metadata_inspector.js:91-139](file://js/image_metadata_inspector.js#L91-L139)
-- [image_metadata_inspector.css:216-251](file://css/image_metadata_inspector.css#L216-L251)
-
-## Dependency Analysis
-- Internal dependencies:
-  - HTML depends on JS for behavior and CSS for styling.
-  - JS relies on the browser’s Canvas API and FileReader.
-- External dependencies:
-  - None; the tool is self-contained.
-- Navigation integration:
-  - The tool is linked from the main menu, enabling discovery alongside other utilities.
+The application implements a flexible grid-based layout that adapts to different screen sizes:
 
 ```mermaid
 graph LR
-Menu["js/menu.js"] --> HTML["tools_html/image_metadata_inspector.html"]
-HTML --> JS["js/image_metadata_inspector.js"]
-HTML --> CSS["css/image_metadata_inspector.css"]
-JS --> Canvas["Canvas API"]
-JS --> DOM["DOM"]
+A[Desktop View] --> B[Two Column Layout]
+C[Mobile View] --> D[Single Column Layout]
+B --> E[Width: 1fr 1fr]
+D --> F[Width: 1fr]
+subgraph "Breakpoints"
+G[> 1100px]
+H[≤ 1100px]
+end
+G --> A
+H --> C
 ```
 
 **Diagram sources**
-- [menu.js:30-40](file://js/menu.js#L30-L40)
-- [image_metadata_inspector.html:1-95](file://tools_html/image_metadata_inspector.html#L1-L95)
-- [image_metadata_inspector.js:1-237](file://js/image_metadata_inspector.js#L1-L237)
-- [image_metadata_inspector.css:1-251](file://css/image_metadata_inspector.css#L1-L251)
+- [image_metadata_inspector.css:34-44](file://css/image_metadata_inspector.css#L34-L44)
+
+### Visual Design System
+
+The interface employs a cohesive design language with:
+
+- **Glass-morphism cards**: Semi-transparent backgrounds with blur effects
+- **Gradient accents**: Consistent color scheme using CSS custom properties
+- **Responsive typography**: Adaptive font sizing and spacing
+- **Interactive states**: Hover effects and transition animations
+
+### Color Analysis Visualization
+
+The histogram visualization provides multi-channel analysis:
+
+```mermaid
+flowchart TD
+A[Pixel Data] --> B[Extract Channels]
+B --> C[R: Red Channel]
+B --> D[G: Green Channel]
+B --> E[B: Blue Channel]
+B --> F[L: Luminance]
+C --> G[Count Occurrences]
+D --> G
+E --> G
+F --> G
+G --> H[Normalize to Max Value]
+H --> I[Draw Channel Curves]
+I --> J[Composite Visualization]
+```
+
+**Diagram sources**
+- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
 
 **Section sources**
-- [menu.js:30-40](file://js/menu.js#L30-L40)
-- [image_metadata_inspector.html:1-95](file://tools_html/image_metadata_inspector.html#L1-L95)
-- [image_metadata_inspector.js:1-237](file://js/image_metadata_inspector.js#L1-L237)
-- [image_metadata_inspector.css:1-251](file://css/image_metadata_inspector.css#L1-L251)
+- [image_metadata_inspector.css:146-191](file://css/image_metadata_inspector.css#L146-L191)
+- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
 
 ## Performance Considerations
-- Image decoding and rendering:
-  - Large images can cause significant memory usage during decoding and drawing. Consider pre-scaling or warning users about very large files.
-- Pixel data scanning:
-  - Alpha detection and histogram computation iterate over all pixels. For very large images, these operations may be slow. Consider downsampling for performance-sensitive scenarios.
-- Canvas rendering:
-  - Drawing large images to a canvas and computing ImageData can be expensive. The preview canvas is sized to the original image; consider limiting preview size for responsiveness.
-- VRAM estimation:
-  - Estimates are constant-time calculations based on resolution and format assumptions. They are fast but approximate.
 
-[No sources needed since this section provides general guidance]
+### Canvas Optimization Strategies
+
+The application implements several performance optimizations:
+
+- **Efficient pixel access**: Direct array manipulation for optimal speed
+- **Memory-efficient histograms**: Pre-allocated arrays with minimal garbage collection
+- **Lazy initialization**: Components initialized only when needed
+- **Event throttling**: Mouse move events processed efficiently
+
+### Memory Management
+
+Key considerations for large image files:
+
+- **ImageData caching**: Single pixel data extraction reused across analyses
+- **Canvas cleanup**: Proper resource management for preview canvases
+- **Format detection**: Early exit for unsupported formats
+- **Progressive loading**: Asynchronous processing prevents UI blocking
+
+### Browser Compatibility
+
+The implementation targets modern browsers with fallback support for:
+
+- **Canvas API**: Essential for image processing operations
+- **FileReader API**: Modern file upload handling
+- **CSS Grid**: Flexible layout system with graceful degradation
+- **ES5 compatibility**: Robust JavaScript execution across browsers
+
+## User Interface Design
+
+### Navigation Integration
+
+The tool integrates seamlessly with the TA Tool Box navigation system:
+
+```mermaid
+graph TB
+A[Main Menu] --> B[游戏工具]
+B --> C[贴图信息查看器]
+C --> D[Tools Page]
+subgraph "Navigation Features"
+E[Search Integration]
+F[Category Organization]
+G[Keyboard Shortcuts]
+H[Responsive Design]
+end
+A --> E
+B --> F
+C --> G
+D --> H
+```
+
+**Diagram sources**
+- [menu.js:36-36](file://js/menu.js#L36-L36)
+- [index.html:12-24](file://index.html#L12-L24)
+
+### Accessibility Features
+
+The interface includes several accessibility enhancements:
+
+- **Keyboard navigation**: Full keyboard support for all interactive elements
+- **Screen reader compatibility**: Proper ARIA attributes and semantic markup
+- **High contrast mode**: CSS custom properties support theme variations
+- **Focus management**: Logical tab order and focus indicators
+
+### Mobile Responsiveness
+
+The design adapts to mobile devices through:
+
+- **Flexible grid system**: Single column layout on smaller screens
+- **Touch-friendly controls**: Sufficient touch target sizes
+- **Adaptive typography**: Readable text across device sizes
+- **Optimized canvas scaling**: Maintains quality on high-DPI displays
+
+**Section sources**
+- [image_metadata_inspector.css:22-67](file://css/image_metadata_inspector.css#L22-L67)
+- [image_metadata_inspector.html:20-23](file://tools_html/image_metadata_inspector.html#L20-L23)
+
+## Integration with Tool Ecosystem
+
+### Menu System Integration
+
+The Image Metadata Inspector participates in the broader TA Tool Box ecosystem:
+
+| Tool Category | Tool Name | Purpose |
+|---------------|-----------|---------|
+| Game Tools | 贴图信息查看器 | Texture metadata analysis |
+| TA Tools | Shader函数库 | Shader function library |
+| TA Tools | GLSL/HLSL转换器 | Shader language conversion |
+| TA Tools | UE材质库 | Unreal Engine material reference |
+| TA Tools | 物理光照计算器 | Lighting and exposure calculations |
+| TA Tools | 色彩空间转换器 | Color space conversions |
+
+### Shared Infrastructure
+
+The tool leverages common infrastructure components:
+
+- **Navigation system**: Consistent menu structure and behavior
+- **Search functionality**: Integrated tool discovery across categories
+- **Styling framework**: Unified visual design language
+- **Responsive layout**: Consistent adaptation across tools
+
+**Section sources**
+- [menu.js:2-43](file://js/menu.js#L2-L43)
+- [common.css:1-386](file://css/common.css#L1-L386)
 
 ## Troubleshooting Guide
-- No preview appears after upload:
-  - Ensure the file is a valid image and not corrupted. Verify the file input accepts the chosen format.
-- Alpha detection shows unexpected results:
-  - Some images may have premultiplied alpha or unusual alpha patterns. Confirm the image’s transparency mode in an editor.
-- Histogram looks flat or empty:
-  - Very low-resolution or grayscale images may produce sparse histograms. Try a different image or zoom into a region.
-- Color picker shows incorrect values:
-  - Ensure the mouse is over the preview canvas and not the swatch area. The swatch itself does not sample pixels.
-- POT/NPOT badge is incorrect:
-  - Verify the reported width and height in the info grid. Non-standard resolutions may appear as NPOT even if they are powers of two.
+
+### Common Issues and Solutions
+
+#### File Upload Problems
+- **Issue**: Images not loading after selection
+- **Solution**: Verify browser supports FileReader API and image format is supported
+- **Prevention**: Test with JPG, PNG, BMP, WEBP, GIF formats
+
+#### Canvas Rendering Issues
+- **Issue**: Blank canvas or distorted images
+- **Solution**: Check CORS restrictions and ensure images are properly loaded
+- **Debugging**: Verify canvas dimensions and context availability
+
+#### Performance Issues
+- **Issue**: Slow analysis on large images
+- **Solution**: Consider image resizing or processing limitations
+- **Optimization**: Implement progressive loading for very large files
+
+#### Memory Constraints
+- **Issue**: Browser crashes with large images
+- **Solution**: Limit maximum image size or implement streaming processing
+- **Monitoring**: Track memory usage during analysis operations
+
+### Error Handling Patterns
+
+The application implements robust error handling:
+
+```mermaid
+flowchart TD
+A[Operation Attempted] --> B{Validation Passed?}
+B --> |No| C[Display Error Message]
+B --> |Yes| D[Execute Operation]
+D --> E{Operation Success?}
+E --> |No| F[Log Error Details]
+E --> |Yes| G[Update UI State]
+F --> H[Provide User Feedback]
+H --> I[Offer Retry Option]
+```
+
+**Diagram sources**
+- [image_metadata_inspector.js:41-89](file://js/image_metadata_inspector.js#L41-L89)
 
 **Section sources**
 - [image_metadata_inspector.js:41-89](file://js/image_metadata_inspector.js#L41-L89)
-- [image_metadata_inspector.js:67-73](file://js/image_metadata_inspector.js#L67-L73)
-- [image_metadata_inspector.js:141-190](file://js/image_metadata_inspector.js#L141-L190)
-- [image_metadata_inspector.js:192-231](file://js/image_metadata_inspector.js#L192-L231)
 
 ## Conclusion
-The Image Metadata Inspector provides a focused set of capabilities for analyzing image assets in a browser environment. It excels at quickly assessing dimensions, transparency, and GPU memory implications, and offers visual diagnostics like histograms and color sampling. While it does not extract EXIF metadata or GPS coordinates, it serves as a practical tool for texture optimization, asset validation, and format compatibility checks in game development workflows.
 
-[No sources needed since this section summarizes without analyzing specific files]
+The Image Metadata Inspector represents a comprehensive solution for texture analysis in game development workflows. Its modular architecture, responsive design, and extensive feature set make it an invaluable tool for technical artists and developers.
 
-## Appendices
+Key strengths include:
 
-### Workflow Examples
-- Texture optimization:
-  - Upload a diffuse/albedo texture and review VRAM estimates for target platforms. Choose formats accordingly (e.g., ASTC/ETC2 for mobile, DXT/BC for PC).
-  - Use the histogram to assess exposure and contrast; adjust source images before compression.
-- Asset validation:
-  - Check POT/NPOT flags and common aspect ratios to ensure compatibility with target engines and pipelines.
-  - Confirm alpha presence for materials requiring translucency.
-- Format compatibility:
-  - Compare raw vs. compressed memory estimates to balance quality and memory budgets.
-  - Use the color picker to verify critical colors and alpha thresholds for masks.
+- **Comprehensive Analysis**: Multi-faceted image inspection covering metadata, memory usage, and visual characteristics
+- **Real-time Interactions**: Live color picking and dynamic visual feedback
+- **Performance Optimization**: Efficient canvas-based processing with memory-conscious design
+- **Integration Capabilities**: Seamless incorporation into the broader TA Tool Box ecosystem
+- **Accessibility Focus**: Thoughtful design considerations for diverse user needs
 
-[No sources needed since this section provides general guidance]
+The tool's client-side architecture ensures privacy and offline functionality while maintaining professional-grade analysis capabilities. Its clean separation of concerns and extensible design provide a solid foundation for future enhancements and additional analysis features.

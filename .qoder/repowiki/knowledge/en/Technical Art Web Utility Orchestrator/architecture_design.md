@@ -1,4 +1,0 @@
-- **Unified Navigation Shell**: Uses a single `js/menu.js` script injected into every tool page (`tools_html/*.html`) to render a consistent sidebar menu and top search bar.
-- **Shared Styling Contract**: All pages import `css/common.css` for layout structure (sidebar, panel, search) and theme consistency, while individual tools load their specific CSS.
-- **Centralized Search & Routing**: The `MENU_DATA` in `js/menu.js` acts as the single source of truth for tool registration, enabling global search across all modules and dynamic path resolution for root vs. subdirectory deployment.
-- **Hybrid Tool Initialization**: Tools are either standalone HTML/JS pairs (e.g., AI Upscale) or dynamically initialized within a shared `#panel` container via `js/local_workbench.js` based on `data-local-tool` attributes.

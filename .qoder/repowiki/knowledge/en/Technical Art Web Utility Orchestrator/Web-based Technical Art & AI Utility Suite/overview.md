@@ -1,1 +1,0 @@
-A collection of client-side web tools for technical artists, featuring AI chat, image processing, shader utilities, and 3D model previewing.
