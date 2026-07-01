@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: ""
-title: Technical Artist Web Workbench
+title: TA Web Tools Suite
 scope:
     - index.html
     - tokens.json

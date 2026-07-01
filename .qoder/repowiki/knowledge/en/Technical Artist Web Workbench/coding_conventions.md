@@ -1,3 +1,0 @@
-- Every tool page includes `js/menu.js` and `css/common.css` to maintain UI consistency.
-- Tool-specific logic is encapsulated in paired files (e.g., `ai_upscale.html` uses `ai_upscale.js` and `ai_upscale.css`).
-- Navigation data is centralized in `MENU_DATA` array within `js/menu.js`, defining labels, paths, and search keywords for all tools.

@@ -1,1 +1,0 @@
-Shared ONNX Runtime Web (1.17.1) and FFmpeg.wasm bundles in `third_part/` utilized by multiple AI and video processing modules.

@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: tools
-title: Technical Artist Web Workbench
+title: Client-Side Technical Artist Tools Suite
 scope:
     - tools_html/
     - js/

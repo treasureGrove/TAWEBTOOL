@@ -1,3 +1,0 @@
-- Tool-specific JavaScript modules are wrapped in Immediately Invoked Function Expressions (IIFE) to avoid global scope pollution, exposing only necessary initialization functions to the `window` object.
-- HTML entry points consistently load `menu.js` and `common.css` first, followed by tool-specific assets, ensuring a uniform layout and navigation structure across all tools.
-- UI components for dynamic tools are often defined as template literals within JavaScript files (e.g., `local_workbench.js`, `chatgpt.js`) rather than static HTML, allowing for programmatic UI generation and state management.

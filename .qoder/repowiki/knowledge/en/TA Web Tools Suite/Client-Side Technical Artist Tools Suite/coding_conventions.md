@@ -1,0 +1,5 @@
+- HTML entry files follow a fixed load order: `common.css` → tool-specific CSS → `menu.js` → `waifu.js` → tool script(s) → `local_workbench.js` (deferred), ensuring the nav shell exists before tool code runs.
+- Workbench-driven tools declare themselves via `data-local-tool="<key>"` on `#panel`; `local_workbench.js` matches this key against a central `toolMeta` map and dispatches to the corresponding `initXxx` handler.
+- Tool logic modules expose an initialization function on `window` (e.g. `window.initChatgptTool`, `window.initVideoCutNative`, `window.initAiDrawPage`) so the workbench can invoke them after injecting the host container.
+- Each tool ships its own CSS file alongside its HTML/JS, loaded immediately after `common.css`, so global layout stays uniform while per-tool styling remains isolated.
+- External third-party scripts are loaded via `<script src="https://cdn.jsdelivr.net/...">` tags in the HTML head with `defer`, rather than being bundled or imported.

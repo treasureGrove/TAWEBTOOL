@@ -1,1 +1,0 @@
-A client-side suite of standalone web tools for technical artists, featuring AI integration, 3D model previewing, and media processing via Web APIs.

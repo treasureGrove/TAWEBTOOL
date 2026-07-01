@@ -6,7 +6,17 @@
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ffmpeg-core.js](file://third_part/ffmpeg-wasm/ffmpeg-core.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
+- [index.css](file://css/index.css)
+- [cloud_music.css](file://css/cloud_music.css)
+- [index.html](file://index.html)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Added new section on CDN Integration for Background Images
+- Updated image delivery optimization strategies with WebP format and CDN acceleration
+- Enhanced performance considerations section with CDN-specific optimizations
+- Added background image loading optimization techniques
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -14,13 +24,14 @@
 3. [Core Components](#core-components)
 4. [Architecture Overview](#architecture-overview)
 5. [Detailed Component Analysis](#detailed-component-analysis)
-6. [Dependency Analysis](#dependency-analysis)
-7. [Performance Considerations](#performance-considerations)
-8. [Troubleshooting Guide](#troubleshooting-guide)
-9. [Conclusion](#conclusion)
+6. [CDN Integration for Background Images](#cdn-integration-for-background-images)
+7. [Dependency Analysis](#dependency-analysis)
+8. [Performance Considerations](#performance-considerations)
+9. [Troubleshooting Guide](#troubleshooting-guide)
+10. [Conclusion](#conclusion)
 
 ## Introduction
-This document provides a comprehensive performance optimization guide for a Web-based multimedia toolkit leveraging WebAssembly (WASM), WebGPU acceleration, and ONNX Runtime inference. It covers execution provider patterns (CPU/GPU/WebGPU), hardware acceleration detection, fallback mechanisms, FFmpeg WASM integration, canvas optimization, and efficient image/video processing pipelines. It also includes performance monitoring, profiling techniques, bottleneck identification, and practical strategies for large file processing, memory footprint reduction, and improved user experience across devices.
+This document provides a comprehensive performance optimization guide for a Web-based multimedia toolkit leveraging WebAssembly (WASM), WebGPU acceleration, and ONNX Runtime inference. It covers execution provider patterns (CPU/GPU/WebGPU), hardware acceleration detection, fallback mechanisms, FFmpeg WASM integration, canvas optimization, efficient image/video processing pipelines, and CDN-backed asset delivery. It also includes performance monitoring, profiling techniques, bottleneck identification, and practical strategies for large file processing, memory footprint reduction, and improved user experience across devices.
 
 ## Project Structure
 The performance-critical modules are organized around:
@@ -28,11 +39,13 @@ The performance-critical modules are organized around:
 - FFmpeg WASM pipeline for video processing
 - Canvas-based image manipulation and rendering
 - Model caching and download strategies to reduce latency and bandwidth
+- CDN-backed background image delivery with WebP optimization
 
 ```mermaid
 graph TB
 subgraph "UI Layer"
 UI["AI Upscaler<br/>Frame Interpolation Tool"]
+BG["Background Image<br/>CDN Delivery"]
 end
 subgraph "Inference Engine"
 ORT["ONNX Runtime (ort.webgpu.min.js)"]
@@ -47,10 +60,13 @@ subgraph "Storage & Caching"
 IDB["IndexedDB Cache"]
 CACHE_API["Cache API"]
 CDN["Model CDN Mirrors"]
+IMG_CDN["Image CDN (weserv.nl)"]
 end
 UI --> ORT
 UI --> FFMPEG
 UI --> CANVAS
+UI --> BG
+BG --> IMG_CDN
 ORT --> EP_CPU
 ORT --> EP_GPU
 UI --> IDB
@@ -63,18 +79,21 @@ UI --> CDN
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
 - [ffmpeg-core.js](file://third_part/ffmpeg-wasm/ffmpeg-core.js)
+- [index.css](file://css/index.css)
 
 **Section sources**
 - [ai_upscale.js](file://js/ai_upscale.js)
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
 - [ffmpeg-core.js](file://third_part/ffmpeg-wasm/ffmpeg-core.js)
+- [index.css](file://css/index.css)
 
 ## Core Components
 - ONNX Runtime with WebGPU/CPU/WASM execution providers and configurable graph optimization
 - FFmpeg WASM for video decoding, filtering, and encoding
 - Canvas-based image processing with OffscreenCanvas for background computation
 - Model caching via IndexedDB and Cache API with multi-source fallback
+- **CDN-backed background image delivery with WebP optimization and responsive sizing**
 - Progressive enhancement and fallback strategies for diverse environments
 
 **Section sources**
@@ -82,6 +101,7 @@ UI --> CDN
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
 - [ffmpeg-core.js](file://third_part/ffmpeg-wasm/ffmpeg-core.js)
+- [index.css](file://css/index.css)
 
 ## Architecture Overview
 The system orchestrates inference and media processing with performance-sensitive paths:
@@ -89,16 +109,22 @@ The system orchestrates inference and media processing with performance-sensitiv
 - Model downloads use streaming with progress reporting and multi-source redundancy
 - Media processing leverages canvas for pixel manipulation and FFmpeg WASM for container/codec operations
 - Caching reduces repeated network overhead and accelerates subsequent runs
+- **Background images delivered via CDN with automatic WebP conversion and quality optimization**
 
 ```mermaid
 sequenceDiagram
 participant User as "User"
 participant UI as "AI Upscaler"
+participant BG as "Background Loader"
 participant ORT as "ONNX Runtime"
 participant GPU as "WebGPU EP"
 participant CPU as "WASM EP"
 participant Cache as "Model Cache"
+participant IMG_CDN as "Image CDN"
 User->>UI : "Load model"
+User->>BG : "Load background image"
+BG->>IMG_CDN : "Fetch optimized WebP (w=1920,q=72)"
+IMG_CDN-->>BG : "Return CDN-optimized image"
 UI->>Cache : "Check IndexedDB/Cache API"
 alt Cache hit
 Cache-->>UI : "Return cached model"
@@ -116,12 +142,14 @@ CPU-->>ORT : "Success"
 end
 ORT-->>UI : "Session ready"
 UI-->>User : "Model loaded"
+BG-->>User : "Background displayed"
 ```
 
 **Diagram sources**
 - [ai_upscale.js](file://js/ai_upscale.js)
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
+- [index.css](file://css/index.css)
 
 ## Detailed Component Analysis
 
@@ -247,10 +275,83 @@ class CanvasManager {
 **Section sources**
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 
+## CDN Integration for Background Images
+
+### Implementation Overview
+The application implements a sophisticated CDN-backed background image delivery system using CSS custom properties and the images.weserv.nl service. This approach provides automatic format optimization, responsive sizing, and quality control for optimal performance across different devices and network conditions.
+
+### CSS Custom Properties Architecture
+Background images are defined using CSS custom properties in the `:root` selector, enabling centralized management and easy modification:
+
+```css
+:root {
+    --main-bg-image: url("https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2FtreasureGrove%2FTAWEBTOOL%2Fmain%2Fassets%2Fimages%2Fbackground%2Findex_bg.jpg&w=1920&output=webp&q=72");
+}
+
+#main_bg {
+    background-image: var(--main-bg-image);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    width: 100%;
+    background-attachment: fixed;
+    z-index: -1;
+}
+```
+
+### CDN Optimization Parameters
+The images.weserv.nl service is configured with specific parameters for optimal performance:
+
+- **Width**: `w=1920` - Provides high-resolution coverage for most desktop displays while avoiding excessive bandwidth usage
+- **Format**: `output=webp` - Automatically converts to WebP format for superior compression (typically 25-35% smaller than JPEG)
+- **Quality**: `q=72` - Balances visual quality with file size optimization
+- **Source**: GitHub raw content for reliable delivery and version control
+
+### Performance Benefits
+1. **Reduced Bandwidth**: WebP format typically achieves 25-35% smaller file sizes compared to JPEG
+2. **Faster Loading**: CDN edge servers provide geographically distributed delivery
+3. **Automatic Optimization**: Server-side image processing eliminates client-side conversion overhead
+4. **Responsive Sizing**: Fixed width prevents over-fetching on mobile devices
+5. **Caching Efficiency**: CDN and browser caching work together for repeat visits
+
+### Cross-File Consistency
+The same CDN pattern is consistently applied across multiple CSS files:
+- `index.css` - Main application interface
+- `cloud_music.css` - Music player tool interface
+- Both files use identical CDN configuration for consistent performance
+
+```mermaid
+flowchart TD
+Browser["User Browser"] --> CSS["CSS Stylesheet"]
+CSS --> CDN_URL["CDN URL with Parameters"]
+CDN_URL --> Weserv["images.weserv.nl Service"]
+Weserv --> Source["GitHub Raw Content"]
+Weserv --> Process["Server-Side Processing"]
+Process --> WebP["Convert to WebP"]
+Process --> Resize["Resize to 1920px"]
+Process --> Optimize["Apply Quality 72%"]
+WebP --> Response["Optimized Response"]
+Resize --> Response
+Optimize --> Response
+Response --> Browser
+```
+
+**Diagram sources**
+- [index.css](file://css/index.css)
+- [cloud_music.css](file://css/cloud_music.css)
+
+**Section sources**
+- [index.css:1-15](file://css/index.css#L1-L15)
+- [cloud_music.css:1-14](file://css/cloud_music.css#L1-L14)
+- [index.html:37](file://index.html#L37)
+
 ## Dependency Analysis
 - ONNX Runtime depends on WebGPU availability; falls back to WASM when unsupported
 - FFmpeg WASM depends on browser APIs (WebCodecs or MediaRecorder) and Canvas
 - Model caching depends on IndexedDB and Cache API availability
+- **Background images depend on CDN availability and support for CSS custom properties**
 
 ```mermaid
 graph LR
@@ -261,6 +362,9 @@ FF["FFmpeg WASM"] --> WC["WebCodecs"]
 FF --> MR["MediaRecorder"]
 Cache["Model Cache"] --> IDB["IndexedDB"]
 Cache --> CA["Cache API"]
+BG["Background Images"] --> CSS_VAR["CSS Custom Properties"]
+BG --> CDN["CDN Service"]
+CDN --> WESERV["images.weserv.nl"]
 ```
 
 **Diagram sources**
@@ -268,12 +372,14 @@ Cache --> CA["Cache API"]
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
 - [ffmpeg-core.js](file://third_part/ffmpeg-wasm/ffmpeg-core.js)
+- [index.css](file://css/index.css)
 
 **Section sources**
 - [ai_upscale.js](file://js/ai_upscale.js)
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
 - [ort.webgpu.min.js](file://third_part/onnxruntime-web/1.17.1/ort.webgpu.min.js)
 - [ffmpeg-core.js](file://third_part/ffmpeg-wasm/ffmpeg-core.js)
+- [index.css](file://css/index.css)
 
 ## Performance Considerations
 - Execution provider selection:
@@ -292,8 +398,12 @@ Cache --> CA["Cache API"]
   - Reuse canvases and typed arrays
   - Dispose of temporary object URLs promptly
   - Monitor memory growth and trigger GC-friendly pauses for large files
-
-[No sources needed since this section provides general guidance]
+- **Background image delivery**:
+  - Leverage CDN for geographic distribution and edge caching
+  - Use WebP format for optimal compression ratios
+  - Implement responsive sizing to avoid over-fetching on mobile devices
+  - Utilize CSS custom properties for centralized configuration management
+  - Apply appropriate quality settings (72%) to balance visual fidelity and load times
 
 ## Troubleshooting Guide
 - WebGPU not available:
@@ -307,12 +417,16 @@ Cache --> CA["Cache API"]
 - Canvas artifacts:
   - Ensure proper sizing and coordinate alignment
   - Avoid excessive context switching
+- **Background image issues**:
+  - Verify CDN accessibility and CORS policies
+  - Check CSS custom property syntax and variable references
+  - Monitor WebP format support in target browsers
+  - Validate CDN URL parameters and source image availability
 
 **Section sources**
 - [ai_upscale.js](file://js/ai_upscale.js)
 - [ai_frame_interpolation.js](file://js/ai_frame_interpolation.js)
+- [index.css](file://css/index.css)
 
 ## Conclusion
-By combining WebGPU acceleration with robust CPU fallbacks, efficient model caching, and optimized canvas/FFmpeg WASM pipelines, the system achieves strong performance across diverse environments. Prioritize WebGPU for speed, maintain WASM for compatibility, and apply memory-conscious patterns to handle large files gracefully. Use progressive enhancement and performance monitoring to continuously improve user experience.
-
-[No sources needed since this section summarizes without analyzing specific files]
+By combining WebGPU acceleration with robust CPU fallbacks, efficient model caching, optimized canvas/FFmpeg WASM pipelines, and CDN-backed asset delivery, the system achieves strong performance across diverse environments. The implementation of CSS custom properties for background image management provides maintainable and scalable optimization strategies. Prioritize WebGPU for speed, maintain WASM for compatibility, apply memory-conscious patterns to handle large files gracefully, and leverage CDN services for optimal asset delivery. Use progressive enhancement and performance monitoring to continuously improve user experience across all device capabilities and network conditions.

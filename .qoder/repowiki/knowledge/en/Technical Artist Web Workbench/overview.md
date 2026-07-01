@@ -1,1 +1,0 @@
-Orchestrates a suite of standalone client-side technical art tools through a unified navigation shell, shared styling contracts, and centralized runtime dependencies.

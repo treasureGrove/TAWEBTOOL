@@ -383,3 +383,145 @@
 .left_menu .sub_menu li.search-hidden {
     display: none;
 }
+
+/* ═══════════════════════════════════════════════════
+   Page Transition System – premium glass morphism
+   ═══════════════════════════════════════════════════ */
+
+/* Transition overlay injected via JS */
+.page-transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    display: flex;
+}
+
+/* Three vertical slices for staggered reveal */
+.page-transition-overlay .pt-slice {
+    flex: 1;
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.85) 0%,
+        rgba(220, 240, 235, 0.90) 50%,
+        rgba(180, 220, 210, 0.85) 100%);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    opacity: 0;
+}
+
+/* ── Exit animation (current page leaving) ── */
+.page-transition-overlay.pt-exit .pt-slice {
+    animation: ptSliceIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.page-transition-overlay.pt-exit .pt-slice:nth-child(2) { animation-delay: 0.06s; }
+.page-transition-overlay.pt-exit .pt-slice:nth-child(3) { animation-delay: 0.12s; }
+
+@keyframes ptSliceIn {
+    0%   { transform: scaleY(0); opacity: 0; transform-origin: bottom; }
+    60%  { opacity: 1; }
+    100% { transform: scaleY(1); opacity: 1; transform-origin: bottom; }
+}
+
+/* Content fade-out during exit */
+body.pt-exiting #panel,
+body.pt-exiting #welcome_title,
+body.pt-exiting #main_bg {
+    animation: ptContentOut 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+body.pt-exiting #main_bg { animation-delay: 0.04s; }
+
+@keyframes ptContentOut {
+    0%   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+    100% { opacity: 0; transform: scale(0.97) translateY(12px); filter: blur(6px); }
+}
+
+/* ── Enter animation (new page arriving) ── */
+.page-transition-overlay.pt-enter .pt-slice {
+    transform: scaleY(1);
+    opacity: 1;
+    transform-origin: top;
+    animation: ptSliceOut 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.page-transition-overlay.pt-enter .pt-slice:nth-child(2) { animation-delay: 0.06s; }
+.page-transition-overlay.pt-enter .pt-slice:nth-child(3) { animation-delay: 0.12s; }
+
+@keyframes ptSliceOut {
+    0%   { transform: scaleY(1); opacity: 1; transform-origin: top; }
+    60%  { opacity: 0.6; }
+    100% { transform: scaleY(0); opacity: 0; transform-origin: top; }
+}
+
+/* Content fade-in on enter */
+body.pt-entering #panel,
+body.pt-entering #welcome_title {
+    animation: ptContentIn 0.56s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: 0.18s;
+    opacity: 0;
+}
+body.pt-entering #main_bg {
+    animation: ptBgIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes ptContentIn {
+    0%   { opacity: 0; transform: scale(1.02) translateY(-16px); filter: blur(8px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes ptBgIn {
+    0%   { opacity: 0; transform: scale(1.04); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Shimmer line accent on the overlay */
+.page-transition-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.35) 50%,
+        transparent 100%);
+    animation: ptShimmer 0.7s ease-in-out forwards;
+    pointer-events: none;
+}
+.pt-enter .page-transition-overlay::after,
+.page-transition-overlay.pt-enter::after {
+    animation: ptShimmerOut 0.6s 0.1s ease-in-out forwards;
+}
+@keyframes ptShimmer {
+    0%   { left: -60%; }
+    100% { left: 120%; }
+}
+@keyframes ptShimmerOut {
+    0%   { left: 120%; }
+    100% { left: -60%; }
+}
+
+/* Preloading spinner (subtle dot pulse) */
+.pt-loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10001;
+    display: flex;
+    gap: 6px;
+}
+.pt-loader span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(55, 177, 140, 0.7);
+    animation: ptDot 0.8s ease-in-out infinite alternate;
+}
+.pt-loader span:nth-child(2) { animation-delay: 0.15s; }
+.pt-loader span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes ptDot {
+    0%   { transform: scale(0.6); opacity: 0.4; }
+    100% { transform: scale(1.2); opacity: 1; }
+}

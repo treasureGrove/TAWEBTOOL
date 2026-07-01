@@ -1,4 +1,0 @@
-- **AI Integration**: Uses Zhipu AI GLM-4.7-Flash API for chat functionality (`chatgpt.js`).
-- **3D Rendering**: Integrates Google's `<model-viewer>` via CDN for GLB/GLTF preview (`local_workbench.js`).
-- **Image/Video Processing**: Leverages browser-native Canvas API and WebAssembly (FFmpeg.wasm mentioned in `video_cut.js` context) for client-side media manipulation.
-- **Markdown Rendering**: Uses `marked` and `DOMPurify` for secure markdown rendering in chat interfaces.
