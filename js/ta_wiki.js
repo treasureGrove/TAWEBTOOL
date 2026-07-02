@@ -1,6 +1,8 @@
 (function () {
+  'use strict';
+
   const STORAGE_KEY = 'ta_wiki_custom_entries';
-  const FORUM_CONFIG_KEY = 'ta_wiki_forum_config';
+  const DATA_URL = '../data/ta_wiki_entries.json';
 
   const state = {
     all: [],
@@ -10,11 +12,11 @@
 
   const searchInput = document.getElementById('wikiSearch');
   const categorySelect = document.getElementById('wikiCategory');
+  const sourceSelect = document.getElementById('wikiSource');
+  const statsEl = document.getElementById('wikiStats');
   const listEl = document.getElementById('wikiList');
   const contentEl = document.getElementById('wikiContent');
   const resultHint = document.getElementById('resultHint');
-  const toolbarEl = document.querySelector('.wiki-toolbar');
-  const layoutEl = document.querySelector('.wiki-layout');
 
   function safeParse(text, fallback) {
     try {
@@ -24,102 +26,286 @@
     }
   }
 
-  function getForumConfig() {
-    const raw = localStorage.getItem(FORUM_CONFIG_KEY);
-    const data = safeParse(raw, {});
-    return {
-      externalWikiUrl: data.externalWikiUrl || '',
-      externalLinkEnabled: Boolean(data.externalLinkEnabled),
-      externalOnlyMode: Boolean(data.externalOnlyMode)
-    };
+  function escapeHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
-  function renderExternalLinkMode() {
-    const config = getForumConfig();
-    if (!config.externalLinkEnabled || !config.externalWikiUrl) {
-      return;
+  function assetPrefix() {
+    return window.location.pathname.replace(/\\/g, '/').includes('/tools_html/') ? '../' : '';
+  }
+
+  async function loadGeneratedEntries() {
+    try {
+      const response = await fetch(assetPrefix() + 'data/ta_wiki_entries.json', { cache: 'no-store' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const data = await response.json();
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.warn('TA wiki data fallback:', err);
+      return Array.isArray(window.TAWikiBuiltinEntries) ? window.TAWikiBuiltinEntries : [];
     }
-
-    const banner = document.createElement('div');
-    banner.className = 'external-link-banner';
-    banner.innerHTML = `
-      <p>当前已接入外部知识库：<strong>${config.externalWikiUrl}</strong></p>
-      <a href="${config.externalWikiUrl}" target="_blank" rel="noopener noreferrer">打开外部知识库</a>
-    `;
-
-    const panel = document.getElementById('panel');
-    panel.insertBefore(banner, toolbarEl);
-
-    if (config.externalOnlyMode) {
-      toolbarEl.style.display = 'none';
-      layoutEl.style.display = 'none';
-
-      const onlyBox = document.createElement('section');
-      onlyBox.className = 'external-only-box';
-      onlyBox.innerHTML = `
-        <h2>已启用外部知识库链接模式</h2>
-        <p>此页面仅保留外部入口，本地知识条目已隐藏。点击下方按钮进入外部服务器。</p>
-        <a href="${config.externalWikiUrl}" target="_blank" rel="noopener noreferrer">前往外部知识库</a>
-      `;
-      panel.appendChild(onlyBox);
-      return true;
-    }
-
-    return false;
   }
 
   function getCustomEntries() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const data = safeParse(raw, []);
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data.map((item) => ({ ...item, source: item.source || 'custom' })) : [];
   }
 
-  function getAllEntries() {
-    const builtin = Array.isArray(window.TAWikiBuiltinEntries) ? window.TAWikiBuiltinEntries : [];
-    const custom = getCustomEntries();
-    return builtin.concat(custom);
+  function normalizeEntry(item, index) {
+    return {
+      id: item.id || 'entry-' + index,
+      title: String(item.title || '未命名条目'),
+      category: String(item.category || '未分类'),
+      tags: Array.isArray(item.tags) ? item.tags.map(String).filter(Boolean) : [],
+      summary: String(item.summary || ''),
+      content: String(item.content || ''),
+      source: item.source || 'generated',
+      sourceTitle: item.sourceTitle || item.provider || '',
+      sourceUrl: item.sourceUrl || item.url || '',
+      quality: item.quality || 'draft',
+      updatedAt: item.updatedAt || item.publishedAt || ''
+    };
+  }
+
+  function dedupeEntries(entries) {
+    const seen = new Set();
+    const out = [];
+    for (let i = 0; i < entries.length; i++) {
+      const item = normalizeEntry(entries[i], i);
+      const key = item.id || (item.title + '|' + item.category + '|' + item.sourceUrl);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(item);
+    }
+    return out;
+  }
+
+  function sourceLabel(source) {
+    const map = {
+      builtin: '内置',
+      generated: '采集',
+      collected: '采集',
+      github: 'GitHub',
+      rss: 'RSS',
+      custom: '自定义',
+      remote: '远端'
+    };
+    return map[source] || source || '未知';
+  }
+
+  function sourceBucket(source) {
+    if (source === 'custom') return 'custom';
+    if (source === 'builtin') return 'builtin';
+    return 'generated';
+  }
+
+  function renderStats() {
+    const counts = state.all.reduce((acc, item) => {
+      const key = sourceBucket(item.source);
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const categories = new Set(state.all.map((item) => item.category));
+    statsEl.innerHTML = [
+      statCard('总条目', state.all.length),
+      statCard('分类', categories.size),
+      statCard('自动采集', counts.generated || 0),
+      statCard('自定义', counts.custom || 0)
+    ].join('');
+  }
+
+  function statCard(label, value) {
+    return '<div class="wiki-stat"><strong>' + escapeHtml(value) + '</strong><span>' + escapeHtml(label) + '</span></div>';
   }
 
   function buildCategories(entries) {
+    const selected = categorySelect.value || '全部分类';
     const set = new Set(entries.map((item) => item.category).filter(Boolean));
     const options = ['全部分类'].concat(Array.from(set).sort());
     categorySelect.innerHTML = options
-      .map((name) => `<option value="${name}">${name}</option>`)
+      .map((name) => '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</option>')
       .join('');
+    if (options.includes(selected)) categorySelect.value = selected;
+  }
+
+  function textBlob(item) {
+    return [item.title, item.category, item.summary, item.content, item.tags.join(' '), item.sourceTitle].join(' ').toLowerCase();
+  }
+
+  function matchScore(item, terms) {
+    const text = textBlob(item);
+    let score = 0;
+    for (let i = 0; i < terms.length; i++) {
+      const term = terms[i].toLowerCase();
+      if (!term) continue;
+      if (!text.includes(term)) return -1;
+      if (item.title.toLowerCase().includes(term)) score += 8;
+      if (item.tags.join(' ').toLowerCase().includes(term)) score += 5;
+      if (item.summary.toLowerCase().includes(term)) score += 3;
+      score += 1;
+    }
+    return score;
+  }
+
+  function filterEntries() {
+    const terms = searchInput.value.trim().split(/\s+/).filter(Boolean);
+    const category = categorySelect.value;
+    const source = sourceSelect.value;
+    let base = state.all.slice();
+
+    if (category && category !== '全部分类') {
+      base = base.filter((item) => item.category === category);
+    }
+
+    if (source && source !== 'all') {
+      base = base.filter((item) => sourceBucket(item.source) === source);
+    }
+
+    if (terms.length) {
+      base = base
+        .map((item) => ({ item, score: matchScore(item, terms) }))
+        .filter((row) => row.score >= 0)
+        .sort((a, b) => b.score - a.score)
+        .map((row) => row.item);
+    }
+
+    state.filtered = base;
+    renderList(base);
   }
 
   function renderList(entries) {
+    resultHint.textContent = entries.length + ' 条结果';
+
     if (!entries.length) {
-      listEl.innerHTML = '<div class="wiki-item"><h3>没有找到匹配内容</h3><p>请尝试更换关键词或分类。</p></div>';
-      contentEl.innerHTML = '没有匹配条目。';
-      resultHint.textContent = '0 条结果';
+      listEl.innerHTML = '<div class="wiki-item empty"><h3>没有找到匹配内容</h3><p>换一个关键词、分类或来源。</p></div>';
+      contentEl.innerHTML = '<div class="wiki-empty">没有匹配条目。</div>';
       return;
     }
 
-    resultHint.textContent = `共 ${entries.length} 条结果`;
-
-    listEl.innerHTML = entries.map((item) => `
-      <div class="wiki-item ${item.id === state.currentId ? 'active' : ''}" data-id="${item.id}">
-        <h3>${item.title}</h3>
-        <p>${item.summary || ''}</p>
-      </div>
-    `).join('');
-
-    if (!state.currentId || !entries.find((x) => x.id === state.currentId)) {
+    if (!state.currentId || !entries.find((item) => item.id === state.currentId)) {
       state.currentId = entries[0].id;
     }
 
-    renderContent(state.currentId, entries);
+    listEl.innerHTML = entries.map((item) => {
+      const tags = item.tags.slice(0, 4).map((tag) => '<span>' + escapeHtml(tag) + '</span>').join('');
+      return [
+        '<button type="button" class="wiki-item ' + (item.id === state.currentId ? 'active' : '') + '" data-id="' + escapeHtml(item.id) + '">',
+        '<strong>' + escapeHtml(item.title) + '</strong>',
+        '<small>' + escapeHtml(item.category) + ' / ' + escapeHtml(sourceLabel(item.source)) + '</small>',
+        '<p>' + escapeHtml(item.summary || '暂无摘要') + '</p>',
+        '<div class="wiki-tags">' + tags + '</div>',
+        '</button>'
+      ].join('');
+    }).join('');
+
+    renderContent(state.currentId);
   }
 
-  function renderContent(id, entries) {
-    const item = entries.find((x) => x.id === id);
+  function renderMarkdown(markdown) {
+    const lines = String(markdown || '').split(/\r?\n/);
+    let html = '';
+    let inCode = false;
+    let listOpen = false;
+    let codeLines = [];
+
+    function closeList() {
+      if (listOpen) {
+        html += '</ul>';
+        listOpen = false;
+      }
+    }
+
+    function inline(text) {
+      return escapeHtml(text)
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/`([^`]+)`/g, '<code>$1</code>');
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (/^```/.test(line.trim())) {
+        if (inCode) {
+          html += '<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>';
+          codeLines = [];
+          inCode = false;
+        } else {
+          closeList();
+          inCode = true;
+        }
+        continue;
+      }
+
+      if (inCode) {
+        codeLines.push(line);
+        continue;
+      }
+
+      if (!line.trim()) {
+        closeList();
+        continue;
+      }
+
+      if (/^###\s+/.test(line)) {
+        closeList();
+        html += '<h3>' + inline(line.replace(/^###\s+/, '')) + '</h3>';
+      } else if (/^##\s+/.test(line)) {
+        closeList();
+        html += '<h2>' + inline(line.replace(/^##\s+/, '')) + '</h2>';
+      } else if (/^#\s+/.test(line)) {
+        closeList();
+        html += '<h1>' + inline(line.replace(/^#\s+/, '')) + '</h1>';
+      } else if (/^>\s?/.test(line)) {
+        closeList();
+        html += '<blockquote>' + inline(line.replace(/^>\s?/, '')) + '</blockquote>';
+      } else if (/^\s*[-*]\s+/.test(line)) {
+        if (!listOpen) {
+          html += '<ul>';
+          listOpen = true;
+        }
+        html += '<li>' + inline(line.replace(/^\s*[-*]\s+/, '')) + '</li>';
+      } else {
+        closeList();
+        html += '<p>' + inline(line) + '</p>';
+      }
+    }
+    closeList();
+    if (inCode) html += '<pre><code>' + escapeHtml(codeLines.join('\n')) + '</code></pre>';
+    return html;
+  }
+
+  function renderContent(id) {
+    const item = state.all.find((entry) => entry.id === id);
     if (!item) return;
 
-    const tags = Array.isArray(item.tags) ? item.tags.join(' / ') : '';
-    const markdown = `# ${item.title}\n\n> 分类：${item.category || '未分类'}  ${tags ? `| 标签：${tags}` : ''}\n\n${item.content || ''}`;
-    contentEl.innerHTML = marked.parse(markdown);
+    const tags = item.tags.map((tag) => '<span>' + escapeHtml(tag) + '</span>').join('');
+    const sourceLink = item.sourceUrl
+      ? '<a href="' + escapeHtml(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">查看来源</a>'
+      : '';
+
+    contentEl.innerHTML = [
+      '<div class="wiki-article-head">',
+      '<div>',
+      '<h1>' + escapeHtml(item.title) + '</h1>',
+      '<p>' + escapeHtml(item.summary || '') + '</p>',
+      '</div>',
+      sourceLink,
+      '</div>',
+      '<div class="wiki-article-meta">',
+      '<span>' + escapeHtml(item.category) + '</span>',
+      '<span>' + escapeHtml(sourceLabel(item.source)) + '</span>',
+      item.updatedAt ? '<span>' + escapeHtml(item.updatedAt) + '</span>' : '',
+      item.quality ? '<span>' + escapeHtml(item.quality) + '</span>' : '',
+      '</div>',
+      '<div class="wiki-tags wiki-tags-large">' + tags + '</div>',
+      '<div class="wiki-markdown">' + renderMarkdown(item.content) + '</div>'
+    ].join('');
 
     const cards = listEl.querySelectorAll('.wiki-item');
     for (let i = 0; i < cards.length; i++) {
@@ -127,47 +313,22 @@
     }
   }
 
-  function filterEntries() {
-    const keyword = searchInput.value.trim();
-    const category = categorySelect.value;
-    const base = category && category !== '全部分类'
-      ? state.all.filter((item) => item.category === category)
-      : state.all.slice();
-
-    if (!keyword) {
-      state.filtered = base;
-      renderList(state.filtered);
-      return;
-    }
-
-    const fuse = new Fuse(base, {
-      keys: ['title', 'summary', 'content', 'tags', 'category'],
-      threshold: 0.35,
-      ignoreLocation: true,
-      minMatchCharLength: 1
-    });
-
-    state.filtered = fuse.search(keyword).map((r) => r.item);
-    renderList(state.filtered);
-  }
-
-  function init() {
-    const onlyExternal = renderExternalLinkMode();
-    if (onlyExternal) return;
-
-    state.all = getAllEntries();
+  async function init() {
+    const generated = await loadGeneratedEntries();
+    const custom = getCustomEntries();
+    state.all = dedupeEntries(generated.concat(custom));
     buildCategories(state.all);
-    state.filtered = state.all.slice();
-    renderList(state.filtered);
+    renderStats();
+    filterEntries();
 
     searchInput.addEventListener('input', filterEntries);
     categorySelect.addEventListener('change', filterEntries);
-
+    sourceSelect.addEventListener('change', filterEntries);
     listEl.addEventListener('click', (event) => {
       const item = event.target.closest('.wiki-item');
-      if (!item) return;
+      if (!item || !item.dataset.id) return;
       state.currentId = item.dataset.id;
-      renderContent(state.currentId, state.filtered);
+      renderContent(state.currentId);
     });
   }
 
