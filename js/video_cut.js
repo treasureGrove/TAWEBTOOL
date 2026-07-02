@@ -1,687 +1,673 @@
-// 纯前端视频剪辑 - 不依赖 FFmpeg.wasm，使用浏览器原生 API
-(function() {
-  'use strict';
+/* ============================================================
+ *  Video Cut — 纯浏览器本地视频剪辑工具
+ *  参考: 专业网页剪辑器 UI/UX
+ *  功能: 裁剪 / 截图 / 提取音频 / 静音 / 变速
+ * ============================================================ */
+(function () {
+    'use strict';
 
-  function initVideoCut(host) {
-    host.innerHTML = `
-      <div class="video-cut-wrap">
-        <p class="hint">
-          <strong>🎬 视频剪辑工具</strong> - 使用浏览器原生 API，无需外部依赖<br>
-          ✅ 完全本地处理 &nbsp;|&nbsp; ✅ 不上传文件 &nbsp;|&nbsp; ✅ 即开即用<br>
-          <small style="opacity: 0.8">💡 支持裁剪、格式转换、截图、音频提取等功能</small>
-        </p>
+    /* ---------- DOM ---------- */
+    var $ = function (id) { return document.getElementById(id); };
 
-        <section class="vc-panel">
-          <h3>📁 素材导入</h3>
-          <div class="vc-row vc-files">
-            <label>主视频<input data-vc="mainFile" type="file" accept="video/*,audio/*"></label>
-          </div>
-          <video data-vc="preview" controls playsinline class="vc-preview"></video>
-          <div class="vc-meta" data-vc="meta">未选择视频文件</div>
-        </section>
+    var fileInput    = $('vcFileInput');
+    var importBtn    = $('vcImportBtn');
+    var exportBtn    = $('vcExportBtn');
+    var dropzone     = $('vcDropzone');
+    var emptyState   = $('vcEmptyState');
+    var video        = $('vcVideo');
+    var videoInfo    = $('vcVideoInfo');
+    var playerCtrl   = $('vcPlayerControls');
+    var timeline     = $('vcTimeline');
+    var timelineTrack = $('vcTimelineTrack');
+    var thumbStrip   = $('vcThumbStrip');
+    var timelineClick = $('vcTimelineClick');
+    var trimRegion   = $('vcTrimRegion');
+    var handleL      = $('vcTrimHandleL');
+    var handleR      = $('vcTrimHandleR');
+    var playhead     = $('vcPlayhead');
+    var playBtn      = $('vcPlayBtn');
+    var playIcon     = $('vcPlayIcon');
+    var pauseIcon    = $('vcPauseIcon');
+    var muteBtn      = $('vcMuteBtn');
+    var volumeSlider = $('vcVolume');
+    var fullscreenBtn = $('vcFullscreenBtn');
+    var curTimeEl    = $('vcCurrentTime');
+    var totalTimeEl  = $('vcTotalTime');
+    var labelStart   = $('vcTimeLabelStart');
+    var labelEnd     = $('vcTimeLabelEnd');
 
-        <section class="vc-panel">
-          <h3>⚙️ 处理模式</h3>
-          
-          <div class="vc-mode-grid" data-vc="modes"></div>
-          
-          <div class="vc-time" data-vc="timePanel" style="display:none;">
-            <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">时间范围设置</h4>
-            <div class="vc-row" style="grid-template-columns: 1fr 1fr;">
-              <label>开始时间（秒）<input data-vc="start" type="number" min="0" step="0.1" value="0"></label>
-              <label>结束时间（秒）<input data-vc="end" type="number" min="0" step="0.1" value="0"></label>
-            </div>
-            <div class="vc-row" style="grid-template-columns: 1fr 1fr 1fr;">
-              <button data-vc="setStart" class="secondary">▶ 开始=当前</button>
-              <button data-vc="setEnd" class="secondary">⏸ 结束=当前</button>
-              <button data-vc="full" class="secondary">📏 完整时长</button>
-            </div>
-          </div>
+    /* tool tabs & panels */
+    var tabs = document.querySelectorAll('.vc-tab');
+    var panels = document.querySelectorAll('.vc-tool-panel');
 
-          <div class="vc-options" data-vc="options"></div>
+    /* trim */
+    var trimStartInput = $('vcTrimStart');
+    var trimEndInput   = $('vcTrimEnd');
+    var trimDurEl      = $('vcTrimDuration');
+    var trimPreviewBtn = $('vcTrimPreview');
 
-          <div class="vc-row vc-actions">
-            <button data-vc="export">🚀 开始处理</button>
-            <button data-vc="cancel" class="danger">❌ 取消任务</button>
-          </div>
-          
-          <div class="vc-progress" data-vc="progressWrap" style="display:none;">
-            <progress data-vc="progress" value="0" max="100"></progress>
-            <span data-vc="progressText">0%</span>
-          </div>
-          
-          <pre data-vc="log" class="result-box">等待操作...</pre>
-          <a data-vc="download" hidden class="btn-link">💾 下载处理后的文件</a>
-        </section>
-      </div>
-    `;
+    /* snapshot */
+    var snapTimeInput  = $('vcSnapTime');
+    var snapFormatSel  = $('vcSnapFormat');
+    var snapQualityRng = $('vcSnapQuality');
+    var snapQualityVal = $('vcSnapQualityVal');
+    var snapQualityFld = $('vcSnapQualityField');
+    var snapGoBtn      = $('vcSnapGo');
 
-    const q = (k) => host.querySelector(`[data-vc="${k}"]`);
-    const state = { 
-      video: null, 
-      videoFile: null,
-      mode: 'trim',
-      processing: false,
-      abortController: null
+    /* audio */
+    var audioRangeEl = $('vcAudioRange');
+
+    /* speed */
+    var speedRng  = $('vcSpeedRate');
+    var speedVal = $('vcSpeedVal');
+    var speedPresets = document.querySelectorAll('.vc-speed-presets button');
+
+    /* export modal */
+    var exportModal       = $('vcExportModal');
+    var exportConfirmBtn  = $('vcExportConfirmBtn');
+    var exportCancelBtn   = $('vcExportCancelBtn');
+    var exportCloseBtn     = $('vcExportCloseBtn');
+    var qualitySelect     = $('vcQualitySelect');
+    var resSelect         = $('vcResSelect');
+    var progressSection   = $('vcProgressSection');
+    var progressFill      = $('vcProgressFill');
+    var progressLabel     = $('vcProgressLabel');
+    var progressPct       = $('vcProgressPct');
+    var exportSettings    = $('vcExportSettings');
+    var resultSection     = $('vcResultSection');
+    var resultVideo       = $('vcResultVideo');
+    var downloadBtn       = $('vcDownloadBtn');
+
+    /* ---------- state ---------- */
+    var state = {
+        file: null,
+        objectURL: null,
+        duration: 0,
+        trimStart: 0,
+        trimEnd: 0,
+        currentTab: 'trim',
+        exportMode: 'trim',
+        resultBlob: null,
+        resultExt: 'webm'
     };
 
-    const modes = [
-      { key: 'trim', name: '✂️ 裁剪视频', needTime: true, desc: '按时间范围裁剪' },
-      { key: 'convert', name: '🔄 格式转换', needTime: false, desc: '转换为 WebM 格式' },
-      { key: 'snapshot', name: '📸 视频截图', needTime: false, desc: '提取单帧为图片' },
-      { key: 'audio', name: '🎵 提取音频', needTime: true, desc: '导出为音频文件' },
-      { key: 'mute', name: '🔇 静音视频', needTime: true, desc: '移除音频轨道' },
-      { key: 'speed', name: '⚡ 变速播放', needTime: true, desc: '加速/减速视频' }
-    ];
-
-    const modeOptions = {
-      convert: `
-        <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">格式设置</h4>
-        <div class="vc-row">
-          <label>视频码率 (Mbps)<input data-vc-opt="videoBitrate" type="number" min="0.5" max="20" step="0.5" value="2.5"></label>
-          <label>音频码率 (kbps)<input data-vc-opt="audioBitrate" type="number" min="64" max="320" step="32" value="128"></label>
-        </div>
-      `,
-      snapshot: `
-        <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">截图设置</h4>
-        <div class="vc-row">
-          <label>截图时间（秒）<input data-vc-opt="snapTime" type="number" min="0" step="0.1" value="0"></label>
-          <label>图片格式<select data-vc-opt="snapFormat">
-            <option value="png">PNG (无损)</option>
-            <option value="jpeg" selected>JPEG (压缩)</option>
-            <option value="webp">WebP (高效)</option>
-          </select></label>
-        </div>
-        <div class="vc-row">
-          <label>图片质量 (0.1-1.0)<input data-vc-opt="snapQuality" type="number" min="0.1" max="1" step="0.1" value="0.92"></label>
-          <button data-vc-opt="useCurrentTime" class="secondary">使用当前播放时间</button>
-        </div>
-      `,
-      speed: `
-        <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">变速设置</h4>
-        <div class="vc-row">
-          <label>播放速度倍率<input data-vc-opt="speedRate" type="number" min="0.25" max="4" step="0.25" value="2"></label>
-        </div>
-        <p class="hint" style="margin: 8px 0 0;">提示: 0.5=慢速, 1.0=正常, 2.0=2倍速, 4.0=4倍速</p>
-      `
-    };
-
-    const log = (msg, type = 'info') => {
-      const box = q('log');
-      const time = new Date().toLocaleTimeString();
-      const icon = { info: 'ℹ️', success: '✅', error: '❌', warn: '⚠️' }[type] || 'ℹ️';
-      box.textContent += `${time} ${icon} ${msg}\n`;
-      box.scrollTop = box.scrollHeight;
-    };
-
-    const setProgress = (v) => {
-      const n = Math.max(0, Math.min(100, Math.floor(v)));
-      q('progress').value = n;
-      q('progressText').textContent = `${n}%`;
-      q('progressWrap').style.display = 'grid';
-    };
-
-    const getOpt = (name, fallback = '') => {
-      const el = host.querySelector(`[data-vc-opt="${name}"]`);
-      return el ? el.value : fallback;
-    };
-
-    // ========== 视频处理核心函数 ==========
-
-    // 裁剪视频 - 使用 MediaRecorder API
-    async function trimVideo(videoEl, startTime, endTime) {
-      log('开始裁剪视频...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const stream = canvas.captureStream(30); // 30fps
-        
-        // 添加音频轨道
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaElementSource(videoEl);
-        const dest = audioContext.createMediaStreamDestination();
-        source.connect(dest);
-        source.connect(audioContext.destination);
-        
-        dest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp9,opus',
-          videoBitsPerSecond: 2500000
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          audioContext.close();
-          setProgress(100);
-          log('裁剪完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = (e) => {
-          audioContext.close();
-          reject(e);
-        };
-
-        videoEl.currentTime = startTime;
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const progress = 10 + ((videoEl.currentTime - startTime) / (endTime - startTime)) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
+    /* ---------- helpers ---------- */
+    function fmtTime(s) {
+        if (!isFinite(s) || s < 0) s = 0;
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
     }
 
-    // 格式转换 - 使用 MediaRecorder
-    async function convertVideo(videoEl) {
-      log('开始格式转换...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const videoBitrate = parseFloat(getOpt('videoBitrate', '2.5')) * 1000000;
-        const audioBitrate = parseFloat(getOpt('audioBitrate', '128')) * 1000;
-
-        const stream = canvas.captureStream(30);
-        
-        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') 
-          ? 'video/webm;codecs=vp9,opus'
-          : 'video/webm';
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType,
-          videoBitsPerSecond: videoBitrate,
-          audioBitsPerSecond: audioBitrate
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          setProgress(100);
-          log('转换完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = reject;
-
-        const duration = videoEl.duration;
-        videoEl.currentTime = 0;
-        videoEl.ontimeupdate = () => {
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const progress = 10 + (videoEl.currentTime / duration) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-          videoEl.pause();
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
+    function clamp(v, lo, hi) {
+        return Math.max(lo, Math.min(hi, v));
     }
 
-    // 视频截图
-    async function snapshotVideo(videoEl) {
-      const snapTime = parseFloat(getOpt('snapTime', '0'));
-      const format = getOpt('snapFormat', 'jpeg');
-      const quality = parseFloat(getOpt('snapQuality', '0.92'));
-
-      log(`在 ${snapTime.toFixed(2)} 秒处截图...`);
-      setProgress(30);
-
-      return new Promise((resolve, reject) => {
-        videoEl.currentTime = snapTime;
-        videoEl.onseeked = () => {
-          try {
-            const canvas = document.createElement('canvas');
-            canvas.width = videoEl.videoWidth;
-            canvas.height = videoEl.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-            
-            setProgress(70);
-            
-            canvas.toBlob((blob) => {
-              setProgress(100);
-              log('截图完成', 'success');
-              resolve(blob);
-            }, `image/${format}`, quality);
-          } catch (err) {
-            reject(err);
-          }
-          videoEl.onseeked = null;
-        };
-      });
+    function setProgress(pct, label) {
+        progressFill.style.width = pct + '%';
+        progressPct.textContent = Math.round(pct) + '%';
+        if (label) progressLabel.textContent = label;
     }
 
-    // 提取音频
-    async function extractAudio(videoEl, startTime, endTime) {
-      log('开始提取音频...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaElementSource(videoEl);
-        const dest = audioContext.createMediaStreamDestination();
-        source.connect(dest);
-        source.connect(audioContext.destination);
-
-        const mediaRecorder = new MediaRecorder(dest.stream, {
-          mimeType: 'audio/webm;codecs=opus'
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/webm' });
-          audioContext.close();
-          setProgress(100);
-          log('音频提取完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = (e) => {
-          audioContext.close();
-          reject(e);
-        };
-
-        videoEl.currentTime = startTime;
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          const progress = 10 + ((videoEl.currentTime - startTime) / (endTime - startTime)) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
-    }
-
-    // 静音视频
-    async function muteVideo(videoEl, startTime, endTime) {
-      log('开始生成静音视频...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const stream = canvas.captureStream(30);
-        
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp9',
-          videoBitsPerSecond: 2500000
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          setProgress(100);
-          log('静音视频生成完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = reject;
-
-        videoEl.muted = true;
-        videoEl.currentTime = startTime;
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.muted = false;
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const progress = 10 + ((videoEl.currentTime - startTime) / (endTime - startTime)) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.muted = false;
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
-    }
-
-    // 变速视频 (注意：这只能用canvas重新渲染，实际效果有限)
-    async function speedVideo(videoEl, startTime, endTime) {
-      const speedRate = parseFloat(getOpt('speedRate', '2'));
-      log(`开始生成 ${speedRate}x 变速视频...`);
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const targetFps = 30;
-        const stream = canvas.captureStream(targetFps);
-        
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaElementSource(videoEl);
-        const dest = audioContext.createMediaStreamDestination();
-        source.connect(dest);
-        source.connect(audioContext.destination);
-        
-        dest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp9,opus',
-          videoBitsPerSecond: 2500000
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          audioContext.close();
-          videoEl.playbackRate = 1.0;
-          setProgress(100);
-          log('变速视频生成完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = (e) => {
-          audioContext.close();
-          videoEl.playbackRate = 1.0;
-          reject(e);
-        };
-
-        videoEl.playbackRate = speedRate;
-        videoEl.currentTime = startTime;
-        
-        const realDuration = (endTime - startTime) / speedRate;
-        let recordStartTime = Date.now();
-        
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const elapsed = (Date.now() - recordStartTime) / 1000;
-          const progress = 10 + (elapsed / realDuration) * 85;
-          setProgress(Math.min(progress, 95));
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
-    }
-
-    // ========== UI 事件处理 ==========
-
-    function renderModes() {
-      const modeHost = q('modes');
-      modeHost.innerHTML = modes.map((m) => `
-        <label class="vc-mode ${state.mode === m.key ? 'active' : ''}" data-mode="${m.key}" title="${m.desc}">
-          <input type="radio" name="vcMode" value="${m.key}" ${state.mode === m.key ? 'checked' : ''}>
-          ${m.name}
-        </label>
-      `).join('');
-
-      modeHost.querySelectorAll('.vc-mode').forEach((el) => {
-        el.addEventListener('click', () => {
-          state.mode = el.dataset.mode;
-          renderModes();
-          updateUI();
-        });
-      });
-    }
-
-    function updateUI() {
-      const mode = modes.find(m => m.key === state.mode);
-      q('timePanel').style.display = mode.needTime ? 'block' : 'none';
-      q('options').innerHTML = modeOptions[state.mode] || '';
-      
-      // 添加"使用当前播放时间"按钮事件
-      const useCurrentBtn = host.querySelector('[data-vc-opt="useCurrentTime"]');
-      if (useCurrentBtn && state.video) {
-        useCurrentBtn.addEventListener('click', () => {
-          const input = host.querySelector('[data-vc-opt="snapTime"]');
-          if (input) {
-            input.value = state.video.currentTime.toFixed(2);
-            log(`已设置截图时间为: ${input.value} 秒`);
-          }
-        });
-      }
-    }
-
-    // 文件选择
-    q('mainFile').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      state.videoFile = file;
-      const videoEl = q('preview');
-      videoEl.src = URL.createObjectURL(file);
-      
-      q('meta').textContent = `📹 ${file.name} | ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
-      
-      videoEl.onloadedmetadata = () => {
-        state.video = videoEl;
-        q('start').value = '0';
-        q('end').value = videoEl.duration.toFixed(2);
-        log(`视频加载成功: ${videoEl.videoWidth}x${videoEl.videoHeight}, 时长 ${videoEl.duration.toFixed(2)}秒`, 'success');
-      };
-    });
-
-    // 时间控制按钮
-    q('setStart').addEventListener('click', () => {
-      if (!state.video) return;
-      q('start').value = state.video.currentTime.toFixed(2);
-      log(`起始时间已设置为: ${state.video.currentTime.toFixed(2)}秒`);
-    });
-
-    q('setEnd').addEventListener('click', () => {
-      if (!state.video) return;
-      q('end').value = state.video.currentTime.toFixed(2);
-      log(`结束时间已设置为: ${state.video.currentTime.toFixed(2)}秒`);
-    });
-
-    q('full').addEventListener('click', () => {
-      if (!state.video) return;
-      q('start').value = '0';
-      q('end').value = state.video.duration.toFixed(2);
-      log('已设置为完整时长');
-    });
-
-    // 开始处理
-    q('export').addEventListener('click', async () => {
-      if (state.processing) {
-        log('已有任务在处理中...', 'warn');
-        return;
-      }
-
-      if (!state.video) {
-        log('请先选择视频文件', 'error');
-        return;
-      }
-
-      state.processing = true;
-      state.abortController = new AbortController();
-      q('download').hidden = true;
-      q('progressWrap').style.display = 'grid';
-      setProgress(0);
-
-      try {
-        let blob, filename, ext;
-        const videoEl = state.video;
-        const startTime = parseFloat(q('start').value || '0');
-        const endTime = parseFloat(q('end').value || videoEl.duration);
-
-        // 验证时间范围
-        if (startTime >= endTime) {
-          throw new Error('开始时间必须小于结束时间');
+    function getMimeType() {
+        var types = [
+            'video/webm;codecs=vp9,opus',
+            'video/webm;codecs=vp8,opus',
+            'video/webm;codecs=vp9',
+            'video/webm;codecs=vp8',
+            'video/webm'
+        ];
+        for (var i = 0; i < types.length; i++) {
+            if (MediaRecorder.isTypeSupported(types[i])) return types[i];
         }
+        return 'video/webm';
+    }
 
-        switch (state.mode) {
-          case 'trim':
-            blob = await trimVideo(videoEl, startTime, endTime);
-            filename = `trimmed_${Date.now()}.webm`;
-            break;
-          
-          case 'convert':
-            blob = await convertVideo(videoEl);
-            filename = `converted_${Date.now()}.webm`;
-            break;
-          
-          case 'snapshot':
-            blob = await snapshotVideo(videoEl);
-            ext = getOpt('snapFormat', 'jpeg');
-            filename = `snapshot_${Date.now()}.${ext}`;
-            break;
-          
-          case 'audio':
-            blob = await extractAudio(videoEl, startTime, endTime);
-            filename = `audio_${Date.now()}.webm`;
-            break;
-          
-          case 'mute':
-            blob = await muteVideo(videoEl, startTime, endTime);
-            filename = `muted_${Date.now()}.webm`;
-            break;
-          
-          case 'speed':
-            blob = await speedVideo(videoEl, startTime, endTime);
-            filename = `speed_${Date.now()}.webm`;
-            break;
-          
-          default:
-            throw new Error('未知的处理模式');
-        }
+    function setupCanvas(targetWidth) {
+        var aspect = video.videoHeight / video.videoWidth || 0.5625;
+        var w = targetWidth || video.videoWidth || 1280;
+        var h = Math.round(w * aspect);
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        return { canvas: canvas, ctx: ctx, w: w, h: h };
+    }
 
-        // 创建下载链接
-        const url = URL.createObjectURL(blob);
-        const dl = q('download');
-        dl.href = url;
-        dl.download = filename;
-        dl.textContent = `💾 下载 ${filename} (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`;
-        dl.hidden = false;
-        
-        log(`处理完成！文件大小: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`, 'success');
-        
-      } catch (err) {
-        log(`处理失败: ${err.message}`, 'error');
-        console.error(err);
-      } finally {
-        state.processing = false;
-        state.abortController = null;
-        // 重置视频状态
-        if (state.video) {
-          state.video.pause();
-          state.video.currentTime = 0;
-          state.video.ontimeupdate = null;
-          state.video.onended = null;
+    /* ---------- file import ---------- */
+    function handleFile(file) {
+        if (!file) return;
+        if (file.type.indexOf('video') === -1) {
+            alert('请选择视频文件');
+            return;
         }
-      }
+        if (state.objectURL) URL.revokeObjectURL(state.objectURL);
+        state.file = file;
+        state.objectURL = URL.createObjectURL(file);
+        video.src = state.objectURL;
+        video.load();
+    }
+
+    video.addEventListener('loadedmetadata', function () {
+        state.duration = video.duration;
+        state.trimStart = 0;
+        state.trimEnd = video.duration;
+        totalTimeEl.textContent = fmtTime(video.duration);
+        curTimeEl.textContent = '00:00';
+        videoInfo.textContent = file.name + ' · ' + Math.round(file.size / 1048576) + 'MB · ' +
+            video.videoWidth + 'x' + video.videoHeight;
+        labelStart.textContent = fmtTime(0);
+        labelEnd.textContent = fmtTime(video.duration);
+        trimEndInput.max = video.duration;
+        trimStartInput.max = video.duration;
+        trimStartInput.value = 0;
+        trimEndInput.value = video.duration;
+        trimDurEl.textContent = fmtTime(video.duration);
+        audioRangeEl.textContent = '完整 (' + fmtTime(video.duration) + ')';
+        updateTrimUI();
+        generateThumbnails();
+        emptyState.style.display = 'none';
+        video.style.display = '';
+        playerCtrl.style.display = '';
+        timeline.style.display = '';
     });
 
-    // 取消任务
-    q('cancel').addEventListener('click', () => {
-      if (!state.processing) {
-        log('当前没有进行中的任务', 'warn');
-        return;
-      }
-      
-      if (state.abortController) {
-        state.abortController.abort();
-      }
-      
-      if (state.video) {
-        state.video.pause();
-        state.video.currentTime = 0;
-        state.video.ontimeupdate = null;
-        state.video.onended = null;
-      }
-      
-      state.processing = false;
-      q('progressWrap').style.display = 'none';
-      log('任务已取消', 'warn');
+    video.addEventListener('timeupdate', function () {
+        curTimeEl.textContent = fmtTime(video.currentTime);
+        if (video.duration > 0) {
+            playhead.style.left = (video.currentTime / video.duration * 100) + '%';
+        }
     });
 
-    // 初始化
-    renderModes();
-    updateUI();
-    log('视频剪辑工具已就绪，请选择视频文件开始', 'success');
-  }
+    video.addEventListener('play', function () {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = '';
+    });
 
-  // 导出到全局
-  window.initVideoCutNative = initVideoCut;
+    video.addEventListener('pause', function () {
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
+    });
+
+    video.addEventListener('ended', function () {
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
+    });
+
+    /* ---------- import button & dropzone ---------- */
+    importBtn.addEventListener('click', function () { fileInput.click(); });
+    dropzone.addEventListener('click', function () { fileInput.click(); });
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files && fileInput.files[0]) handleFile(fileInput.files[0]);
+    });
+
+    dropzone.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dropzone.classList.add('vc-dragover');
+    });
+    dropzone.addEventListener('dragleave', function () {
+        dropzone.classList.remove('vc-dragover');
+    });
+    dropzone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropzone.classList.remove('vc-dragover');
+        var f = e.dataTransfer.files[0];
+        if (f) handleFile(f);
+    });
+
+    /* ---------- player controls ---------- */
+    playBtn.addEventListener('click', function () {
+        if (video.paused) video.play(); else video.pause();
+    });
+
+    muteBtn.addEventListener('click', function () {
+        video.muted = !video.muted;
+        muteBtn.textContent = video.muted ? '🔇' : '🔊';
+    });
+
+    volumeSlider.addEventListener('input', function () {
+        video.volume = volumeSlider.value / 100;
+    });
+
+    fullscreenBtn.addEventListener('click', function () {
+        if (video.requestFullscreen) video.requestFullscreen();
+        else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+    });
+
+    /* keyboard shortcuts */
+    document.addEventListener('keydown', function (e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+        if (e.code === 'Space') {
+            e.preventDefault();
+            if (video.paused) video.play(); else video.pause();
+        } else if (e.code === 'ArrowLeft') {
+            video.currentTime = Math.max(0, video.currentTime - 5);
+        } else if (e.code === 'ArrowRight') {
+            video.currentTime = Math.min(video.duration, video.currentTime + 5);
+        }
+    });
+
+    /* ---------- timeline ---------- */
+    timelineClick.addEventListener('click', function (e) {
+        var rect = timelineClick.getBoundingClientRect();
+        var pct = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pct * video.duration;
+    });
+
+    function generateThumbnails() {
+        thumbStrip.innerHTML = '';
+        var count = 12;
+        var seeker = document.createElement('video');
+        seeker.src = state.objectURL;
+        seeker.muted = true;
+        seeker.crossOrigin = 'anonymous';
+
+        var canvas = document.createElement('canvas');
+        var thumbW = 80;
+        canvas.width = thumbW;
+        canvas.height = thumbW * (video.videoHeight / video.videoWidth) || 45;
+        var ctx = canvas.getContext('2d');
+
+        for (var i = 0; i < count; i++) {
+            (function (idx) {
+                var img = document.createElement('img');
+                img.className = 'vc-thumb';
+                thumbStrip.appendChild(img);
+                seeker.currentTime = (idx + 0.5) / count * state.duration;
+                seeker.addEventListener('seeked', function handler() {
+                    seeker.removeEventListener('seeked', handler);
+                    ctx.drawImage(seeker, 0, 0, canvas.width, canvas.height);
+                    img.src = canvas.toDataURL();
+                });
+            })(i);
+        }
+    }
+
+    /* ---------- trim handles ---------- */
+    function updateTrimUI() {
+        var lpct = state.trimStart / state.duration * 100;
+        var rpct = state.trimEnd / state.duration * 100;
+        trimRegion.style.left = lpct + '%';
+        trimRegion.style.width = (rpct - lpct) + '%';
+        handleL.style.left = lpct + '%';
+        handleR.style.left = rpct + '%';
+        labelStart.textContent = fmtTime(state.trimStart);
+        labelEnd.textContent = fmtTime(state.trimEnd);
+        trimStartInput.value = state.trimStart.toFixed(1);
+        trimEndInput.value = state.trimEnd.toFixed(1);
+        trimDurEl.textContent = fmtTime(state.trimEnd - state.trimStart);
+    }
+
+    function startDrag(handle, isLeft) {
+        var rect = timelineTrack.getBoundingClientRect();
+        function onMove(e) {
+            var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            var pct = (clientX - rect.left) / rect.width;
+            var t = clamp(pct * state.duration, 0, state.duration);
+            if (isLeft) {
+                state.trimStart = clamp(t, 0, state.trimEnd - 0.1);
+            } else {
+                state.trimEnd = clamp(t, state.trimStart + 0.1, state.duration);
+            }
+            updateTrimUI();
+        }
+        function onUp() {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onUp);
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+        document.addEventListener('touchmove', onMove, { passive: false });
+        document.addEventListener('touchend', onUp);
+    }
+
+    handleL.addEventListener('mousedown', function (e) { e.preventDefault(); startDrag(handleL, true); });
+    handleR.addEventListener('mousedown', function (e) { e.preventDefault(); startDrag(handleR, false); });
+    handleL.addEventListener('touchstart', function (e) { e.preventDefault(); startDrag(handleL, true); });
+    handleR.addEventListener('touchstart', function (e) { e.preventDefault(); startDrag(handleR, false); });
+
+    trimStartInput.addEventListener('input', function () {
+        var v = parseFloat(trimStartInput.value);
+        if (!isNaN(v)) { state.trimStart = clamp(v, 0, state.trimEnd - 0.1); updateTrimUI(); }
+    });
+    trimEndInput.addEventListener('input', function () {
+        var v = parseFloat(trimEndInput.value);
+        if (!isNaN(v)) { state.trimEnd = clamp(v, state.trimStart + 0.1, state.duration); updateTrimUI(); }
+    });
+
+    trimPreviewBtn.addEventListener('click', function () {
+        video.currentTime = state.trimStart;
+        video.play();
+    });
+
+    /* ---------- tab switching ---------- */
+    tabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            tabs.forEach(function (t) { t.classList.remove('vc-tab-active'); });
+            panels.forEach(function (p) { p.classList.remove('vc-panel-active'); });
+            tab.classList.add('vc-tab-active');
+            var target = tab.getAttribute('data-panel');
+            var panel = document.querySelector('[data-panel-id="' + target + '"]');
+            if (panel) panel.classList.add('vc-panel-active');
+            state.currentTab = target;
+        });
+    });
+
+    /* ---------- snapshot ---------- */
+    snapQualityRng.addEventListener('input', function () {
+        snapQualityVal.textContent = snapQualityRng.value + '%';
+        snapQualityFld.style.display = snapFormatSel.value === 'jpeg' ? '' : 'none';
+    });
+    snapFormatSel.addEventListener('change', function () {
+        snapQualityFld.style.display = snapFormatSel.value === 'jpeg' ? '' : 'none';
+    });
+
+    snapGoBtn.addEventListener('click', function () {
+        if (!state.file) return;
+        var t = parseFloat(snapTimeInput.value) || 0;
+        t = clamp(t, 0, state.duration);
+
+        setProgress(5, '截取帧...');
+        exportSettings.style.display = 'none';
+        progressSection.style.display = '';
+        resultSection.style.display = 'none';
+        exportModal.style.display = '';
+
+        var seeker = document.createElement('video');
+        seeker.src = state.objectURL;
+        seeker.muted = true;
+        seeker.currentTime = t;
+        seeker.addEventListener('seeked', function () {
+            var cv = setupCanvas(video.videoWidth);
+            cv.ctx.drawImage(seeker, 0, 0, cv.w, cv.h);
+            var fmt = snapFormatSel.value;
+            var q = parseInt(snapQualityRng.value) / 100;
+            var dataUrl = cv.canvas.toDataURL('image/' + fmt, q);
+            setProgress(80, '生成图片...');
+            var a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = 'snapshot_' + Math.round(t) + 's.' + fmt;
+            setProgress(100, '完成');
+            setTimeout(function () {
+                progressSection.style.display = 'none';
+                exportSettings.style.display = '';
+                exportModal.style.display = 'none';
+                a.click();
+            }, 600);
+        });
+        seeker.addEventListener('error', function () {
+            setProgress(0, '错误');
+            progressLabel.textContent = '截取帧失败';
+        });
+    });
+
+    /* ---------- speed ---------- */
+    speedRng.addEventListener('input', function () {
+        speedVal.textContent = parseFloat(speedRng.value).toFixed(1) + 'x';
+    });
+    speedPresets.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            speedRng.value = btn.getAttribute('data-speed');
+            speedVal.textContent = parseFloat(speedRng.value).toFixed(1) + 'x';
+        });
+    });
+
+    /* ---------- export modal ---------- */
+    exportBtn.addEventListener('click', function () {
+        if (!state.file) { alert('请先导入视频'); return; }
+        state.exportMode = state.currentTab;
+        exportSettings.style.display = '';
+        progressSection.style.display = 'none';
+        resultSection.style.display = 'none';
+        exportModal.style.display = '';
+    });
+
+    exportCancelBtn.addEventListener('click', function () {
+        exportModal.style.display = 'none';
+    });
+    exportCloseBtn.addEventListener('click', function () {
+        exportModal.style.display = 'none';
+    });
+
+    exportConfirmBtn.addEventListener('click', function () {
+        exportSettings.style.display = 'none';
+        progressSection.style.display = '';
+        setProgress(0, '准备中...');
+
+        if (state.exportMode === 'trim') doTrim();
+        else if (state.exportMode === 'audio') doExtractAudio();
+        else if (state.exportMode === 'mute') doMute();
+        else if (state.exportMode === 'speed') doSpeed();
+        else doTrim();
+    });
+
+    /* click outside modal to close */
+    exportModal.addEventListener('click', function (e) {
+        if (e.target === exportModal) exportModal.style.display = 'none';
+    });
+
+    /* ---------- cancel button in progress ---------- */
+    var cancelBtn = document.createElement('button');
+    cancelBtn.className = 'vc-btn vc-btn-cancel';
+    cancelBtn.textContent = '取消';
+    cancelBtn.style.marginTop = '12px';
+    cancelBtn.addEventListener('click', function () {
+        exportModal.style.display = 'none';
+        setProgress(0, '已取消');
+    });
+    progressSection.appendChild(cancelBtn);
+
+    /* ---------- processing: trim ---------- */
+    function doTrim() {
+        setProgress(5, '准备裁剪...');
+        var cs = setupCanvas(parseInt(resSelect.value) || video.videoWidth);
+        var fps = 30;
+        var stream = cs.canvas.captureStream(fps);
+        var audioStream = null;
+        var combined = stream;
+
+        try {
+            audioStream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+            var audioTracks = audioStream.getAudioTracks();
+            if (audioTracks.length) {
+                audioTracks.forEach(function (at) { stream.addTrack(at); });
+            }
+        } catch (e) { /* no audio */ }
+
+        var mimeType = getMimeType();
+        var rec = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: parseInt(qualitySelect.value) });
+        var chunks = [];
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+            var blob = new Blob(chunks, { type: mimeType });
+            setProgress(100, '完成');
+            showResult(blob, 'webm');
+        };
+        rec.onerror = function () { reject(new Error('录制失败')); };
+
+        video.currentTime = state.trimStart;
+        video.play();
+        rec.start();
+
+        function checkTime() {
+            if (video.currentTime >= state.trimEnd || video.paused) {
+                video.pause();
+                rec.stop();
+                setProgress(95, '正在编码...');
+                return;
+            }
+            cs.ctx.drawImage(video, 0, 0, cs.w, cs.h);
+            var pct = 10 + (video.currentTime - state.trimStart) / (state.trimEnd - state.trimStart) * 80;
+            setProgress(pct, '裁剪中...');
+            requestAnimationFrame(checkTime);
+        }
+        video.addEventListener('seeked', function onSeeked() {
+            video.removeEventListener('seeked', onSeeked);
+            checkTime();
+        });
+    }
+
+    /* ---------- processing: extract audio ---------- */
+    function doExtractAudio() {
+        setProgress(5, '提取音频...');
+        try {
+            var AudioCtx = window.AudioContext || window.webkitAudioContext;
+            var audioCtx = new AudioCtx();
+            var source = audioCtx.createMediaElementSource(video);
+            var dest = audioCtx.createMediaStreamDestination();
+            source.connect(dest);
+            source.connect(audioCtx.destination);
+
+            var rec = new MediaRecorder(dest.stream, { mimeType: 'audio/webm' });
+            var chunks = [];
+            rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+            rec.onstop = function () {
+                audioCtx.close();
+                var blob = new Blob(chunks, { type: 'audio/webm' });
+                setProgress(100, '完成');
+                showResult(blob, 'webm', true);
+            };
+            rec.onerror = function () { audioCtx.close(); reject(new Error('音频录制失败')); };
+
+            video.currentTime = state.trimStart;
+            video.play();
+            rec.start();
+
+            function checkTime() {
+                if (video.currentTime >= state.trimEnd || video.paused) {
+                    video.pause();
+                    rec.stop();
+                    setProgress(95, '正在编码...');
+                    return;
+                }
+                var pct = 10 + (video.currentTime - state.trimStart) / (state.trimEnd - state.trimStart) * 80;
+                setProgress(pct, '录制音频...');
+                requestAnimationFrame(checkTime);
+            }
+            video.addEventListener('seeked', function onSeeked() {
+                video.removeEventListener('seeked', onSeeked);
+                checkTime();
+            });
+        } catch (err) {
+            setProgress(0, '错误');
+            progressLabel.textContent = '错误: ' + err.message;
+        }
+    }
+
+    /* ---------- processing: mute ---------- */
+    function doMute() {
+        setProgress(5, '生成静音视频...');
+        var cs = setupCanvas(parseInt(resSelect.value) || video.videoWidth);
+        var fps = 30;
+        var stream = cs.canvas.captureStream(fps);
+        var mimeType = getMimeType();
+        var rec = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: parseInt(qualitySelect.value) });
+        var chunks = [];
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+            var blob = new Blob(chunks, { type: mimeType });
+            setProgress(100, '完成');
+            showResult(blob, 'webm');
+        };
+        rec.onerror = function () { reject(new Error('录制失败')); };
+
+        video.currentTime = state.trimStart;
+        video.muted = true;
+        video.play();
+        rec.start();
+
+        function checkTime() {
+            if (video.currentTime >= state.trimEnd || video.pause) {
+                video.pause();
+                rec.stop();
+                setProgress(95, '正在编码...');
+                return;
+            }
+            cs.ctx.drawImage(video, 0, 0, cs.w, cs.h);
+            var pct = 10 + (video.currentTime - state.trimStart) / (state.trimEnd - state.trimStart) * 80;
+            setProgress(pct, '录制静音视频...');
+            requestAnimationFrame(checkTime);
+        }
+        video.addEventListener('seeked', function onSeeked() {
+            video.removeEventListener('seeked', onSeeked);
+            checkTime();
+        });
+    }
+
+    /* ---------- processing: speed ---------- */
+    function doSpeed() {
+        setProgress(5, '变速处理...');
+        var rate = parseFloat(speedRng.value);
+        var cs = setupCanvas(parseInt(resSelect.value) || video.videoWidth);
+        var fps = 30;
+        var stream = cs.canvas.captureStream(fps);
+
+        try {
+            var aStream = video.captureStream ? video.captureStream() : video.mozCaptureStream();
+            var aTracks = aStream.getAudioTracks();
+            if (aTracks.length) aTracks.forEach(function (at) { stream.addTrack(at); });
+        } catch (e) { /* no audio */ }
+
+        var mimeType = getMimeType();
+        var rec = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: parseInt(qualitySelect.value) });
+        var chunks = [];
+        rec.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+        rec.onstop = function () {
+            var blob = new Blob(chunks, { type: mimeType });
+            setProgress(100, '完成');
+            showResult(blob, 'webm');
+        };
+        rec.onerror = function () { reject(new Error('录制失败')); };
+
+        video.currentTime = state.trimStart;
+        video.playbackRate = rate;
+        video.play();
+        rec.start();
+
+        function checkTime() {
+            if (video.currentTime >= state.trimEnd || video.paused) {
+                video.pause();
+                rec.stop();
+                video.playbackRate = 1;
+                setProgress(95, '正在编码...');
+                return;
+            }
+            cs.ctx.drawImage(video, 0, 0, cs.w, cs.h);
+            var pct = 10 + (video.currentTime - state.trimStart) / (state.trimEnd - state.trimStart) * 80;
+            setProgress(Math.min(pct, 95), '变速录制中...');
+            requestAnimationFrame(checkTime);
+        }
+        video.addEventListener('seeked', function onSeeked() {
+            video.removeEventListener('seeked', onSeeked);
+            checkTime();
+        });
+    }
+
+    /* ---------- show result ---------- */
+    function showResult(blob, ext, isAudio) {
+        state.resultBlob = blob;
+        state.resultExt = ext;
+        if (resultVideo.src) URL.revokeObjectURL(resultVideo.src);
+        resultVideo.src = URL.createObjectURL(blob);
+        resultVideo.style.display = '';
+        progressSection.style.display = 'none';
+        resultSection.style.display = '';
+        downloadBtn.textContent = '下载' + (isAudio ? '音频' : '视频');
+    }
+
+    downloadBtn.addEventListener('click', function () {
+        if (!state.resultBlob) return;
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(state.resultBlob);
+        a.download = 'export_' + state.exportMode + '.' + state.resultExt;
+        a.click();
+    });
+
+    /* ---------- init ---------- */
+    video.style.display = 'none';
+    playerCtrl.style.display = 'none';
+    timeline.style.display = 'none';
+
 })();

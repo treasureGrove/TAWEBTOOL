@@ -320,6 +320,11 @@ function initTopSearch() {
 
     // Preload the target page HTML and extract image URLs to prefetch
     function preloadPage(href, callback) {
+        // file:// protocol blocks XHR to other local files; skip preloading
+        if (window.location.protocol === 'file:') {
+            callback();
+            return;
+        }
         var xhr = new XMLHttpRequest();
         xhr.open('GET', href, true);
         xhr.responseType = 'text';

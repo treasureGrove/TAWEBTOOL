@@ -6,22 +6,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>视频剪辑</title>
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
     <link rel="stylesheet" href="../css/video_cut.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
     <script src="../js/waifu.js"></script>
-    <script src="../js/video_cut.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu"></div>
     <div class="top_search">
         <input type="text" placeholder="搜索">
     </div>
-    <div id="panel" data-local-tool="video_cut" data-tool-title="视频剪辑"></div>
+    <div id="panel">
+        <div class="vc-app">
+            <!-- Top bar -->
+            <header class="vc-topbar">
+                <div class="vc-topbar-left">
+                    <h1>视频剪辑</h1>
+                    <span class="vc-badge" id="vcVideoInfo">未导入素材</span>
+                </div>
+                <div class="vc-topbar-right">
+                    <button id="vcImportBtn" class="vc-btn vc-btn-ghost">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        导入视频
+                    </button>
+                    <button id="vcExportBtn" class="vc-btn vc-btn-primary" disabled>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        导出
+                    </button>
+                    <input id="vcFileInput" type="file" accept="video/*,audio/*" hidden>
+                </div>
+            </header>
 
+            <!-- Main work area -->
+            <div class="vc-workarea">
+                <!-- Preview -->
+                <div class="vc-preview-area" id="vcDropzone">
+                    <div class="vc-preview-empty" id="vcEmptyState">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+                            <polygon points="23 7 16 12 23 17 23 7"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                        <p>拖拽视频到此处或点击「导入视频」</p>
+                        <small>支持 MP4、WebM、MOV 等常见格式</small>
+                    </div>
+                    <video id="vcVideo" playsinline class="vc-video-el" hidden></video>
+                    <div class="vc-preview-overlay" id="vcPreviewOverlay" hidden></div>
+                </div>
+
+                <!-- Right sidebar -->
+                <aside class="vc-sidebar">
+                    <!-- Tool tabs -->
+                    <div class="vc-tabs">
+                        <button class="vc-tab active" data-tool="trim">裁剪</button>
+                        <button class="vc-tab" data-tool="snapshot">截图</button>
+                        <button class="vc-tab" data-tool="audio">提取音频</button>
+                        <button class="vc-tab" data-tool="mute">静音</button>
+                        <button class="vc-tab" data-tool="speed">变速</button>
+                    </div>
+
+                    <!-- Tool panels -->
+                    <div class="vc-tool-panels">
+                        <!-- Trim -->
+                        <div class="vc-tool-panel active" data-panel="trim">
+                            <p class="vc-panel-desc">拖动时间线上的手柄设置裁剪范围，导出后将只保留选中片段。</p>
+                            <div class="vc-field">
+                                <label>入点</label>
+                                <div class="vc-time-input">
+                                    <input id="vcTrimStart" type="number" min="0" step="0.1" value="0">
+                                    <span>秒</span>
+                                </div>
+                            </div>
+                            <div class="vc-field">
+                                <label>出点</label>
+                                <div class="vc-time-input">
+                                    <input id="vcTrimEnd" type="number" min="0" step="0.1" value="0">
+                                    <span>秒</span>
+                                </div>
+                            </div>
+                            <div class="vc-field">
+                                <label>选中片段时长</label>
+                                <span class="vc-value" id="vcTrimDuration">—</span>
+                            </div>
+                            <button class="vc-btn vc-btn-sm vc-btn-ghost" id="vcTrimPreview">预览选中片段</button>
+                        </div>
+
+                        <!-- Snapshot -->
+                        <div class="vc-tool-panel" data-panel="snapshot">
+                            <p class="vc-panel-desc">拖动播放头到目标位置，点击截图即可导出当前帧。</p>
+                            <div class="vc-field">
+                                <label>截图时间点</label>
+                                <div class="vc-time-input">
+                                    <input id="vcSnapTime" type="number" min="0" step="0.1" value="0">
+                                    <span>秒</span>
+                                </div>
+                            </div>
+                            <div class="vc-field">
+                                <label>图片格式</label>
+                                <select id="vcSnapFormat">
+                                    <option value="png">PNG (无损)</option>
+                                    <option value="jpeg" selected>JPEG</option>
+                                    <option value="webp">WebP</option>
+                                </select>
+                            </div>
+                            <div class="vc-field" id="vcSnapQualityField">
+                                <label>质量</label>
+                                <input id="vcSnapQuality" type="range" min="0.1" max="1" step="0.05" value="0.92">
+                                <span class="vc-value" id="vcSnapQualityVal">92%</span>
+                            </div>
+                            <button class="vc-btn vc-btn-sm vc-btn-ghost" id="vcSnapGo">跳到该帧</button>
+                        </div>
+
+                        <!-- Audio -->
+                        <div class="vc-tool-panel" data-panel="audio">
+                            <p class="vc-panel-desc">从视频的选中时间范围内提取音频轨，导出为 WebM (Opus) 格式。</p>
+                            <div class="vc-field">
+                                <label>音频范围</label>
+                                <span class="vc-value" id="vcAudioRange">完整时长</span>
+                            </div>
+                        </div>
+
+                        <!-- Mute -->
+                        <div class="vc-tool-panel" data-panel="mute">
+                            <p class="vc-panel-desc">移除视频中的音频轨道，仅保留画面。可先用时间线选择要静音的片段。</p>
+                        </div>
+
+                        <!-- Speed -->
+                        <div class="vc-tool-panel" data-panel="speed">
+                            <p class="vc-panel-desc">调整视频播放速度，加速或慢放。范围 0.25x — 4x。</p>
+                            <div class="vc-field">
+                                <label>速度倍率</label>
+                                <input id="vcSpeedRate" type="range" min="0.25" max="4" step="0.25" value="1.5">
+                                <span class="vc-value" id="vcSpeedVal">1.5x</span>
+                            </div>
+                            <div class="vc-speed-presets">
+                                <button data-speed="0.5">0.5x</button>
+                                <button data-speed="1">1x</button>
+                                <button data-speed="1.5" class="active">1.5x</button>
+                                <button data-speed="2">2x</button>
+                                <button data-speed="4">4x</button>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Player controls -->
+            <div class="vc-player-controls" id="vcPlayerControls" hidden>
+                <button id="vcPlayBtn" class="vc-icon-btn" title="播放/暂停 (空格)">
+                    <svg id="vcPlayIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    <svg id="vcPauseIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" hidden><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+                </button>
+                <span class="vc-time-display">
+                    <span id="vcCurrentTime">0:00</span>
+                    <span class="vc-time-sep">/</span>
+                    <span id="vcTotalTime">0:00</span>
+                </span>
+                <div class="vc-volume-wrap">
+                    <button id="vcMuteBtn" class="vc-icon-btn" title="静音">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.5 4.5 0 0 0 16.5 12z"/></svg>
+                    </button>
+                    <input id="vcVolume" type="range" min="0" max="1" step="0.05" value="1" class="vc-volume-slider">
+                </div>
+                <div class="vc-spacer"></div>
+                <button id="vcFullscreenBtn" class="vc-icon-btn" title="全屏">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+                </button>
+            </div>
+
+            <!-- Timeline -->
+            <div class="vc-timeline" id="vcTimeline" hidden>
+                <div class="vc-timeline-track" id="vcTimelineTrack">
+                    <div class="vc-timeline-strip" id="vcThumbStrip"></div>
+                    <div class="vc-trim-region" id="vcTrimRegion">
+                        <div class="vc-trim-handle vc-trim-left" id="vcTrimHandleL">
+                            <div class="vc-handle-grip"></div>
+                        </div>
+                        <div class="vc-trim-handle vc-trim-right" id="vcTrimHandleR">
+                            <div class="vc-handle-grip"></div>
+                        </div>
+                    </div>
+                    <div class="vc-playhead" id="vcPlayhead">
+                        <div class="vc-playhead-line"></div>
+                        <div class="vc-playhead-head"></div>
+                    </div>
+                    <div class="vc-timeline-click" id="vcTimelineClick"></div>
+                </div>
+                <div class="vc-timeline-labels">
+                    <span id="vcTimeLabelStart">0:00</span>
+                    <span id="vcTimeLabelEnd">0:00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export modal -->
+    <div class="vc-modal-overlay" id="vcExportModal" hidden>
+        <div class="vc-modal">
+            <div class="vc-modal-header">
+                <h2>导出视频</h2>
+            </div>
+            <div class="vc-modal-body">
+                <div class="vc-export-settings" id="vcExportSettings">
+                    <div class="vc-field">
+                        <label>输出质量</label>
+                        <select id="vcQualitySelect">
+                            <option value="8">高清 (8 Mbps)</option>
+                            <option value="4" selected>标准 (4 Mbps)</option>
+                            <option value="2">压缩 (2 Mbps)</option>
+                        </select>
+                    </div>
+                    <div class="vc-field">
+                        <label>分辨率</label>
+                        <select id="vcResSelect">
+                            <option value="0">原始分辨率</option>
+                            <option value="1280">720p</option>
+                            <option value="1920">1080p</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="vc-progress-section" id="vcProgressSection" hidden>
+                    <div class="vc-progress-bar">
+                        <div class="vc-progress-fill" id="vcProgressFill"></div>
+                    </div>
+                    <div class="vc-progress-info">
+                        <span id="vcProgressLabel">处理中...</span>
+                        <span id="vcProgressPct">0%</span>
+                    </div>
+                </div>
+                <div class="vc-result-section" id="vcResultSection" hidden>
+                    <video id="vcResultVideo" controls class="vc-result-preview"></video>
+                    <button id="vcDownloadBtn" class="vc-btn vc-btn-primary">下载文件</button>
+                </div>
+            </div>
+            <div class="vc-modal-footer">
+                <button id="vcExportCancelBtn" class="vc-btn vc-btn-ghost">取消</button>
+                <button id="vcExportConfirmBtn" class="vc-btn vc-btn-primary">开始导出</button>
+                <button id="vcExportCloseBtn" class="vc-btn vc-btn-primary" hidden>完成</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/video_cut.js"></script>
 </body>
 
 </html>

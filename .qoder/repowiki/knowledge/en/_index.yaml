@@ -3,11 +3,11 @@ schema_version: 1
 locale: en-US
 branch: main
 nodes_managed: true
-exported_at: "2026-06-30T10:03:50Z"
+exported_at: "2026-07-01T07:24:02Z"
 modules:
     "":
-        dir_name: TA Web Tools Suite
-        title: TA Web Tools Suite
+        dir_name: Browser-Based Technical Artist Tools Suite
+        title: Browser-Based Technical Artist Tools Suite
         scope:
             - index.html
             - tokens.json

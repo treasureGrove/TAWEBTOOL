@@ -22,12 +22,19 @@
     <div class="top_search">
         <input type="text" placeholder="搜索">
     </div>
-    </div>
     <div id="panel">
         <section class="city-app">
             <aside class="city-controls">
                 <h1>真实城市预览与导出</h1>
                 <p class="city-subtitle">3D 预览采用 Cesium 渲染，支持搜索定位与下载数据。</p>
+
+                <div class="control-group">
+                    <label>搜索地点</label>
+                    <div class="search-row">
+                        <input id="cityQuery" type="text" placeholder="输入城市或地点，例如：上海外滩">
+                        <button id="searchBtn" class="btn-solid">搜索定位</button>
+                    </div>
+                </div>
 
                 <div class="control-group">
                     <label>选择位置</label>
@@ -59,6 +66,7 @@
                 </div>
             </div>
         </section>
+    </div>
 
 </body>
 
