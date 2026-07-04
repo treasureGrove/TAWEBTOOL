@@ -1,5 +1,49 @@
 [
   {
+    "id": "github-com-google-filament-4c5551155b",
+    "title": "Google Filament",
+    "category": "渲染基础",
+    "tags": [
+      "PBR",
+      "Filament",
+      "实时渲染",
+      "引擎",
+      "render",
+      "rendering",
+      "shader",
+      "material"
+    ],
+    "summary": "Filament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2",
+    "content": "## 自动归纳\nFilament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2 # Filament [![Android Build Status](https://github.com/google/filament/actions/workflows/status-android.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-android.yml) [![iOS Build Status](https://github.com/google/filament/actions/workflows/status-ios.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-ios.yml) [![Linux Build...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：渲染基础\n- 标签：PBR, Filament, 实时渲染, 引擎, render, rendering, shader, material\n- 来源：GitHub / google/filament\n- 原文：https://github.com/google/filament",
+    "source": "github",
+    "sourceTitle": "GitHub / google/filament",
+    "sourceUrl": "https://github.com/google/filament",
+    "quality": "draft",
+    "updatedAt": "2026-07-03"
+  },
+  {
+    "id": "github-com-khronosgroup-gltf-76eb5349d1",
+    "title": "Khronos glTF",
+    "category": "资产管线",
+    "tags": [
+      "glTF",
+      "资产格式",
+      "PBR",
+      "Pipeline",
+      "render",
+      "rendering",
+      "shader",
+      "material"
+    ],
+    "summary": "glTF – Runtime 3D Asset Delivery",
+    "content": "## 自动归纳\nglTF – Runtime 3D Asset Delivery [![Join glTF Discord](https://img.shields.io/badge/discuss-on%20discord-blue.svg)](https://khr.io/khrdiscord) [![Join the forums](https://img.shields.io/badge/discuss-in%20forums-blue.svg)](https://community.khronos.org/c/gltf-general) [![Join the Slack group](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://www.khr.io/slack) glTF™ (GL Transmission Format) is a royalty-free specification for the efficient transmission and loading of 3D scenes and models by...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：资产管线\n- 标签：glTF, 资产格式, PBR, Pipeline, render, rendering, shader, material\n- 来源：GitHub / KhronosGroup/glTF\n- 原文：https://github.com/KhronosGroup/glTF",
+    "source": "github",
+    "sourceTitle": "GitHub / KhronosGroup/glTF",
+    "sourceUrl": "https://github.com/KhronosGroup/glTF",
+    "quality": "draft",
+    "updatedAt": "2026-07-03"
+  },
+  {
     "id": "pbr-params",
     "title": "PBR 核心参数速查",
     "category": "渲染基础",
@@ -96,28 +140,6 @@
     "updatedAt": "2026-07-02"
   },
   {
-    "id": "github-com-google-filament-4c5551155b",
-    "title": "Google Filament",
-    "category": "渲染基础",
-    "tags": [
-      "PBR",
-      "Filament",
-      "实时渲染",
-      "引擎",
-      "render",
-      "rendering",
-      "shader",
-      "material"
-    ],
-    "summary": "Filament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2",
-    "content": "## 自动归纳\nFilament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2 # Filament [![Android Build Status](https://github.com/google/filament/actions/workflows/status-android.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-android.yml) [![iOS Build Status](https://github.com/google/filament/actions/workflows/status-ios.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-ios.yml) [![Linux Build...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：渲染基础\n- 标签：PBR, Filament, 实时渲染, 引擎, render, rendering, shader, material\n- 来源：GitHub / google/filament\n- 原文：https://github.com/google/filament",
-    "source": "github",
-    "sourceTitle": "GitHub / google/filament",
-    "sourceUrl": "https://github.com/google/filament",
-    "quality": "draft",
-    "updatedAt": "2026-07-02"
-  },
-  {
     "id": "github-com-microsoft-directx-graphics-samples-ccd5e1f675",
     "title": "DirectX Graphics Samples",
     "category": "图形 API",
@@ -160,28 +182,6 @@
     "sourceUrl": "https://github.com/Unity-Technologies/Graphics",
     "quality": "draft",
     "updatedAt": "2026-07-01"
-  },
-  {
-    "id": "github-com-khronosgroup-gltf-76eb5349d1",
-    "title": "Khronos glTF",
-    "category": "资产管线",
-    "tags": [
-      "glTF",
-      "资产格式",
-      "PBR",
-      "Pipeline",
-      "render",
-      "rendering",
-      "shader",
-      "material"
-    ],
-    "summary": "glTF – Runtime 3D Asset Delivery",
-    "content": "## 自动归纳\nglTF – Runtime 3D Asset Delivery [![Join glTF Discord](https://img.shields.io/badge/discuss-on%20discord-blue.svg)](https://khr.io/khrdiscord) [![Join the forums](https://img.shields.io/badge/discuss-in%20forums-blue.svg)](https://community.khronos.org/c/gltf-general) [![Join the Slack group](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://www.khr.io/slack) glTF™ (GL Transmission Format) is a royalty-free specification for the efficient transmission and loading of 3D scenes and models by...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：资产管线\n- 标签：glTF, 资产格式, PBR, Pipeline, render, rendering, shader, material\n- 来源：GitHub / KhronosGroup/glTF\n- 原文：https://github.com/KhronosGroup/glTF",
-    "source": "github",
-    "sourceTitle": "GitHub / KhronosGroup/glTF",
-    "sourceUrl": "https://github.com/KhronosGroup/glTF",
-    "quality": "draft",
-    "updatedAt": "2026-06-30"
   },
   {
     "id": "developer-nvidia-com-blog-streamlining-resource-binding-with-end-to-end-support--5d2277747d",
@@ -282,5 +282,122 @@
     "sourceUrl": "https://gpuopen.com/learn/radeon-developer-tool-suite-shader-source-code/",
     "quality": "draft",
     "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "developer-nvidia-com-blog-whats-new-for-game-developers-in-nvidia-rtx-dlss-4-5-f-ea8047ebbc",
+    "title": "What’s New for Game Developers in NVIDIA RTX: DLSS 4.5 for UE5 and Multilingual AI Characters",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "render",
+      "rendering"
+    ],
+    "summary": "NVIDIA RTX provides game developers with direct paths to AI-driven characters, frame generation, and ray-traced rendering. This post walks through a meaningful...",
+    "content": "## 自动归纳\nNVIDIA RTX provides game developers with direct paths to AI-driven characters, frame generation, and ray-traced rendering. This post walks through a meaningful...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, render, rendering\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/whats-new-for-game-developers-in-nvidia-rtx-dlss-4-5-for-ue5-and-multilingual-ai-characters/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/whats-new-for-game-developers-in-nvidia-rtx-dlss-4-5-for-ue5-and-multilingual-ai-characters/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "developer-nvidia-com-blog-speed-up-unreal-engine-nne-inference-with-nvidia-tenso-f4c23ca03a",
+    "title": "Speed Up Unreal Engine NNE Inference with NVIDIA TensorRT for RTX Runtime",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "graphics",
+      "unreal",
+      "performance"
+    ],
+    "summary": "Neural network techniques are increasingly used in computer graphics to boost image quality, improve performance, and streamline content creation. Approaches...",
+    "content": "## 自动归纳\nNeural network techniques are increasingly used in computer graphics to boost image quality, improve performance, and streamline content creation. Approaches...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, graphics, unreal, performance\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/speed-up-unreal-engine-nne-inference-with-nvidia-tensorrt-for-rtx-runtime/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/speed-up-unreal-engine-nne-inference-with-nvidia-tensorrt-for-rtx-runtime/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "developer-nvidia-com-blog-build-ai-powered-games-with-nvidia-dlss-4-5-rtx-and-un-ad83a31d9d",
+    "title": "Build AI-Powered Games with NVIDIA DLSS 4.5, RTX, and Unreal Engine 5",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "unreal"
+    ],
+    "summary": "Today, game developers can begin integrating NVIDIA DLSS 4.5 with Dynamic Multi Frame Generation, Multi Frame Generation 6X, and the second-generation...",
+    "content": "## 自动归纳\nToday, game developers can begin integrating NVIDIA DLSS 4.5 with Dynamic Multi Frame Generation, Multi Frame Generation 6X, and the second-generation...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, unreal\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/build-ai-powered-games-with-nvidia-dlss-4-5-rtx-and-unreal-engine-5/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/build-ai-powered-games-with-nvidia-dlss-4-5-rtx-and-unreal-engine-5/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "gpuopen-com-learn-wmma-guide-amd-rdna-4-gpus-part-3-f063fe7edd",
+    "title": "WMMA guide for AMD RDNA 4 architecture GPUs - part 3",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "Learn how to implement fast in-register matrix transpose on AMD RDNA™ 4 architecture GPUs with a WMMA-based identity trick, delivering a lightweight, memory-free alternative proven in Llama.cpp.",
+    "content": "## 自动归纳\nLearn how to implement fast in-register matrix transpose on AMD RDNA™ 4 architecture GPUs with a WMMA-based identity trick, delivering a lightweight, memory-free alternative proven in Llama.cpp.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-3/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-3/",
+    "quality": "draft",
+    "updatedAt": "2026-06-02"
+  },
+  {
+    "id": "gpuopen-com-learn-wmma-guide-amd-rdna-4-gpus-part-2-2a94f4ddce",
+    "title": "WMMA guide for AMD RDNA 4 architecture GPUs - part 2",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "Achieve peak AMD RDNA™ 4 architecture memory bandwidth for low-precision GEMM by fusing WMMA to double the K dimension, enabling 128-bit loads for FP8/INT8, and matching hipBLAS results bit-for-bit.",
+    "content": "## 自动归纳\nAchieve peak AMD RDNA™ 4 architecture memory bandwidth for low-precision GEMM by fusing WMMA to double the K dimension, enabling 128-bit loads for FP8/INT8, and matching hipBLAS results bit-for-bit.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-2/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-2/",
+    "quality": "draft",
+    "updatedAt": "2026-06-02"
+  },
+  {
+    "id": "gpuopen-com-learn-wmma-guide-amd-rdna-4-gpus-part-1-f008ac6860",
+    "title": "WMMA guide for AMD RDNA 4 architecture GPUs - part 1",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "Practical guide to fusing GEMMs on AMD RDNA™ 4 architecture, covering WMMA layout, a transpose-by-swapping A/B technique, HIP sample code, and hipBLAS-verified results used in Llama.cpp.",
+    "content": "## 自动归纳\nPractical guide to fusing GEMMs on AMD RDNA™ 4 architecture, covering WMMA layout, a transpose-by-swapping A/B technique, HIP sample code, and hipBLAS-verified results used in Llama.cpp.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-1/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-1/",
+    "quality": "draft",
+    "updatedAt": "2026-06-02"
   }
 ]
