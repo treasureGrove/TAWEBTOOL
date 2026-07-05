@@ -52,7 +52,7 @@ async function readText(file, fallback = '') {
   }
 }
 
-function compact(value, size = 1200) {
+function compact(value, size = 900) {
   const text = String(value || '').replace(/\s+/g, ' ').trim();
   if (text.length <= size) return text;
   return text.slice(0, size).replace(/\s+\S*$/, '') + '...';
@@ -66,6 +66,17 @@ function section(markdown, title) {
 
 function escapeRegExp(value) {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function stripMarkdown(value) {
+  return String(value || '')
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/^\s*[-*]\s+/gm, '- ')
+    .replace(/[ \t]+\n/g, '\n')
+    .trim();
 }
 
 function changedEntries(before, after, collectLog) {
@@ -91,7 +102,7 @@ function changedEntries(before, after, collectLog) {
     }
   }
 
-  return changed.slice(0, 12);
+  return changed.slice(0, 10);
 }
 
 function entryForPrompt(row) {
@@ -108,47 +119,45 @@ function entryForPrompt(row) {
     filterReason: entry.filterReason || '',
     sourceTitle: entry.sourceTitle || '',
     sourceUrl: entry.sourceUrl || '',
-    summary: compact(entry.summary, 500),
-    originalExcerpt: compact(section(entry.content, '原文摘录'), 1000),
-    articleExplanation: compact(section(entry.content, '文章阐述'), 1000),
-    taView: compact(section(entry.content, 'TA 视角'), 1000)
+    summary: compact(entry.summary, 420),
+    originalExcerpt: compact(section(entry.content, '原文摘录').replace(/^>\s*/gm, ''), 700),
+    articleExplanation: compact(section(entry.content, '文章阐述').replace(/^[-*]\s*/gm, ''), 700),
+    taView: compact(section(entry.content, 'TA 视角').replace(/^[-*]\s*/gm, ''), 700)
   };
 }
 
 function fallbackDigest(rows, collectLog) {
   const lines = [
-    '# TA Wiki 自动更新报告',
+    'TA Wiki 自动更新报告',
     '',
     `生成时间：${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })}`,
     '',
-    '## 本次具体更新',
+    `本次检测到 ${rows.length} 条新增或更新内容。`,
     ''
   ];
 
   if (!rows.length) {
-    lines.push('本次采集没有检测到新增或内容变更条目。');
+    lines.push('本次没有检测到新增或内容变更条目。');
   }
 
   rows.forEach((row, index) => {
     const entry = row.entry;
-    lines.push(`### ${index + 1}. ${entry.title}`);
-    lines.push(`- 更新类型：${row.reasons.join('、')}`);
-    lines.push(`- 来源：${entry.sourceTitle || '未知'}${entry.sourceUrl ? ` (${entry.sourceUrl})` : ''}`);
-    lines.push(`- 分类/标签：${entry.category || '未分类'} / ${(entry.tags || []).slice(0, 6).join('、')}`);
-    lines.push(`- 具体内容：${compact(entry.summary, 260) || '无摘要'}`);
+    lines.push(`${index + 1}. ${entry.title}`);
+    lines.push(`更新类型：${row.reasons.join('、')}`);
+    lines.push(`来源：${entry.sourceTitle || '未知'}${entry.sourceUrl ? ` (${entry.sourceUrl})` : ''}`);
+    lines.push(`分类：${entry.category || '未分类'}`);
+    lines.push(`具体内容：${compact(entry.summary, 220) || '暂无摘要'}`);
     const excerpt = section(entry.content, '原文摘录');
-    if (excerpt) lines.push(`- 原文摘录重点：${compact(excerpt.replace(/^>\s*/gm, ''), 360)}`);
+    if (excerpt) lines.push(`原文重点：${compact(excerpt.replace(/^>\s*/gm, ''), 280)}`);
     const article = section(entry.content, '文章阐述');
-    if (article) lines.push(`- 文章阐述：${compact(article.replace(/^[-*]\s*/gm, ''), 360)}`);
+    if (article) lines.push(`文章说明：${compact(article.replace(/^[-*]\s*/gm, ''), 280)}`);
     const ta = section(entry.content, 'TA 视角');
-    if (ta) lines.push(`- TA 落地：${compact(ta.replace(/^[-*]\s*/gm, ''), 360)}`);
+    if (ta) lines.push(`TA 落地：${compact(ta.replace(/^[-*]\s*/gm, ''), 280)}`);
     lines.push('');
   });
 
-  lines.push('## 采集日志');
-  lines.push('```text');
-  lines.push(collectLog.trim());
-  lines.push('```');
+  lines.push('采集状态：');
+  lines.push(compact(collectLog, 800) || '无采集日志。');
   return lines.join('\n');
 }
 
@@ -161,21 +170,30 @@ async function askDeepSeek(rows, collectLog) {
         role: 'system',
         content: [
           '你是 TA Wiki 的中文邮件编辑。',
-          '你必须写简体中文 Markdown 邮件。',
-          '禁止只说“更新了条目”这类空话。',
-          '每个条目必须说明具体新增/更新了什么知识点、原文摘录说了什么、TA 应该如何落地。',
-          '如果信息不足，要明确说不足在哪里，不要编造。'
+          '请写普通邮件正文，不要写 Markdown。',
+          '不要使用 #、###、**、表格、代码块。',
+          '语言要简单、清楚、像正常邮件通知。',
+          '每条更新都要说明具体更新了什么，不要只说“更新了某个条目”。',
+          '每条都要包含：更新类型、来源、具体内容、原文重点、TA 怎么用。',
+          '如果信息不足，要直接写“需要打开原文确认”，不要编造。'
         ].join('\n')
       },
       {
         role: 'user',
         content: [
-          '请根据下面 JSON 生成 TA Wiki 自动更新邮件。',
-          '格式要求：',
-          '1. 标题：TA Wiki 自动更新报告',
-          '2. 开头一句话说明本次更新数量和状态。',
-          '3. 对每个条目使用三级标题，逐条写：更新类型、来源、具体更新内容、原文摘录重点、TA 落地建议。',
-          '4. 最后给出“需要人工复核”的条目或原因。',
+          '请根据下面 JSON 生成一封纯文本中文邮件。',
+          '推荐格式：',
+          'TA Wiki 自动更新报告',
+          '本次更新了 X 条内容。',
+          '',
+          '1. 条目标题',
+          '更新类型：...',
+          '来源：...',
+          '具体内容：...',
+          '原文重点：...',
+          'TA 怎么用：...',
+          '',
+          '最后写“需要人工复核”：列出需要确认的点。',
           '',
           JSON.stringify({
             generatedAt: new Date().toISOString(),
@@ -201,7 +219,7 @@ async function askDeepSeek(rows, collectLog) {
     throw new Error(`DeepSeek mail digest failed: ${response.status} ${await response.text()}`);
   }
   const json = await response.json();
-  return String(json.choices?.[0]?.message?.content || '').trim();
+  return stripMarkdown(json.choices?.[0]?.message?.content || '');
 }
 
 async function main() {
