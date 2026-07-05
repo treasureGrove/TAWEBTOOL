@@ -14,7 +14,6 @@
 
   const designToolLinks = {
     hdr_editor: 'https://designtool.site/hdr',
-    ai_frame_interpolation: 'https://designtool.site',
     pbr_texture_generator: 'https://designtool.site',
     video_format_cover: 'https://designtool.site'
   };

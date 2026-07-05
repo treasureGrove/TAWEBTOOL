@@ -3,7 +3,6 @@ var MENU_DATA = [
     { name: 'AI工具箱', icon: 'icon-ai', items: [
         { label: 'ChatGPT', href: 'chatgpt.html', keywords: ['聊天', 'AI问答', '大模型'] },
         { label: 'AI高清放大', href: 'ai_upscale.html', keywords: ['超分辨率', '图片放大', 'upscale'] },
-        { label: 'AI插帧/分辨率', href: 'ai_frame_interpolation.html', keywords: ['视频插帧', '补帧', 'RIFE'] },
         { label: 'AI绘画', href: 'ai_draw.html', keywords: ['文生图', '画图', '生成图片'] },
     ]},
     { name: '图片处理', icon: 'icon-image', items: [
