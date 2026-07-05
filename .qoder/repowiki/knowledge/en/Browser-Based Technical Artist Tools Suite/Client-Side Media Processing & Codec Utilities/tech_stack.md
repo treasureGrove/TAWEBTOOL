@@ -1,0 +1,1 @@
+FFmpeg via ffmpeg.wasm (WebAssembly), ONNX Runtime Web (WebAssembly/WebGPU), mp4-muxer (JavaScript), custom JavaScript encoders/decoders for BMP, DDS, and TGA formats.

@@ -4,23 +4,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>模型预览器</title>
+    <title>Tiling贴图预览器</title>
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/model_previewer.css">
-    <link rel="stylesheet" href="../css/local_workbench.css">
+    <link rel="stylesheet" href="../css/tiling_texture.css">
 </head>
 
 <body>
     <script src="../js/menu.js"></script>
     <script src="../js/waifu.js"></script>
-    <script src="../js/local_workbench.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu"></div>
-    <div class="top_search">
-        <input type="text" placeholder="搜索">
-    </div>
-    <div id="panel" data-local-tool="tiling_texture" data-tool-title="模型预览器"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
 
+    <div id="panel">
+        <div class="tl-head">
+            <h1>Tiling 贴图无缝预览器</h1>
+            <p>上传贴图实时预览 Tiling 平铺效果，检查贴图接缝、缩放比例与整体视觉。支持 UV 偏移、旋转与混合模式。</p>
+        </div>
+
+        <div class="tl-layout">
+            <!-- Left: Controls -->
+            <div class="tl-left">
+                <section class="tl-section">
+                    <h2>输入贴图</h2>
+                    <label class="tl-drop-zone" id="tlDropZone">
+                        <p>拖拽或点击上传</p>
+                        <small>JPG / PNG / WEBP / BMP</small>
+                    </label>
+                    <input type="file" id="tlFileInput" accept="image/*" style="display:none">
+                    <div class="tl-src-preview"><canvas id="tlSrcCanvas"></canvas></div>
+                    <div class="tl-info" id="tlInfo">等待上传...</div>
+                </section>
+
+                <section class="tl-section">
+                    <h2>Tiling 设置</h2>
+                    <div class="tl-ctrl-row">
+                        <label>Tile X</label>
+                        <input type="range" id="tlTileX" min="1" max="20" step="0.1" value="4">
+                        <span class="tl-val" id="tlTileXVal">4.0</span>
+                    </div>
+                    <div class="tl-ctrl-row">
+                        <label>Tile Y</label>
+                        <input type="range" id="tlTileY" min="1" max="20" step="0.1" value="4">
+                        <span class="tl-val" id="tlTileYVal">4.0</span>
+                    </div>
+                    <div class="tl-ctrl-row">
+                        <label>UV 偏移 X</label>
+                        <input type="range" id="tlOffsetX" min="0" max="1" step="0.01" value="0">
+                        <span class="tl-val" id="tlOffsetXVal">0.00</span>
+                    </div>
+                    <div class="tl-ctrl-row">
+                        <label>UV 偏移 Y</label>
+                        <input type="range" id="tlOffsetY" min="0" max="1" step="0.01" value="0">
+                        <span class="tl-val" id="tlOffsetYVal">0.00</span>
+                    </div>
+                    <div class="tl-ctrl-row">
+                        <label>旋转角度</label>
+                        <input type="range" id="tlRotation" min="0" max="360" step="1" value="0">
+                        <span class="tl-val" id="tlRotationVal">0°</span>
+                    </div>
+                </section>
+
+                <section class="tl-section">
+                    <h2>显示选项</h2>
+                    <div class="tl-opt-row">
+                        <label>混合模式</label>
+                        <select id="tlBlendMode">
+                            <option value="source-over" selected>正常</option>
+                            <option value="multiply">正片叠底</option>
+                            <option value="screen">滤色</option>
+                            <option value="overlay">叠加</option>
+                        </select>
+                    </div>
+                    <div class="tl-opt-row">
+                        <label>背景色</label>
+                        <input type="color" id="tlBgColor" value="#1a1a2e" style="width:40px;height:28px;border:none;border-radius:4px;cursor:pointer">
+                    </div>
+                    <div class="tl-check-row">
+                        <label><input type="checkbox" id="tlShowGrid"> 显示 UV 网格</label>
+                        <label><input type="checkbox" id="tlShowSeam"> 高亮接缝区域</label>
+                    </div>
+                </section>
+
+                <section class="tl-section">
+                    <h2>导出</h2>
+                    <div class="tl-opt-row">
+                        <label>输出尺寸</label>
+                        <select id="tlOutSize">
+                            <option value="512">512×512</option>
+                            <option value="1024" selected>1024×1024</option>
+                            <option value="2048">2048×2048</option>
+                        </select>
+                    </div>
+                    <button class="tl-btn" id="tlExportBtn" disabled>导出 Tiling 预览图</button>
+                </section>
+            </div>
+
+            <!-- Right: Preview -->
+            <div class="tl-right">
+                <div class="tl-preview-wrap">
+                    <canvas id="tlPreviewCanvas" width="800" height="600"></canvas>
+                </div>
+                <div class="tl-preview-info" id="tlPreviewInfo">上传贴图以开始预览</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/tiling_texture.js"></script>
 </body>
 
 </html>

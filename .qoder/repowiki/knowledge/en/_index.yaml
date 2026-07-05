@@ -1,0 +1,245 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: main
+nodes_managed: true
+exported_at: "2026-07-01T07:24:02Z"
+modules:
+    "":
+        dir_name: Browser-Based Technical Artist Tools Suite
+        title: Browser-Based Technical Artist Tools Suite
+        scope:
+            - index.html
+            - tokens.json
+            - .vscode\settings.json
+            - LICENSE
+            - assets\images\background\index_bg.jpg
+            - assets\images\background\pbr_bg.jpg
+            - css\3d_city.css
+            - css\TA_wiki.css
+            - css\TA_wiki_admin.css
+            - css\ai_draw.css
+            - css\ai_frame_interpolation.css
+            - css\ai_upscale.css
+            - css\chatgpt.css
+            - css\cloud_music.css
+            - css\color_space_converter.css
+            - css\combine_rgb.css
+            - css\common.css
+            - css\compress_image.css
+            - css\gif_compress.css
+            - css\glsl_hlsl_converter.css
+            - css\hdr_editor.css
+            - css\image_metadata_inspector.css
+            - css\index.css
+            - css\local_workbench.css
+            - css\model_previewer.css
+            - css\pbr_texture_generator.css
+            - css\physics_light.css
+            - css\ps_online.css
+            - css\shader_library.css
+            - css\sprite_sheet_packer.css
+            - css\texture_channel_splitter.css
+            - css\tiling_texture.css
+            - css\ue_material_picture.css
+            - css\video_cut.css
+            - css\video_format_cover.css
+            - doc\AI图片超分辨率技术实现文档.md
+            - doc\AI视频补帧功能说明.md
+            - doc\下载mp4-muxer说明.md
+            - doc\视频剪辑_CDN跨域解决方案.md
+            - doc\视频剪辑工具使用说明.md
+            - js\3d_city.js
+            - js\_newfunc.txt
+            - js\ai_draw.js
+            - js\ai_frame_interpolation.js
+            - js\ai_upscale.js
+            - js\ai_upscale.js.backup
+            - js\ai_upscale_onnx_backup.js
+            - js\chatgpt.js
+            - js\cloud_music.js
+            - js\color_space_converter.js
+            - js\combine_rgba.js
+            - js\compress_image.js
+            - js\gif_compress.js
+            - js\glsl_hlsl_converter.js
+            - js\hdr_editor.js
+            - js\image_metadata_inspector.js
+            - js\local_workbench.js
+            - js\menu.js
+            - js\model_previewer.js
+            - js\pbr_texture_generator.js
+            - js\physics_light.js
+            - js\ps_online.js
+            - js\shader_library.js
+            - js\sprite_sheet_packer.js
+            - js\ta_wiki.js
+            - js\ta_wiki_admin.js
+            - js\ta_wiki_data.js
+            - js\texture_channel_splitter.js
+            - js\tiling_texture.js
+            - js\video_cut.js
+            - js\waifu.js
+            - models\README.md
+            - models\esrgan\real-esrgan-x4plus-128.onnx
+            - models\rife\model.onnx
+            - scripts\fetch_models.sh
+            - third_part\bmp-encoder.js
+            - third_part\dds-encoder.js
+            - third_part\ffmpeg-wasm\ffmpeg-core.js
+            - third_part\ffmpeg-wasm\ffmpeg-core.wasm
+            - third_part\ffmpeg-wasm\ffmpeg-util.js
+            - third_part\ffmpeg-wasm\ffmpeg.js
+            - third_part\mp4-muxer.umd.js
+            - third_part\onnxruntime-web\1.17.1\ort-wasm-simd-threaded.wasm
+            - third_part\onnxruntime-web\1.17.1\ort-wasm-simd.wasm
+            - third_part\onnxruntime-web\1.17.1\ort-wasm-threaded.wasm
+            - third_part\onnxruntime-web\1.17.1\ort-wasm.wasm
+            - third_part\onnxruntime-web\1.17.1\ort.webgpu.min.js
+            - third_part\tga-decoder.js
+            - third_part\tga-encoder.js
+            - tools_html\3d_city.html
+            - tools_html\TA_wiki.html
+            - tools_html\TA_wiki_admin.html
+            - tools_html\ai_draw.html
+            - tools_html\ai_frame_interpolation.html
+            - tools_html\ai_upscale.html
+            - tools_html\chatgpt.html
+            - tools_html\cloud_music.html
+            - tools_html\color_space_converter.html
+            - tools_html\combine_rgba.html
+            - tools_html\compress_image.html
+            - tools_html\gif_compress.html
+            - tools_html\glsl_hlsl_converter.html
+            - tools_html\hdr_editor.html
+            - tools_html\image_metadata_inspector.html
+            - tools_html\model_previewer.html
+            - tools_html\pbr_texture_generator.html
+            - tools_html\physics_light.html
+            - tools_html\ps_online.html
+            - tools_html\shader_library.html
+            - tools_html\sprite_sheet_packer.html
+            - tools_html\texture_channel_splitter.html
+            - tools_html\tiling_texture.html
+            - tools_html\ue_material_picture.html
+            - tools_html\video_cut.html
+            - tools_html\video_format_cover.html
+        source_files: []
+        children:
+            - docs
+            - third_party_libs
+            - tools
+        depends_on: []
+        related_to: []
+    build_system:
+        dir_name: Static Web Asset Delivery with Manual Model Fetching
+        title: Static Web Asset Delivery with Manual Model Fetching
+        scope: []
+        source_files:
+            - scripts/fetch_models.sh
+            - third_part/
+            - index.html
+        children: []
+        depends_on: []
+        related_to: []
+    configuration_system:
+        dir_name: Client-Side Configuration and State Management
+        title: Client-Side Configuration and State Management
+        scope: []
+        source_files:
+            - tokens.json
+            - js/3d_city.js
+            - js/chatgpt.js
+            - js/cloud_music.js
+            - js/menu.js
+            - js/ai_upscale.js
+            - js/ai_frame_interpolation.js
+        children: []
+        depends_on: []
+        related_to: []
+    dependency_management:
+        dir_name: Manual Dependency Management via Vendoring and CDN
+        title: Manual Dependency Management via Vendoring and CDN
+        scope: []
+        source_files:
+            - third_part/
+            - scripts/fetch_models.sh
+            - models/README.md
+            - js/ai_upscale.js
+            - js/ai_frame_interpolation.js
+        children: []
+        depends_on: []
+        related_to: []
+    docs:
+        dir_name: AI Media Processing Documentation
+        title: AI Media Processing Documentation
+        scope:
+            - doc/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []
+    error_handling:
+        dir_name: Client-Side Error Handling & Resilience Patterns
+        title: Client-Side Error Handling & Resilience Patterns
+        scope: []
+        source_files:
+            - js/ai_draw.js
+            - js/ai_frame_interpolation.js
+            - js/ai_upscale.js
+            - js/3d_city.js
+        children: []
+        depends_on: []
+        related_to: []
+    frontend_style:
+        dir_name: Glassmorphic Shell Architecture with Per-Tool CSS Modules
+        title: Glassmorphic Shell Architecture with Per-Tool CSS Modules
+        scope: []
+        source_files:
+            - css/common.css
+            - css/index.css
+            - css/chatgpt.css
+            - css/ai_upscale.css
+            - css/model_previewer.css
+            - css/color_space_converter.css
+            - css/TA_wiki.css
+            - index.html
+            - assets/images/background/index_bg.jpg
+            - assets/images/background/pbr_bg.jpg
+        children: []
+        depends_on: []
+        related_to: []
+    logging_system:
+        dir_name: Browser-Native Logging via Console API
+        title: Browser-Native Logging via Console API
+        scope: []
+        source_files:
+            - js/ai_upscale.js
+            - js/ai_frame_interpolation.js
+            - js/3d_city.js
+            - third_part/ort-wasm-simd-threaded.js
+        children: []
+        depends_on: []
+        related_to: []
+    third_party_libs:
+        dir_name: Client-Side Media Processing & Codec Utilities
+        title: Client-Side Media Processing & Codec Utilities
+        scope:
+            - third_part/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: tools
+    tools:
+        dir_name: Client-Side Technical Artist Tools Suite
+        title: Client-Side Technical Artist Tools Suite
+        scope:
+            - tools_html/
+            - js/
+            - css/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: third_party_libs

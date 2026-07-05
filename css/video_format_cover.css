@@ -1,0 +1,280 @@
+#main_bg {
+    background-image: url("https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2FtreasureGrove%2FTAWEBTOOL%2Fmain%2Fassets%2Fimages%2Fbackground%2Findex_bg.jpg&w=1920&output=webp&q=72");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    width: 100%;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+#panel {
+    overflow: hidden;
+}
+
+.vfc-app {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vfc-head {
+    background: linear-gradient(135deg, rgba(17, 24, 39, 0.92), rgba(30, 41, 59, 0.90));
+    color: #f1f5f9;
+    border-radius: 14px;
+    padding: 12px 18px;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 0 1px rgba(148, 197, 255, 0.14);
+}
+.vfc-head h1 {
+    font-size: 22px;
+    margin: 0 0 4px;
+    color: #e2e8f0;
+}
+.vfc-head p {
+    margin: 0;
+    font-size: 13px;
+    color: #94a3b8;
+}
+
+.vfc-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.vfc-left,
+.vfc-right {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.vfc-section {
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 12px;
+    padding: 12px 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border: 1px solid rgba(55, 177, 140, 0.18);
+}
+.vfc-section h3 {
+    font-size: 15px;
+    color: #1f2937;
+    margin: 0 0 10px;
+}
+
+/* Dropzone */
+.vfc-dropzone {
+    position: relative;
+    min-height: 140px;
+    border: 2px dashed rgba(55, 177, 140, 0.55);
+    border-radius: 12px;
+    background: linear-gradient(160deg, rgba(12, 22, 30, 0.96), rgba(19, 45, 43, 0.94));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+}
+.vfc-dropzone:hover,
+.vfc-dropzone.dragover {
+    border-color: rgba(74, 222, 128, 1);
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2) inset;
+}
+.vfc-drop-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #e2e8f0;
+    z-index: 1;
+}
+.vfc-drop-content span {
+    font-size: 13px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.vfc-drop-content small {
+    font-size: 11px;
+    color: #94a3b8;
+}
+.vfc-dropzone.has-video .vfc-drop-content {
+    opacity: 0;
+    pointer-events: none;
+}
+.vfc-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+    border-radius: 10px;
+}
+
+.vfc-meta {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #475569;
+}
+
+/* Rows */
+.vfc-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.vfc-row label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+    color: #374151;
+}
+.vfc-row input,
+.vfc-row select {
+    border: 1px solid rgba(55, 177, 140, 0.3);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 13px;
+    background: #f8fafc;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+.vfc-row input:focus,
+.vfc-row select:focus {
+    outline: none;
+    border-color: rgba(55, 177, 140, 0.7);
+    box-shadow: 0 0 0 3px rgba(55, 177, 140, 0.12);
+}
+
+/* Buttons */
+.vfc-actions {
+    display: flex;
+    gap: 8px;
+}
+.vfc-actions .btn-primary,
+.vfc-actions .btn-secondary {
+    flex: 1;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+.btn-primary {
+    background: linear-gradient(135deg, #37b18c, #2fa888);
+    color: #fff;
+}
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(55, 177, 140, 0.3);
+}
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(55, 177, 140, 0.3) !important;
+    color: #374151;
+}
+.btn-secondary:hover {
+    background: #fff;
+    border-color: rgba(55, 177, 140, 0.6) !important;
+}
+
+/* Progress */
+.vfc-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.vfc-progress {
+    flex: 1;
+    height: 10px;
+    background: rgba(55, 177, 140, 0.15);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.vfc-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #37b18c, #4ade80);
+    border-radius: 999px;
+    transition: width .2s ease;
+}
+#vfcProgressText {
+    font-size: 13px;
+    color: #374151;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: right;
+}
+
+.vfc-log {
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.6;
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+}
+
+/* Result */
+.vfc-result-preview {
+    width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    background: #0a0f14;
+    border-radius: 10px;
+    border: 1px solid rgba(55, 177, 140, 0.2);
+    display: block;
+}
+.btn-download {
+    display: inline-block;
+    margin-top: 10px;
+    background: linear-gradient(135deg, #37b18c, #2fa888);
+    color: #fff;
+    text-decoration: none;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-download:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(55, 177, 140, 0.3);
+}
+
+@media (max-width: 1100px) {
+    .vfc-layout {
+        grid-template-columns: 1fr;
+    }
+    .vfc-right {
+        overflow-y: visible;
+    }
+}

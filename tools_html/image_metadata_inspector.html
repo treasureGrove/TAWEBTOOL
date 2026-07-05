@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贴图信息查看器</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/image_metadata_inspector.css">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <div class="mi-head">
+            <h1>贴图信息查看器</h1>
+            <p>快速查看贴图元数据：尺寸、POT/NPOT、宽高比、通道信息、显存占用估算、直方图分析、像素取色。</p>
+        </div>
+
+        <div class="mi-layout">
+            <!-- Left: Input & Preview -->
+            <div class="mi-col">
+                <section class="mi-section">
+                    <h2>输入贴图</h2>
+                    <label class="mi-drop-zone" id="miDropZone">
+                        <p>拖拽或点击上传图像</p>
+                        <small>支持 JPG / PNG / BMP / WEBP / GIF</small>
+                    </label>
+                    <input type="file" id="miFileInput" accept="image/*" style="display:none">
+                </section>
+
+                <section class="mi-section">
+                    <h2>预览（鼠标取色）</h2>
+                    <div class="mi-preview-wrap">
+                        <canvas id="miPreviewCanvas" width="256" height="256"></canvas>
+                    </div>
+                    <div class="mi-color-info">
+                        <div class="mi-color-swatch" id="miColorSwatch" style="background:#000"></div>
+                        <div class="mi-color-values" id="miColorValues">移动鼠标到图像上拾取颜色</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right: Info -->
+            <div class="mi-col">
+                <section class="mi-section">
+                    <h2>基本信息</h2>
+                    <div class="mi-info-grid" id="miInfoGrid">
+                        <div class="mi-info-item full">
+                            <div class="label">提示</div>
+                            <div class="value" style="font-size:13px">请上传图像以查看详细信息</div>
+                        </div>
+                    </div>
+                    <div style="margin-top:10px">
+                        <div class="label" style="font-size:11px;color:var(--text-sub);margin-bottom:4px">常见宽高比</div>
+                        <div class="mi-ratio-list" id="miRatioList"></div>
+                    </div>
+                </section>
+
+                <section class="mi-section">
+                    <h2>显存占用估算（VRAM）</h2>
+                    <div class="mi-info-grid" id="miMemoryGrid">
+                        <div class="mi-info-item full">
+                            <div class="label">提示</div>
+                            <div class="value" style="font-size:13px">请上传图像以查看显存占用</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mi-section">
+                    <h2>直方图分析</h2>
+                    <div class="mi-histogram-wrap">
+                        <canvas id="miHistCanvas"></canvas>
+                        <div class="mi-hist-legend">
+                            <span><span class="dot" style="background:#ef4444"></span>R</span>
+                            <span><span class="dot" style="background:#22c55e"></span>G</span>
+                            <span><span class="dot" style="background:#3b82f6"></span>B</span>
+                            <span><span class="dot" style="background:#e2e8f0"></span>Luminance</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/image_metadata_inspector.js"></script>
+</body>
+
+</html>

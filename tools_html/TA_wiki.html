@@ -14,19 +14,30 @@
     <script src="../js/waifu.js"></script>
     <div id="main_bg"></div>
     <div class="left_menu"></div>
+    <div class="top_search">
+        <input type="text" placeholder="搜索">
+    </div>
 
     <div id="panel" class="wiki-panel">
         <header class="wiki-header">
-            <div>
+            <div class="wiki-title">
                 <h1>TA 知识库</h1>
-                <p>使用开源 <strong>Fuse.js</strong> + <strong>Marked</strong> 构建可搜索知识库，支持后台持续新增内容。</p>
+                <p>整理渲染、Shader、资产规范和性能排查笔记。内置条目与本地自定义条目统一搜索。</p>
             </div>
-            <a class="admin-link" href="TA_wiki_admin.html">进入后台维护</a>
+            <a class="admin-link" href="TA_wiki_admin.html">维护条目</a>
         </header>
 
+        <section class="wiki-stats" id="wikiStats"></section>
+
         <div class="wiki-toolbar">
-            <input id="wikiSearch" type="search" placeholder="搜索关键词，例如：roughness、后处理、drawcall" />
+            <input id="wikiSearch" type="search" placeholder="搜索标题、标签、正文，例如：roughness、drawcall、法线" />
             <select id="wikiCategory"></select>
+            <select id="wikiSource">
+                <option value="all">全部来源</option>
+                <option value="builtin">内置</option>
+                <option value="generated">自动采集</option>
+                <option value="custom">自定义</option>
+            </select>
             <span id="resultHint"></span>
         </div>
 
@@ -36,11 +47,8 @@
         </section>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="../js/ta_wiki_data.js"></script>
     <script src="../js/ta_wiki.js"></script>
-
 </body>
 
 </html>

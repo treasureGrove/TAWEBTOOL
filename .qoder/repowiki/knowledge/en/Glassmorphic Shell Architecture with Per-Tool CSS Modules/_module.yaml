@@ -1,0 +1,17 @@
+schema_version: 1
+module_path: frontend_style
+title: Glassmorphic Shell Architecture with Per-Tool CSS Modules
+scope: []
+source_files:
+    - css/common.css
+    - css/index.css
+    - css/chatgpt.css
+    - css/ai_upscale.css
+    - css/model_previewer.css
+    - css/color_space_converter.css
+    - css/TA_wiki.css
+    - index.html
+    - assets/images/background/index_bg.jpg
+    - assets/images/background/pbr_bg.jpg
+depends_on: []
+related_to: []

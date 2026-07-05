@@ -1,687 +1,705 @@
-// 纯前端视频剪辑 - 不依赖 FFmpeg.wasm，使用浏览器原生 API
-(function() {
-  'use strict';
+(function () {
+    'use strict';
 
-  function initVideoCut(host) {
-    host.innerHTML = `
-      <div class="video-cut-wrap">
-        <p class="hint">
-          <strong>🎬 视频剪辑工具</strong> - 使用浏览器原生 API，无需外部依赖<br>
-          ✅ 完全本地处理 &nbsp;|&nbsp; ✅ 不上传文件 &nbsp;|&nbsp; ✅ 即开即用<br>
-          <small style="opacity: 0.8">💡 支持裁剪、格式转换、截图、音频提取等功能</small>
-        </p>
-
-        <section class="vc-panel">
-          <h3>📁 素材导入</h3>
-          <div class="vc-row vc-files">
-            <label>主视频<input data-vc="mainFile" type="file" accept="video/*,audio/*"></label>
-          </div>
-          <video data-vc="preview" controls playsinline class="vc-preview"></video>
-          <div class="vc-meta" data-vc="meta">未选择视频文件</div>
-        </section>
-
-        <section class="vc-panel">
-          <h3>⚙️ 处理模式</h3>
-          
-          <div class="vc-mode-grid" data-vc="modes"></div>
-          
-          <div class="vc-time" data-vc="timePanel" style="display:none;">
-            <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">时间范围设置</h4>
-            <div class="vc-row" style="grid-template-columns: 1fr 1fr;">
-              <label>开始时间（秒）<input data-vc="start" type="number" min="0" step="0.1" value="0"></label>
-              <label>结束时间（秒）<input data-vc="end" type="number" min="0" step="0.1" value="0"></label>
-            </div>
-            <div class="vc-row" style="grid-template-columns: 1fr 1fr 1fr;">
-              <button data-vc="setStart" class="secondary">▶ 开始=当前</button>
-              <button data-vc="setEnd" class="secondary">⏸ 结束=当前</button>
-              <button data-vc="full" class="secondary">📏 完整时长</button>
-            </div>
-          </div>
-
-          <div class="vc-options" data-vc="options"></div>
-
-          <div class="vc-row vc-actions">
-            <button data-vc="export">🚀 开始处理</button>
-            <button data-vc="cancel" class="danger">❌ 取消任务</button>
-          </div>
-          
-          <div class="vc-progress" data-vc="progressWrap" style="display:none;">
-            <progress data-vc="progress" value="0" max="100"></progress>
-            <span data-vc="progressText">0%</span>
-          </div>
-          
-          <pre data-vc="log" class="result-box">等待操作...</pre>
-          <a data-vc="download" hidden class="btn-link">💾 下载处理后的文件</a>
-        </section>
-      </div>
-    `;
-
-    const q = (k) => host.querySelector(`[data-vc="${k}"]`);
-    const state = { 
-      video: null, 
-      videoFile: null,
-      mode: 'trim',
-      processing: false,
-      abortController: null
-    };
-
-    const modes = [
-      { key: 'trim', name: '✂️ 裁剪视频', needTime: true, desc: '按时间范围裁剪' },
-      { key: 'convert', name: '🔄 格式转换', needTime: false, desc: '转换为 WebM 格式' },
-      { key: 'snapshot', name: '📸 视频截图', needTime: false, desc: '提取单帧为图片' },
-      { key: 'audio', name: '🎵 提取音频', needTime: true, desc: '导出为音频文件' },
-      { key: 'mute', name: '🔇 静音视频', needTime: true, desc: '移除音频轨道' },
-      { key: 'speed', name: '⚡ 变速播放', needTime: true, desc: '加速/减速视频' }
-    ];
-
-    const modeOptions = {
-      convert: `
-        <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">格式设置</h4>
-        <div class="vc-row">
-          <label>视频码率 (Mbps)<input data-vc-opt="videoBitrate" type="number" min="0.5" max="20" step="0.5" value="2.5"></label>
-          <label>音频码率 (kbps)<input data-vc-opt="audioBitrate" type="number" min="64" max="320" step="32" value="128"></label>
-        </div>
-      `,
-      snapshot: `
-        <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">截图设置</h4>
-        <div class="vc-row">
-          <label>截图时间（秒）<input data-vc-opt="snapTime" type="number" min="0" step="0.1" value="0"></label>
-          <label>图片格式<select data-vc-opt="snapFormat">
-            <option value="png">PNG (无损)</option>
-            <option value="jpeg" selected>JPEG (压缩)</option>
-            <option value="webp">WebP (高效)</option>
-          </select></label>
-        </div>
-        <div class="vc-row">
-          <label>图片质量 (0.1-1.0)<input data-vc-opt="snapQuality" type="number" min="0.1" max="1" step="0.1" value="0.92"></label>
-          <button data-vc-opt="useCurrentTime" class="secondary">使用当前播放时间</button>
-        </div>
-      `,
-      speed: `
-        <h4 style="margin: 10px 0 8px; font-size: 14px; color: #93c5fd;">变速设置</h4>
-        <div class="vc-row">
-          <label>播放速度倍率<input data-vc-opt="speedRate" type="number" min="0.25" max="4" step="0.25" value="2"></label>
-        </div>
-        <p class="hint" style="margin: 8px 0 0;">提示: 0.5=慢速, 1.0=正常, 2.0=2倍速, 4.0=4倍速</p>
-      `
-    };
-
-    const log = (msg, type = 'info') => {
-      const box = q('log');
-      const time = new Date().toLocaleTimeString();
-      const icon = { info: 'ℹ️', success: '✅', error: '❌', warn: '⚠️' }[type] || 'ℹ️';
-      box.textContent += `${time} ${icon} ${msg}\n`;
-      box.scrollTop = box.scrollHeight;
-    };
-
-    const setProgress = (v) => {
-      const n = Math.max(0, Math.min(100, Math.floor(v)));
-      q('progress').value = n;
-      q('progressText').textContent = `${n}%`;
-      q('progressWrap').style.display = 'grid';
-    };
-
-    const getOpt = (name, fallback = '') => {
-      const el = host.querySelector(`[data-vc-opt="${name}"]`);
-      return el ? el.value : fallback;
-    };
-
-    // ========== 视频处理核心函数 ==========
-
-    // 裁剪视频 - 使用 MediaRecorder API
-    async function trimVideo(videoEl, startTime, endTime) {
-      log('开始裁剪视频...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const stream = canvas.captureStream(30); // 30fps
-        
-        // 添加音频轨道
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaElementSource(videoEl);
-        const dest = audioContext.createMediaStreamDestination();
-        source.connect(dest);
-        source.connect(audioContext.destination);
-        
-        dest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp9,opus',
-          videoBitsPerSecond: 2500000
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          audioContext.close();
-          setProgress(100);
-          log('裁剪完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = (e) => {
-          audioContext.close();
-          reject(e);
-        };
-
-        videoEl.currentTime = startTime;
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const progress = 10 + ((videoEl.currentTime - startTime) / (endTime - startTime)) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
+    function assetPrefix() {
+        return window.location.pathname.replace(/\\/g, '/').includes('/tools_html/') ? '../' : '';
     }
 
-    // 格式转换 - 使用 MediaRecorder
-    async function convertVideo(videoEl) {
-      log('开始格式转换...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const videoBitrate = parseFloat(getOpt('videoBitrate', '2.5')) * 1000000;
-        const audioBitrate = parseFloat(getOpt('audioBitrate', '128')) * 1000;
-
-        const stream = canvas.captureStream(30);
-        
-        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus') 
-          ? 'video/webm;codecs=vp9,opus'
-          : 'video/webm';
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType,
-          videoBitsPerSecond: videoBitrate,
-          audioBitsPerSecond: audioBitrate
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          setProgress(100);
-          log('转换完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = reject;
-
-        const duration = videoEl.duration;
-        videoEl.currentTime = 0;
-        videoEl.ontimeupdate = () => {
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const progress = 10 + (videoEl.currentTime / duration) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-          videoEl.pause();
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
+    function template() {
+        return [
+            '<div class="vc-app">',
+            '  <header class="vc-head">',
+            '    <div class="vc-title">',
+            '      <h1>视频剪辑</h1>',
+            '      <span class="vc-status" id="vcStatus">未导入素材</span>',
+            '    </div>',
+            '    <div class="vc-actions">',
+            '      <button class="vc-btn" id="vcPickBtn" type="button">导入视频</button>',
+            '      <button class="vc-btn vc-primary" id="vcRunBtn" type="button" disabled>开始处理</button>',
+            '      <button class="vc-btn vc-danger" id="vcStopBtn" type="button" disabled>终止任务</button>',
+            '      <input id="vcFile" type="file" accept="video/*,audio/*" hidden>',
+            '    </div>',
+            '  </header>',
+            '  <main class="vc-layout">',
+            '    <section class="vc-preview-pane">',
+            '      <div class="vc-dropzone" id="vcDropzone">',
+            '        <div class="vc-empty" id="vcEmpty">',
+            '          <strong>拖拽视频到这里</strong>',
+            '          <span>文件只在浏览器本地处理。剪辑、去音轨、抽音频和截图通过 FFmpeg.wasm 执行。</span>',
+            '        </div>',
+            '        <video class="vc-video" id="vcVideo" controls playsinline hidden></video>',
+            '      </div>',
+            '      <div class="vc-timeline">',
+            '        <div class="vc-timebar">',
+            '          <span id="vcStartText">00:00.000</span>',
+            '          <span id="vcDurationText">未选择区间</span>',
+            '          <span id="vcEndText">00:00.000</span>',
+            '        </div>',
+            '        <div class="vc-range">',
+            '          <input id="vcStartRange" type="range" min="0" max="0" step="0.01" value="0" disabled>',
+            '          <input id="vcEndRange" type="range" min="0" max="0" step="0.01" value="0" disabled>',
+            '        </div>',
+            '      </div>',
+            '    </section>',
+            '    <aside class="vc-pane vc-settings-pane">',
+            '      <section class="vc-section">',
+            '        <h2>素材信息</h2>',
+            '        <div class="vc-meta">',
+            '          <b>文件</b><span id="vcMetaName">-</span>',
+            '          <b>大小</b><span id="vcMetaSize">-</span>',
+            '          <b>分辨率</b><span id="vcMetaRes">-</span>',
+            '          <b>时长</b><span id="vcMetaDuration">-</span>',
+            '        </div>',
+            '      </section>',
+            '      <section class="vc-section">',
+            '        <h2>剪辑参数</h2>',
+            '        <div class="vc-field">',
+            '          <label for="vcMode">处理模式</label>',
+            '          <select id="vcMode">',
+            '            <option value="trim">裁剪片段</option>',
+            '            <option value="mute">裁剪并移除音轨</option>',
+            '            <option value="audio">提取选中区间音频</option>',
+            '            <option value="snapshot">截取当前帧 PNG</option>',
+            '            <option value="gif">导出 GIF 动图</option>',
+            '          </select>',
+            '        </div>',
+            '        <div class="vc-two">',
+            '          <div class="vc-field">',
+            '            <label for="vcStartInput">开始秒数</label>',
+            '            <input id="vcStartInput" type="number" min="0" step="0.001" value="0" disabled>',
+            '          </div>',
+            '          <div class="vc-field">',
+            '            <label for="vcEndInput">结束秒数</label>',
+            '            <input id="vcEndInput" type="number" min="0" step="0.001" value="0" disabled>',
+            '          </div>',
+            '        </div>',
+            '        <div class="vc-field">',
+            '          <label for="vcFileBase">导出文件名</label>',
+            '          <input id="vcFileBase" type="text" value="video_cut" disabled>',
+            '        </div>',
+            '      </section>',
+            '      <section class="vc-section" id="vcExportSection">',
+            '        <h2>导出设置</h2>',
+            '        <div class="vc-field" id="vcFormatField">',
+            '          <label for="vcFormat">导出格式</label>',
+            '          <select id="vcFormat">',
+            '            <option value="source">保持源格式</option>',
+            '            <option value="mp4" selected>MP4 / H.264</option>',
+            '            <option value="mov">MOV / H.264</option>',
+            '          </select>',
+            '        </div>',
+            '        <div class="vc-field" id="vcEncodeField">',
+            '          <label for="vcEncodeMode">编码方式</label>',
+            '          <select id="vcEncodeMode">',
+            '            <option value="copy">快速裁剪，不重编码</option>',
+            '            <option value="encode" selected>重编码，可改格式/尺寸</option>',
+            '          </select>',
+            '        </div>',
+            '        <div class="vc-two" id="vcVideoExportGrid">',
+            '          <div class="vc-field">',
+            '            <label for="vcResolution">分辨率</label>',
+            '            <select id="vcResolution">',
+            '              <option value="source">原始</option>',
+            '              <option value="1080">1080p</option>',
+            '              <option value="720" selected>720p</option>',
+            '              <option value="480">480p</option>',
+            '              <option value="custom">自定义宽度</option>',
+            '            </select>',
+            '          </div>',
+            '          <div class="vc-field">',
+            '            <label for="vcFps">帧率</label>',
+            '            <select id="vcFps">',
+            '              <option value="source" selected>原始</option>',
+            '              <option value="60">60 FPS</option>',
+            '              <option value="30">30 FPS</option>',
+            '              <option value="24">24 FPS</option>',
+            '              <option value="15">15 FPS</option>',
+            '            </select>',
+            '          </div>',
+            '        </div>',
+            '        <div class="vc-two">',
+            '          <div class="vc-field" id="vcCustomWidthField">',
+            '            <label for="vcCustomWidth">自定义宽度</label>',
+            '            <input id="vcCustomWidth" type="number" min="160" max="3840" step="2" value="1280" disabled>',
+            '          </div>',
+            '          <div class="vc-field" id="vcQualityField">',
+            '            <label for="vcQuality">质量 CRF</label>',
+            '            <input id="vcQuality" type="number" min="16" max="35" step="1" value="23" disabled>',
+            '          </div>',
+            '        </div>',
+            '        <div class="vc-field" id="vcAudioField">',
+            '          <label for="vcAudioMode">音频策略</label>',
+            '          <select id="vcAudioMode" disabled>',
+            '            <option value="keep" selected>保留音频</option>',
+            '            <option value="mute">移除音频</option>',
+            '          </select>',
+            '        </div>',
+            '        <p class="vc-note" id="vcExportHint">快速裁剪适合只截片段；选择重编码后可改格式、分辨率、帧率和质量。</p>',
+            '      </section>',
+            '    </aside>',
+            '    <aside class="vc-pane vc-output-pane">',
+            '      <section class="vc-section">',
+            '        <h2>处理进度</h2>',
+            '        <div class="vc-progress"><span id="vcProgressFill"></span></div>',
+            '        <pre class="vc-log" id="vcLog">等待导入素材...</pre>',
+            '      </section>',
+            '      <section class="vc-section">',
+            '        <h2>输出结果</h2>',
+            '        <div class="vc-result" id="vcResult" hidden>',
+            '          <video id="vcResultVideo" controls playsinline hidden></video>',
+            '          <img id="vcResultImage" alt="截图预览" hidden>',
+            '          <a class="vc-download" id="vcDownload" href="#" download>下载文件</a>',
+            '        </div>',
+            '        <p class="vc-note" id="vcResultNote">处理完成后会在这里生成预览和下载链接。</p>',
+            '      </section>',
+            '    </aside>',
+            '  </main>',
+            '</div>'
+        ].join('');
     }
 
-    // 视频截图
-    async function snapshotVideo(videoEl) {
-      const snapTime = parseFloat(getOpt('snapTime', '0'));
-      const format = getOpt('snapFormat', 'jpeg');
-      const quality = parseFloat(getOpt('snapQuality', '0.92'));
+    function initVideoCutNative(host) {
+        if (!host) return;
+        host.innerHTML = template();
 
-      log(`在 ${snapTime.toFixed(2)} 秒处截图...`);
-      setProgress(30);
-
-      return new Promise((resolve, reject) => {
-        videoEl.currentTime = snapTime;
-        videoEl.onseeked = () => {
-          try {
-            const canvas = document.createElement('canvas');
-            canvas.width = videoEl.videoWidth;
-            canvas.height = videoEl.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-            
-            setProgress(70);
-            
-            canvas.toBlob((blob) => {
-              setProgress(100);
-              log('截图完成', 'success');
-              resolve(blob);
-            }, `image/${format}`, quality);
-          } catch (err) {
-            reject(err);
-          }
-          videoEl.onseeked = null;
-        };
-      });
-    }
-
-    // 提取音频
-    async function extractAudio(videoEl, startTime, endTime) {
-      log('开始提取音频...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaElementSource(videoEl);
-        const dest = audioContext.createMediaStreamDestination();
-        source.connect(dest);
-        source.connect(audioContext.destination);
-
-        const mediaRecorder = new MediaRecorder(dest.stream, {
-          mimeType: 'audio/webm;codecs=opus'
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
+        var prefix = assetPrefix();
+        var ffmpeg = null;
+        var ffmpegLoading = null;
+        var objectUrl = '';
+        var resultUrl = '';
+        var state = {
+            file: null,
+            duration: 0,
+            videoWidth: 0,
+            videoHeight: 0,
+            processing: false,
+            inputName: 'input.bin'
         };
 
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/webm' });
-          audioContext.close();
-          setProgress(100);
-          log('音频提取完成', 'success');
-          resolve(blob);
+        var el = {
+            status: host.querySelector('#vcStatus'),
+            pickBtn: host.querySelector('#vcPickBtn'),
+            runBtn: host.querySelector('#vcRunBtn'),
+            stopBtn: host.querySelector('#vcStopBtn'),
+            file: host.querySelector('#vcFile'),
+            dropzone: host.querySelector('#vcDropzone'),
+            empty: host.querySelector('#vcEmpty'),
+            video: host.querySelector('#vcVideo'),
+            startRange: host.querySelector('#vcStartRange'),
+            endRange: host.querySelector('#vcEndRange'),
+            startText: host.querySelector('#vcStartText'),
+            endText: host.querySelector('#vcEndText'),
+            durationText: host.querySelector('#vcDurationText'),
+            name: host.querySelector('#vcMetaName'),
+            size: host.querySelector('#vcMetaSize'),
+            res: host.querySelector('#vcMetaRes'),
+            dur: host.querySelector('#vcMetaDuration'),
+            mode: host.querySelector('#vcMode'),
+            startInput: host.querySelector('#vcStartInput'),
+            endInput: host.querySelector('#vcEndInput'),
+            fileBase: host.querySelector('#vcFileBase'),
+            exportSection: host.querySelector('#vcExportSection'),
+            formatField: host.querySelector('#vcFormatField'),
+            format: host.querySelector('#vcFormat'),
+            encodeField: host.querySelector('#vcEncodeField'),
+            encodeMode: host.querySelector('#vcEncodeMode'),
+            videoExportGrid: host.querySelector('#vcVideoExportGrid'),
+            resolution: host.querySelector('#vcResolution'),
+            fps: host.querySelector('#vcFps'),
+            customWidthField: host.querySelector('#vcCustomWidthField'),
+            customWidth: host.querySelector('#vcCustomWidth'),
+            qualityField: host.querySelector('#vcQualityField'),
+            quality: host.querySelector('#vcQuality'),
+            audioField: host.querySelector('#vcAudioField'),
+            audioMode: host.querySelector('#vcAudioMode'),
+            exportHint: host.querySelector('#vcExportHint'),
+            progress: host.querySelector('#vcProgressFill'),
+            log: host.querySelector('#vcLog'),
+            result: host.querySelector('#vcResult'),
+            resultVideo: host.querySelector('#vcResultVideo'),
+            resultImage: host.querySelector('#vcResultImage'),
+            download: host.querySelector('#vcDownload'),
+            resultNote: host.querySelector('#vcResultNote')
         };
 
-        mediaRecorder.onerror = (e) => {
-          audioContext.close();
-          reject(e);
-        };
-
-        videoEl.currentTime = startTime;
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          const progress = 10 + ((videoEl.currentTime - startTime) / (endTime - startTime)) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
-    }
-
-    // 静音视频
-    async function muteVideo(videoEl, startTime, endTime) {
-      log('开始生成静音视频...');
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const stream = canvas.captureStream(30);
-        
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp9',
-          videoBitsPerSecond: 2500000
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          setProgress(100);
-          log('静音视频生成完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = reject;
-
-        videoEl.muted = true;
-        videoEl.currentTime = startTime;
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.muted = false;
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const progress = 10 + ((videoEl.currentTime - startTime) / (endTime - startTime)) * 85;
-          setProgress(progress);
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.muted = false;
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
-    }
-
-    // 变速视频 (注意：这只能用canvas重新渲染，实际效果有限)
-    async function speedVideo(videoEl, startTime, endTime) {
-      const speedRate = parseFloat(getOpt('speedRate', '2'));
-      log(`开始生成 ${speedRate}x 变速视频...`);
-      setProgress(10);
-
-      return new Promise((resolve, reject) => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-
-        const targetFps = 30;
-        const stream = canvas.captureStream(targetFps);
-        
-        const audioContext = new AudioContext();
-        const source = audioContext.createMediaElementSource(videoEl);
-        const dest = audioContext.createMediaStreamDestination();
-        source.connect(dest);
-        source.connect(audioContext.destination);
-        
-        dest.stream.getAudioTracks().forEach(track => stream.addTrack(track));
-
-        const mediaRecorder = new MediaRecorder(stream, {
-          mimeType: 'video/webm;codecs=vp9,opus',
-          videoBitsPerSecond: 2500000
-        });
-
-        const chunks = [];
-        mediaRecorder.ondataavailable = (e) => {
-          if (e.data.size > 0) chunks.push(e.data);
-        };
-
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' });
-          audioContext.close();
-          videoEl.playbackRate = 1.0;
-          setProgress(100);
-          log('变速视频生成完成', 'success');
-          resolve(blob);
-        };
-
-        mediaRecorder.onerror = (e) => {
-          audioContext.close();
-          videoEl.playbackRate = 1.0;
-          reject(e);
-        };
-
-        videoEl.playbackRate = speedRate;
-        videoEl.currentTime = startTime;
-        
-        const realDuration = (endTime - startTime) / speedRate;
-        let recordStartTime = Date.now();
-        
-        videoEl.ontimeupdate = () => {
-          if (videoEl.currentTime >= endTime) {
-            mediaRecorder.stop();
-            videoEl.pause();
-            videoEl.ontimeupdate = null;
-            return;
-          }
-          ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-          const elapsed = (Date.now() - recordStartTime) / 1000;
-          const progress = 10 + (elapsed / realDuration) * 85;
-          setProgress(Math.min(progress, 95));
-        };
-
-        videoEl.onended = () => {
-          mediaRecorder.stop();
-          videoEl.ontimeupdate = null;
-        };
-
-        mediaRecorder.start();
-        setProgress(20);
-        videoEl.play();
-      });
-    }
-
-    // ========== UI 事件处理 ==========
-
-    function renderModes() {
-      const modeHost = q('modes');
-      modeHost.innerHTML = modes.map((m) => `
-        <label class="vc-mode ${state.mode === m.key ? 'active' : ''}" data-mode="${m.key}" title="${m.desc}">
-          <input type="radio" name="vcMode" value="${m.key}" ${state.mode === m.key ? 'checked' : ''}>
-          ${m.name}
-        </label>
-      `).join('');
-
-      modeHost.querySelectorAll('.vc-mode').forEach((el) => {
-        el.addEventListener('click', () => {
-          state.mode = el.dataset.mode;
-          renderModes();
-          updateUI();
-        });
-      });
-    }
-
-    function updateUI() {
-      const mode = modes.find(m => m.key === state.mode);
-      q('timePanel').style.display = mode.needTime ? 'block' : 'none';
-      q('options').innerHTML = modeOptions[state.mode] || '';
-      
-      // 添加"使用当前播放时间"按钮事件
-      const useCurrentBtn = host.querySelector('[data-vc-opt="useCurrentTime"]');
-      if (useCurrentBtn && state.video) {
-        useCurrentBtn.addEventListener('click', () => {
-          const input = host.querySelector('[data-vc-opt="snapTime"]');
-          if (input) {
-            input.value = state.video.currentTime.toFixed(2);
-            log(`已设置截图时间为: ${input.value} 秒`);
-          }
-        });
-      }
-    }
-
-    // 文件选择
-    q('mainFile').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      
-      state.videoFile = file;
-      const videoEl = q('preview');
-      videoEl.src = URL.createObjectURL(file);
-      
-      q('meta').textContent = `📹 ${file.name} | ${(file.size / (1024 * 1024)).toFixed(2)} MB`;
-      
-      videoEl.onloadedmetadata = () => {
-        state.video = videoEl;
-        q('start').value = '0';
-        q('end').value = videoEl.duration.toFixed(2);
-        log(`视频加载成功: ${videoEl.videoWidth}x${videoEl.videoHeight}, 时长 ${videoEl.duration.toFixed(2)}秒`, 'success');
-      };
-    });
-
-    // 时间控制按钮
-    q('setStart').addEventListener('click', () => {
-      if (!state.video) return;
-      q('start').value = state.video.currentTime.toFixed(2);
-      log(`起始时间已设置为: ${state.video.currentTime.toFixed(2)}秒`);
-    });
-
-    q('setEnd').addEventListener('click', () => {
-      if (!state.video) return;
-      q('end').value = state.video.currentTime.toFixed(2);
-      log(`结束时间已设置为: ${state.video.currentTime.toFixed(2)}秒`);
-    });
-
-    q('full').addEventListener('click', () => {
-      if (!state.video) return;
-      q('start').value = '0';
-      q('end').value = state.video.duration.toFixed(2);
-      log('已设置为完整时长');
-    });
-
-    // 开始处理
-    q('export').addEventListener('click', async () => {
-      if (state.processing) {
-        log('已有任务在处理中...', 'warn');
-        return;
-      }
-
-      if (!state.video) {
-        log('请先选择视频文件', 'error');
-        return;
-      }
-
-      state.processing = true;
-      state.abortController = new AbortController();
-      q('download').hidden = true;
-      q('progressWrap').style.display = 'grid';
-      setProgress(0);
-
-      try {
-        let blob, filename, ext;
-        const videoEl = state.video;
-        const startTime = parseFloat(q('start').value || '0');
-        const endTime = parseFloat(q('end').value || videoEl.duration);
-
-        // 验证时间范围
-        if (startTime >= endTime) {
-          throw new Error('开始时间必须小于结束时间');
+        function log(message) {
+            var time = new Date().toLocaleTimeString();
+            el.log.textContent += '[' + time + '] ' + message + '\n';
+            el.log.scrollTop = el.log.scrollHeight;
         }
 
-        switch (state.mode) {
-          case 'trim':
-            blob = await trimVideo(videoEl, startTime, endTime);
-            filename = `trimmed_${Date.now()}.webm`;
-            break;
-          
-          case 'convert':
-            blob = await convertVideo(videoEl);
-            filename = `converted_${Date.now()}.webm`;
-            break;
-          
-          case 'snapshot':
-            blob = await snapshotVideo(videoEl);
-            ext = getOpt('snapFormat', 'jpeg');
-            filename = `snapshot_${Date.now()}.${ext}`;
-            break;
-          
-          case 'audio':
-            blob = await extractAudio(videoEl, startTime, endTime);
-            filename = `audio_${Date.now()}.webm`;
-            break;
-          
-          case 'mute':
-            blob = await muteVideo(videoEl, startTime, endTime);
-            filename = `muted_${Date.now()}.webm`;
-            break;
-          
-          case 'speed':
-            blob = await speedVideo(videoEl, startTime, endTime);
-            filename = `speed_${Date.now()}.webm`;
-            break;
-          
-          default:
-            throw new Error('未知的处理模式');
+        function setProgress(value) {
+            var pct = Math.max(0, Math.min(100, Math.round(value || 0)));
+            el.progress.style.width = pct + '%';
         }
 
-        // 创建下载链接
-        const url = URL.createObjectURL(blob);
-        const dl = q('download');
-        dl.href = url;
-        dl.download = filename;
-        dl.textContent = `💾 下载 ${filename} (${(blob.size / (1024 * 1024)).toFixed(2)} MB)`;
-        dl.hidden = false;
-        
-        log(`处理完成！文件大小: ${(blob.size / (1024 * 1024)).toFixed(2)} MB`, 'success');
-        
-      } catch (err) {
-        log(`处理失败: ${err.message}`, 'error');
-        console.error(err);
-      } finally {
-        state.processing = false;
-        state.abortController = null;
-        // 重置视频状态
-        if (state.video) {
-          state.video.pause();
-          state.video.currentTime = 0;
-          state.video.ontimeupdate = null;
-          state.video.onended = null;
+        function formatTime(seconds) {
+            if (!isFinite(seconds) || seconds < 0) seconds = 0;
+            var ms = Math.floor((seconds % 1) * 1000);
+            var total = Math.floor(seconds);
+            var h = Math.floor(total / 3600);
+            var m = Math.floor((total % 3600) / 60);
+            var s = total % 60;
+            var base = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + '.' + String(ms).padStart(3, '0');
+            return h > 0 ? String(h).padStart(2, '0') + ':' + base : base;
         }
-      }
-    });
 
-    // 取消任务
-    q('cancel').addEventListener('click', () => {
-      if (!state.processing) {
-        log('当前没有进行中的任务', 'warn');
-        return;
-      }
-      
-      if (state.abortController) {
-        state.abortController.abort();
-      }
-      
-      if (state.video) {
-        state.video.pause();
-        state.video.currentTime = 0;
-        state.video.ontimeupdate = null;
-        state.video.onended = null;
-      }
-      
-      state.processing = false;
-      q('progressWrap').style.display = 'none';
-      log('任务已取消', 'warn');
-    });
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
 
-    // 初始化
-    renderModes();
-    updateUI();
-    log('视频剪辑工具已就绪，请选择视频文件开始', 'success');
-  }
+        function extFromName(name) {
+            var match = /\.([a-z0-9]+)$/i.exec(name || '');
+            return match ? match[1].toLowerCase() : 'mp4';
+        }
 
-  // 导出到全局
-  window.initVideoCutNative = initVideoCut;
+        function safeBaseName(name) {
+            return (name || 'video_cut').replace(/\.[^.]+$/, '').replace(/[^a-z0-9_-]+/gi, '_').replace(/^_+|_+$/g, '') || 'video_cut';
+        }
+
+        function outputExt(mode) {
+            var ext = extFromName(state.file && state.file.name);
+            if (mode === 'snapshot') return 'png';
+            if (mode === 'gif') return 'gif';
+            if (mode === 'audio') {
+                if (ext === 'mp4' || ext === 'm4v' || ext === 'mov') return 'm4a';
+                if (ext === 'webm') return 'webm';
+                return 'mka';
+            }
+            if (el.format.value === 'source') {
+                if ((mode === 'trim' || mode === 'mute') && el.encodeMode && el.encodeMode.value === 'encode' && ext === 'webm') {
+                    return 'mp4';
+                }
+                return ext;
+            }
+            return el.format.value;
+        }
+
+        function isVideoMode() {
+            var mode = el.mode.value;
+            return mode === 'trim' || mode === 'mute' || mode === 'gif';
+        }
+
+        function selectedScaleFilter() {
+            var value = el.resolution.value;
+            if (value === 'source') return '';
+            var width = 0;
+            if (value === 'custom') {
+                width = parseInt(el.customWidth.value, 10) || 0;
+            } else {
+                var targetH = parseInt(value, 10) || 0;
+                if (targetH > 0 && state.videoWidth && state.videoHeight) {
+                    width = Math.round(state.videoWidth * (targetH / state.videoHeight));
+                }
+            }
+            if (!width) return '';
+            if (width % 2) width += 1;
+            return 'scale=' + width + ':-2';
+        }
+
+        function videoFilters(mode) {
+            var filters = [];
+            var scale = selectedScaleFilter();
+            if (scale) filters.push(scale);
+            if (el.fps.value !== 'source') filters.push('fps=' + el.fps.value);
+            if (mode === 'gif') {
+                if (!filters.some(function (item) { return item.indexOf('fps=') === 0; })) filters.push('fps=12');
+            }
+            return filters.join(',');
+        }
+
+        function shouldEncode(mode) {
+            if (mode === 'gif' || mode === 'snapshot') return true;
+            if (mode === 'mute') return el.encodeMode.value === 'encode';
+            if (el.encodeMode.value === 'encode') return true;
+            if (el.format.value !== 'source') return true;
+            if (el.resolution.value !== 'source') return true;
+            if (el.fps.value !== 'source') return true;
+            return false;
+        }
+
+        function updateExportControls() {
+            var mode = el.mode.value;
+            var videoMode = isVideoMode();
+            var snapshot = mode === 'snapshot';
+            var audio = mode === 'audio';
+            var gif = mode === 'gif';
+            var encode = shouldEncode(mode);
+            var busy = state.processing;
+
+            el.exportSection.hidden = false;
+            el.formatField.hidden = snapshot || audio || gif;
+            el.encodeField.hidden = snapshot || audio || gif;
+            el.videoExportGrid.hidden = snapshot || audio;
+            el.customWidthField.hidden = snapshot || audio;
+            el.qualityField.hidden = snapshot || audio || el.encodeMode.value === 'copy';
+            el.audioField.hidden = snapshot || audio || gif;
+
+            el.endInput.disabled = !state.file || snapshot || busy;
+            el.endRange.disabled = !state.file || snapshot || busy;
+            el.format.disabled = !state.file || !videoMode || gif || busy;
+            el.encodeMode.disabled = !state.file || !videoMode || gif || busy;
+            el.resolution.disabled = !state.file || snapshot || audio || (!encode && !gif) || busy;
+            el.fps.disabled = !state.file || snapshot || audio || (!encode && !gif) || busy;
+            el.customWidth.disabled = !state.file || el.resolution.value !== 'custom' || snapshot || audio || (!encode && !gif) || busy;
+            el.quality.disabled = !state.file || snapshot || audio || el.encodeMode.value === 'copy' || busy;
+            el.audioMode.disabled = !state.file || snapshot || audio || gif || busy;
+
+            if (mode === 'mute') el.audioMode.value = 'mute';
+            if (gif) {
+                el.exportHint.textContent = 'GIF 会重编码，建议选择 15 秒以内片段，并使用 480p 或自定义较小宽度。';
+            } else if (audio) {
+                el.exportHint.textContent = '音频提取会优先复制源音轨，不重新压缩。';
+            } else if (snapshot) {
+                el.exportHint.textContent = '截图导出为 PNG，使用开始秒数作为截帧时间点。';
+            } else if (el.encodeMode.value === 'copy') {
+                el.exportHint.textContent = '快速裁剪不重编码，速度最快、画质无损，但不能改变格式、分辨率或帧率。';
+            } else {
+                el.exportHint.textContent = '重编码可改格式、分辨率、帧率和质量；CRF 越小质量越高、文件越大。';
+            }
+        }
+
+        function updateRangeLabels() {
+            var start = parseFloat(el.startInput.value) || 0;
+            var end = parseFloat(el.endInput.value) || 0;
+            start = clamp(start, 0, state.duration);
+            end = clamp(end, start + 0.01, state.duration);
+            el.startInput.value = start.toFixed(3);
+            el.endInput.value = end.toFixed(3);
+            el.startRange.value = start;
+            el.endRange.value = end;
+            el.startText.textContent = formatTime(start);
+            el.endText.textContent = formatTime(end);
+            el.durationText.textContent = '选中 ' + formatTime(end - start);
+        }
+
+        function enableControls(enabled) {
+            el.runBtn.disabled = !enabled || state.processing;
+            el.startRange.disabled = !enabled;
+            el.endRange.disabled = !enabled;
+            el.startInput.disabled = !enabled;
+            el.endInput.disabled = !enabled;
+            el.fileBase.disabled = !enabled;
+            updateExportControls();
+        }
+
+        function resetResult() {
+            if (resultUrl) URL.revokeObjectURL(resultUrl);
+            resultUrl = '';
+            el.result.hidden = true;
+            el.resultVideo.hidden = true;
+            el.resultImage.hidden = true;
+            el.resultVideo.removeAttribute('src');
+            el.resultImage.removeAttribute('src');
+            el.download.href = '#';
+            el.download.removeAttribute('download');
+            el.resultNote.hidden = false;
+        }
+
+        function setFile(file) {
+            if (!file) return;
+            state.file = file;
+            state.inputName = 'input.' + extFromName(file.name);
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+            objectUrl = URL.createObjectURL(file);
+            el.video.src = objectUrl;
+            el.video.hidden = false;
+            el.empty.hidden = true;
+            el.status.textContent = file.name;
+            el.name.textContent = file.name;
+            el.size.textContent = (file.size / 1048576).toFixed(2) + ' MB';
+            el.res.textContent = '读取中';
+            el.dur.textContent = '读取中';
+            el.fileBase.value = safeBaseName(file.name) + '_cut';
+            el.log.textContent = '';
+            setProgress(0);
+            resetResult();
+            log('素材已导入: ' + file.name);
+        }
+
+        function loadScript(src) {
+            return new Promise(function (resolve, reject) {
+                var existing = document.querySelector('script[src="' + src + '"]');
+                if (existing) {
+                    existing.addEventListener('load', resolve, { once: true });
+                    if (window.createFFmpegCore) resolve();
+                    return;
+                }
+                var script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = function () { reject(new Error('无法加载 ' + src)); };
+                document.head.appendChild(script);
+            });
+        }
+
+        async function ensureFFmpeg() {
+            if (ffmpeg) return ffmpeg;
+            if (ffmpegLoading) return ffmpegLoading;
+            ffmpegLoading = (async function () {
+                if (!window.createFFmpegCore) {
+                    await loadScript(prefix + 'third_part/ffmpeg-wasm/ffmpeg-core.js');
+                }
+                if (!window.createFFmpegCore) {
+                    throw new Error('FFmpeg 核心未加载');
+                }
+                log('初始化 FFmpeg.wasm...');
+                setProgress(3);
+                var core = await window.createFFmpegCore({
+                    print: function (message) { if (message) log(String(message)); },
+                    printErr: function (message) { if (message) log(String(message)); }
+                });
+                if (core.setLogger) {
+                    core.setLogger(function (entry) {
+                        if (entry && entry.message) log(entry.message);
+                    });
+                }
+                if (core.setProgress) {
+                    core.setProgress(function (entry) {
+                        if (entry && typeof entry.progress === 'number') {
+                            setProgress(8 + entry.progress * 86);
+                        }
+                    });
+                }
+                ffmpeg = core;
+                log('FFmpeg.wasm 已就绪');
+                return ffmpeg;
+            })();
+            return ffmpegLoading;
+        }
+
+        function readFileAsUint8Array(file) {
+            return new Promise(function (resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function () { resolve(new Uint8Array(reader.result)); };
+                reader.onerror = function () { reject(new Error('读取文件失败')); };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function buildArgs(mode, outputName) {
+            var start = parseFloat(el.startInput.value) || 0;
+            var end = parseFloat(el.endInput.value) || state.duration;
+            var duration = Math.max(0.01, end - start);
+            var args = ['-ss', start.toFixed(3), '-t', duration.toFixed(3), '-i', state.inputName];
+            var ext = outputExt(mode);
+            var filters = videoFilters(mode);
+            var encode = shouldEncode(mode);
+            var crf = String(parseInt(el.quality.value, 10) || 23);
+
+            if (mode === 'snapshot') {
+                return ['-ss', start.toFixed(3), '-i', state.inputName, '-frames:v', '1', '-update', '1', outputName];
+            }
+            if (mode === 'gif') {
+                args = args.concat(['-an']);
+                if (filters) args = args.concat(['-vf', filters]);
+                return args.concat([outputName]);
+            }
+            if (mode === 'mute') {
+                if (!encode) {
+                    return args.concat(['-map', '0:v:0', '-c:v', 'copy', '-an', '-avoid_negative_ts', 'make_zero', outputName]);
+                }
+                args = args.concat(['-map', '0:v:0']);
+                if (filters) args = args.concat(['-vf', filters]);
+                args = args.concat(videoEncodeArgs(ext, crf), ['-an', '-avoid_negative_ts', 'make_zero', outputName]);
+                return args;
+            }
+            if (mode === 'audio') {
+                return args.concat(['-vn', '-map', '0:a:0?', '-c:a', 'copy', outputName]);
+            }
+            if (!encode) {
+                return args.concat(['-map', '0', '-c', 'copy', '-avoid_negative_ts', 'make_zero', outputName]);
+            }
+            args = args.concat(['-map', '0:v:0']);
+            if (el.audioMode.value === 'keep') args = args.concat(['-map', '0:a:0?']);
+            if (filters) args = args.concat(['-vf', filters]);
+            args = args.concat(videoEncodeArgs(ext, crf));
+            if (el.audioMode.value === 'keep') {
+                args = args.concat(audioEncodeArgs(ext));
+            } else {
+                args = args.concat(['-an']);
+            }
+            return args.concat(['-avoid_negative_ts', 'make_zero', outputName]);
+        }
+
+        function videoEncodeArgs(ext, crf) {
+            return ['-c:v', 'libx264', '-crf', crf, '-preset', 'veryfast', '-pix_fmt', 'yuv420p'];
+        }
+
+        function audioEncodeArgs(ext) {
+            return ['-c:a', 'aac', '-b:a', '160k'];
+        }
+
+        async function runFFmpeg(args, outputName) {
+            var core = await ensureFFmpeg();
+            var data = await readFileAsUint8Array(state.file);
+            try {
+                core.FS.unlink(state.inputName);
+            } catch (ignore) {}
+            try {
+                core.FS.unlink(outputName);
+            } catch (ignore2) {}
+            core.FS.writeFile(state.inputName, data);
+            log('执行命令: ffmpeg ' + args.join(' '));
+            setProgress(8);
+            var ret = core.exec.apply(core, args);
+            if (core.reset) core.reset();
+            if (ret !== 0) {
+                throw new Error('FFmpeg 返回错误码 ' + ret);
+            }
+            setProgress(96);
+            var output = core.FS.readFile(outputName);
+            try {
+                core.FS.unlink(state.inputName);
+                core.FS.unlink(outputName);
+            } catch (ignore3) {}
+            return output;
+        }
+
+        function showResult(bytes, filename, mode) {
+            var ext = outputExt(mode);
+            var type = mode === 'snapshot' ? 'image/png' : 'video/' + ext;
+            if (mode === 'gif') type = 'image/gif';
+            if (mode === 'audio') type = ext === 'm4a' ? 'audio/mp4' : 'audio/' + ext;
+            if (ext === 'mov') type = 'video/quicktime';
+            var blob = new Blob([bytes], { type: type });
+            resultUrl = URL.createObjectURL(blob);
+            el.result.hidden = false;
+            el.resultNote.hidden = true;
+            if (mode === 'snapshot' || mode === 'gif') {
+                el.resultImage.src = resultUrl;
+                el.resultImage.hidden = false;
+                el.resultVideo.hidden = true;
+            } else {
+                el.resultVideo.src = resultUrl;
+                el.resultVideo.hidden = false;
+                el.resultImage.hidden = true;
+            }
+            el.download.href = resultUrl;
+            el.download.download = filename;
+            el.download.textContent = '下载 ' + filename + ' (' + (blob.size / 1048576).toFixed(2) + ' MB)';
+        }
+
+        async function startProcess() {
+            if (!state.file || state.processing) return;
+            state.processing = true;
+            resetResult();
+            setProgress(0);
+            enableControls(true);
+            el.runBtn.disabled = true;
+            el.stopBtn.disabled = false;
+            var mode = el.mode.value;
+            var ext = outputExt(mode);
+            var base = safeBaseName(el.fileBase.value);
+            var outputName = 'output.' + ext;
+            var downloadName = base + '_' + mode + '.' + ext;
+            try {
+                var args = buildArgs(mode, outputName);
+                var output = await runFFmpeg(args, outputName);
+                showResult(output, downloadName, mode);
+                setProgress(100);
+                log('处理完成: ' + downloadName);
+            } catch (err) {
+                setProgress(0);
+                log('处理失败: ' + err.message);
+            } finally {
+                state.processing = false;
+                el.stopBtn.disabled = true;
+                enableControls(!!state.file);
+            }
+        }
+
+        el.pickBtn.addEventListener('click', function () { el.file.click(); });
+        el.file.addEventListener('change', function () {
+            if (el.file.files && el.file.files[0]) setFile(el.file.files[0]);
+        });
+        el.dropzone.addEventListener('dragover', function (event) {
+            event.preventDefault();
+            el.dropzone.classList.add('is-dragover');
+        });
+        el.dropzone.addEventListener('dragleave', function () {
+            el.dropzone.classList.remove('is-dragover');
+        });
+        el.dropzone.addEventListener('drop', function (event) {
+            event.preventDefault();
+            el.dropzone.classList.remove('is-dragover');
+            if (event.dataTransfer.files && event.dataTransfer.files[0]) setFile(event.dataTransfer.files[0]);
+        });
+
+        el.video.addEventListener('loadedmetadata', function () {
+            state.duration = el.video.duration || 0;
+            state.videoWidth = el.video.videoWidth || 0;
+            state.videoHeight = el.video.videoHeight || 0;
+            el.res.textContent = state.videoWidth && state.videoHeight ? state.videoWidth + ' x ' + state.videoHeight : '-';
+            el.dur.textContent = formatTime(state.duration);
+            el.startRange.max = state.duration;
+            el.endRange.max = state.duration;
+            el.startInput.max = state.duration;
+            el.endInput.max = state.duration;
+            el.startInput.value = '0.000';
+            el.endInput.value = state.duration.toFixed(3);
+            el.startRange.value = 0;
+            el.endRange.value = state.duration;
+            enableControls(true);
+            updateRangeLabels();
+            updateExportControls();
+        });
+
+        el.startRange.addEventListener('input', function () {
+            var end = parseFloat(el.endInput.value) || state.duration;
+            el.startInput.value = clamp(parseFloat(el.startRange.value) || 0, 0, end - 0.01).toFixed(3);
+            updateRangeLabels();
+            el.video.currentTime = parseFloat(el.startInput.value) || 0;
+        });
+        el.endRange.addEventListener('input', function () {
+            var start = parseFloat(el.startInput.value) || 0;
+            el.endInput.value = clamp(parseFloat(el.endRange.value) || state.duration, start + 0.01, state.duration).toFixed(3);
+            updateRangeLabels();
+        });
+        el.startInput.addEventListener('change', updateRangeLabels);
+        el.endInput.addEventListener('change', updateRangeLabels);
+        el.mode.addEventListener('change', function () {
+            if (el.mode.value === 'snapshot') {
+                el.endInput.disabled = true;
+                el.endRange.disabled = true;
+                el.durationText.textContent = '截图时间 ' + el.startText.textContent;
+            } else {
+                enableControls(!!state.file);
+                updateRangeLabels();
+            }
+            updateExportControls();
+        });
+        el.format.addEventListener('change', updateExportControls);
+        el.encodeMode.addEventListener('change', updateExportControls);
+        el.resolution.addEventListener('change', updateExportControls);
+        el.fps.addEventListener('change', updateExportControls);
+        el.audioMode.addEventListener('change', updateExportControls);
+        el.runBtn.addEventListener('click', startProcess);
+        el.stopBtn.addEventListener('click', function () {
+            if (ffmpeg && state.processing) {
+                ffmpeg.reset && ffmpeg.reset();
+                log('当前核心不支持中断正在执行的同步命令，任务结束前请等待浏览器响应。');
+            }
+        });
+
+        enableControls(false);
+        updateExportControls();
+        window.addEventListener('beforeunload', function () {
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+            if (resultUrl) URL.revokeObjectURL(resultUrl);
+        });
+    }
+
+    window.initVideoCutNative = initVideoCutNative;
+
+    function boot() {
+        var root = document.getElementById('vcToolRoot');
+        if (root) initVideoCutNative(root);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
 })();

@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: third_party_libs
+title: Client-Side Media Processing & Codec Utilities
+scope:
+    - third_part/
+source_files: []
+depends_on: []
+related_to:
+    - path: tools

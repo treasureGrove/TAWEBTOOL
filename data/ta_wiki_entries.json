@@ -1,0 +1,403 @@
+[
+  {
+    "id": "github-com-google-filament-4c5551155b",
+    "title": "Google Filament",
+    "category": "渲染基础",
+    "tags": [
+      "PBR",
+      "Filament",
+      "实时渲染",
+      "引擎",
+      "render",
+      "rendering",
+      "shader",
+      "material"
+    ],
+    "summary": "Filament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2",
+    "content": "## 自动归纳\nFilament is a real-time physically based rendering engine for Android, iOS, Windows, Linux, macOS, and WebGL2 # Filament [![Android Build Status](https://github.com/google/filament/actions/workflows/status-android.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-android.yml) [![iOS Build Status](https://github.com/google/filament/actions/workflows/status-ios.yml/badge.svg)](https://github.com/google/filament/actions/workflows/status-ios.yml) [![Linux Build...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：渲染基础\n- 标签：PBR, Filament, 实时渲染, 引擎, render, rendering, shader, material\n- 来源：GitHub / google/filament\n- 原文：https://github.com/google/filament",
+    "source": "github",
+    "sourceTitle": "GitHub / google/filament",
+    "sourceUrl": "https://github.com/google/filament",
+    "quality": "draft",
+    "updatedAt": "2026-07-03"
+  },
+  {
+    "id": "github-com-khronosgroup-gltf-76eb5349d1",
+    "title": "Khronos glTF",
+    "category": "资产管线",
+    "tags": [
+      "glTF",
+      "资产格式",
+      "PBR",
+      "Pipeline",
+      "render",
+      "rendering",
+      "shader",
+      "material"
+    ],
+    "summary": "glTF – Runtime 3D Asset Delivery",
+    "content": "## 自动归纳\nglTF – Runtime 3D Asset Delivery [![Join glTF Discord](https://img.shields.io/badge/discuss-on%20discord-blue.svg)](https://khr.io/khrdiscord) [![Join the forums](https://img.shields.io/badge/discuss-in%20forums-blue.svg)](https://community.khronos.org/c/gltf-general) [![Join the Slack group](https://img.shields.io/badge/chat-on%20slack-blue.svg)](https://www.khr.io/slack) glTF™ (GL Transmission Format) is a royalty-free specification for the efficient transmission and loading of 3D scenes and models by...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：资产管线\n- 标签：glTF, 资产格式, PBR, Pipeline, render, rendering, shader, material\n- 来源：GitHub / KhronosGroup/glTF\n- 原文：https://github.com/KhronosGroup/glTF",
+    "source": "github",
+    "sourceTitle": "GitHub / KhronosGroup/glTF",
+    "sourceUrl": "https://github.com/KhronosGroup/glTF",
+    "quality": "draft",
+    "updatedAt": "2026-07-03"
+  },
+  {
+    "id": "pbr-params",
+    "title": "PBR 核心参数速查",
+    "category": "渲染基础",
+    "tags": [
+      "PBR",
+      "Metallic",
+      "Roughness",
+      "BaseColor"
+    ],
+    "summary": "BaseColor、Metallic、Roughness、Normal 的用途和常见错误。",
+    "content": "## 关键判断\n\n- BaseColor 表示固有颜色，不应该烘入明显光影。\n- Metallic 只描述金属/非金属属性，不是高光强度滑条。\n- Roughness 控制微表面分布，越高高光越散。\n- Normal 改变局部法线，用来补充细节，不改变轮廓。\n\n## 排查清单\n\n- 高光发灰：检查金属度、粗糙度范围和色彩空间。\n- 材质像塑料：检查 Metallic 是否误设为 0。\n- 表面脏或接缝明显：检查法线贴图方向、压缩格式和切线空间。",
+    "source": "builtin",
+    "quality": "verified",
+    "updatedAt": "2026-07-02"
+  },
+  {
+    "id": "gamma-linear",
+    "title": "Gamma / Linear 工作流",
+    "category": "渲染基础",
+    "tags": [
+      "Gamma",
+      "Linear",
+      "sRGB",
+      "色彩空间"
+    ],
+    "summary": "贴图采样、光照计算和最终输出阶段的色彩空间规则。",
+    "content": "## 基本规则\n\n- Albedo/BaseColor 通常以 sRGB 存储，采样后进入线性空间计算。\n- Roughness、Metallic、AO、Mask 等数据贴图通常不要按 sRGB 采样。\n- 最终输出到屏幕前再做线性到 sRGB 的转换。\n\n## 常见现象\n\n- 画面整体发灰：可能重复做了 gamma 转换。\n- 画面对比过强：可能漏了线性到 sRGB 输出。\n- Mask 通道边缘异常：检查贴图是否被错误标记为 sRGB。",
+    "source": "builtin",
+    "quality": "verified",
+    "updatedAt": "2026-07-02"
+  },
+  {
+    "id": "normal-map-import",
+    "title": "法线贴图导入检查",
+    "category": "资产管线",
+    "tags": [
+      "NormalMap",
+      "Tangent",
+      "压缩",
+      "导入"
+    ],
+    "summary": "法线贴图在引擎导入时最容易出错的几个点。",
+    "content": "## 检查项\n\n- 贴图类型必须标记为 Normal Map。\n- 确认 DirectX/OpenGL 法线 Y 通道方向。\n- 避免把法线贴图当作 sRGB 色彩图采样。\n- 移动端注意压缩格式对法线质量的影响。\n\n## 症状定位\n\n- 凹凸反了：优先检查绿色通道是否需要翻转。\n- 表面有块状噪点：检查压缩格式或贴图分辨率。\n- 接缝明显：检查模型切线空间和烘焙设置是否一致。",
+    "source": "builtin",
+    "quality": "verified",
+    "updatedAt": "2026-07-02"
+  },
+  {
+    "id": "drawcall-checklist",
+    "title": "Draw Call 排查清单",
+    "category": "性能优化",
+    "tags": [
+      "DrawCall",
+      "Batching",
+      "Instancing",
+      "性能"
+    ],
+    "summary": "定位 Draw Call 偏高时可以按这个顺序排查。",
+    "content": "## 优先级\n\n1. 先确认瓶颈是否真在 CPU 提交，而不是 GPU 着色或带宽。\n2. 检查材质数量和材质实例是否过度拆分。\n3. 检查是否可以合批、实例化或合并网格。\n4. 对透明物体、阴影投射、后处理 pass 单独统计。\n\n## 常见策略\n\n- 同类小物件优先考虑 GPU Instancing。\n- 静态场景可以考虑静态合批或离线合并。\n- UI 和粒子要单独看批次拆分原因。",
+    "source": "builtin",
+    "quality": "verified",
+    "updatedAt": "2026-07-02"
+  },
+  {
+    "id": "shader-keyword-budget",
+    "title": "Shader Variant 控制",
+    "category": "Shader",
+    "tags": [
+      "Shader",
+      "Variant",
+      "Keyword",
+      "构建体积"
+    ],
+    "summary": "Shader 关键字和变体爆炸的控制原则。",
+    "content": "## 原则\n\n- 不要把运行时连续参数做成 keyword。\n- 全局 keyword 要谨慎，局部 keyword 优先。\n- 功能组合要限制矩阵规模，避免指数级变体。\n- 构建前做 variant stripping。\n\n## 判断\n\n如果一个开关只是改变数值或很小分支，通常用 uniform 更合理；如果它会完全移除一大段采样或复杂逻辑，才更适合 keyword。",
+    "source": "builtin",
+    "quality": "verified",
+    "updatedAt": "2026-07-02"
+  },
+  {
+    "id": "texture-channel-packing",
+    "title": "贴图通道打包规范",
+    "category": "资产管线",
+    "tags": [
+      "贴图",
+      "通道打包",
+      "ORM",
+      "Mask"
+    ],
+    "summary": "把 AO、Roughness、Metallic 等灰度数据合并到一张贴图的规则。",
+    "content": "## 常见方案\n\n- ORM：R=AO，G=Roughness，B=Metallic。\n- MRA：R=Metallic，G=Roughness，B=AO。\n- 自定义 Mask：需要在材质和导出工具中明确标注。\n\n## 注意\n\n- 通道贴图一般按线性数据采样，不使用 sRGB。\n- 打包前确认各通道位深和压缩格式。\n- UI、角色皮肤、复杂材质不要盲目套统一通道规范。",
+    "source": "builtin",
+    "quality": "verified",
+    "updatedAt": "2026-07-02"
+  },
+  {
+    "id": "github-com-microsoft-directx-graphics-samples-ccd5e1f675",
+    "title": "DirectX Graphics Samples",
+    "category": "图形 API",
+    "tags": [
+      "DirectX",
+      "DX12",
+      "GPU",
+      "Sample",
+      "render",
+      "rendering",
+      "shader",
+      "texture"
+    ],
+    "summary": "This repo contains the DirectX Graphics samples that demonstrate how to build graphics intensive applications on Windows.",
+    "content": "## 自动归纳\nThis repo contains the DirectX Graphics samples that demonstrate how to build graphics intensive applications on Windows. # DirectX-Graphics-Samples This repo contains the DirectX 12 Graphics samples that demonstrate how to build graphics intensive applications for Windows 10. We invite you to join us at our [discord server](http://discord.gg/directx). See our [YouTube channel](https://www.youtube.com/MicrosoftDirectX12andGraphicsEducation) for tutorials, our [spec repo](https://microsoft.github.io/DirectX-Specs/)...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形 API\n- 标签：DirectX, DX12, GPU, Sample, render, rendering, shader, texture\n- 来源：GitHub / microsoft/DirectX-Graphics-Samples\n- 原文：https://github.com/microsoft/DirectX-Graphics-Samples",
+    "source": "github",
+    "sourceTitle": "GitHub / microsoft/DirectX-Graphics-Samples",
+    "sourceUrl": "https://github.com/microsoft/DirectX-Graphics-Samples",
+    "quality": "draft",
+    "updatedAt": "2026-07-01"
+  },
+  {
+    "id": "github-com-unity-technologies-graphics-1b5fff31d1",
+    "title": "Unity Graphics",
+    "category": "引擎实践",
+    "tags": [
+      "Unity",
+      "URP",
+      "HDRP",
+      "渲染管线",
+      "render",
+      "shader",
+      "graphics",
+      "unity"
+    ],
+    "summary": "Unity Graphics - Including Scriptable Render Pipeline",
+    "content": "## 自动归纳\nUnity Graphics - Including Scriptable Render Pipeline ## NOTE: We have migrated reported issues to FogBugz. You can only log further issues via the Unity bug tracker. To see how, read [this](https://unity3d.com/unity/qa/bug-reporting). ## NOTE 2: Development by Unity developers happens in an private repo. Changes are mirrored from that private repo to this public repo every few weeks. [This](https://forum.unity.com/threads/important-upcoming-changes-to-the-graphics-repository.1239826/) forum thread can be used to...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：引擎实践\n- 标签：Unity, URP, HDRP, 渲染管线, render, shader, graphics, unity\n- 来源：GitHub / Unity-Technologies/Graphics\n- 原文：https://github.com/Unity-Technologies/Graphics",
+    "source": "github",
+    "sourceTitle": "GitHub / Unity-Technologies/Graphics",
+    "sourceUrl": "https://github.com/Unity-Technologies/Graphics",
+    "quality": "draft",
+    "updatedAt": "2026-07-01"
+  },
+  {
+    "id": "developer-nvidia-com-blog-streamlining-resource-binding-with-end-to-end-support--5d2277747d",
+    "title": "Streamlining Resource Binding with End-to-End Support for Vulkan Descriptor Heaps",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "render",
+      "rendering",
+      "shader",
+      "texture"
+    ],
+    "summary": "Shaders are GPU programs that process visual data—such as rays, pixels, geometry, and textures—to produce specific rendering effects. Shaders find necessary...",
+    "content": "## 自动归纳\nShaders are GPU programs that process visual data—such as rays, pixels, geometry, and textures—to produce specific rendering effects. Shaders find necessary...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, render, rendering, shader, texture\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/streamlining-resource-binding-with-end-to-end-support-for-vulkan-descriptor-heaps/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/streamlining-resource-binding-with-end-to-end-support-for-vulkan-descriptor-heaps/",
+    "quality": "draft",
+    "updatedAt": "2026-06-25"
+  },
+  {
+    "id": "developer-nvidia-com-blog-build-on-device-ai-companions-with-the-nvidia-ace-game-edafe63b61",
+    "title": "Build On-Device AI Companions with the NVIDIA ACE Game Agent SDK and Unreal Engine 5 Plugins",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "unreal"
+    ],
+    "summary": "NVIDIA RTX technologies are deeply integrated into Unreal Engine 5 through the NVIDIA RTX Branch of Unreal Engine and the NVIDIA DLSS Unreal Engine plugin. This...",
+    "content": "## 自动归纳\nNVIDIA RTX technologies are deeply integrated into Unreal Engine 5 through the NVIDIA RTX Branch of Unreal Engine and the NVIDIA DLSS Unreal Engine plugin. This...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, unreal\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/build-on-device-ai-companions-with-the-nvidia-ace-game-agent-sdk-and-unreal-engine-5-plugins/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/build-on-device-ai-companions-with-the-nvidia-ace-game-agent-sdk-and-unreal-engine-5-plugins/",
+    "quality": "draft",
+    "updatedAt": "2026-06-25"
+  },
+  {
+    "id": "gpuopen-com-learn-amd-fsr-sdk-2-3-blog-ff4177932b",
+    "title": "AMD FSR Upscaling 4.1 RDNA 3 Support Now Available in FSR SDK 2.3 Update",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "AMD FSR \"Redstone\" SDK 2.3 brings ML-powered FSR Upscaling 4.1.1 to AMD Radeon RX 7000 Series GPUs, along with Frame Generation 4.0.1 and Ray Regeneration 1.2 improvements for RDNA 4 GPUs.",
+    "content": "## 自动归纳\nAMD FSR \"Redstone\" SDK 2.3 brings ML-powered FSR Upscaling 4.1.1 to AMD Radeon RX 7000 Series GPUs, along with Frame Generation 4.0.1 and Ray Regeneration 1.2 improvements for RDNA 4 GPUs.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/amd-fsr-sdk-2-3-blog/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/amd-fsr-sdk-2-3-blog/",
+    "quality": "draft",
+    "updatedAt": "2026-06-24"
+  },
+  {
+    "id": "github-com-gpuopen-librariesandsdks-fidelityfx-sdk-b670dd1ab7",
+    "title": "AMD FidelityFX SDK",
+    "category": "图形性能",
+    "tags": [
+      "FidelityFX",
+      "FSR",
+      "GPU",
+      "性能",
+      "gpu",
+      "directx",
+      "vulkan"
+    ],
+    "summary": "The main repository for the FidelityFX SDK.",
+    "content": "## 自动归纳\nThe main repository for the FidelityFX SDK. Welcome to the AMD FSR™ SDK 2.3.0 - \"Redstone\" ![alt text](Kits/FidelityFX/docs/media/AMD_FSR_SDK_Lockup_RGB_Wht.png) The AMD FSR™ SDK is a collection of heavily optimized technologies that can be used by developers to improve their DirectX® 12 or Vulkan® applications. The AMD FSR™ SDK includes: | [AMD FSR™ SDK Technique](https://gpuopen.com/amd-fidelityfx-sdk/) | [Samples](docs/samples/index.md) | [GPUOpen page](https://gpuopen.com/) | Description | | --- | --- | --- |...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：FidelityFX, FSR, GPU, 性能, gpu, directx, vulkan\n- 来源：GitHub / GPUOpen-LibrariesAndSDKs/FidelityFX-SDK\n- 原文：https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK",
+    "source": "github",
+    "sourceTitle": "GitHub / GPUOpen-LibrariesAndSDKs/FidelityFX-SDK",
+    "sourceUrl": "https://github.com/GPUOpen-LibrariesAndSDKs/FidelityFX-SDK",
+    "quality": "draft",
+    "updatedAt": "2026-06-24"
+  },
+  {
+    "id": "gpuopen-com-learn-radeon-developer-tool-suite-shader-source-code-d9dd4abfd4",
+    "title": "New AMD Radeon Developer Tool Suite update brings shader source code, Extended PIX Markers, and command-line capture",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "shader"
+    ],
+    "summary": "The new AMD Radeon Developer Tool Suite release delivers RGP 2.7 with shader source code viewing, instruction‑level divergence metrics, and Extended PIX Marker support, expanded hardware compatibility, and updates...",
+    "content": "## 自动归纳\nThe new AMD Radeon Developer Tool Suite release delivers RGP 2.7 with shader source code viewing, instruction‑level divergence metrics, and Extended PIX Marker support, expanded hardware compatibility, and updates across RGD, RRA, RMV, RGA, and RDP.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, shader\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/radeon-developer-tool-suite-shader-source-code/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/radeon-developer-tool-suite-shader-source-code/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "developer-nvidia-com-blog-whats-new-for-game-developers-in-nvidia-rtx-dlss-4-5-f-ea8047ebbc",
+    "title": "What’s New for Game Developers in NVIDIA RTX: DLSS 4.5 for UE5 and Multilingual AI Characters",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "render",
+      "rendering"
+    ],
+    "summary": "NVIDIA RTX provides game developers with direct paths to AI-driven characters, frame generation, and ray-traced rendering. This post walks through a meaningful...",
+    "content": "## 自动归纳\nNVIDIA RTX provides game developers with direct paths to AI-driven characters, frame generation, and ray-traced rendering. This post walks through a meaningful...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, render, rendering\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/whats-new-for-game-developers-in-nvidia-rtx-dlss-4-5-for-ue5-and-multilingual-ai-characters/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/whats-new-for-game-developers-in-nvidia-rtx-dlss-4-5-for-ue5-and-multilingual-ai-characters/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "developer-nvidia-com-blog-speed-up-unreal-engine-nne-inference-with-nvidia-tenso-f4c23ca03a",
+    "title": "Speed Up Unreal Engine NNE Inference with NVIDIA TensorRT for RTX Runtime",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "graphics",
+      "unreal",
+      "performance"
+    ],
+    "summary": "Neural network techniques are increasingly used in computer graphics to boost image quality, improve performance, and streamline content creation. Approaches...",
+    "content": "## 自动归纳\nNeural network techniques are increasingly used in computer graphics to boost image quality, improve performance, and streamline content creation. Approaches...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, graphics, unreal, performance\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/speed-up-unreal-engine-nne-inference-with-nvidia-tensorrt-for-rtx-runtime/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/speed-up-unreal-engine-nne-inference-with-nvidia-tensorrt-for-rtx-runtime/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "developer-nvidia-com-blog-build-ai-powered-games-with-nvidia-dlss-4-5-rtx-and-un-ad83a31d9d",
+    "title": "Build AI-Powered Games with NVIDIA DLSS 4.5, RTX, and Unreal Engine 5",
+    "category": "图形性能",
+    "tags": [
+      "NVIDIA",
+      "GPU",
+      "渲染",
+      "性能",
+      "unreal"
+    ],
+    "summary": "Today, game developers can begin integrating NVIDIA DLSS 4.5 with Dynamic Multi Frame Generation, Multi Frame Generation 6X, and the second-generation...",
+    "content": "## 自动归纳\nToday, game developers can begin integrating NVIDIA DLSS 4.5 with Dynamic Multi Frame Generation, Multi Frame Generation 6X, and the second-generation...\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：NVIDIA, GPU, 渲染, 性能, unreal\n- 来源：NVIDIA Developer Graphics\n- 原文：https://developer.nvidia.com/blog/build-ai-powered-games-with-nvidia-dlss-4-5-rtx-and-unreal-engine-5/",
+    "source": "rss",
+    "sourceTitle": "NVIDIA Developer Graphics",
+    "sourceUrl": "https://developer.nvidia.com/blog/build-ai-powered-games-with-nvidia-dlss-4-5-rtx-and-unreal-engine-5/",
+    "quality": "draft",
+    "updatedAt": "2026-06-11"
+  },
+  {
+    "id": "gpuopen-com-learn-wmma-guide-amd-rdna-4-gpus-part-3-f063fe7edd",
+    "title": "WMMA guide for AMD RDNA 4 architecture GPUs - part 3",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "Learn how to implement fast in-register matrix transpose on AMD RDNA™ 4 architecture GPUs with a WMMA-based identity trick, delivering a lightweight, memory-free alternative proven in Llama.cpp.",
+    "content": "## 自动归纳\nLearn how to implement fast in-register matrix transpose on AMD RDNA™ 4 architecture GPUs with a WMMA-based identity trick, delivering a lightweight, memory-free alternative proven in Llama.cpp.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-3/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-3/",
+    "quality": "draft",
+    "updatedAt": "2026-06-02"
+  },
+  {
+    "id": "gpuopen-com-learn-wmma-guide-amd-rdna-4-gpus-part-2-2a94f4ddce",
+    "title": "WMMA guide for AMD RDNA 4 architecture GPUs - part 2",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "Achieve peak AMD RDNA™ 4 architecture memory bandwidth for low-precision GEMM by fusing WMMA to double the K dimension, enabling 128-bit loads for FP8/INT8, and matching hipBLAS results bit-for-bit.",
+    "content": "## 自动归纳\nAchieve peak AMD RDNA™ 4 architecture memory bandwidth for low-precision GEMM by fusing WMMA to double the K dimension, enabling 128-bit loads for FP8/INT8, and matching hipBLAS results bit-for-bit.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-2/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-2/",
+    "quality": "draft",
+    "updatedAt": "2026-06-02"
+  },
+  {
+    "id": "gpuopen-com-learn-wmma-guide-amd-rdna-4-gpus-part-1-f008ac6860",
+    "title": "WMMA guide for AMD RDNA 4 architecture GPUs - part 1",
+    "category": "图形性能",
+    "tags": [
+      "GPUOpen",
+      "AMD",
+      "渲染",
+      "性能",
+      "gpu"
+    ],
+    "summary": "Practical guide to fusing GEMMs on AMD RDNA™ 4 architecture, covering WMMA layout, a transpose-by-swapping A/B technique, HIP sample code, and hipBLAS-verified results used in Llama.cpp.",
+    "content": "## 自动归纳\nPractical guide to fusing GEMMs on AMD RDNA™ 4 architecture, covering WMMA layout, a transpose-by-swapping A/B technique, HIP sample code, and hipBLAS-verified results used in Llama.cpp.\n## TA 视角\n- 关注它对渲染质量、性能预算、资产管线或 Shader 实现的影响。\n- 阅读原文时优先确认版本、平台和适用限制。\n- 如果要落地到项目中，先用小场景验证成本和画质收益。\n## 元信息\n- 分类：图形性能\n- 标签：GPUOpen, AMD, 渲染, 性能, gpu\n- 来源：GPUOpen\n- 原文：https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-1/",
+    "source": "rss",
+    "sourceTitle": "GPUOpen",
+    "sourceUrl": "https://gpuopen.com/learn/wmma-guide-amd-rdna-4-gpus-part-1/",
+    "quality": "draft",
+    "updatedAt": "2026-06-02"
+  }
+]

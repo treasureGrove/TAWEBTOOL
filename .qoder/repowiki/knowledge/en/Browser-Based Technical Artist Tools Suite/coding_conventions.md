@@ -1,0 +1,4 @@
+- Every tool page includes `js/menu.js` and `css/common.css` to inherit the shared sidebar/search chrome.
+- Tool logic lives in a paired file with the same base name as its HTML (e.g. `ai_upscale.html` ↔ `ai_upscale.js`).
+- New tools register themselves by appending an entry to the `MENU_DATA` array in `js/menu.js`; no other registration mechanism exists.
+- Tools that participate in the shared workbench declare `<div id="panel" data-local-tool="key">` and expose an `initXxxTool(host)` function on `window` for `local_workbench.js` to call.

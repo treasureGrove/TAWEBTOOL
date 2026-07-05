@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>色彩空间转换器</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/color_space_converter.css">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <div class="cs-head">
+            <h1>色彩空间 / Gamma 转换器</h1>
+            <p>游戏美术常用色彩空间快速转换：Linear、sRGB、Gamma 1.8/2.2 互转。支持单色值计算与批量图像转换。</p>
+        </div>
+
+        <div class="cs-layout">
+            <!-- Left: Manual converter + curve chart -->
+            <div class="cs-col">
+                <section class="cs-section">
+                    <h2>单色值转换</h2>
+                    <div class="cs-row">
+                        <label>Hex</label>
+                        <input type="text" id="csHexInput" value="#808080" maxlength="7" placeholder="#RRGGBB">
+                        <label>R</label>
+                        <input type="number" id="csR" value="128" min="0" max="255">
+                        <label>G</label>
+                        <input type="number" id="csG" value="128" min="0" max="255">
+                        <label>B</label>
+                        <input type="number" id="csB" value="128" min="0" max="255">
+                        <div id="csColorPreview" class="cs-color-preview" style="background:#808080"></div>
+                    </div>
+                    <div class="cs-result-grid" id="csManualResults"></div>
+                </section>
+
+                <section class="cs-section">
+                    <h2>Transfer Curve 对比</h2>
+                    <div class="cs-curve-wrap">
+                        <canvas id="csCurveCanvas"></canvas>
+                        <div class="cs-curve-legend" id="csCurveLegend"></div>
+                    </div>
+                </section>
+
+                <section class="cs-section">
+                    <h2>Gamma 渐变预览</h2>
+                    <div class="cs-gamma-row">
+                        <label style="font-size:13px;min-width:60px">Gamma</label>
+                        <input type="range" id="csGammaSlider" min="0.5" max="3.0" step="0.01" value="2.2">
+                        <span class="gamma-val" id="csGammaVal">2.20</span>
+                    </div>
+                    <canvas id="csGammaBarCanvas" style="width:100%;height:40px;border-radius:8px;display:block;margin-top:8px"></canvas>
+                    <div class="cs-info-box" style="margin-top:10px">
+                        <div>• <b>Linear</b>: 物理正确光照，游戏引擎内部使用</div>
+                        <div>• <b>sRGB</b>: 标准显示器色彩空间，纹理默认存储格式</div>
+                        <div>• <b>Gamma 2.2</b>: 近似 sRGB，部分旧引擎使用</div>
+                        <div>• <b>Gamma 1.8</b>: Mac 旧标准，部分影视流程使用</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right: Image converter -->
+            <div class="cs-col">
+                <section class="cs-section">
+                    <h2>图像色彩空间转换</h2>
+                    <label class="cs-drop-zone" id="csImgDropZone">
+                        <p>拖拽或点击上传图像</p>
+                        <small>支持 JPG / PNG / BMP / WEBP</small>
+                    </label>
+                    <input type="file" id="csImgFile" accept="image/*" style="display:none">
+                    <div id="csImgInfo" style="font-size:12px;color:#5e6e75;margin-bottom:10px"></div>
+
+                    <div class="cs-img-opts">
+                        <label>从</label>
+                        <select id="csFromSpace">
+                            <option value="srgb" selected>sRGB</option>
+                            <option value="linear">Linear</option>
+                            <option value="gamma">Gamma</option>
+                        </select>
+                        <label>→ 到</label>
+                        <select id="csToSpace">
+                            <option value="linear" selected>Linear</option>
+                            <option value="srgb">sRGB</option>
+                            <option value="gamma">Gamma</option>
+                        </select>
+                        <label>Gamma</label>
+                        <input type="number" id="csImgGamma" value="2.2" min="0.5" max="3.0" step="0.1" style="width:70px;padding:6px;border:1px solid rgba(47,168,136,0.2);border-radius:7px;font-size:13px">
+                    </div>
+
+                    <div style="display:flex;gap:10px;margin-bottom:12px">
+                        <button class="cs-btn" id="csConvertBtn" disabled>转换</button>
+                        <button class="cs-btn-secondary" id="csDownloadBtn" disabled>下载结果 (PNG)</button>
+                    </div>
+
+                    <div class="cs-img-preview-row">
+                        <div class="cs-img-card">
+                            <canvas id="csSrcCanvas"></canvas>
+                            <span class="tag">原图</span>
+                        </div>
+                        <div class="cs-img-card">
+                            <canvas id="csOutCanvas"></canvas>
+                            <span class="tag">转换结果</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="cs-section">
+                    <h2>UE / Unity 色彩空间速查</h2>
+                    <div class="cs-info-box">
+                        <div><b>Unreal Engine</b></div>
+                        <div>• 纹理默认 sRGB → 引擎自动转 Linear 用于光照计算</div>
+                        <div>• ORM/RMA 贴图需关闭 sRGB（存储 Linear 数据）</div>
+                        <div>• 输出到显示器时自动 Linear → sRGB</div>
+                        <div style="margin-top:6px"><b>Unity</b></div>
+                        <div>• Linear 工作流：纹理导入时勾选 sRGB</div>
+                        <div>• Gamma 工作流：所有贴图按原样采样</div>
+                        <div>• HDRP 强制 Linear，URP 可选</div>
+                        <div style="margin-top:6px"><b>常见坑</b></div>
+                        <div>• 法线/ORM/AO 贴图误开 sRGB → 颜色偏移</div>
+                        <div>• UI 贴图在线性空间下变暗（忘记开 sRGB）</div>
+                        <div>• 跨引擎迁移材质时 Gamma 不一致</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/color_space_converter.js"></script>
+</body>
+
+</html>

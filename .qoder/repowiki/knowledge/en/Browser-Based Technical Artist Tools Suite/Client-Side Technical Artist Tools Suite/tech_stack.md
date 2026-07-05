@@ -1,0 +1,1 @@
+Pure client-side stack: Cesium + Leaflet for 3D/geospatial visualization, Google `<model-viewer>` for GLB/GLTF preview, FFmpeg.wasm (referenced in comments as the original video-cut backend), Marked + DOMPurify for secure markdown rendering, Fuse.js for fuzzy search, Photopea iframe for PS-like editing, and Zhipu GLM-4.7-Flash API for chat — all loaded from jsDelivr/unpkg CDNs.

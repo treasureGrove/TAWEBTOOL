@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "gpuopen-feed",
+      "type": "rss",
+      "title": "GPUOpen",
+      "url": "https://gpuopen.com/feed/",
+      "category": "图形性能",
+      "tags": ["GPUOpen", "AMD", "渲染", "性能"]
+    },
+    {
+      "id": "nvidia-graphics-feed",
+      "type": "rss",
+      "title": "NVIDIA Developer Graphics",
+      "url": "https://developer.nvidia.com/blog/category/graphics/feed/",
+      "category": "图形性能",
+      "tags": ["NVIDIA", "GPU", "渲染", "性能"]
+    },
+    {
+      "id": "filament-github",
+      "type": "github_repo",
+      "title": "Google Filament",
+      "owner": "google",
+      "repo": "filament",
+      "category": "渲染基础",
+      "tags": ["PBR", "Filament", "实时渲染", "引擎"]
+    },
+    {
+      "id": "fidelityfx-github",
+      "type": "github_repo",
+      "title": "AMD FidelityFX SDK",
+      "owner": "GPUOpen-LibrariesAndSDKs",
+      "repo": "FidelityFX-SDK",
+      "category": "图形性能",
+      "tags": ["FidelityFX", "FSR", "GPU", "性能"]
+    },
+    {
+      "id": "directx-samples-github",
+      "type": "github_repo",
+      "title": "DirectX Graphics Samples",
+      "owner": "microsoft",
+      "repo": "DirectX-Graphics-Samples",
+      "category": "图形 API",
+      "tags": ["DirectX", "DX12", "GPU", "Sample"]
+    },
+    {
+      "id": "gltf-github",
+      "type": "github_repo",
+      "title": "Khronos glTF",
+      "owner": "KhronosGroup",
+      "repo": "glTF",
+      "category": "资产管线",
+      "tags": ["glTF", "资产格式", "PBR", "Pipeline"]
+    },
+    {
+      "id": "unity-graphics-github",
+      "type": "github_repo",
+      "title": "Unity Graphics",
+      "owner": "Unity-Technologies",
+      "repo": "Graphics",
+      "category": "引擎实践",
+      "tags": ["Unity", "URP", "HDRP", "渲染管线"]
+    }
+  ]
+}

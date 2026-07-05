@@ -1,0 +1,1 @@
+Orchestrates a collection of standalone browser-based technical-art tools through a shared navigation shell, centralized menu registry, and common WebAssembly runtimes.
