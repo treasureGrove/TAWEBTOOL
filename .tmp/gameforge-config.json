@@ -1,0 +1,19 @@
+{
+  "targets": [
+    {
+      "name": "treasure-merge-placeholder",
+      "url": "https://tools.treasuregrove.art/",
+      "kind": "web-game",
+      "notes": "部署具体游戏后，把 url 改成游戏页面地址。"
+    }
+  ],
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "budgets": {
+    "maxConsoleErrors": 0,
+    "maxRequestFailures": 0,
+    "minCanvasPixelsChanged": 50
+  }
+}

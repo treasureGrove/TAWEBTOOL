@@ -1,0 +1,13 @@
+{
+  "targets": [
+    {
+      "name": "treasure-merge",
+      "url": "https://tools.treasuregrove.art/treasure-merge/debug/index.html",
+      "kind": "web-game",
+      "notes": "Baota Nginx static deployment game debug entry."
+    }
+  ],
+  "budgets": {
+    "minCanvasPixelsChanged": 10
+  }
+}
