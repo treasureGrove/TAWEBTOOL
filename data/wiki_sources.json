@@ -18,49 +18,28 @@
       "tags": ["NVIDIA", "GPU", "渲染", "性能"]
     },
     {
-      "id": "filament-github",
-      "type": "github_repo",
-      "title": "Google Filament",
-      "owner": "google",
-      "repo": "filament",
+      "id": "learnopengl-pbr",
+      "type": "page",
+      "title": "LearnOpenGL PBR",
+      "url": "https://learnopengl.com/PBR/Theory",
       "category": "渲染基础",
-      "tags": ["PBR", "Filament", "实时渲染", "引擎"]
+      "tags": ["PBR", "OpenGL", "BRDF", "IBL"]
     },
     {
-      "id": "fidelityfx-github",
-      "type": "github_repo",
-      "title": "AMD FidelityFX SDK",
-      "owner": "GPUOpen-LibrariesAndSDKs",
-      "repo": "FidelityFX-SDK",
-      "category": "图形性能",
-      "tags": ["FidelityFX", "FSR", "GPU", "性能"]
-    },
-    {
-      "id": "directx-samples-github",
-      "type": "github_repo",
-      "title": "DirectX Graphics Samples",
-      "owner": "microsoft",
-      "repo": "DirectX-Graphics-Samples",
+      "id": "webgpu-fundamentals",
+      "type": "page",
+      "title": "WebGPU Fundamentals",
+      "url": "https://webgpufundamentals.org/",
       "category": "图形 API",
-      "tags": ["DirectX", "DX12", "GPU", "Sample"]
+      "tags": ["WebGPU", "GPU", "Shader", "Rendering"]
     },
     {
-      "id": "gltf-github",
-      "type": "github_repo",
-      "title": "Khronos glTF",
-      "owner": "KhronosGroup",
-      "repo": "glTF",
-      "category": "资产管线",
-      "tags": ["glTF", "资产格式", "PBR", "Pipeline"]
-    },
-    {
-      "id": "unity-graphics-github",
-      "type": "github_repo",
-      "title": "Unity Graphics",
-      "owner": "Unity-Technologies",
-      "repo": "Graphics",
-      "category": "引擎实践",
-      "tags": ["Unity", "URP", "HDRP", "渲染管线"]
+      "id": "scratchapixel-rendering",
+      "type": "page",
+      "title": "Scratchapixel Rendering Lessons",
+      "url": "https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/what-is-shading-light-matter-interaction.html",
+      "category": "渲染基础",
+      "tags": ["Shading", "Lighting", "Rendering", "RayTracing"]
     }
   ]
 }

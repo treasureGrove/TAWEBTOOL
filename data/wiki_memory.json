@@ -1,0 +1,76 @@
+{
+  "project": "TAWEBTOOL TA知识库",
+  "goals": [
+    "知识库优先服务技术美术、图形程序、渲染TA和技术向美术同学。",
+    "内容宁缺毋滥，必须能沉淀成规范、排查方法、实现经验、性能结论或工具链建议。",
+    "前台应像 wiki/documentation 阅读器，而不是后台表单、搜索结果页或信息流。",
+    "服务器自动更新，用户不通过后台维护 HTML。"
+  ],
+  "include": [
+    "实时渲染",
+    "Shader/HLSL/GLSL/WGSL",
+    "PBR/BRDF/IBL/光照模型",
+    "材质与贴图压缩",
+    "GPU性能分析",
+    "Unity/Unreal/自研引擎渲染管线",
+    "资产管线、LOD、DCC到引擎流程",
+    "RenderDoc/PIX/Nsight等TA工具链",
+    "WebGPU/DirectX/Vulkan/OpenGL图形API中和TA相关的实践内容"
+  ],
+  "exclude": [
+    "纯产品新闻",
+    "招聘和活动预告",
+    "营销软文",
+    "普通后端/前端编程文章",
+    "泛AI资讯",
+    "只介绍仓库功能但没有技术细节的README",
+    "导航页、下载页、首页聚合页",
+    "没有可复用TA知识点的版本发布说明"
+  ],
+  "quality": {
+    "minScore": 7,
+    "minConfidence": 0.65,
+    "localMinRelevanceScore": 5,
+    "preferOriginalText": true,
+    "staleEntriesDefault": "drop"
+  },
+  "style": {
+    "summary": "中文，120字以内，说明为什么值得TA看。",
+    "article": "2到4段，讲清文章观点、关键技术、适用边界和项目落地方式。",
+    "ta": "3到5条可执行检查建议，避免空泛口号。",
+    "excerpt": "保留原文中最相关的片段，但不要把导航、广告、Cookie提示或目录当正文。"
+  },
+  "ui": {
+    "layout": "panel内使用wiki/documentation布局：左侧条目，中间正文，宽屏右侧本文目录和相关条目。",
+    "avoid": [
+      "压抑的强透明背景",
+      "大量统计卡片堆在首屏",
+      "标签云占据过多空间",
+      "后台维护入口",
+      "搜索硬切导致上下文丢失"
+    ],
+    "priorities": [
+      "阅读清晰",
+      "信息层级明确",
+      "分类和相关条目可连续阅读",
+      "移动端不遮挡内容"
+    ]
+  },
+  "agentMaintenance": {
+    "preferredAgent": "OpenCode or Codex-style coding agent",
+    "allowed": [
+      "维护采集规则",
+      "优化wiki前台框架",
+      "新增内置知识点",
+      "新增或移除来源",
+      "检查日志并修复失败源",
+      "根据用户反馈调整UI和筛选标准"
+    ],
+    "requiresCare": [
+      "修改服务器cron",
+      "修改DeepSeek token配置",
+      "删除大量历史数据",
+      "切换模型或API地址"
+    ]
+  }
+}
