@@ -42,6 +42,54 @@
       "tags": ["Shading", "Lighting", "Rendering", "RayTracing"]
     },
     {
+      "id": "gdc-assassins-creed-shadows-rendering",
+      "type": "page",
+      "title": "GDC Vault - Rendering Assassin's Creed Shadows",
+      "url": "https://gdcvault.com/play/1035526/Rendering-Assassin-s-Creed-Shadows",
+      "category": "技术分享",
+      "tags": ["GDC", "Rendering", "GPU Driven", "OpenWorld", "Optimization"]
+    },
+    {
+      "id": "gdc-anime-pbr",
+      "type": "page",
+      "title": "GDC Vault - Anime Style and Physically Based Rendering",
+      "url": "https://www.gdcvault.com/play/1027597/Technical-Artist-Summit-Finding-Harmony",
+      "category": "技术分享",
+      "tags": ["GDC", "TechnicalArt", "PBR", "ToonShading", "Lighting"]
+    },
+    {
+      "id": "gdc-niagara-technical-art",
+      "type": "page",
+      "title": "GDC Vault - Technical Art with Unreal Niagara",
+      "url": "https://gdcvault.com/play/1029331/Technical-Artist-Summit-Approaching-Technical",
+      "category": "引擎实践",
+      "tags": ["GDC", "Unreal", "Niagara", "VFX", "GPUCompute"]
+    },
+    {
+      "id": "siggraph-advances-rt-rendering",
+      "type": "page",
+      "title": "SIGGRAPH Advances in Real-Time Rendering",
+      "url": "https://advances.realtimerendering.com/",
+      "category": "技术分享",
+      "tags": ["SIGGRAPH", "RealTimeRendering", "Rendering", "Research"]
+    },
+    {
+      "id": "unreal-rendering-docs",
+      "type": "page",
+      "title": "Unreal Engine Rendering and Graphics Documentation",
+      "url": "https://dev.epicgames.com/documentation/unreal-engine/designing-visuals-rendering-and-graphics-with-unreal-engine?lang=en-US",
+      "category": "引擎实践",
+      "tags": ["Unreal", "Rendering", "Materials", "Lighting", "VFX"]
+    },
+    {
+      "id": "unity-urp-vfx-recipes",
+      "type": "page",
+      "title": "Unity URP Visual Effects Recipes",
+      "url": "https://unity.com/blog/engine-platform/12-recipes-for-popular-visual-effects-using-universal-render-pipeline",
+      "category": "引擎实践",
+      "tags": ["Unity", "URP", "VFX", "Shader", "RendererFeature"]
+    },
+    {
       "id": "ta-conference-search",
       "type": "search",
       "title": "TA Conference / Engine Tech Search",

@@ -46,13 +46,16 @@ sync_git_after_update() {
 
   git add \
     .gitignore \
+    css/TA_wiki.css \
     data/ta_wiki_entries.json \
     data/wiki_sources.json \
     data/wiki_memory.json \
+    js/ta_wiki.js \
     scripts/wiki_collect.mjs \
     scripts/wiki_email_digest.mjs \
     scripts/run_wiki_collect.sh \
-    scripts/opencode_wiki_maintainer.sh
+    scripts/opencode_wiki_maintainer.sh \
+    tools_html/TA_wiki.html
 
   if git diff --cached --quiet; then
     echo "- Git sync: no changes"
