@@ -246,9 +246,48 @@ function buildArticleNotes({ title, text, category, tags }) {
   return notes.slice(0, 3);
 }
 
+function zhTopicName({ title, category, tags }) {
+  const lower = [title, category, (tags || []).join(' ')].join(' ').toLowerCase();
+  if (/(pbr|brdf|roughness|metallic|material)/i.test(lower)) return 'PBR 材质与光照模型';
+  if (/(shader|hlsl|glsl|wgsl|compute)/i.test(lower)) return 'Shader 与 GPU 管线';
+  if (/(profiler|performance|optimization|rgp|nsight|pix|bandwidth|memory)/i.test(lower)) return '渲染性能分析';
+  if (/(webgpu|vulkan|directx|opengl|api)/i.test(lower)) return '图形 API 与资源绑定';
+  if (/(gltf|mesh|asset|lod|texture)/i.test(lower)) return '资产管线与资源规范';
+  if (/(shading|lighting|ray tracing|rendering)/i.test(lower)) return '着色与渲染基础';
+  return category || '图形学知识';
+}
+
+function buildChineseSummary({ title, summary, category, tags, originalText }) {
+  const topic = zhTopicName({ title, category, tags });
+  const text = compactText([summary, originalText].filter(Boolean).join(' '));
+  const hints = [];
+  const lower = text.toLowerCase();
+
+  if (/(pbr|brdf|roughness|metallic|basecolor|albedo)/i.test(lower)) {
+    hints.push('重点关注材质参数、贴图编码、能量守恒和不同光照环境下的一致性。');
+  }
+  if (/(shader|hlsl|glsl|wgsl|divergence|wave|instruction)/i.test(lower)) {
+    hints.push('重点关注 Shader 代码、分支发散、指令成本和调试工具定位方式。');
+  }
+  if (/(profiler|performance|optimization|bandwidth|memory|capture)/i.test(lower)) {
+    hints.push('重点关注性能捕获、瓶颈定位、带宽/显存成本和自动化回归检查。');
+  }
+  if (/(webgpu|vulkan|directx|descriptor|resource binding)/i.test(lower)) {
+    hints.push('重点关注资源绑定、管线状态、平台差异和 API 版本限制。');
+  }
+  if (/(shading|lighting|reflection|refraction|surface)/i.test(lower)) {
+    hints.push('重点关注光照、表面朝向、反射/折射和最终颜色计算的关系。');
+  }
+
+  const sourceHint = textSlice(summary || originalText || title, 120);
+  const suffix = hints.length ? hints.slice(0, 2).join('') : '适合作为 TA 知识库的参考条目，落地前需要结合项目引擎、平台和性能预算验证。';
+  return `这篇内容归入“${topic}”。${suffix}原始摘要线索：${sourceHint}`;
+}
+
 function buildContent({ title, summary, sourceUrl, sourceTitle, category, tags, originalText }) {
   const tagLine = tags.length ? tags.join(', ') : '未分类标签';
   const excerptLines = pickRelevantSentences(originalText || summary, 4);
+  const chineseSummary = buildChineseSummary({ title, summary, category, tags, originalText });
   const articleNotes = buildArticleNotes({
     title,
     text: [summary, originalText].join(' '),
@@ -259,7 +298,7 @@ function buildContent({ title, summary, sourceUrl, sourceTitle, category, tags, 
   return [
     '## 自动归纳',
     '',
-    summary || '采集器获取到该来源，但没有足够正文生成详细摘要。',
+    chineseSummary || '采集器获取到该来源，但没有足够正文生成详细中文摘要。',
     '',
     '## 原文摘录',
     '',
@@ -394,7 +433,9 @@ async function enrichEntryWithAi(entry, memory) {
         memoryPrompt(memory),
         '请基于输入内容生成中文 JSON，不要输出 markdown 代码块。',
         'JSON 字段：summary:string, article:string, ta:string[]。',
-        'summary 控制在 120 字内；article 用 2 到 4 段解释文章讲了什么、为什么重要、适用边界；ta 给 3 到 5 条可落地检查建议。',
+        'summary 必须是简体中文，控制在 120 字内，具体说明这条知识讲了什么，不要保留英文原始摘要。',
+        'article 必须是简体中文，用 2 到 4 段解释文章讲了什么、为什么重要、适用边界；ta 给 3 到 5 条可落地检查建议。',
+        '如果原文是英文，需要翻译归纳成中文，不要直接照抄英文句子作为摘要。',
         '不要编造原文没有的信息；如果信息不足，明确说需要打开原文确认。'
       ].join('\n')
     },
@@ -409,6 +450,9 @@ async function enrichEntryWithAi(entry, memory) {
   const ta = Array.isArray(result.ta) ? result.ta.map((item) => String(item).trim()).filter(Boolean) : [];
 
   if (summary) entry.summary = textSlice(summary, 220);
+  if (summary) {
+    entry.content = replaceMarkdownSection(entry.content, '自动归纳', [textSlice(summary, 420)]);
+  }
   if (article) {
     entry.content = replaceMarkdownSection(entry.content, '文章阐述', article.split(/\n+/).filter(Boolean));
   }
