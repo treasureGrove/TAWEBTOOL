@@ -40,6 +40,27 @@
       "url": "https://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading/what-is-shading-light-matter-interaction.html",
       "category": "渲染基础",
       "tags": ["Shading", "Lighting", "Rendering", "RayTracing"]
+    },
+    {
+      "id": "ta-conference-search",
+      "type": "search",
+      "title": "TA Conference / Engine Tech Search",
+      "category": "技术分享",
+      "tags": ["GDC", "Unreal", "Unity", "Rendering", "Shader", "TechnicalArt"],
+      "maxEntries": 4,
+      "maxCandidates": 12,
+      "scope": [
+        "GDC rendering talk technical art shader material pipeline",
+        "Unreal Engine rendering technical art presentation shader material",
+        "Unity graphics rendering technical art shader performance",
+        "SIGGRAPH real-time rendering production shader material pipeline"
+      ],
+      "queries": [
+        "GDC rendering technical art shader material pipeline",
+        "site:dev.epicgames.com Unreal Engine rendering technical art shader material",
+        "site:unity.com graphics rendering technical art shader performance",
+        "SIGGRAPH real-time rendering production shader material pipeline"
+      ]
     }
   ]
 }

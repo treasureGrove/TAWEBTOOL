@@ -703,10 +703,125 @@ async function collectGithubRepo(source) {
   }];
 }
 
+function bingRssUrl(query) {
+  return `https://www.bing.com/search?q=${encodeURIComponent(query)}&format=rss`;
+}
+
+async function buildSearchQueries(source) {
+  const fallback = Array.isArray(source.queries) ? source.queries : [];
+  if (!AI_ENABLED) return fallback;
+
+  try {
+    const result = await callAiJson([
+      {
+        role: 'system',
+        content: [
+          '你是技术美术（TA）知识库的信息检索助手。',
+          '请生成适合搜索引擎的英文查询词，用来找高质量图形学/TA 技术文章。',
+          '重点：GDC、Unreal Engine 技术分享、Unity Graphics、SIGGRAPH、RenderDoc、渲染管线、材质、Shader、性能分析。',
+          '不要生成营销、招聘、新闻泛词。',
+          '输出 JSON：queries:string[]，最多 6 条。'
+        ].join('\n')
+      },
+      {
+        role: 'user',
+        content: [
+          `搜索主题：${source.title || source.id}`,
+          `固定范围：${(source.scope || []).join(', ')}`,
+          `备用查询：${fallback.join(' | ')}`
+        ].join('\n')
+      }
+    ]);
+    const queries = Array.isArray(result.queries)
+      ? result.queries.map((item) => String(item).trim()).filter(Boolean)
+      : [];
+    return queries.length ? queries.slice(0, 6) : fallback;
+  } catch (err) {
+    console.warn(`[wiki] search query AI failed for ${source.id}: ${err.message}`);
+    return fallback;
+  }
+}
+
+async function collectSearch(source) {
+  const entries = [];
+  const seen = new Set();
+  const queries = await buildSearchQueries(source);
+  const perQuery = Math.max(2, Math.ceil((source.maxCandidates || MAX_PER_SOURCE * 2) / Math.max(1, queries.length)));
+
+  for (const query of queries) {
+    let candidates = [];
+    try {
+      const xml = await fetchText(bingRssUrl(query));
+      candidates = parseRssItems(xml).slice(0, perQuery);
+    } catch (err) {
+      console.warn(`[wiki] search failed: ${query}: ${err.message}`);
+      continue;
+    }
+
+    for (const item of candidates) {
+      if (seen.has(item.link)) continue;
+      seen.add(item.link);
+
+      let pageText = item.content || item.summary || item.title;
+      let pageTitle = item.title;
+      try {
+        const html = await fetchText(item.link);
+        pageTitle = firstMatch(html, /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i) ||
+          firstMatch(html, /<title[^>]*>([\s\S]*?)<\/title>/i) ||
+          item.title;
+        pageText = extractReadableText(html) || pageText;
+      } catch (err) {
+        pageText = item.content || item.summary || item.title;
+      }
+
+      const summary = textSlice(item.summary || pageText || pageTitle, 420);
+      const verdict = await classifyCandidateWithAi({
+        title: pageTitle,
+        summary,
+        text: pageText,
+        source,
+        memory: source.memory
+      });
+      if (!verdict.include) continue;
+
+      const tags = verdict.tags.length ? verdict.tags : inferTags([pageTitle, summary, pageText].join(' '), source.tags || []);
+      entries.push({
+        id: idFor(item.link || pageTitle),
+        title: pageTitle,
+        category: verdict.category || source.category || '技术分享',
+        tags,
+        summary,
+        content: buildContent({
+          title: pageTitle,
+          summary,
+          originalText: pageText,
+          sourceUrl: item.link,
+          sourceTitle: source.title,
+          category: verdict.category || source.category || '技术分享',
+          tags
+        }),
+        source: 'search',
+        sourceId: source.id,
+        sourceTitle: source.title,
+        sourceUrl: item.link,
+        quality: 'draft',
+        updatedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().slice(0, 10) : today(),
+        filterReason: `${verdict.reason}；搜索词：${query}`,
+        relevanceScore: verdict.score,
+        filterConfidence: verdict.confidence,
+        contentType: verdict.contentType
+      });
+      if (entries.length >= (source.maxEntries || MAX_PER_SOURCE)) return entries;
+    }
+  }
+  return entries;
+}
+
 async function collectSource(source) {
   if (source.type === 'rss') return collectRss(source);
   if (source.type === 'page') return collectPage(source);
   if (source.type === 'github_repo') return collectGithubRepo(source);
+  if (source.type === 'search') return collectSearch(source);
   console.warn(`skip unsupported source type: ${source.type}`);
   return [];
 }
