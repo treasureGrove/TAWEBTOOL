@@ -76,6 +76,22 @@ function injectMenu() {
     }
 }
 
+function markCurrentMenuItem() {
+    var current = window.location.pathname.replace(/\\/g, '/').split('/').pop() || 'index.html';
+    var links = document.querySelectorAll('.left_menu .sub_menu a');
+    for (var i = 0; i < links.length; i++) {
+        var href = (links[i].getAttribute('href') || '').split('?')[0].split('#')[0].replace(/\\/g, '/').split('/').pop();
+        if (href && href === current) {
+            links[i].classList.add('active-link');
+            var item = links[i].closest('.left_item');
+            if (item) {
+                item.classList.add('active');
+                item.classList.add('open');
+            }
+        }
+    }
+}
+
 // ─── Accordion toggle ───
 function initLeftMenu() {
     var menuRoot = document.querySelector('.menu_root');
@@ -283,7 +299,7 @@ function initTopSearch() {
     if (shouldAnimateEarly) {
         var earlyStyle = document.createElement('style');
         earlyStyle.textContent =
-            'body.pt-entering #panel, body.pt-entering #welcome_title { opacity: 0; }' +
+            'body.pt-entering #panel, body.pt-entering .top_search, body.pt-entering .left_menu, body.pt-entering #welcome_title { opacity: 0; }' +
             'body.pt-entering #main_bg { opacity: 0; }';
         document.head.appendChild(earlyStyle);
         // Apply class to body as soon as it exists
@@ -462,6 +478,7 @@ function initTopSearch() {
 
 document.addEventListener('DOMContentLoaded', function () {
     injectMenu();
+    markCurrentMenuItem();
     initLeftMenu();
     initTopSearch();
 });
