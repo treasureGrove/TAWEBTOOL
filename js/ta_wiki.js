@@ -418,7 +418,9 @@
       ? '<a href="' + escapeHtml(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">查看来源</a>'
       : '';
 
-    contentEl.innerHTML = [
+    contentEl.classList.add('transitioning');
+
+    const html = [
       '<div class="wiki-doc-shell">',
       '<main class="wiki-doc-main">',
       '<div class="wiki-article-head">',
@@ -444,9 +446,28 @@
       '</div>'
     ].join('');
 
-    const cards = listEl.querySelectorAll('.wiki-item');
-    for (let i = 0; i < cards.length; i++) {
+    contentEl.innerHTML = html;
+    contentEl.scrollTop = 0;
+
+    requestAnimationFrame(function () {
+      contentEl.classList.remove('transitioning');
+    });
+
+    var cards = listEl.querySelectorAll('.wiki-item');
+    for (var i = 0; i < cards.length; i++) {
       cards[i].classList.toggle('active', cards[i].dataset.id === id);
+    }
+
+    scrollActiveIntoView();
+  }
+
+  function scrollActiveIntoView() {
+    var activeCard = listEl.querySelector('.wiki-item.active');
+    if (!activeCard) return;
+    var listRect = listEl.getBoundingClientRect();
+    var cardRect = activeCard.getBoundingClientRect();
+    if (cardRect.top < listRect.top || cardRect.bottom > listRect.bottom) {
+      activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 

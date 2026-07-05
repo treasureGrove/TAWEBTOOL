@@ -31,12 +31,12 @@
 .queue-title {
     font-size: 13px;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--app-text-inverse);
     padding: 10px 12px;
-    background: linear-gradient(135deg, rgba(55, 177, 140, 0.9), rgba(35, 137, 107, 0.95));
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
     border-radius: 10px;
-    border: 1px solid rgba(55, 177, 140, 0.3);
-    box-shadow: 0 2px 8px rgba(55, 177, 140, 0.2);
+    border: 1px solid var(--app-line);
+    box-shadow: var(--app-accent-glow);
     text-align: center;
 }
 
@@ -47,9 +47,9 @@
     flex-direction: column;
     gap: 10px;
     padding: 12px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(248, 250, 252, 0.96), rgba(241, 245, 249, 0.96));
-    border: 1px solid rgba(55, 177, 140, 0.15);
+    border-radius: var(--app-radius-md);
+    background: var(--app-glass-strong);
+    border: 1px solid var(--app-line-subtle);
 }
 
 .file-list:empty::before {
@@ -58,25 +58,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #94a3b8;
+    color: var(--app-muted);
     font-size: 13px;
     font-weight: 600;
 }
 
 .file-item {
-    background: #ffffff;
-    border: 1px solid rgba(55, 177, 140, 0.2);
+    background: var(--app-glass-strong);
+    border: 1px solid var(--app-line-subtle);
     border-radius: 10px;
     padding: 9px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--app-shadow-card);
     display: flex;
     flex-direction: column;
     gap: 7px;
 }
 
 .file-item.active {
-    border-color: rgba(84, 126, 199, 0.55);
-    box-shadow: 0 0 0 2px rgba(84, 126, 199, 0.16);
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-glow);
 }
 
 .file-head {
@@ -87,7 +87,7 @@
 
 .file-name {
     font-size: 12px;
-    color: #1f2937;
+    color: var(--app-text);
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -96,13 +96,13 @@
 
 .file-size {
     font-size: 10px;
-    color: #6b7280;
+    color: var(--app-muted);
     white-space: nowrap;
 }
 
 .file-meta {
     font-size: 10px;
-    color: #64748b;
+    color: var(--app-muted);
 }
 
 .file-status {
@@ -120,23 +120,23 @@
 }
 
 .status-badge.pending {
-    background: rgba(100, 116, 139, 0.15);
-    color: #475569;
+    background: rgba(95, 112, 120, 0.15);
+    color: var(--app-muted);
 }
 
 .status-badge.processing {
-    background: rgba(59, 130, 246, 0.15);
-    color: #2563eb;
+    background: var(--app-accent-hover);
+    color: var(--app-accent);
 }
 
 .status-badge.completed {
-    background: rgba(34, 197, 94, 0.14);
-    color: #15803d;
+    background: var(--app-success-bg);
+    color: var(--app-success);
 }
 
 .status-badge.error {
-    background: rgba(239, 68, 68, 0.15);
-    color: #b91c1c;
+    background: var(--app-error-bg);
+    color: var(--app-error);
 }
 
 .file-actions {
@@ -147,7 +147,7 @@
 .file-actions button {
     flex: 1;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--app-radius-xs);
     padding: 5px 8px;
     font-size: 10px;
     font-weight: 600;
@@ -155,18 +155,18 @@
 }
 
 .file-actions .btn-preview {
-    background: rgba(84, 126, 199, 0.75);
-    color: #fff;
+    background: var(--app-accent-strong);
+    color: var(--app-text-inverse);
 }
 
 .file-actions .btn-download {
-    background: rgba(55, 177, 140, 0.8);
-    color: #fff;
+    background: var(--app-accent);
+    color: var(--app-text-inverse);
 }
 
 .file-actions .btn-remove {
     background: rgba(185, 28, 28, 0.76);
-    color: #fff;
+    color: var(--app-text-inverse);
 }
 
 .file-actions button:disabled {
@@ -185,13 +185,13 @@
 .main-content h1 {
     font-size: 17px;
     margin: 0;
-    color: #111827;
+    color: var(--app-text-heading);
 }
 
 .subtitle {
     margin: 4px 0 10px;
     font-size: 12px;
-    color: #475569;
+    color: var(--app-muted);
 }
 
 .upload-section {
@@ -199,29 +199,29 @@
 }
 
 .upload-area {
-    border: 2px dashed rgba(55, 177, 140, 0.4);
+    border: 2px dashed var(--app-line);
     border-radius: 10px;
     padding: 14px;
     text-align: center;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(245, 250, 248, 0.9));
+    background: var(--app-glass-strong);
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: all 0.25s var(--app-ease);
 }
 
 .upload-area:hover {
-    border-color: rgba(55, 177, 140, 0.7);
-    box-shadow: 0 4px 14px rgba(55, 177, 140, 0.16);
+    border-color: var(--app-line-strong);
+    box-shadow: var(--app-accent-glow);
 }
 
 .upload-area.drag-over {
-    background: rgba(55, 177, 140, 0.14);
-    border-color: rgba(55, 177, 140, 0.86);
+    background: var(--app-accent-hover);
+    border-color: var(--app-accent);
 }
 
 .upload-content svg {
     width: 32px;
     height: 32px;
-    color: rgba(55, 177, 140, 0.9);
+    color: var(--app-accent);
     margin-bottom: 6px;
 }
 
@@ -229,13 +229,13 @@
     margin: 0;
     font-size: 13px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--app-text);
 }
 
 .upload-content .sub-text {
     margin-top: 3px;
     font-size: 11px;
-    color: #64748b;
+    color: var(--app-muted);
 }
 
 .settings-panel {
@@ -245,15 +245,15 @@
     padding: 12px;
     margin-bottom: 10px;
     border-radius: 10px;
-    border: 1px solid rgba(55, 177, 140, 0.15);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(249, 252, 251, 0.96));
+    border: 1px solid var(--app-line-subtle);
+    background: var(--app-glass-strong);
 }
 
 .setting-group {
     padding: 9px;
-    border-radius: 8px;
-    border: 1px solid rgba(55, 177, 140, 0.15);
-    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--app-radius-sm);
+    border: 1px solid var(--app-line-subtle);
+    background: var(--app-card);
 }
 
 .setting-group label {
@@ -263,28 +263,28 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.35px;
-    color: rgba(55, 177, 140, 0.95);
+    color: var(--app-accent);
 }
 
 .setting-group select,
 .setting-group input[type="number"] {
     width: 100%;
-    border: 1.5px solid rgba(55, 177, 140, 0.3);
-    border-radius: 6px;
+    border: 1.5px solid var(--app-line);
+    border-radius: var(--app-radius-xs);
     padding: 6px 8px;
     font-size: 11px;
-    background: #fff;
+    background: var(--app-surface-input);
 }
 
 .setting-group input[type="range"] {
     width: 100%;
-    accent-color: rgb(55, 177, 140);
+    accent-color: var(--app-accent-light);
 }
 
 .hint {
     margin-top: 4px;
     font-size: 10px;
-    color: #64748b;
+    color: var(--app-muted);
 }
 
 .action-buttons {
@@ -293,15 +293,15 @@
     justify-content: flex-end;
     margin-bottom: 10px;
     padding: 8px;
-    border: 1px solid rgba(55, 177, 140, 0.15);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--app-line-subtle);
+    border-radius: var(--app-radius-sm);
+    background: var(--app-card);
 }
 
 .btn-primary,
 .btn-secondary {
     border: none;
-    border-radius: 8px;
+    border-radius: var(--app-radius-sm);
     padding: 8px 18px;
     font-size: 13px;
     font-family: "Yu Gothic UI", sans-serif;
@@ -309,23 +309,23 @@
 }
 
 .btn-primary {
-    color: #fff;
-    background: rgba(55, 177, 140, 0.86);
+    color: var(--app-text-inverse);
+    background: var(--app-accent);
 }
 
 .btn-primary:disabled {
-    background: rgba(148, 163, 184, 0.8);
+    background: rgba(95, 112, 120, 0.8);
     cursor: not-allowed;
 }
 
 .btn-secondary {
-    color: #fff;
-    background: rgba(100, 116, 139, 0.75);
+    color: var(--app-text-inverse);
+    background: var(--app-accent-strong);
 }
 
 .progress-container {
-    background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(55, 177, 140, 0.18);
+    background: var(--app-card);
+    border: 1px solid var(--app-line-subtle);
     border-radius: 10px;
     padding: 12px;
     margin-bottom: 10px;
@@ -336,27 +336,27 @@
     height: 18px;
     border-radius: 10px;
     overflow: hidden;
-    background: rgba(226, 232, 240, 0.9);
+    background: var(--app-glass);
 }
 
 .progress-fill {
     width: 0;
     height: 100%;
-    transition: width 0.2s ease;
-    background: linear-gradient(90deg, rgba(55, 177, 140, 0.85), rgba(56, 189, 248, 0.88));
+    transition: width 0.2s var(--app-ease);
+    background: linear-gradient(90deg, var(--app-accent-strong), var(--app-accent));
 }
 
 .progress-text {
     margin-top: 8px;
     text-align: center;
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
 }
 
 .preview-panel {
-    border: 1px solid rgba(55, 177, 140, 0.16);
+    border: 1px solid var(--app-line-subtle);
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--app-card);
     padding: 12px;
 }
 
@@ -371,7 +371,7 @@
 .preview-header h2 {
     margin: 0;
     font-size: 14px;
-    color: #0f172a;
+    color: var(--app-text-heading);
 }
 
 .preview-title-wrap {
@@ -383,12 +383,12 @@
 
 #previewMetrics {
     font-size: 11px;
-    color: #64748b;
+    color: var(--app-muted);
 }
 
 #previewFileName {
     font-size: 11px;
-    color: #64748b;
+    color: var(--app-muted);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -399,7 +399,7 @@
     position: relative;
     border-radius: 10px;
     overflow: hidden;
-    background: #0f172a;
+    background: var(--app-overlay-dark);
     aspect-ratio: 16 / 9;
 }
 
@@ -430,7 +430,7 @@
 #compareSlider {
     width: 100%;
     margin-top: 8px;
-    accent-color: rgb(55, 177, 140);
+    accent-color: var(--app-accent-light);
 }
 
 @media (max-width: 1250px) {

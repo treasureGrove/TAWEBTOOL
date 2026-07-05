@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
   padding: 0 !important;
-  background: rgba(255, 255, 255, 0.94) !important;
+  background: var(--app-glass-strong) !important;
 }
 
 .cm-layout {
@@ -35,7 +35,7 @@
   justify-content: space-between;
   gap: 14px;
   padding: 14px 20px;
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, var(--app-accent) 0%, var(--app-accent-strong) 100%);
   color: #fff;
   flex-shrink: 0;
   border-radius: 10px 10px 0 0;
@@ -132,7 +132,7 @@
 }
 
 .cm-btn.copied {
-  background: #16a34a !important;
+  background: var(--app-success) !important;
 }
 
 .cm-btn-ghost {
@@ -203,11 +203,11 @@
 }
 
 .cm-player-body .aplayer .aplayer-list ol li.aplayer-list-light {
-  background: #fee2e2 !important;
+  background: var(--app-accent-hover) !important;
 }
 
 .cm-player-body .aplayer .aplayer-list ol li:hover {
-  background: #fef2f2;
+  background: var(--app-accent-hover);
 }
 
 /* ── Loading ── */
@@ -217,15 +217,15 @@
   justify-content: center;
   gap: 12px;
   padding: 80px 0;
-  color: #94a3b8;
+  color: var(--app-muted);
   font-size: 14px;
 }
 
 .cm-spinner {
   width: 20px;
   height: 20px;
-  border: 3px solid #fecaca;
-  border-top-color: #dc2626;
+  border: 3px solid var(--app-accent-hover);
+  border-top-color: var(--app-accent);
   border-radius: 50%;
   animation: spin 0.65s linear infinite;
 }
@@ -248,36 +248,36 @@
 .cm-error-title {
   font-size: 16px;
   font-weight: 700;
-  color: #b91c1c;
+  color: var(--app-accent-strong);
   margin-bottom: 6px;
 }
 
 .cm-error-msg {
   font-size: 13px;
-  color: #64748b;
+  color: var(--app-muted);
   margin-bottom: 8px;
 }
 
 .cm-error-hint {
   font-size: 13px;
-  color: #475569;
+  color: var(--app-muted);
   margin-bottom: 16px;
 }
 
 .cm-error-hint a {
-  color: #dc2626;
+  color: var(--app-accent);
   text-decoration: underline;
 }
 
 .cm-btn-retry {
   border-radius: 999px;
-  background: #dc2626;
+  background: var(--app-accent);
   padding: 8px 24px;
   font-size: 13px;
 }
 
 .cm-btn-retry:hover {
-  background: #991b1b;
+  background: var(--app-accent-strong);
 }
 
 /* ── Footer ── */
@@ -287,15 +287,15 @@
   justify-content: space-between;
   padding: 10px 20px;
   font-size: 13px;
-  color: #94a3b8;
-  border-top: 1px solid #f1f5f9;
+  color: var(--app-muted);
+  border-top: 1px solid var(--app-line);
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--app-glass);
   border-radius: 0 0 10px 10px;
 }
 
 .cm-footer-right {
-  color: #cbd5e1;
+  color: var(--app-muted);
 }
 
 /* ── Responsive ── */

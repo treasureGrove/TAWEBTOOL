@@ -30,7 +30,7 @@
 
     /* glassy gradient text */
     color: transparent;
-    background: rgba(255,255,255,0.8);
+    background: var(--app-glass-strong);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -39,7 +39,7 @@
     font-weight: 800;
     letter-spacing: 0.02em;
 
-    -webkit-text-stroke: 0.6px rgba(255,255,255,0.22);
+    -webkit-text-stroke: 0.6px var(--app-line-subtle);
 
     filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25));
 }
@@ -53,7 +53,7 @@
     transform: translate(-50%,-50%) skewY(-6deg);
     width: min(72%, 920px);
     height: 46%;
-    background: linear-gradient(180deg, rgba(177, 201, 255, 0.28), rgba(255, 155, 155, 0.23));
+    background: linear-gradient(180deg, var(--app-accent-glow), rgba(55, 177, 140, 0.16));
     mix-blend-mode: overlay;
     pointer-events: none;
     z-index: 49;

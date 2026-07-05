@@ -30,7 +30,6 @@ var MENU_DATA = [
     { name: 'TA工具', icon: 'icon-ta', items: [
         { label: 'Shader函数库', href: 'shader_library.html', keywords: ['着色器', 'HLSL', '函数'] },
         { label: 'GLSL/HLSL转换器', href: 'glsl_hlsl_converter.html', keywords: ['shader转换', '着色器转换'] },
-        { label: 'UE材质库', href: 'ue_material_picture.html', keywords: ['Unreal', '虚幻', '材质节点'] },
         { label: '物理光照计算器', href: 'physics_light.html', keywords: ['光照', '曝光', 'lux', 'ev'] },
         { label: '色彩空间转换器', href: 'color_space_converter.html', keywords: ['Linear', 'sRGB', 'Gamma', '色彩空间'] },
         { label: '贴图信息查看器', href: 'image_metadata_inspector.html', keywords: ['贴图信息', 'POT', '显存', 'VRAM', '直方图'] },
@@ -287,98 +286,57 @@ function initTopSearch() {
 }
 
 // ─── Page Transition System ───
-// Intercept internal link clicks, preload target page, play premium transition
+// Dark-veil dissolve with subtle shimmer sweep & blur ramp.
+// Uses CSS animation + animationend event instead of JS timers.
 (function () {
-    var TRANSITION_KEY = 'pt_transition';
-    var EXIT_DURATION = 620;   // ms – matches CSS exit animation total duration
-    var ENTER_DURATION = 800;  // ms – enter animation cleanup
+    var KEY = 'pt_transition';
 
-    // Prevent flash: inject blocking style immediately before first paint
-    var shouldAnimateEarly = false;
-    try { shouldAnimateEarly = sessionStorage.getItem(TRANSITION_KEY) === '1'; } catch (e) {}
-    if (shouldAnimateEarly) {
-        var earlyStyle = document.createElement('style');
-        earlyStyle.textContent =
-            'body.pt-entering #panel, body.pt-entering .top_search, body.pt-entering .left_menu, body.pt-entering #welcome_title { opacity: 0; }' +
-            'body.pt-entering #main_bg { opacity: 0; }';
-        document.head.appendChild(earlyStyle);
-        // Apply class to body as soon as it exists
-        if (document.body) {
-            document.body.classList.add('pt-entering');
-        } else {
-            document.addEventListener('DOMContentLoaded', function () {
-                document.body.classList.add('pt-entering');
-            });
-        }
+    function createVeil(className) {
+        var v = document.createElement('div');
+        v.id = 'pt-veil';
+        v.className = className;
+        v.style.cssText = 'position:fixed;inset:0;z-index:99999;pointer-events:all;';
+        return v;
     }
 
-    // Build overlay DOM (three slices + shimmer handled by CSS ::after)
-    function createOverlay() {
-        var overlay = document.createElement('div');
-        overlay.className = 'page-transition-overlay';
-        for (var i = 0; i < 3; i++) {
-            var slice = document.createElement('div');
-            slice.className = 'pt-slice';
-            overlay.appendChild(slice);
-        }
-        return overlay;
+    // ── Enter phase: block content before first paint ──
+    var entering = false;
+    try { entering = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
+    if (entering) {
+        try { sessionStorage.removeItem(KEY); } catch (e) {}
+        var veil = createVeil('veil-enter');
+        veil.style.opacity = '1'; // fully opaque until animation starts
+        document.documentElement.appendChild(veil);
+        window._ptVeil = veil;
     }
 
-    // Create a small dot-pulse loader
-    function createLoader() {
-        var loader = document.createElement('div');
-        loader.className = 'pt-loader';
-        for (var i = 0; i < 3; i++) {
-            loader.appendChild(document.createElement('span'));
-        }
-        return loader;
+    function playEnterAnimation() {
+        var v = window._ptVeil;
+        if (!v) return;
+        window._ptVeil = null;
+        // Trigger CSS dissolve: blur reduces, opacity → 0, sweep passes
+        v.addEventListener('animationend', function () {
+            if (v.parentNode) v.parentNode.removeChild(v);
+        }, { once: true });
+        // Replace inline opacity with class-driven animation
+        v.style.opacity = '';
+        v.classList.add('dissolving');
     }
 
-    // Preload the target page HTML and extract image URLs to prefetch
-    function preloadPage(href, callback) {
-        // file:// protocol blocks XHR to other local files; skip preloading
-        if (window.location.protocol === 'file:') {
-            callback();
-            return;
-        }
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', href, true);
-        xhr.responseType = 'text';
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                // Parse HTML and find background-image / img src URLs
-                var parser = new DOMParser();
-                var doc = parser.parseFromString(xhr.responseText, 'text/html');
-                var imgs = doc.querySelectorAll('img[src]');
-                var prefetched = [];
-                for (var i = 0; i < imgs.length; i++) {
-                    var img = new Image();
-                    img.src = imgs[i].getAttribute('src');
-                    prefetched.push(img);
-                }
-                // Also detect CSS var(--xxx-bg-image) in inline styles / <style>
-                var styles = doc.querySelectorAll('style');
-                var urlRe = /url\(["']?([^"')]+)["']?\)/g;
-                for (var s = 0; s < styles.length; s++) {
-                    var m;
-                    while ((m = urlRe.exec(styles[s].textContent)) !== null) {
-                        if (m[1]) { var im = new Image(); im.src = m[1]; prefetched.push(im); }
-                    }
-                }
-                // Give images a brief window to start loading
-                setTimeout(function () { callback(); }, 80);
-            } else {
-                callback();
-            }
-        };
-        xhr.onerror = function () { callback(); };
-        xhr.send();
+    // ── Exit phase ──
+    function triggerExitTransition(href) {
+        var v = createVeil('veil-exit');
+        document.documentElement.appendChild(v);
+        v.addEventListener('animationend', function () {
+            try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
+            window.location.href = href;
+        }, { once: true });
     }
 
-    // Check if a link is an internal navigation (same origin, .html)
+    window.triggerExitTransition = triggerExitTransition;
+
     function isInternalLink(href) {
         if (!href) return false;
-        // Skip anchors, javascript:, external, and new-tab links
         if (href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return false;
         if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return false;
         try {
@@ -389,82 +347,18 @@ function initTopSearch() {
         }
     }
 
-    // Run the exit transition then navigate
-    function triggerExitTransition(href) {
-        document.body.classList.add('pt-exiting');
-
-        var overlay = createOverlay();
-        overlay.classList.add('pt-exit');
-        document.body.appendChild(overlay);
-
-        var loader = createLoader();
-        document.body.appendChild(loader);
-
-        var minElapsed = false;
-        var preloaded = false;
-
-        function tryNavigate() {
-            if (minElapsed && preloaded) {
-                // Signal the next page to play enter animation
-                try { sessionStorage.setItem(TRANSITION_KEY, '1'); } catch (e) {}
-                window.location.href = href;
-            }
-        }
-
-        // Ensure exit animation has time to play
-        setTimeout(function () { minElapsed = true; tryNavigate(); }, EXIT_DURATION);
-
-        // Preload in parallel
-        preloadPage(href, function () { preloaded = true; tryNavigate(); });
-    }
-
-    // Expose for use by search handler
-    window.triggerExitTransition = triggerExitTransition;
-
-    // Intercept clicks on sub_menu links and search result links
     function interceptNavigation() {
         document.addEventListener('click', function (event) {
             var anchor = event.target.closest('a');
             if (!anchor) return;
             var href = anchor.getAttribute('href');
             if (!isInternalLink(href)) return;
-            // Don't intercept if modifier keys pressed (new tab, etc.)
             if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
             event.preventDefault();
             triggerExitTransition(href);
         });
     }
 
-    // Play enter animation on page load if transition flag is set
-    function playEnterAnimation() {
-        var shouldAnimate = false;
-        try { shouldAnimate = sessionStorage.getItem(TRANSITION_KEY) === '1'; } catch (e) {}
-        if (!shouldAnimate) return;
-        try { sessionStorage.removeItem(TRANSITION_KEY); } catch (e) {}
-
-        // pt-entering class may already be applied from early flash prevention
-        if (!document.body.classList.contains('pt-entering')) {
-            document.body.classList.add('pt-entering');
-        }
-
-        var overlay = createOverlay();
-        overlay.classList.add('pt-enter');
-        document.body.appendChild(overlay);
-
-        // Small RAF delay to ensure overlay is painted before animation starts
-        requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-                // Trigger content fade-in
-                document.body.classList.add('pt-entering');
-                setTimeout(function () {
-                    document.body.classList.remove('pt-entering');
-                    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-                }, ENTER_DURATION);
-            });
-        });
-    }
-
-    // Hook into DOMContentLoaded (runs after existing menu init)
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
             interceptNavigation();

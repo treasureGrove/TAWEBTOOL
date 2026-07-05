@@ -185,7 +185,7 @@
     if (key === 'chatgpt') return initChatTool(main);
     if (key === 'ai_draw') return initAiDrawTool(main);
 
-    renderDefault(main, key);
+  renderDefault(main, key);
   }
 
   if (document.readyState === 'loading') {

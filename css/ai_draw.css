@@ -22,11 +22,11 @@
 }
 
 .card-lite {
-    background: rgba(15, 23, 42, 0.82);
-    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: var(--app-glass);
+    border: 1px solid var(--app-line-subtle);
     border-radius: 14px;
     padding: 16px;
-    color: #e2e8f0;
+    color: var(--app-text);
     backdrop-filter: blur(4px);
 }
 
@@ -38,7 +38,7 @@
 .ai-draw-form label {
     display: block;
     margin: 12px 0 6px;
-    color: #cbd5e1;
+    color: var(--app-text);
     font-size: 13px;
 }
 
@@ -47,9 +47,9 @@
 .ai-draw-form select {
     width: 100%;
     border-radius: 10px;
-    border: 1px solid rgba(148, 163, 184, 0.32);
-    background: rgba(15, 23, 42, 0.92);
-    color: #f8fafc;
+    border: 1px solid var(--app-line);
+    background: var(--app-surface-input);
+    color: var(--app-text);
     padding: 10px;
     box-sizing: border-box;
 }
@@ -80,7 +80,7 @@
     border-radius: 10px;
     padding: 10px 14px;
     cursor: pointer;
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    background: linear-gradient(135deg, var(--app-accent), var(--app-accent-strong));
     color: #fff;
     font-weight: 600;
 }
@@ -91,8 +91,8 @@
 .prompt-helper button.ghost,
 .chip {
     background: transparent;
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    color: #e2e8f0;
+    border: 1px solid var(--app-line);
+    color: var(--app-text);
 }
 
 .preset-list {
@@ -111,11 +111,11 @@
     min-height: 20px;
     margin-top: 10px;
     font-size: 13px;
-    color: #93c5fd;
+    color: var(--app-accent);
 }
 
 .status-text.error {
-    color: #fca5a5;
+    color: var(--app-error);
 }
 
 .draw-output-head {
@@ -133,15 +133,15 @@
 }
 
 .draw-item {
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    border: 1px solid var(--app-line-subtle);
     border-radius: 12px;
     overflow: hidden;
-    background: rgba(15, 23, 42, 0.6);
+    background: var(--app-glass);
 }
 
 .draw-item-image-wrap {
     aspect-ratio: 1 / 1;
-    background: rgba(15, 23, 42, 0.8);
+    background: var(--app-overlay-dark);
 }
 
 .draw-item img {
@@ -161,14 +161,14 @@
 }
 
 .draw-item-meta a {
-    color: #93c5fd;
+    color: var(--app-accent);
 }
 
 .empty-result {
-    border: 1px dashed rgba(148, 163, 184, 0.4);
+    border: 1px dashed var(--app-line);
     border-radius: 12px;
     padding: 28px;
-    color: #94a3b8;
+    color: var(--app-muted);
     text-align: center;
     grid-column: 1 / -1;
 }
@@ -186,7 +186,7 @@
     padding: 4px 0;
     background: none;
     border: none;
-    color: #cbd5e1;
+    color: var(--app-text);
     cursor: pointer;
     text-align: left;
 }

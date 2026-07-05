@@ -1,11 +1,11 @@
 :root {
-  --vc-accent: #2fa888;
-  --vc-accent-strong: #1f8e71;
-  --vc-text: #233036;
-  --vc-sub: #5e6e75;
-  --vc-line: rgba(47, 168, 136, 0.2);
-  --vc-card: rgba(255, 255, 255, 0.72);
-  --vc-card-strong: rgba(255, 255, 255, 0.9);
+  --vc-accent: var(--app-accent);
+  --vc-accent-strong: var(--app-accent-strong);
+  --vc-text: var(--app-text);
+  --vc-sub: var(--app-muted);
+  --vc-line: var(--app-line-subtle);
+  --vc-card: var(--app-glass);
+  --vc-card-strong: var(--app-glass-strong);
 }
 
 #main_bg {
@@ -88,10 +88,10 @@
 .vc-btn {
   min-height: 36px;
   padding: 0 14px;
-  border: 1px solid rgba(47, 168, 136, 0.25);
+  border: 1px solid var(--app-line);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.92);
-  color: #374151;
+  background: var(--app-surface-input);
+  color: var(--app-text);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -100,7 +100,7 @@
 
 .vc-btn:hover:not(:disabled) {
   background: #fff;
-  border-color: rgba(47, 168, 136, 0.55);
+  border-color: var(--app-line-strong);
   transform: translateY(-1px);
 }
 
@@ -117,12 +117,12 @@
 }
 
 .vc-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #34b996, #1e886c);
+  background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
   box-shadow: 0 6px 14px rgba(26, 112, 90, 0.32);
 }
 
 .vc-danger {
-  color: #9d3342;
+  color: var(--app-error);
   border-color: rgba(157, 51, 66, 0.22);
   background: rgba(255, 247, 248, 0.92);
 }
@@ -161,7 +161,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px dashed rgba(47, 168, 136, 0.55);
+  border: 1px dashed var(--app-line-strong);
   border-radius: 12px;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.86), rgba(234, 248, 242, 0.72));
   box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
@@ -171,7 +171,7 @@
 
 .vc-dropzone:hover,
 .vc-dropzone.is-dragover {
-  border-color: rgba(47, 168, 136, 0.86);
+  border-color: var(--app-line-strong);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(227, 246, 239, 0.84));
   box-shadow: 0 10px 20px rgba(24, 91, 73, 0.12);
 }
@@ -200,7 +200,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  background: #070b0f;
+  background: var(--app-overlay-dark);
   border-radius: 10px;
 }
 
@@ -224,7 +224,7 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 10px;
-  color: #2d6f5f;
+  color: var(--app-accent-strong);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
@@ -252,7 +252,7 @@
 .vc-section {
   padding-bottom: 16px;
   margin-bottom: 16px;
-  border-bottom: 1px solid rgba(47, 168, 136, 0.16);
+  border-bottom: 1px solid var(--app-line-subtle);
 }
 
 .vc-section:last-child {
@@ -284,11 +284,11 @@
   width: 100%;
   min-height: 36px;
   box-sizing: border-box;
-  border: 1px solid rgba(47, 168, 136, 0.26);
+  border: 1px solid var(--app-line);
   border-radius: 8px;
   padding: 0 10px;
-  color: #1f2937;
-  background: rgba(255, 255, 255, 0.92);
+  color: var(--app-text);
+  background: var(--app-surface-input);
   font-size: 13px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -296,8 +296,8 @@
 .vc-field input:focus,
 .vc-field select:focus {
   outline: none;
-  border-color: rgba(47, 168, 136, 0.62);
-  box-shadow: 0 0 0 3px rgba(47, 168, 136, 0.12);
+  border-color: var(--app-line-strong);
+  box-shadow: 0 0 0 3px var(--app-accent-hover);
 }
 
 .vc-two {
@@ -316,7 +316,7 @@
 }
 
 .vc-meta b {
-  color: #2d6f5f;
+  color: var(--app-accent-strong);
   font-weight: 700;
 }
 
@@ -333,9 +333,9 @@
   margin: 0;
   padding: 10px 12px;
   border-radius: 10px;
-  color: #e2e8f0;
-  background: #0f172a;
-  border: 1px solid rgba(47, 168, 136, 0.16);
+  color: var(--app-text-inverse);
+  background: var(--app-overlay-dark);
+  border: 1px solid var(--app-line-subtle);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -344,7 +344,7 @@
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(47, 168, 136, 0.14);
+  background: var(--app-accent-hover);
   margin-bottom: 10px;
 }
 
@@ -353,7 +353,7 @@
   width: 0;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--vc-accent), #4ade80);
+  background: linear-gradient(90deg, var(--vc-accent), var(--app-accent-light));
   transition: width 0.2s ease;
 }
 
@@ -368,7 +368,7 @@
   max-height: 240px;
   object-fit: contain;
   border-radius: 10px;
-  background: #070b0f;
+  background: var(--app-overlay-dark);
 }
 
 .vc-download {

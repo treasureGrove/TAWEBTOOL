@@ -8,12 +8,12 @@
 }
 
 :root {
-    --accent: #2fa888;
-    --accent-strong: #1f8e71;
-    --text-main: #233036;
-    --text-sub: #5e6e75;
-    --line-soft: rgba(47, 168, 136, 0.2);
-    --card-bg: rgba(255, 255, 255, 0.68);
+    --accent: var(--app-accent);
+    --accent-strong: var(--app-accent-strong);
+    --text-main: var(--app-text);
+    --text-sub: var(--app-muted);
+    --line-soft: var(--app-line);
+    --card-bg: var(--app-card);
 }
 
 #main_bg {
@@ -33,7 +33,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(245, 252, 249, 0.62));
+    background: linear-gradient(135deg, var(--app-glass), rgba(245, 252, 249, 0.62));
     border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
@@ -52,35 +52,35 @@
 }
 
 .upload-area {
-    border: 1px dashed rgba(47, 168, 136, 0.55);
+    border: 1px dashed var(--app-line-strong);
     border-radius: 12px;
     padding: 28px 16px 42px 16px;
     text-align: center;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(234, 248, 242, 0.72));
+    background: linear-gradient(160deg, var(--app-glass-strong), rgba(234, 248, 242, 0.72));
     cursor: pointer;
     transition: all 0.24s ease;
 }
 
 .upload-area:hover {
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(227, 246, 239, 0.78));
-    border-color: rgba(47, 168, 136, 0.85);
+    background: linear-gradient(160deg, var(--app-surface-input), rgba(227, 246, 239, 0.78));
+    border-color: var(--app-accent);
     transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(27, 102, 82, 0.1);
+    box-shadow: var(--app-shadow-card);
 }
 
 .upload-area.drag-over {
-    border-color: rgba(55, 177, 140, 0.8);
-    background: rgba(55, 177, 140, 0.15);
+    border-color: var(--app-accent);
+    background: var(--app-accent-hover);
 }
 
 .upload-content svg {
-    color: rgba(47, 168, 136, 0.75);
+    color: var(--app-accent);
     margin-bottom: 16px;
 }
 
 .upload-content p {
     font-size: 16px;
-    color: #333;
+    color: var(--app-text);
     margin: 8px 0;
     /* font-weight: 500; */
     font-family: "Yu Gothic UI", sans-serif;
@@ -108,13 +108,13 @@
     font-family: "Yu Gothic UI", sans-serif;
     transition: all 0.2s;
     z-index: 10;
-    box-shadow: 0 4px 12px rgba(35, 126, 102, 0.28);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .upload-folder-btn:hover {
-    background: linear-gradient(135deg, #34b996, #1e886c);
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
     transform: translateX(-50%) translateY(-1px);
-    box-shadow: 0 6px 14px rgba(26, 112, 90, 0.34);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .settings-panel {
@@ -124,7 +124,7 @@
     margin-bottom: 12px;
     border: 1px solid var(--line-soft);
     flex-shrink: 0;
-    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+    box-shadow: var(--app-shadow-card);
 }
 
 .setting-group {
@@ -154,7 +154,7 @@
 
 .column-title {
     font-size: 13px;
-    color: #2d6f5f;
+    color: var(--app-accent-strong);
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -169,7 +169,7 @@
     border: 1px solid var(--line-soft);
     border-radius: 12px;
     padding: 10px;
-    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+    box-shadow: var(--app-shadow-card);
 }
 
 .control-column {
@@ -188,7 +188,7 @@
     border: 1px solid var(--line-soft);
     border-radius: 8px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--app-surface-input);
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: "Yu Gothic UI", sans-serif;
@@ -197,8 +197,8 @@
 .setting-group select:focus,
 .setting-group input[type="text"]:focus {
     outline: none;
-    border-color: rgba(47, 168, 136, 0.55);
-    box-shadow: 0 0 0 3px rgba(47, 168, 136, 0.12);
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 3px var(--app-accent-hover);
 }
 
 .setting-group input[type="range"] {
@@ -216,8 +216,8 @@
 .radio-group label {
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(47, 168, 136, 0.16);
+    background: var(--app-glass);
+    border: 1px solid var(--app-line-subtle);
     border-radius: 999px;
     padding: 5px 10px;
     cursor: pointer;
@@ -227,14 +227,14 @@
 }
 
 .radio-group label:hover {
-    border-color: rgba(47, 168, 136, 0.35);
+    border-color: var(--app-line);
     background: rgba(239, 250, 246, 0.95);
 }
 
 .radio-group input[type="radio"] {
     margin-right: 4px;
     cursor: pointer;
-    accent-color: rgba(55, 177, 140, 0.8);
+    accent-color: var(--app-accent);
 }
 
 .target-size-row {
@@ -264,7 +264,7 @@
 
 .file-note {
     font-size: 12px;
-    color: #4f666f;
+    color: var(--app-muted);
     margin-top: 2px;
     font-family: "Yu Gothic UI", sans-serif;
 }
@@ -278,18 +278,18 @@
 .suffix-input {
     width: 110px;
     padding: 5px 8px;
-    border: 1px solid rgba(47, 168, 136, 0.3);
+    border: 1px solid var(--app-line);
     border-radius: 5px;
     font-size: 13px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--app-surface-input);
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: "Yu Gothic UI", sans-serif;
 }
 
 .suffix-input:focus {
-    border-color: rgba(47, 168, 136, 0.65);
-    box-shadow: 0 0 0 2px rgba(47, 168, 136, 0.12);
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-hover);
 }
 
 .folder-input {
@@ -315,7 +315,7 @@
 }
 
 .folder-input button:hover {
-    background: linear-gradient(135deg, #34b996, #1e886c);
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
 }
 
 .file-list {
@@ -327,21 +327,21 @@
 }
 
 .file-item {
-    background: rgba(255, 255, 255, 0.84);
+    background: var(--app-glass-strong);
     border-radius: 10px;
     padding: 10px 12px;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1px solid rgba(47, 168, 136, 0.15);
+    border: 1px solid var(--app-line-subtle);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .file-item:hover {
     transform: translateY(-1px);
-    box-shadow: 0 7px 14px rgba(28, 103, 84, 0.14);
-    border-color: rgba(47, 168, 136, 0.35);
+    box-shadow: var(--app-shadow-subtle);
+    border-color: var(--app-line);
 }
 
 .file-info {
@@ -356,8 +356,8 @@
     height: 44px;
     border-radius: 8px;
     object-fit: cover;
-    background: rgba(55, 177, 140, 0.08);
-    border: 1px solid rgba(55, 177, 140, 0.15);
+    background: var(--app-accent-hover);
+    border: 1px solid var(--app-line-subtle);
 }
 
 .file-details {
@@ -375,13 +375,13 @@
 
 .file-size {
     font-size: 12px;
-    color: #6c7a80;
+    color: var(--app-muted);
     font-family: "Yu Gothic UI", sans-serif;
 }
 
 .file-size-compare {
     font-size: 12px;
-    color: rgba(38, 141, 113, 0.95);
+    color: var(--app-accent);
     /* font-weight: 500; */
     margin-top: 2px;
     font-family: "Yu Gothic UI", sans-serif;
@@ -393,7 +393,7 @@
 
 .file-status {
     font-size: 12px;
-    color: #258b57;
+    color: var(--app-accent-strong);
     /* font-weight: 500; */
     margin-right: 8px;
     font-family: "Yu Gothic UI", sans-serif;
@@ -443,13 +443,13 @@
 .btn-primary {
     background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
-    box-shadow: 0 6px 14px rgba(26, 112, 90, 0.27);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #34b996, #1e886c);
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
     transform: translateY(-1px);
-    box-shadow: 0 8px 16px rgba(22, 98, 78, 0.34);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .btn-primary:disabled {
@@ -468,12 +468,12 @@
 }
 
 .progress-container {
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--app-glass);
     border-radius: 12px;
     padding: 14px 16px;
     border: 1px solid var(--line-soft);
     flex-shrink: 0;
-    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+    box-shadow: var(--app-shadow-card);
 }
 
 @media (max-height: 860px) {
@@ -499,12 +499,12 @@
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 12px;
-    border: 1px solid rgba(47, 168, 136, 0.16);
+    border: 1px solid var(--app-line-subtle);
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #33b492, #238b6f);
+    background: linear-gradient(90deg, var(--app-accent-light), var(--app-accent-strong));
     transition: width 0.3s;
     width: 0;
     box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);

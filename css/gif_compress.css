@@ -7,12 +7,12 @@
 }
 
 :root {
-    --accent: #2fa888;
-    --accent-strong: #1f8e71;
-    --text-main: #233036;
-    --text-sub: #5e6e75;
-    --line-soft: rgba(47, 168, 136, 0.2);
-    --card-bg: rgba(255, 255, 255, 0.68);
+    --accent: var(--app-accent);
+    --accent-strong: var(--app-accent-strong);
+    --text-main: var(--app-text);
+    --text-sub: var(--app-muted);
+    --line-soft: var(--app-line);
+    --card-bg: var(--app-card);
 }
 
 #main_bg {
@@ -32,7 +32,7 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(245, 252, 249, 0.62));
+    background: linear-gradient(135deg, var(--app-glass), rgba(245, 252, 249, 0.62));
     border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
@@ -68,12 +68,12 @@
     border: 1px solid var(--line-soft);
     border-radius: 12px;
     padding: 10px;
-    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+    box-shadow: var(--app-shadow-card);
 }
 
 .column-title {
     font-size: 13px;
-    color: #2d6f5f;
+    color: var(--app-accent-strong);
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -88,7 +88,7 @@
     justify-content: center;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 8px;
-    border: 1px dashed rgba(47, 168, 136, 0.3);
+    border: 1px dashed var(--app-line);
     overflow: hidden;
 }
 
@@ -114,7 +114,7 @@
 }
 
 .preview-info .size-reduced {
-    color: rgba(38, 141, 113, 0.95);
+    color: var(--app-accent);
     font-weight: 500;
 }
 
@@ -138,35 +138,35 @@
 }
 
 .upload-area {
-    border: 1px dashed rgba(47, 168, 136, 0.55);
+    border: 1px dashed var(--app-line-strong);
     border-radius: 12px;
     padding: 28px 16px;
     text-align: center;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(234, 248, 242, 0.72));
+    background: linear-gradient(160deg, var(--app-glass-strong), rgba(234, 248, 242, 0.72));
     cursor: pointer;
     transition: all 0.24s ease;
 }
 
 .upload-area:hover {
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(227, 246, 239, 0.78));
-    border-color: rgba(47, 168, 136, 0.85);
+    background: linear-gradient(160deg, var(--app-surface-input), rgba(227, 246, 239, 0.78));
+    border-color: var(--app-accent);
     transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(27, 102, 82, 0.1);
+    box-shadow: var(--app-shadow-card);
 }
 
 .upload-area.drag-over {
-    border-color: rgba(55, 177, 140, 0.8);
-    background: rgba(55, 177, 140, 0.15);
+    border-color: var(--app-accent);
+    background: var(--app-accent-hover);
 }
 
 .upload-content svg {
-    color: rgba(47, 168, 136, 0.75);
+    color: var(--app-accent);
     margin-bottom: 16px;
 }
 
 .upload-content p {
     font-size: 16px;
-    color: #333;
+    color: var(--app-text);
     margin: 8px 0;
     font-family: "Yu Gothic UI", sans-serif;
 }
@@ -184,7 +184,7 @@
     margin-bottom: 12px;
     border: 1px solid var(--line-soft);
     flex-shrink: 0;
-    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+    box-shadow: var(--app-shadow-card);
 }
 
 .setting-group {
@@ -210,7 +210,7 @@
     border: 1px solid var(--line-soft);
     border-radius: 8px;
     font-size: 14px;
-    background: rgba(255, 255, 255, 0.92);
+    background: var(--app-surface-input);
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: "Yu Gothic UI", sans-serif;
@@ -218,8 +218,8 @@
 
 .setting-group select:focus {
     outline: none;
-    border-color: rgba(47, 168, 136, 0.55);
-    box-shadow: 0 0 0 3px rgba(47, 168, 136, 0.12);
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 3px var(--app-accent-hover);
 }
 
 .setting-group input[type="range"] {
@@ -256,13 +256,13 @@
 .btn-primary {
     background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
-    box-shadow: 0 6px 14px rgba(26, 112, 90, 0.27);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #34b996, #1e886c);
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
     transform: translateY(-1px);
-    box-shadow: 0 8px 16px rgba(22, 98, 78, 0.34);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .btn-primary:disabled {
@@ -283,12 +283,12 @@
 }
 
 .progress-container {
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--app-glass);
     border-radius: 12px;
     padding: 14px 16px;
     border: 1px solid var(--line-soft);
     flex-shrink: 0;
-    box-shadow: 0 8px 16px rgba(24, 91, 73, 0.08);
+    box-shadow: var(--app-shadow-card);
 }
 
 .progress-bar {

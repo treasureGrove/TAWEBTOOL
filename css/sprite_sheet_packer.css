@@ -1,10 +1,10 @@
 :root {
-    --accent: #2fa888;
-    --accent-strong: #1f8e71;
-    --text-main: #233036;
-    --text-sub: #5e6e75;
-    --line-soft: rgba(47, 168, 136, 0.2);
-    --card-bg: rgba(255, 255, 255, 0.68);
+    --accent: var(--app-accent);
+    --accent-strong: var(--app-accent-strong);
+    --text-main: var(--app-text);
+    --text-sub: var(--app-muted);
+    --line-soft: var(--app-line-subtle);
+    --card-bg: var(--app-card);
 }
 
 #main_bg {
@@ -64,7 +64,7 @@
 }
 
 .ss-drop-zone {
-    border: 1px dashed rgba(47,168,136,0.55);
+    border: 1px dashed var(--app-line-strong);
     border-radius: 10px;
     padding: 24px 12px;
     text-align: center;
@@ -76,10 +76,10 @@
 
 .ss-drop-zone:hover {
     background: linear-gradient(160deg, rgba(255,255,255,0.94), rgba(227,246,239,0.78));
-    border-color: rgba(47,168,136,0.85);
+    border-color: var(--app-line-strong);
 }
 
-.ss-drop-zone p { font-size: 14px; color: #333; margin-bottom: 4px; }
+.ss-drop-zone p { font-size: 14px; color: var(--app-text); margin-bottom: 4px; }
 .ss-drop-zone small { font-size: 12px; color: var(--text-sub); }
 
 .ss-opt-row {
@@ -101,7 +101,7 @@
     border: 1px solid var(--line-soft);
     border-radius: 7px;
     font-size: 13px;
-    background: rgba(255,255,255,0.92);
+    background: var(--app-surface-input);
     font-family: "Yu Gothic UI", sans-serif;
     flex: 1;
     max-width: 140px;
@@ -123,19 +123,19 @@
 }
 
 .ss-btn:hover {
-    background: linear-gradient(135deg, #34b996, #1e886c);
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
     transform: translateY(-1px);
 }
 
 .ss-btn:disabled {
-    background: rgba(150,150,150,0.6);
+    background: var(--app-line);
     cursor: not-allowed;
     transform: none;
 }
 
 .ss-btn-secondary {
     padding: 8px 16px;
-    background: rgba(104,120,130,0.8);
+    background: var(--app-accent-hover);
     color: white;
     border: none;
     border-radius: 7px;
@@ -146,7 +146,7 @@
 }
 
 .ss-btn-secondary:hover {
-    background: rgba(82,98,109,0.92);
+    background: var(--app-accent-pressed);
 }
 
 /* Sprite list */
@@ -172,7 +172,7 @@
     height: 28px;
     object-fit: contain;
     border-radius: 4px;
-    background: #0f172a;
+    background: var(--app-overlay-dark);
 }
 
 .ss-sprite-item .name {
@@ -191,7 +191,7 @@
 
 .ss-sprite-item .remove {
     padding: 2px 8px;
-    background: rgba(193,69,69,0.78);
+    background: var(--app-error);
     color: white;
     border: none;
     border-radius: 4px;
@@ -201,7 +201,7 @@
 
 /* Output canvas */
 .ss-output-wrap {
-    background: #0f172a;
+    background: var(--app-overlay-dark);
     border-radius: 10px;
     padding: 10px;
     text-align: center;
@@ -222,8 +222,8 @@
 }
 
 .ss-json-box {
-    background: rgba(15,23,42,0.92);
-    color: #e2e8f0;
+    background: var(--app-overlay-dark);
+    color: var(--app-text-inverse);
     border-radius: 8px;
     padding: 10px;
     font-size: 11px;

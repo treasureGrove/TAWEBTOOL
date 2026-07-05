@@ -1,10 +1,10 @@
 :root {
-    --accent: #2fa888;
-    --accent-strong: #1f8e71;
-    --text-main: #233036;
-    --text-sub: #5e6e75;
-    --line-soft: rgba(47, 168, 136, 0.2);
-    --card-bg: rgba(255, 255, 255, 0.68);
+    --accent: var(--app-accent);
+    --accent-strong: var(--app-accent-strong);
+    --text-main: var(--app-text);
+    --text-sub: var(--app-muted);
+    --line-soft: var(--app-line);
+    --card-bg: var(--app-card);
 }
 
 #main_bg {
@@ -23,7 +23,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    background: linear-gradient(135deg, rgba(255,255,255,0.72), rgba(245,252,249,0.62));
+    background: linear-gradient(135deg, var(--app-glass), rgba(245,252,249,0.62));
     border: 1px solid rgba(255,255,255,0.45);
 }
 
@@ -94,7 +94,7 @@
     border: 1px solid var(--line-soft);
     border-radius: 7px;
     font-size: 13px;
-    background: rgba(255,255,255,0.92);
+    background: var(--app-surface-input);
     width: 80px;
     box-sizing: border-box;
     font-family: "Yu Gothic UI", sans-serif;
@@ -118,7 +118,7 @@
 }
 
 .cs-result-item {
-    background: rgba(255,255,255,0.8);
+    background: var(--app-card);
     border: 1px solid var(--line-soft);
     border-radius: 8px;
     padding: 8px 10px;
@@ -161,7 +161,7 @@
 
 .cs-curve-legend span {
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--app-text-inverse-muted);
     display: flex;
     align-items: center;
     gap: 4px;
@@ -176,11 +176,11 @@
 
 /* Image converter */
 .cs-drop-zone {
-    border: 1px dashed rgba(47,168,136,0.55);
+    border: 1px dashed var(--app-line-strong);
     border-radius: 10px;
     padding: 28px 16px;
     text-align: center;
-    background: linear-gradient(160deg, rgba(255,255,255,0.85), rgba(234,248,242,0.72));
+    background: linear-gradient(160deg, var(--app-glass-strong), rgba(234,248,242,0.72));
     cursor: pointer;
     transition: all 0.24s ease;
     margin-bottom: 12px;
@@ -188,11 +188,11 @@
 }
 
 .cs-drop-zone:hover {
-    background: linear-gradient(160deg, rgba(255,255,255,0.94), rgba(227,246,239,0.78));
-    border-color: rgba(47,168,136,0.85);
+    background: linear-gradient(160deg, var(--app-surface-input), rgba(227,246,239,0.78));
+    border-color: var(--app-accent);
 }
 
-.cs-drop-zone p { font-size: 14px; color: #333; }
+.cs-drop-zone p { font-size: 14px; color: var(--app-text); }
 .cs-drop-zone small { font-size: 12px; color: var(--text-sub); }
 
 .cs-img-preview-row {
@@ -218,7 +218,7 @@
 
 .cs-img-card .tag {
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--app-text-inverse-muted);
     margin-top: 5px;
     display: block;
 }
@@ -241,7 +241,7 @@
     border: 1px solid var(--line-soft);
     border-radius: 7px;
     font-size: 13px;
-    background: rgba(255,255,255,0.92);
+    background: var(--app-surface-input);
     font-family: "Yu Gothic UI", sans-serif;
 }
 
@@ -255,13 +255,13 @@
     font-size: 13px;
     font-family: "Yu Gothic UI", sans-serif;
     transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(35,126,102,0.28);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .cs-btn:hover {
-    background: linear-gradient(135deg, #34b996, #1e886c);
+    background: linear-gradient(135deg, var(--app-accent-light), var(--app-accent-strong));
     transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(26,112,90,0.34);
+    box-shadow: var(--app-shadow-subtle);
 }
 
 .cs-btn:disabled {
@@ -309,8 +309,8 @@
 }
 
 .cs-info-box {
-    background: rgba(15,23,42,0.92);
-    color: #e2e8f0;
+    background: var(--app-overlay-dark);
+    color: var(--app-text-inverse);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 12px;

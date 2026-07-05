@@ -19,25 +19,25 @@
 }
 
 .combine-head {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(241, 255, 250, 0.72));
-    border: 1px solid rgba(55, 177, 140, 0.28);
+    background: linear-gradient(135deg, var(--app-glass-strong), rgba(240, 255, 249, 0.72));
+    border: 1px solid var(--app-line);
     border-radius: 14px;
     padding: 8px 14px;
     margin-bottom: 6px;
-    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.08);
+    box-shadow: var(--app-shadow-card);
     flex-shrink: 0;
 }
 
 .combine-head h1 {
     font-size: 18px;
-    color: #1f3f37;
+    color: var(--app-text-heading);
     margin-bottom: 2px;
     letter-spacing: .4px;
 }
 
 .combine-head p {
     font-size: 12px;
-    color: #4b5563;
+    color: var(--app-muted);
 }
 
 .combine-layout {
@@ -54,11 +54,11 @@
     width: 100%;
     min-height: 0;
     min-width: 0;
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(55, 177, 140, 0.22);
+    background: var(--app-glass);
+    border: 1px solid var(--app-line);
     border-radius: 14px;
     padding: 8px;
-    box-shadow: 0 8px 20px rgba(15, 118, 110, 0.08);
+    box-shadow: var(--app-shadow-card);
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -84,7 +84,7 @@
 
 label {
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -93,20 +93,20 @@ label {
 input,
 select,
 button {
-    border: 1px solid rgba(55, 177, 140, 0.3);
+    border: 1px solid var(--app-line);
     border-radius: 9px;
     padding: 8px 10px;
-    background: rgba(255, 255, 255, 0.94);
+    background: var(--app-surface-input);
     font-size: 12px;
     box-sizing: border-box;
-    transition: border-color .18s, box-shadow .18s, transform .18s;
+    transition: border-color .18s var(--app-ease), box-shadow .18s var(--app-ease), transform .18s var(--app-ease);
 }
 
 input:focus,
 select:focus {
     outline: none;
-    border-color: rgba(55, 177, 140, 0.75);
-    box-shadow: 0 0 0 2px rgba(55, 177, 140, 0.14);
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-glow);
 }
 
 .channel-controls {
@@ -117,8 +117,8 @@ select:focus {
 }
 
 .channel-card {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(244, 255, 251, 0.84));
-    border: 1px solid rgba(55, 177, 140, 0.22);
+    background: linear-gradient(180deg, var(--app-glass-strong), rgba(244, 255, 251, 0.84));
+    border: 1px solid var(--app-line);
     border-radius: 11px;
     padding: 6px;
     display: flex;
@@ -128,7 +128,7 @@ select:focus {
 
 .channel-card h3 {
     font-size: 12px;
-    color: #1f2937;
+    color: var(--app-text);
     font-weight: 600;
     margin: 0;
 }
@@ -153,7 +153,7 @@ select:focus {
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
 }
 
 .source-ch-label select {
@@ -168,9 +168,9 @@ select:focus {
     width: 80px;
     height: 80px;
     flex-shrink: 0;
-    border: 1px dashed rgba(74, 222, 128, 0.75);
+    border: 1px dashed var(--app-line-strong);
     border-radius: 10px;
-    background: linear-gradient(160deg, rgba(12, 22, 30, 0.96), rgba(19, 45, 43, 0.94));
+    background: var(--app-overlay-dark);
     background-size: cover;
     background-position: center;
     display: grid;
@@ -181,7 +181,7 @@ select:focus {
 
 .dropzone span {
     font-size: 10px;
-    color: #e2e8f0;
+    color: var(--app-text-inverse);
     padding: 3px 6px;
     border-radius: 999px;
     background: rgba(0, 0, 0, 0.5);
@@ -193,8 +193,8 @@ select:focus {
 .dropzone.has-image span { opacity: 0.1; }
 
 .dropzone.dragover {
-    border-color: rgba(74, 222, 128, 1);
-    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.35) inset;
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-glow) inset;
 }
 
 .tile-row {
@@ -202,7 +202,7 @@ select:focus {
     align-items: center;
     gap: 4px;
     font-size: 11px;
-    color: #475569;
+    color: var(--app-muted);
 }
 
 .tile-row span {
@@ -231,8 +231,8 @@ select:focus {
 
 #mergeRGBA {
     border: none;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(16, 185, 129, 0.92));
-    color: #fff;
+    background: linear-gradient(135deg, var(--app-accent-strong), var(--app-accent));
+    color: var(--app-text-inverse);
     cursor: pointer;
     padding: 9px 16px;
     font-weight: 600;
@@ -240,20 +240,20 @@ select:focus {
 
 #mergeRGBA:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 12px rgba(16, 185, 129, 0.28);
+    box-shadow: var(--app-accent-glow);
 }
 
 #rgbaStatus {
     font-size: 12px;
-    color: #475569;
+    color: var(--app-muted);
 }
 
 .pv {
     flex: 1;
     min-height: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(240, 255, 250, 0.86));
-    border: 1px solid rgba(55, 177, 140, 0.25);
-    border-radius: 12px;
+    background: var(--app-glass-strong);
+    border: 1px solid var(--app-line);
+    border-radius: var(--app-radius-md);
     padding: 8px;
     display: flex;
     flex-direction: column;
@@ -263,7 +263,7 @@ select:focus {
 
 .pv b {
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
     font-weight: 600;
     flex-shrink: 0;
 }
@@ -274,9 +274,9 @@ select:focus {
     width: 100%;
     display: block;
     object-fit: contain;
-    background: linear-gradient(160deg, rgba(9, 16, 24, 0.96), rgba(15, 33, 40, 0.96));
+    background: var(--app-overlay-dark);
     border-radius: 9px;
-    border: 1px solid rgba(74, 222, 128, 0.2);
+    border: 1px solid var(--app-line-subtle);
 }
 
 .alpha-mult-row {
@@ -285,7 +285,7 @@ select:focus {
     align-items: center;
     gap: 8px;
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
 }
 
 .alpha-mult-row input[type="range"] {
@@ -301,10 +301,10 @@ select:focus {
 .square-tag {
     display: inline-block;
     padding: 8px 10px;
-    border: 1px solid rgba(55, 177, 140, .25);
+    border: 1px solid var(--app-line);
     border-radius: 9px;
-    background: rgba(255, 255, 255, .82);
-    color: #3f4b58;
+    background: var(--app-card);
+    color: var(--app-text);
     font-size: 12px;
 }
 

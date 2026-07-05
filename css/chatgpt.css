@@ -11,13 +11,13 @@
 }
 
 #panel.chatgpt-panel {
-    --chat-surface: rgba(15, 23, 42, 0.55);
-    --chat-surface-2: rgba(30, 41, 59, 0.6);
-    --chat-border: rgba(148, 163, 184, 0.2);
-    --chat-text: #e2e8f0;
-    --chat-muted: #94a3b8;
-    --chat-accent: #2563eb;
-    --chat-accent-strong: #1d4ed8;
+    --chat-surface: var(--app-glass);
+    --chat-surface-2: var(--app-glass-strong);
+    --chat-border: var(--app-line-subtle);
+    --chat-text: var(--app-text);
+    --chat-muted: var(--app-muted);
+    --chat-accent: var(--app-accent);
+    --chat-accent-strong: var(--app-accent-strong);
     overflow: hidden;
     padding: 0 !important;
     background: var(--chat-surface) !important;
@@ -32,12 +32,12 @@
 }
 
 #panel.chatgpt-panel .tool-head {
-    background: rgba(10, 16, 30, 0.82);
-    color: #e2e8f0;
+    background: var(--app-glass-strong);
+    color: var(--app-text);
 }
 
 #panel.chatgpt-panel .tool-head p {
-    color: #cbd5e1;
+    color: var(--app-muted);
 }
 
 #panel.chatgpt-panel #toolMain.card {
@@ -106,7 +106,7 @@
     justify-content: center;
     padding: 4px 10px;
     border-radius: 999px;
-    background: rgba(148, 163, 184, 0.16);
+    background: var(--app-line-subtle);
     color: var(--chat-text);
     font-size: 12px;
     letter-spacing: 0.04em;
@@ -117,7 +117,7 @@
 .chat-empty-state h2 {
     margin: 0;
     font-size: 28px;
-    color: #f8fafc;
+    color: var(--app-text);
 }
 
 .chat-empty-state p {
@@ -142,8 +142,8 @@
 
 .prompt-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(148, 163, 184, 0.5);
-    background: rgba(30, 41, 59, 0.9);
+    border-color: var(--app-line);
+    background: var(--app-card-hover);
 }
 
 .prompt-title {
@@ -205,20 +205,20 @@
 }
 
 .chat-message-body a {
-    color: #7dd3fc;
+    color: var(--app-accent-light);
     text-decoration: underline;
 }
 
 .chat-message-body blockquote {
     margin: 0 0 10px;
     padding-left: 12px;
-    border-left: 3px solid rgba(148, 163, 184, 0.45);
+    border-left: 3px solid var(--app-line-strong);
     color: var(--chat-muted);
 }
 
 .chat-message-body pre {
-    background: #0b1120;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: #060f0d;
+    border: 1px solid var(--app-line-subtle);
     border-radius: 12px;
     padding: 12px;
     overflow: auto;
@@ -227,7 +227,7 @@
 }
 
 .chat-message-body code {
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(7, 20, 17, 0.55);
     padding: 2px 6px;
     border-radius: 6px;
     font-family: Consolas, "SFMono-Regular", Menlo, Monaco, monospace;
@@ -253,20 +253,20 @@
 
 .chat-message-body th,
 .chat-message-body td {
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    border: 1px solid var(--app-line-subtle);
     padding: 6px 8px;
     text-align: left;
 }
 
 .chat-message-body hr {
     border: none;
-    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    border-top: 1px solid var(--app-line-subtle);
     margin: 12px 0;
 }
 
 .chat-message.user {
     align-self: flex-end;
-    background: linear-gradient(135deg, var(--chat-accent), #3b82f6);
+    background: linear-gradient(135deg, var(--chat-accent), var(--app-accent-light));
     color: #fff;
 }
 
@@ -279,7 +279,7 @@
 
 .chat-input-wrap {
     border-top: 1px solid var(--chat-border);
-    background: rgba(15, 23, 42, 0.5);
+    background: var(--app-glass);
     padding: 14px;
 }
 
@@ -289,13 +289,13 @@
     gap: 10px;
     border: 1px solid var(--chat-border);
     border-radius: 14px;
-    background: rgba(11, 17, 32, 0.6);
+    background: var(--app-surface-input);
     padding: 10px 12px;
 }
 
 .chat-input-shell:focus-within {
-    border-color: rgba(59, 130, 246, 0.6);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    border-color: rgba(38, 168, 132, 0.5);
+    box-shadow: 0 0 0 2px var(--app-accent-glow);
 }
 
 #chatInput {
@@ -353,7 +353,7 @@
 }
 
 .send-btn:disabled {
-    background: rgba(37, 99, 235, 0.4);
+    background: rgba(38, 168, 132, 0.4);
     cursor: not-allowed;
     transform: none;
 }

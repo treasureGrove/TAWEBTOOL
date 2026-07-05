@@ -1,9 +1,16 @@
+/* ═══════════════════════════════════════════════════
+   HDR Editor — Light Glass Theme
+   common.css provides:
+     body { background:#071411; color:var(--app-text); }
+     #panel { background:rgba(255,255,255,0.74); … }
+   Dark elements explicitly set inverse text / dark bg.
+   ═══════════════════════════════════════════════════ */
+
+/* ─── Page Body ─── */
 .hdr-page-body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 0%, #1e293b 0, #0b1120 45%, #020617 100%);
 }
-
 
 .hdr-page-body #panel {
   display: grid;
@@ -12,20 +19,22 @@
   align-items: stretch;
 }
 
+/* ─── Queue Sidebar (light glass) ─── */
 .hdr-page-body .queue-sidebar {
   display: none;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0.95), rgba(15, 23, 42, 0.93));
-  border: 1px solid rgba(71, 85, 105, 0.55);
+  background: var(--app-glass);
+  border: 1px solid var(--app-line);
   border-radius: 12px;
   padding: 10px;
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.35);
+  box-shadow: var(--app-shadow-card);
   min-height: calc(100vh - 160px);
   height: calc(100vh - 160px);
+  backdrop-filter: blur(8px);
 }
 
 .hdr-page-body .queue-title {
-  color: #dbeafe;
+  color: var(--app-text);
   font-weight: 700;
   font-size: 14px;
   margin-bottom: 8px;
@@ -34,20 +43,22 @@
 .hdr-page-body .file-list {
   flex: 1;
   border-radius: 8px;
-  border: 1px solid rgba(71, 85, 105, 0.45);
-  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--app-line-subtle);
+  background: var(--app-overlay-dark);
 }
 
+/* ─── Main Content ─── */
 .hdr-main-content {
   width: 100%;
   padding: 0;
-  color: #e6eefb;
+  color: var(--app-text);
 }
 
 .hdr-tool-container {
   width: 100%;
 }
 
+/* ─── Main Grid ─── */
 .hdr-grid-main {
   display: grid;
   grid-template-columns: 480px minmax(0, 1fr);
@@ -55,14 +66,27 @@
   align-items: stretch;
   min-height: calc(100vh - 160px);
   height: calc(100vh - 160px);
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
+.hdr-grid-main > .left-panel,
+.hdr-grid-main > .hdr-canvas-wrap {
+  height: 100%;
+  min-height: 0;
+}
+
+/* ═══════════════════════════════════════
+   Light Glass Surfaces
+   ═══════════════════════════════════════ */
+
 .card-lite {
-  background: linear-gradient(180deg, rgba(2, 6, 23, 0.95), rgba(15, 23, 42, 0.93));
-  border: 1px solid rgba(71, 85, 105, 0.55);
+  background: var(--app-glass);
+  border: 1px solid var(--app-line);
   border-radius: 12px;
   padding: 10px;
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.45);
+  box-shadow: var(--app-shadow-card);
+  backdrop-filter: blur(8px);
 }
 
 .left-panel {
@@ -73,153 +97,126 @@
   overflow: auto;
   position: relative;
   z-index: 3;
-}
-
-
-#guiDock {
-  max-height: min(72vh, 700px);
-  overflow: auto;
-  padding-right: 2px;
-}
-
-#guiDock::-webkit-scrollbar {
-  width: 8px;
-}
-
-#guiDock::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.65);
-  border-radius: 10px;
-}
-
-
-.hdr-gui {
-  position: static;
-  box-shadow: none;
-}
-
-.lil-gui.hdr-gui {
-  width: 100% !important;
-  border: 1px solid rgba(71, 85, 105, 0.5);
-  border-radius: 10px;
-  overflow: hidden;
-  --background-color: rgba(2, 6, 23, 0.92);
-  --widget-color: #0f172a;
-  --text-color: #dbeafe;
-  --title-background-color: #1e293b;
-  --hover-color: #334155;
-  --focus-color: #22d3ee;
-  --number-color: #7dd3fc;
-}
-
-.lil-gui.hdr-gui .title {
-  font-weight: 700;
-  letter-spacing: 0.2px;
-}
-
-.lil-gui.hdr-gui .children {
-  border-left: 2px solid rgba(56, 189, 248, 0.25);
-}
-
-.lil-gui.hdr-gui .controller {
-  border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-}
-
-.lil-gui.hdr-gui .name {
-  color: #cfe7ff;
+  min-height: 0;
 }
 
 .panel-section {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 8px;
   padding: 10px;
-  border: 1px solid rgba(71, 85, 105, 0.45);
+  border: 1px solid var(--app-line);
   border-radius: 10px;
-  background: rgba(15, 23, 42, 0.78);
+  background: var(--app-card);
 }
 
-.hdr-file-btn,
-button {
-  border: none;
-  border-radius: 8px;
+.panel-guide {
+  border: 1px solid var(--app-line);
+  background: var(--app-glass);
+  border-radius: 10px;
+  padding: 10px;
+  color: var(--app-text);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.panel-guide .guide-title {
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--app-accent-strong);
+}
+
+.panel-guide ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.canvas-help {
+  color: var(--app-muted);
+  font-size: 12px;
   padding: 7px 10px;
-  color: #fff;
-  cursor: pointer;
-  font-size: 13px;
-  background: #2563eb;
-}
-
-.hdr-file-btn {
-  background: linear-gradient(90deg, #06b6d4, #2563eb);
-  display: inline-flex;
+  border-bottom: 1px solid var(--app-line);
+  background: var(--app-glass-strong);
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-button.secondary {
-  background: linear-gradient(90deg, #334155, #475569);
+.utility-card {
+  padding: 7px 10px;
+  background: var(--app-glass);
+  max-height: 140px;
+  overflow: auto;
+  border: 1px solid var(--app-line);
+  border-radius: 12px;
+  box-shadow: var(--app-shadow-card);
+  backdrop-filter: blur(8px);
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-bottom: 6px;
 }
 
-.hdr-file-btn input[type='file'] {
-  display: none;
+.utility-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 8px;
+  align-items: stretch;
 }
 
-.light-list-block {
-  display: block;
+.utility-guide {
+  margin: 0;
 }
 
-#lightPicker {
-  width: 100%;
-  min-height: 170px;
-  background: #071020;
-  color: #dbeafe;
-  border: 1px solid #263347;
+.utility-actions {
+  border: 1px solid var(--app-line);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--app-glass);
+}
+
+.utility-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.utility-btns .hdr-file-btn,
+.utility-btns button {
+  justify-content: center;
+  text-align: center;
+}
+
+.gui-merged-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.gui-merged-panel #guiDock {
+  flex: 1;
+  min-height: 240px;
+  max-height: none;
+  overflow: auto;
+  border: 1px solid var(--app-line-subtle);
   border-radius: 8px;
   padding: 6px;
+  background: var(--app-glass);
 }
 
-.light-meta {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #93c5fd;
-}
-
-.size-label {
-  display: block;
-  margin-top: 8px;
-  color: #bfdbfe;
-  font-size: 12px;
-}
-
-.size-label input[type='range'] {
-  width: 100%;
-  margin-top: 6px;
-}
-
-.inline-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.inline-actions button {
-  flex: 1;
-}
-
-.hdr-canvas-wrap {
-  height: calc(100vh - 175px);
-  min-height: 0;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 12px;
-  overflow: hidden;
-}
+/* ═══════════════════════════════════════
+   Dark Surfaces — Image / Code Areas
+   ═══════════════════════════════════════ */
 
 .canvas-card {
-  background: rgba(2, 6, 23, 0.9);
-  border: 1px solid rgba(71, 85, 105, 0.55);
+  background: var(--app-overlay-dark);
+  border: 1px solid var(--app-line);
   border-radius: 12px;
   overflow: hidden;
   box-sizing: border-box;
+  box-shadow: 0 10px 26px rgba(7, 20, 17, 0.35);
 }
 
 .hdri-edit-card {
@@ -233,10 +230,12 @@ button.secondary {
   aspect-ratio: 2 / 1;
   display: block;
   border: none;
-  background: #020617;
+  background: #071411;
   cursor: grab;
   position: relative;
   z-index: 0;
+  touch-action: none;
+  max-height: 100%;
 }
 
 #hdriCanvas:active {
@@ -262,52 +261,63 @@ button.secondary {
   display: block;
   max-width: 100%;
   max-height: 100%;
+  background: #071411;
 }
 
-@media (max-width: 1320px) {
-  .hdr-grid-main {
-    grid-template-columns: 430px minmax(0, 1fr);
-  }
-
+/* ─── lil-gui Parameter Panel ─── */
+#guiDock {
+  max-height: min(72vh, 700px);
+  overflow: auto;
+  padding-right: 2px;
+  border-radius: 12px;
 }
 
-@media (max-width: 860px) {
-  .hdr-grid-main {
-    grid-template-columns: 1fr;
-    min-height: auto;
-    max-height: none;
-  }
-
-  .left-panel,
-  .hdr-canvas-wrap {
-    max-height: none;
-    min-height: auto;
-  }
-
-  .hdr-canvas-wrap {
-    grid-template-rows: auto minmax(360px, 1fr) auto;
-  }
-
-  .utility-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .utility-btns {
-    grid-template-columns: 1fr;
-  }
+#guiDock::-webkit-scrollbar {
+  width: 8px;
 }
 
-@media (max-width: 1100px) {
-  .hdr-page-body #panel {
-    grid-template-columns: 1fr;
-  }
-
-  .hdr-page-body .queue-sidebar {
-    min-height: 140px;
-  }
+#guiDock::-webkit-scrollbar-thumb {
+  background: rgba(55, 177, 140, 0.35);
+  border-radius: 10px;
 }
 
+.hdr-gui {
+  position: static;
+  box-shadow: none;
+}
 
+.lil-gui.hdr-gui {
+  width: 100% !important;
+  border: 1px solid var(--app-line);
+  border-radius: 10px;
+  overflow: hidden;
+  --background-color: rgba(7, 20, 17, 0.92);
+  --widget-color: #071a17;
+  --text-color: var(--app-text-inverse);
+  --title-background-color: #0f2620;
+  --hover-color: #1a3a32;
+  --focus-color: var(--app-accent-light);
+  --number-color: var(--app-accent-light);
+}
+
+.lil-gui.hdr-gui .title {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.lil-gui.hdr-gui .children {
+  border-left: 2px solid var(--app-line);
+}
+
+.lil-gui.hdr-gui .controller {
+  border-bottom: 1px solid rgba(26, 58, 50, 0.5);
+}
+
+.lil-gui.hdr-gui .name {
+  color: var(--app-text-inverse);
+}
+
+/* ─── Fallback Parameter UI ─── */
 .fallback-gui {
   display: grid;
   gap: 10px;
@@ -318,14 +328,14 @@ button.secondary {
 }
 
 .fallback-folder {
-  border: 1px solid rgba(71, 85, 105, 0.45);
+  border: 1px solid var(--app-line);
   border-radius: 10px;
   padding: 10px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.9), rgba(2, 6, 23, 0.9));
+  background: var(--app-overlay-dark);
 }
 
 .fallback-folder legend {
-  color: #dbeafe;
+  color: var(--app-text-inverse);
   padding: 0 8px;
   font-size: 12px;
   font-weight: 700;
@@ -350,15 +360,15 @@ button.secondary {
 }
 
 .fallback-label {
-  color: #cfe7ff;
+  color: var(--app-text-inverse);
   font-size: 12px;
 }
 
 .fallback-value {
   font-size: 11px;
-  color: #7dd3fc;
-  background: rgba(14, 116, 144, 0.18);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: var(--app-accent-light);
+  background: rgba(38, 168, 132, 0.18);
+  border: 1px solid var(--app-line);
   border-radius: 6px;
   padding: 2px 6px;
 }
@@ -370,23 +380,23 @@ button.secondary {
 }
 
 .fallback-row input[type='range'] {
-  accent-color: #38bdf8;
+  accent-color: var(--app-accent-light);
 }
 
 .fallback-row input[type='text'],
 .fallback-row select {
   height: 32px;
   border-radius: 8px;
-  border: 1px solid rgba(71, 85, 105, 0.6);
-  background: rgba(2, 6, 23, 0.75);
-  color: #dbeafe;
+  border: 1px solid var(--app-line-strong);
+  background: rgba(7, 20, 17, 0.75);
+  color: var(--app-text-inverse);
   padding: 0 8px;
 }
 
 .fallback-row input[type='color'] {
   height: 34px;
   border-radius: 8px;
-  border: 1px solid rgba(71, 85, 105, 0.6);
+  border: 1px solid var(--app-line-strong);
   background: transparent;
 }
 
@@ -399,1174 +409,23 @@ button.secondary {
 .fallback-row.is-checkbox input[type='checkbox'] {
   width: 16px;
   height: 16px;
-  accent-color: #22d3ee;
+  accent-color: var(--app-accent-light);
 }
 
-.panel-section-head {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #dbeafe;
-  font-size: 12px;
-  font-weight: 700;
-  margin-bottom: 6px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(71, 85, 105, 0.4);
-}
-
-.panel-collapse-btn {
-  background: rgba(51, 65, 85, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  border-radius: 6px;
-  padding: 2px 8px;
-  font-size: 11px;
-}
-
-.panel-section.collapsed > *:not(.panel-section-head) {
-  display: none;
-}
-
-#activeSizeValue {
-  color: #7dd3fc;
-  font-weight: 700;
-  margin-left: 4px;
-}
-
-.gui-merged-panel #guiDock {
-  border: 1px solid rgba(71, 85, 105, 0.35);
-  border-radius: 8px;
-  padding: 6px;
-  background: rgba(2, 6, 23, 0.45);
-}
-
-
-.panel-guide {
-  border: 1px solid rgba(56, 189, 248, 0.35);
-  background: linear-gradient(180deg, rgba(14, 116, 144, 0.2), rgba(15, 23, 42, 0.7));
-  border-radius: 10px;
-  padding: 10px;
-  color: #dff6ff;
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-.panel-guide .guide-title {
-  font-weight: 700;
-  margin-bottom: 4px;
-  color: #7dd3fc;
-}
-
-.panel-guide ul {
-  margin: 0;
-  padding-left: 16px;
-}
-
-.selection-hint {
-  width: 100%;
-  color: #cbd5e1;
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.selection-hint span {
-  color: #22d3ee;
-  font-weight: 700;
-}
-
-#lightPicker {
-  min-height: 210px;
-  font-size: 12px;
-  line-height: 1.6;
-}
-
-.canvas-help {
-  color: #bae6fd;
-  font-size: 12px;
-  padding: 7px 10px;
-  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
-  background: linear-gradient(90deg, rgba(14, 116, 144, 0.15), rgba(2, 6, 23, 0.25));
-}
-
-#hdriCanvas {
-  touch-action: none;
-}
-
-.panel-section-head span {
-  letter-spacing: 0.2px;
-}
-
-.panel-collapse-btn {
-  min-width: 48px;
-  color: #dbeafe;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.panel-collapse-btn:hover {
-  background: rgba(56, 189, 248, 0.2);
-  border-color: rgba(125, 211, 252, 0.8);
-}
-
-
-.utility-card {
-  padding: 7px 10px;
-  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.92));
-  max-height: 185px;
-  overflow: auto;
-}
-
-.utility-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 8px;
-  align-items: stretch;
-}
-
-.utility-guide {
-  margin: 0;
-}
-
-.utility-actions {
-  border: 1px solid rgba(56, 189, 248, 0.25);
-  border-radius: 10px;
-  padding: 10px;
-  background: rgba(2, 6, 23, 0.45);
-}
-
-.utility-title {
-  color: #93c5fd;
-  font-size: 12px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.utility-btns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.utility-btns .hdr-file-btn,
-.utility-btns button {
-  justify-content: center;
-  text-align: center;
-}
-
-
-.active-light-editor {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 10px;
-}
-
-.active-light-editor label {
-  display: block;
-  color: #dbeafe;
-  font-size: 12px;
-}
-
-.active-light-editor label span {
-  color: #7dd3fc;
-  font-weight: 700;
-  margin-left: 4px;
-}
-
-.active-light-editor input[type='range'],
-.active-light-editor select,
-.active-light-editor input[type='color'] {
-  width: 100%;
-  margin-top: 4px;
-}
-
-.active-inline-check {
-  display: flex !important;
-  align-items: center;
-  gap: 8px;
-}
-
-.active-light-editor .active-inline-check,
-.active-light-editor label:last-child {
-  grid-column: span 2;
-}
-
-/* ===== Anime theme override ===== */
-.hdr-page-body {
-  background:
-    radial-gradient(50rem 28rem at 10% -10%, rgba(255, 170, 226, 0.34), transparent 70%),
-    radial-gradient(45rem 30rem at 90% 0%, rgba(145, 190, 255, 0.28), transparent 70%),
-    linear-gradient(180deg, #1a1533 0%, #17122d 45%, #130f25 100%);
-  color: #fbe7ff;
-}
-
-.hdr-grid-main {
-  gap: 16px;
-}
-
-.card-lite,
-.canvas-card {
-  border: 1px solid rgba(255, 190, 246, 0.35);
-  background: linear-gradient(180deg, rgba(40, 25, 70, 0.88), rgba(24, 18, 49, 0.9));
-  box-shadow:
-    0 14px 36px rgba(12, 8, 28, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-}
-
-.panel-section {
-  border: 1px solid rgba(255, 182, 240, 0.32);
-  background: linear-gradient(180deg, rgba(59, 36, 102, 0.62), rgba(35, 25, 70, 0.7));
-  border-radius: 14px;
-}
-
-.panel-section-head {
-  color: #ffe8fb;
-  border-bottom-color: rgba(255, 187, 237, 0.28);
-}
-
-.panel-section-head span {
-  font-weight: 800;
-}
-
-.panel-collapse-btn {
-  background: linear-gradient(90deg, rgba(122, 80, 200, 0.7), rgba(78, 154, 255, 0.65));
-  border-color: rgba(255, 221, 248, 0.45);
-  color: #fff7fd;
-}
-
-.panel-collapse-btn:hover {
-  background: linear-gradient(90deg, rgba(153, 103, 244, 0.78), rgba(97, 182, 255, 0.75));
-}
-
-button,
-.hdr-file-btn {
-  border-radius: 12px;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  border: 1px solid rgba(255, 229, 249, 0.26);
-  box-shadow: 0 6px 14px rgba(9, 7, 26, 0.34);
-}
-
-button {
-  background: linear-gradient(90deg, #8f6dff, #5cb0ff);
-}
-
-button.secondary {
-  background: linear-gradient(90deg, #b076ff, #7898ff);
-}
-
-.hdr-file-btn {
-  background: linear-gradient(90deg, #ff89d4, #a285ff);
-}
-
-#guiDock {
-  border-radius: 12px;
-}
-
-.fallback-folder {
-  border: 1px solid rgba(255, 187, 236, 0.35);
-  border-radius: 12px;
-  background: linear-gradient(180deg, rgba(61, 36, 104, 0.82), rgba(35, 24, 68, 0.88));
-}
-
-.fallback-folder legend,
-.fallback-label,
-.light-meta,
-.selection-hint,
-.size-label,
-.canvas-help,
-.utility-title {
-  color: #ffe7fb;
-}
-
-.fallback-value,
-#activeSizeValue,
-.active-light-editor label span {
-  color: #ffd4fa;
-  background: rgba(255, 140, 220, 0.18);
-  border-color: rgba(255, 183, 236, 0.45);
-}
-
-.fallback-row input[type='text'],
-.fallback-row select,
-.active-light-editor select,
-.active-light-editor input[type='color'],
-#lightPicker {
-  border-color: rgba(255, 186, 236, 0.4);
-  background: rgba(24, 18, 45, 0.9);
-  color: #ffeefe;
-}
-
-.fallback-row input[type='range'],
-.active-light-editor input[type='range'],
-.size-label input[type='range'] {
-  accent-color: #ff89d4;
-}
-
-#lightPicker option:checked {
-  background: linear-gradient(90deg, rgba(255, 137, 212, 0.55), rgba(126, 131, 255, 0.55));
-  color: #fff;
-}
-
-.selection-hint span {
-  color: #ffd0fa;
-}
-
-.canvas-help {
-  border-bottom-color: rgba(255, 179, 236, 0.28);
-  background: linear-gradient(90deg, rgba(255, 125, 202, 0.2), rgba(139, 159, 255, 0.18));
-}
-
-.utility-card {
-  border-color: rgba(255, 186, 236, 0.38);
-  background: linear-gradient(180deg, rgba(57, 33, 96, 0.9), rgba(31, 22, 60, 0.94));
-}
-
-.panel-guide {
-  border-color: rgba(255, 191, 240, 0.36);
-  background: linear-gradient(180deg, rgba(255, 148, 211, 0.2), rgba(130, 125, 255, 0.16));
-  color: #ffecfc;
-}
-
-.panel-guide .guide-title {
-  color: #ffd6f9;
-}
-
-#hdriCanvas,
-#hdrEditorCanvas {
-  background: #120f23;
-}
-
-/* ===== Miku style refinement (lighter glass) ===== */
-.hdr-page-body {
-  background:
-    radial-gradient(56rem 30rem at 8% -10%, rgba(139, 236, 232, 0.35), transparent 72%),
-    radial-gradient(52rem 32rem at 92% 0%, rgba(120, 214, 255, 0.28), transparent 72%),
-    linear-gradient(180deg, #0e1b2b 0%, #12243a 42%, #101d31 100%);
-}
-
-.card-lite,
-.canvas-card {
-  border: 1px solid rgba(178, 248, 246, 0.42);
-  background: linear-gradient(180deg, rgba(214, 251, 255, 0.18), rgba(167, 232, 248, 0.1));
-  box-shadow:
-    0 14px 34px rgba(5, 21, 37, 0.38),
-    0 0 0 1px rgba(235, 255, 255, 0.18) inset;
-  backdrop-filter: blur(8px);
-}
-
-.panel-section {
-  border: 1px solid rgba(176, 248, 243, 0.4);
-  background: linear-gradient(180deg, rgba(221, 252, 255, 0.22), rgba(176, 238, 247, 0.14));
-}
-
-.panel-section-head,
-.fallback-folder legend,
-.fallback-label,
-.light-meta,
-.selection-hint,
-.size-label,
-.canvas-help,
-.utility-title,
-.panel-guide,
-.panel-guide .guide-title {
-  color: #e6ffff;
-}
-
-.panel-collapse-btn {
-  background: linear-gradient(90deg, rgba(103, 221, 214, 0.72), rgba(106, 179, 255, 0.7));
-  border-color: rgba(218, 254, 255, 0.7);
-}
-
-button {
-  background: linear-gradient(90deg, #52d5cf, #6ab8ff);
-}
-
-button.secondary {
-  background: linear-gradient(90deg, #6de1d5, #7bc8ff);
-}
-
-.hdr-file-btn {
-  background: linear-gradient(90deg, #7be7dc, #70c8ff);
-}
-
-.fallback-folder,
-.utility-card,
-.utility-actions,
-.panel-guide {
-  border-color: rgba(183, 249, 246, 0.42);
-  background: linear-gradient(180deg, rgba(210, 249, 255, 0.2), rgba(158, 229, 246, 0.12));
-}
-
-.fallback-row input[type='text'],
-.fallback-row select,
-.active-light-editor select,
-.active-light-editor input[type='color'],
-#lightPicker {
-  border-color: rgba(170, 244, 242, 0.55);
-  background: rgba(9, 30, 52, 0.72);
-  color: #eaffff;
-}
-
-.fallback-value,
-#activeSizeValue,
-.active-light-editor label span {
-  color: #dbffff;
-  background: rgba(129, 241, 231, 0.2);
-  border-color: rgba(166, 250, 247, 0.55);
-}
-
-.fallback-row input[type='range'],
-.active-light-editor input[type='range'],
-.size-label input[type='range'] {
-  accent-color: #72e6d9;
-}
-
-#lightPicker option:checked {
-  background: linear-gradient(90deg, rgba(107, 229, 218, 0.72), rgba(121, 197, 255, 0.65));
-}
-
-.hdr-canvas-wrap {
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto !important;
-}
-
-.hdri-edit-card {
-  display: flex;
-  flex-direction: column;
-}
-
-#hdriCanvas {
-  width: 100%;
-  max-height: 100%;
-}
-
-.utility-card {
-  max-height: 126px;
-  overflow: auto;
-}
-
-@media (max-width: 860px) {
-  .hdr-canvas-wrap {
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto !important;
-  }
-}
-
-/* ===== readability + bottom alignment refinement ===== */
-.hdr-grid-main {
-  align-items: stretch;
-}
-
-.hdr-grid-main > .left-panel,
-.hdr-grid-main > .hdr-canvas-wrap {
-  height: 100%;
-  min-height: 0;
-}
-
-.hdr-canvas-wrap {
-  height: 100% !important;
-}
-
-/* 提升对比度：降低玻璃底色亮度，避免“白字白底” */
-.panel-section,
-.fallback-folder,
-.utility-card,
-.utility-actions,
-.panel-guide {
-  background: linear-gradient(180deg, rgba(54, 111, 142, 0.36), rgba(25, 69, 95, 0.44));
-  border-color: rgba(154, 238, 236, 0.45);
-}
-
-.panel-section-head,
-.fallback-folder legend,
-.panel-guide .guide-title,
-.utility-title {
-  color: #d2f8ff;
-  text-shadow: 0 1px 1px rgba(5, 18, 31, 0.45);
-}
-
-.fallback-label,
-.selection-hint,
-.size-label,
-.canvas-help,
-.light-meta,
-.active-light-editor label,
-.panel-guide {
-  color: #b8eaf6;
-}
-
-.selection-hint span,
-#activeSizeValue,
-.active-light-editor label span,
-.fallback-value {
-  color: #8ff2e7;
-  border-color: rgba(137, 241, 228, 0.5);
-  background: rgba(69, 160, 157, 0.22);
-}
-
-/* 输入区再压暗一点，增强文字可读性 */
-.fallback-row input[type='text'],
-.fallback-row select,
-.active-light-editor select,
-.active-light-editor input[type='color'],
-#lightPicker {
-  background: rgba(7, 28, 44, 0.82);
-  color: #defbff;
-  border-color: rgba(146, 235, 233, 0.58);
-}
-
-#lightPicker option {
-  color: #defbff;
-  background: #0a253c;
-}
-
-button,
-button.secondary,
-.hdr-file-btn,
-.panel-collapse-btn {
-  color: #072030;
-  text-shadow: none;
-  font-weight: 800;
-}
-
-/* ===== final theme: bright miku + clean contrast + utility stick to bottom ===== */
-.hdr-page-body {
-  background:
-    radial-gradient(44rem 24rem at 8% -6%, rgba(150, 255, 241, 0.24), transparent 70%),
-    radial-gradient(40rem 24rem at 92% 0%, rgba(134, 220, 255, 0.2), transparent 72%),
-    linear-gradient(180deg, #0f2134 0%, #11263c 52%, #102236 100%);
-}
-
-.card-lite,
-.canvas-card {
-  border: 1px solid rgba(164, 236, 236, 0.3);
-  background: linear-gradient(180deg, rgba(24, 54, 77, 0.7), rgba(18, 45, 66, 0.78));
-  box-shadow: 0 12px 28px rgba(3, 16, 29, 0.36), 0 0 0 1px rgba(212, 255, 255, 0.08) inset;
-  backdrop-filter: blur(6px);
-}
-
-.panel-section,
-.fallback-folder,
-.utility-actions,
-.panel-guide,
-.utility-card {
-  border-color: rgba(154, 231, 232, 0.34);
-  background: linear-gradient(180deg, rgba(30, 72, 98, 0.62), rgba(20, 58, 82, 0.72));
-}
-
-.panel-section-head,
-.fallback-folder legend,
-.panel-guide .guide-title,
-.utility-title {
-  color: #dcfbff;
-}
-
-.fallback-label,
-.light-meta,
-.selection-hint,
-.size-label,
-.canvas-help,
-.active-light-editor label,
-.panel-guide {
-  color: #bceef4;
-}
-
-.fallback-value,
-#activeSizeValue,
-.active-light-editor label span,
-.selection-hint span {
-  color: #90f5e8;
-  background: rgba(62, 168, 165, 0.22);
-  border-color: rgba(133, 236, 228, 0.5);
-}
-
-.fallback-row input[type='text'],
-.fallback-row select,
-.active-light-editor select,
-.active-light-editor input[type='color'],
-#lightPicker {
-  background: rgba(7, 27, 42, 0.86);
-  color: #e1fcff;
-  border-color: rgba(145, 227, 229, 0.52);
-}
-
-button,
-button.secondary,
-.hdr-file-btn,
-.panel-collapse-btn {
-  color: #052233;
-  font-weight: 800;
-}
-
-button {
-  background: linear-gradient(90deg, #67ddd3, #79c7ff);
-}
-
-button.secondary {
-  background: linear-gradient(90deg, #7ae5db, #8cd2ff);
-}
-
-.hdr-file-btn {
-  background: linear-gradient(90deg, #82efe3, #8ad4ff);
-}
-
-.panel-collapse-btn {
-  background: linear-gradient(90deg, #7de4db, #93d5ff);
-  border-color: rgba(216, 255, 255, 0.68);
-}
-
-.canvas-help {
-  border-bottom-color: rgba(157, 236, 236, 0.24);
-  background: linear-gradient(90deg, rgba(103, 226, 215, 0.2), rgba(124, 199, 255, 0.18));
-}
-
-/* 让底部操作提示贴到 panel 地面 */
-.hdr-canvas-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  height: 100% !important;
-}
-
-.hdri-edit-card,
-.preview-card {
-  flex: 1;
-  min-height: 0;
-}
-
-.utility-card {
-  margin-top: auto;
-  max-height: 122px;
-}
-
-@media (max-width: 860px) {
-  .hdr-canvas-wrap {
-    height: auto !important;
-    min-height: auto;
-  }
-
-  .hdri-edit-card,
-  .preview-card {
-    min-height: 260px;
-  }
-
-  .utility-card {
-    margin-top: 0;
-    max-height: none;
-  }
-}
-
-/* ===== fix: 完整参数区 + utility 靠起 panel（不贴地） ===== */
-.left-panel {
-  min-height: 0;
-}
-
-.gui-merged-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 280px;
-}
-
-.gui-merged-panel #guiDock {
-  flex: 1;
-  min-height: 240px;
-  max-height: none;
-  overflow: auto;
-}
-
-/* 右侧恢复自然排布：靠起 panel，不做底部贴地 */
-.hdr-canvas-wrap {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
-  height: 100%;
-}
-
-.hdri-edit-card,
-.preview-card {
-  flex: initial;
-}
-
-.utility-card {
-  margin-top: 0;
-  max-height: 140px;
-}
-
-@media (max-width: 860px) {
-  .gui-merged-panel {
-    min-height: 220px;
-  }
-
-  .gui-merged-panel #guiDock {
-    min-height: 200px;
-  }
-
-  .utility-card {
-    max-height: none;
-  }
-}
-
-/* ===== final polish: cleaner colors + bottom spacing tighten ===== */
-.hdr-page-body {
-  background:
-    radial-gradient(52rem 26rem at 10% -8%, rgba(126, 234, 230, 0.18), transparent 72%),
-    radial-gradient(48rem 24rem at 92% 0%, rgba(129, 205, 245, 0.16), transparent 72%),
-    linear-gradient(180deg, #0f1f30 0%, #102236 100%);
-}
-
-.card-lite,
-.canvas-card {
-  border-color: rgba(163, 226, 231, 0.26);
-  background: linear-gradient(180deg, rgba(20, 48, 68, 0.72), rgba(16, 41, 60, 0.78));
-}
-
-.panel-section,
-.fallback-folder,
-.utility-actions,
-.panel-guide,
-.utility-card {
-  border-color: rgba(150, 217, 224, 0.28);
-  background: linear-gradient(180deg, rgba(26, 64, 88, 0.58), rgba(18, 52, 74, 0.68));
-}
-
-button {
-  background: linear-gradient(90deg, #73d8d0, #87bff0);
-}
-
-button.secondary {
-  background: linear-gradient(90deg, #86dfd8, #99c8f1);
-}
-
-.hdr-file-btn {
-  background: linear-gradient(90deg, #90e8df, #9acef2);
-}
-
-.hdr-grid-main,
-.left-panel,
-.hdr-canvas-wrap {
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-.hdr-canvas-wrap {
-  gap: 10px;
-}
-
-.utility-card {
-  margin-bottom: 0;
-  padding-bottom: 6px;
-  max-height: 128px;
-}
-
-
-/* ===== bright palette pass ===== */
-.hdr-page-body {
-  background:
-    radial-gradient(58rem 28rem at 8% -6%, rgba(173, 255, 241, 0.3), transparent 72%),
-    radial-gradient(54rem 28rem at 92% 0%, rgba(172, 223, 255, 0.26), transparent 72%),
-    linear-gradient(180deg, #17314b 0%, #1b3856 100%);
-}
-
-.card-lite,
-.canvas-card {
-  border-color: rgba(176, 245, 244, 0.42);
-  background: linear-gradient(180deg, rgba(52, 112, 146, 0.7), rgba(37, 90, 124, 0.76));
-}
-
-.panel-section,
-.fallback-folder,
-.utility-actions,
-.panel-guide,
-.utility-card {
-  border-color: rgba(178, 245, 242, 0.42);
-  background: linear-gradient(180deg, rgba(63, 136, 170, 0.62), rgba(45, 113, 148, 0.72));
-}
-
-.panel-section-head,
-.fallback-folder legend,
-.panel-guide .guide-title,
-.utility-title,
-.fallback-label,
-.light-meta,
-.selection-hint,
-.size-label,
-.canvas-help,
-.active-light-editor label,
-.panel-guide {
-  color: #e9feff;
-}
-
-.fallback-row input[type='text'],
-.fallback-row select,
-.active-light-editor select,
-.active-light-editor input[type='color'],
-#lightPicker {
-  background: rgba(17, 58, 86, 0.85);
-  color: #f0feff;
-  border-color: rgba(181, 246, 244, 0.64);
-}
-
-button {
-  background: linear-gradient(90deg, #8af0e4, #9bd2ff);
-}
-
-button.secondary {
-  background: linear-gradient(90deg, #9af4ea, #a8dbff);
-}
-
-.hdr-file-btn {
-  background: linear-gradient(90deg, #a1f7ed, #afe0ff);
-}
-
-/* ═══════════════════════════════════════════════
-   新控制行布局 (v2 重写)
-═══════════════════════════════════════════════ */
-
-/* 通用控制行 */
-.ctrl-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  width: 100%;
-}
-
-.ctrl-row.ctrl-checkbox {
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.ctrl-label {
-  color: #bceef4;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.val-badge {
-  color: #90f5e8;
-  background: rgba(62, 168, 165, 0.22);
-  border: 1px solid rgba(133, 236, 228, 0.5);
-  border-radius: 5px;
-  padding: 1px 6px;
-  font-size: 11px;
-  font-weight: 700;
-  min-width: 36px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.ctrl-range {
-  width: 100%;
-  accent-color: #72e6d9;
-  cursor: pointer;
-}
-
-.ctrl-select,
-.ctrl-text {
-  width: 100%;
-  box-sizing: border-box;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid rgba(145, 227, 229, 0.52);
-  background: rgba(7, 27, 42, 0.86);
-  color: #e1fcff;
-  padding: 0 8px;
-  font-size: 12px;
-}
-
-.ctrl-color {
-  width: 100%;
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid rgba(145, 227, 229, 0.52);
-  background: transparent;
-  cursor: pointer;
-}
-
-/* Panel section — flex column, full width children */
-.panel-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* Light list section */
-.light-add-btns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  width: 100%;
-}
-
-.light-add-btns button {
-  font-size: 12px;
-  padding: 5px 6px;
-}
-
-/* HDR 调整区提示 */
-.hdr-adj-info {
-  font-size: 11px;
-  color: rgba(144, 245, 232, 0.65);
-  border: 1px solid rgba(133, 236, 228, 0.22);
-  border-radius: 6px;
-  padding: 4px 8px;
-  background: rgba(62, 168, 165, 0.1);
-}
-
-/* 球形网格切换标签 (画布顶部) */
-.sphere-grid-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  color: #90f5e8;
-  cursor: pointer;
-  margin-left: auto;
-  padding: 2px 8px;
-  border: 1px solid rgba(133, 236, 228, 0.4);
-  border-radius: 6px;
-  background: rgba(62, 168, 165, 0.14);
-  flex-shrink: 0;
-}
-
-.sphere-grid-label input[type='checkbox'] {
-  accent-color: #72e6d9;
-  width: 13px;
-  height: 13px;
-}
-
-.canvas-help {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-/* 状态文本 */
-.hdr-status-text {
-  font-size: 12px;
-  color: #bceef4;
-  word-break: break-all;
-  padding: 4px 0;
-}
-
-/* Kelvin 色温预览 */
-.kelvin-preview-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.kelvin-swatch {
-  flex: 1;
-  height: 20px;
-  border-radius: 6px;
-  border: 1px solid rgba(133, 236, 228, 0.4);
-}
-
-/* 亮度直方图 */
-.hist-wrap {
-  padding: 8px 6px 4px;
-  border-top: 1px solid rgba(133, 236, 228, 0.2);
-  margin-top: 4px;
-}
-
-.hist-title {
-  font-size: 11px;
-  color: rgba(188, 238, 244, 0.6);
-  margin-bottom: 4px;
-}
-
-.hist-canvas {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
-  display: block;
-}
-
-/* 强制 .panel-section > .hdr-file-btn, buttons 全宽 */
-.panel-section > .hdr-file-btn,
-.panel-section > button {
-  display: flex;
-  width: 100%;
-  max-width: 100%;
-  justify-content: center;
-  text-align: center;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-/* light picker 全宽，浅色选中项 */
-#lightPicker {
-  width: 100%;
-  background: rgba(7, 27, 42, 0.86);
-  color: #e1fcff;
-  border: 1px solid rgba(145, 227, 229, 0.52);
-  border-radius: 8px;
-  padding: 4px;
-  font-size: 12px;
-  min-height: 130px;
-}
-
-#lightPicker option {
-  color: #e1fcff;
-  background: #0a253c;
-}
-
-#lightPicker option:checked {
-  background: linear-gradient(90deg, rgba(107, 229, 218, 0.72), rgba(121, 197, 255, 0.65));
-  color: #fff;
-}
-
-/* ═══════════════════════════════════════════════
-   画布包裹层 & 像素检视器 & 上下文菜单 (v2.1)
-═══════════════════════════════════════════════ */
-
-/* 相对定位包裹层（用于绝对定位检视器 / 上下文菜单） */
-.hdri-wrap-rel {
-  position: relative;
-  overflow: hidden;
-  line-height: 0; /* 消除 canvas 下方空白 */
-}
-
-/* ─── float32 悬浮检视器 ─── */
-.hdr-inspector {
-  position: absolute;
-  pointer-events: none;
-  background: rgba(2, 8, 20, 0.94);
-  border: 1px solid rgba(56, 189, 248, 0.55);
-  border-radius: 9px;
-  padding: 6px 10px 7px;
-  font-size: 11px;
-  color: #cfe7ff;
-  min-width: 175px;
-  line-height: 1.65;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
-  z-index: 20;
-  backdrop-filter: blur(4px);
-}
-
-.insp-hex {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 3px;
-  font-weight: 700;
-  color: #7dd3fc;
-  font-size: 12px;
-}
-
-.insp-swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  flex-shrink: 0;
-}
-
-.insp-row {
-  color: #94a3b8;
-  font-size: 10.5px;
-}
-
-.insp-row b {
-  color: #e2e8f0;
-  font-weight: 600;
-}
-
-/* ─── 右键上下文菜单 ─── */
-.hdr-ctx-menu {
-  position: absolute;
-  background: rgba(2, 10, 24, 0.97);
-  border: 1px solid rgba(56, 189, 248, 0.55);
-  border-radius: 10px;
-  padding: 8px 0 6px;
-  min-width: 265px;
-  font-size: 11px;
-  color: #cfe7ff;
-  z-index: 30;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(6px);
-}
-
-.ctx-title {
-  color: #7dd3fc;
-  font-weight: 700;
-  font-size: 12px;
-  padding: 0 12px 5px;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
-  margin-bottom: 4px;
-}
-
-.ctx-swatch-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 3px 12px 5px;
-  color: #e2e8f0;
-  font-weight: 600;
-  font-size: 12px;
-}
-
-.ctx-swatch {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  flex-shrink: 0;
-}
-
-.ctx-row {
-  padding: 4px 14px 4px;
-  line-height: 1.65;
-  color: #94a3b8;
-  font-family: ui-monospace, 'Cascadia Code', monospace;
-  font-size: 10.5px;
-  white-space: nowrap;
-}
-
-.ctx-copy-btn {
-  margin: 9px 10px 4px;
-  text-align: center;
-  background: linear-gradient(90deg, rgba(14, 116, 144, 0.7), rgba(37, 99, 235, 0.7));
-  border: 1px solid rgba(56, 189, 248, 0.45);
-  border-radius: 7px;
-  padding: 7px 10px;
-  cursor: pointer;
-  color: #dbeafe;
-  font-size: 11px;
-  transition: background 0.15s;
-}
-
-.ctx-copy-btn:hover {
-  background: linear-gradient(90deg, rgba(14, 116, 144, 0.9), rgba(37, 99, 235, 0.9));
-}
-
-/* canvas-help 行：左侧提示 + 右侧复选框组 */
-.canvas-help {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* ═══════════════════════════════════════════════
-   Range 控件（类 RenderDoc 浮点显示范围映射）
-═══════════════════════════════════════════════ */
-
+/* ─── Range Bar ─── */
 .range-bar {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 8px 14px 9px;
-  background: rgba(5, 18, 34, 0.78);
-  border-bottom: 1px solid rgba(56, 189, 248, 0.22);
+  background: rgba(7, 20, 17, 0.78);
+  border-bottom: 1px solid var(--app-line-subtle);
 }
 
 .range-bar-label {
   font-size: 11px;
   font-weight: 700;
-  color: rgba(147, 197, 253, 0.7);
+  color: var(--app-text-inverse-muted);
   letter-spacing: 0.3px;
   min-width: 38px;
   font-family: ui-monospace, 'Cascadia Code', monospace;
@@ -1575,10 +434,10 @@ button.secondary {
 .range-num {
   width: 60px;
   height: 22px;
-  border: 1px solid rgba(56, 189, 248, 0.38);
+  border: 1px solid rgba(38, 168, 132, 0.38);
   border-radius: 5px;
-  background: rgba(5, 18, 34, 0.85);
-  color: #dbeafe;
+  background: rgba(7, 20, 17, 0.85);
+  color: var(--app-text-inverse);
   font-size: 11px;
   font-family: ui-monospace, 'Cascadia Code', monospace;
   padding: 0 5px;
@@ -1594,16 +453,16 @@ button.secondary {
 
 .range-num:focus {
   outline: none;
-  border-color: rgba(34, 211, 238, 0.7);
-  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.15);
+  border-color: rgba(38, 168, 132, 0.7);
+  box-shadow: 0 0 0 2px rgba(38, 168, 132, 0.15);
 }
 
 .range-bar-track {
   flex: 1;
   height: 6px;
   border-radius: 4px;
-  background: rgba(30, 58, 80, 0.9);
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: rgba(10, 25, 21, 0.9);
+  border: 1px solid rgba(38, 168, 132, 0.2);
   position: relative;
   cursor: pointer;
 }
@@ -1612,12 +471,11 @@ button.secondary {
   position: absolute;
   top: 0; bottom: 0;
   left: 0%; width: 100%;
-  background: linear-gradient(90deg, rgba(34, 211, 238, 0.55), rgba(56, 189, 248, 0.7));
+  background: linear-gradient(90deg, rgba(38, 168, 132, 0.55), rgba(55, 177, 140, 0.7));
   border-radius: 3px;
   pointer-events: none;
 }
 
-/* Draggable thumb handles on the range bar */
 .range-thumb {
   position: absolute;
   top: 50%;
@@ -1625,8 +483,8 @@ button.secondary {
   width: 12px;
   height: 18px;
   border-radius: 4px;
-  background: rgba(56, 189, 248, 0.92);
-  border: 1.5px solid rgba(186, 230, 253, 0.85);
+  background: rgba(38, 168, 132, 0.92);
+  border: 1.5px solid rgba(55, 177, 140, 0.85);
   box-shadow: 0 1px 4px rgba(0,0,0,0.5);
   cursor: ew-resize;
   touch-action: none;
@@ -1636,16 +494,16 @@ button.secondary {
 
 .range-thumb:hover,
 .range-thumb:active {
-  background: rgba(186, 230, 253, 0.98);
-  border-color: #fff;
+  background: rgba(55, 177, 140, 0.98);
+  border-color: var(--app-text-inverse);
 }
 
 .range-reset-btn {
   width: 22px; height: 22px;
   border-radius: 5px;
-  border: 1px solid rgba(56, 189, 248, 0.38);
-  background: rgba(14, 116, 144, 0.35);
-  color: #7dd3fc;
+  border: 1px solid rgba(38, 168, 132, 0.38);
+  background: rgba(38, 168, 132, 0.35);
+  color: var(--app-accent-light);
   font-size: 14px;
   line-height: 1;
   cursor: pointer;
@@ -1655,48 +513,446 @@ button.secondary {
 }
 
 .range-reset-btn:hover {
-  background: rgba(34, 211, 238, 0.25);
-  border-color: rgba(34, 211, 238, 0.6);
-  color: #e0f9ff;
+  background: rgba(38, 168, 132, 0.25);
+  border-color: rgba(38, 168, 132, 0.6);
+  color: var(--app-text-inverse);
 }
 
-/* ─── 亮度数字输入框（配合 range 使用，无上限） ─── */
-.ctrl-num-inline {
-  width: 58px;
-  height: 24px;
-  border: 1px solid rgba(56, 189, 248, 0.38);
-  border-radius: 5px;
-  background: rgba(5, 18, 34, 0.85);
-  color: #dbeafe;
-  font-size: 11.5px;
-  font-family: ui-monospace, 'Cascadia Code', monospace;
-  padding: 0 5px;
-  box-sizing: border-box;
-  text-align: right;
+/* ─── Inspector & Context Menu (keep dark) ─── */
+.hdri-wrap-rel {
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.hdr-inspector {
+  position: absolute;
+  pointer-events: none;
+  background: var(--app-overlay-dark);
+  border: 1px solid var(--app-line-strong);
+  border-radius: 9px;
+  padding: 6px 10px 7px;
+  font-size: 11px;
+  color: var(--app-text-inverse);
+  min-width: 175px;
+  line-height: 1.65;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  z-index: 20;
+  backdrop-filter: blur(4px);
+}
+
+.insp-hex {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 3px;
+  font-weight: 700;
+  color: var(--app-accent-light);
+  font-size: 12px;
+}
+
+.insp-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(55, 177, 140, 0.3);
   flex-shrink: 0;
-  -moz-appearance: textfield;
-}
-.ctrl-num-inline::-webkit-inner-spin-button,
-.ctrl-num-inline::-webkit-outer-spin-button { opacity: 0.4; }
-.ctrl-num-inline:focus {
-  outline: none;
-  border-color: rgba(34, 211, 238, 0.7);
-  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.12);
 }
 
-/* 缩短版 range（与数字输入框并排时使用） */
-.ctrl-range-short {
-  min-width: 64px;
+.insp-row {
+  color: var(--app-muted);
+  font-size: 10.5px;
+}
+
+.insp-row b {
+  color: var(--app-text-inverse);
+  font-weight: 600;
+}
+
+.hdr-ctx-menu {
+  position: absolute;
+  background: var(--app-overlay-dark);
+  border: 1px solid var(--app-line-strong);
+  border-radius: 10px;
+  padding: 10px 0 8px;
+  min-width: 265px;
+  font-size: 11px;
+  color: var(--app-text-inverse);
+  z-index: 30;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+}
+
+.ctx-title {
+  color: var(--app-accent-light);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 0 12px 5px;
+  border-bottom: 1px solid rgba(26, 58, 50, 0.6);
+  margin-bottom: 4px;
+}
+
+.ctx-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 12px 5px;
+  color: var(--app-text-inverse);
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.ctx-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid rgba(55, 177, 140, 0.28);
+  flex-shrink: 0;
+}
+
+.ctx-row {
+  padding: 4px 14px 4px;
+  line-height: 1.65;
+  color: var(--app-text-inverse-muted);
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.ctx-copy-btn {
+  margin: 9px 10px 4px;
+  text-align: center;
+  background: linear-gradient(90deg, rgba(20, 122, 99, 0.7), rgba(20, 122, 99, 0.7));
+  border: 1px solid var(--app-line);
+  border-radius: 7px;
+  padding: 7px 10px;
+  cursor: pointer;
+  color: var(--app-text-inverse);
+  font-size: 11px;
+  transition: background 0.15s;
+}
+
+.ctx-copy-btn:hover {
+  background: linear-gradient(90deg, rgba(20, 122, 99, 0.9), rgba(20, 122, 99, 0.9));
+}
+
+/* ─── Light Picker (keep dark inside light panel) ─── */
+.light-list-block {
+  display: block;
+}
+
+#lightPicker {
+  width: 100%;
+  min-height: 130px;
+  background: var(--app-overlay-dark);
+  color: var(--app-text-inverse);
+  border: 1px solid var(--app-line);
+  border-radius: 8px;
+  padding: 4px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+#lightPicker option {
+  color: var(--app-text-inverse);
+  background: #071411;
+}
+
+#lightPicker option:checked {
+  background: linear-gradient(90deg, var(--app-accent), var(--app-accent-light));
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════
+   Typography — Light Surface Text
+   ═══════════════════════════════════════ */
+
+.panel-section-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--app-text);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--app-line);
+  text-shadow: none;
+}
+
+.panel-section-head span {
+  letter-spacing: 0.2px;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.panel-section.collapsed > *:not(.panel-section-head) {
+  display: none;
+}
+
+.light-meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--app-muted);
+}
+
+.size-label {
+  display: block;
+  margin-top: 8px;
+  color: var(--app-text);
+  font-size: 12px;
+}
+
+.size-label input[type='range'] {
+  width: 100%;
+  margin-top: 6px;
+  accent-color: var(--app-accent-light);
+}
+
+.selection-hint {
+  width: 100%;
+  color: var(--app-muted);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.selection-hint span {
+  color: var(--app-accent-light);
+  font-weight: 700;
+}
+
+#activeSizeValue {
+  color: var(--app-accent-light);
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.utility-title {
+  color: var(--app-muted);
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.ctrl-label {
+  color: var(--app-text);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.val-badge {
+  color: var(--app-accent-light);
+  background: rgba(38, 168, 132, 0.2);
+  border: 1px solid var(--app-line);
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.hdr-status-text {
+  font-size: 12px;
+  color: var(--app-muted);
+  word-break: break-all;
+  padding: 4px 0;
+}
+
+.hdr-adj-info {
+  font-size: 11px;
+  color: var(--app-muted);
+  border: 1px solid var(--app-line-subtle);
+  border-radius: 6px;
+  padding: 4px 8px;
+  background: var(--app-glass);
+}
+
+.hist-title {
+  font-size: 11px;
+  color: var(--app-muted);
+  margin-bottom: 4px;
+}
+
+.sphere-grid-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: var(--app-accent-light);
+  cursor: pointer;
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid var(--app-line);
+  border-radius: 6px;
+  background: rgba(38, 168, 132, 0.12);
+  flex-shrink: 0;
+}
+
+.sphere-grid-label input[type='checkbox'] {
+  accent-color: var(--app-accent-light);
+  width: 13px;
+  height: 13px;
+}
+
+/* ═══════════════════════════════════════
+   Active Light Editor
+   ═══════════════════════════════════════ */
+
+.active-light-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+
+.active-light-editor label {
+  display: block;
+  color: var(--app-text);
+  font-size: 12px;
+}
+
+.active-light-editor label span {
+  color: var(--app-accent-light);
+  background: rgba(38, 168, 132, 0.15);
+  border: 1px solid var(--app-line);
+  border-radius: 4px;
+  padding: 0 4px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+.active-light-editor input[type='range'],
+.active-light-editor select,
+.active-light-editor input[type='color'] {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.active-light-editor input[type='range'] {
+  accent-color: var(--app-accent-light);
+}
+
+.active-light-editor select {
+  border: 1px solid var(--app-line);
+  background: var(--app-surface-input);
+  color: var(--app-text);
+  border-radius: 6px;
+  padding: 4px;
+  height: 30px;
+}
+
+.active-light-editor input[type='color'] {
+  border: 1px solid var(--app-line);
+  height: 32px;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.active-inline-check {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.active-light-editor .active-inline-check,
+.active-light-editor label:last-child {
+  grid-column: span 2;
+}
+
+/* ═══════════════════════════════════════
+   Buttons
+   ═══════════════════════════════════════ */
+
+.hdr-file-btn,
+button {
+  border: 1px solid var(--app-line);
+  border-radius: 12px;
+  padding: 7px 10px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: linear-gradient(90deg, var(--app-accent-light), var(--app-accent));
+  box-shadow: 0 6px 14px rgba(7, 20, 17, 0.20);
+}
+
+.hdr-file-btn {
+  display: inline-flex;
+  align-items: center;
+  background: linear-gradient(90deg, var(--app-accent-light), var(--app-accent));
+}
+
+button.secondary {
+  background: linear-gradient(90deg, var(--app-accent), var(--app-accent-strong));
+}
+
+.hdr-file-btn input[type='file'] {
+  display: none;
+}
+
+.panel-collapse-btn {
+  background: linear-gradient(90deg, var(--app-accent-light), var(--app-accent));
+  border: 1px solid var(--app-line-strong);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: #fff;
+  min-width: 48px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.panel-collapse-btn:hover {
+  background: linear-gradient(90deg, var(--app-accent), var(--app-accent-light));
+  border-color: var(--app-line-strong);
+}
+
+.inline-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.inline-actions button {
   flex: 1;
 }
 
-/* 环境设置区的导入文件按钮 */
+.panel-section > .hdr-file-btn,
+.panel-section > button {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.light-add-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+}
+
+.light-add-btns button {
+  font-size: 12px;
+  padding: 5px 6px;
+}
+
 .env-file-btn {
   width: 100%;
   justify-content: center;
 }
 
-/* ─── 右下角工具栏导出按钮 ─── */
 .util-export-row {
   display: flex;
   gap: 6px;
@@ -1715,7 +971,198 @@ button.secondary {
   white-space: nowrap;
 }
 
-/* hdr-ctx-menu 内距微调 */
-.hdr-ctx-menu {
-  padding: 10px 0 8px;
+/* ═══════════════════════════════════════
+   v2 Controls (light glass context)
+   ═══════════════════════════════════════ */
+
+.ctrl-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.ctrl-row.ctrl-checkbox {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ctrl-range {
+  width: 100%;
+  accent-color: var(--app-accent-light);
+  cursor: pointer;
+}
+
+.ctrl-range-short {
+  min-width: 64px;
+  flex: 1;
+}
+
+.ctrl-select,
+.ctrl-text {
+  width: 100%;
+  box-sizing: border-box;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--app-line);
+  background: var(--app-surface-input);
+  color: var(--app-text);
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.ctrl-color {
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--app-line);
+  background: transparent;
+  cursor: pointer;
+}
+
+.ctrl-num-inline {
+  width: 58px;
+  height: 24px;
+  border: 1px solid rgba(38, 168, 132, 0.38);
+  border-radius: 5px;
+  background: rgba(7, 20, 17, 0.85);
+  color: var(--app-text-inverse);
+  font-size: 11.5px;
+  font-family: ui-monospace, 'Cascadia Code', monospace;
+  padding: 0 5px;
+  box-sizing: border-box;
+  text-align: right;
+  flex-shrink: 0;
+  -moz-appearance: textfield;
+}
+
+.ctrl-num-inline::-webkit-inner-spin-button,
+.ctrl-num-inline::-webkit-outer-spin-button {
+  opacity: 0.4;
+}
+
+.ctrl-num-inline:focus {
+  outline: none;
+  border-color: rgba(38, 168, 132, 0.7);
+  box-shadow: 0 0 0 2px rgba(38, 168, 132, 0.12);
+}
+
+/* ─── Kelvin / Histogram / Misc ─── */
+.kelvin-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.kelvin-swatch {
+  flex: 1;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid var(--app-line);
+}
+
+.hist-wrap {
+  padding: 8px 6px 4px;
+  border-top: 1px solid var(--app-line);
+  margin-top: 4px;
+}
+
+.hist-canvas {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  display: block;
+}
+
+/* ═══════════════════════════════════════
+   Canvas Layout
+   ═══════════════════════════════════════ */
+
+.hdr-canvas-wrap {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  overflow: hidden;
+  height: 100%;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.hdri-edit-card,
+.preview-card {
+  flex: initial;
+  min-height: 0;
+}
+
+.hdri-edit-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════ */
+
+@media (max-width: 1320px) {
+  .hdr-grid-main {
+    grid-template-columns: 430px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1100px) {
+  .hdr-page-body #panel {
+    grid-template-columns: 1fr;
+  }
+
+  .hdr-page-body .queue-sidebar {
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 860px) {
+  .hdr-grid-main {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-height: none;
+  }
+
+  .left-panel,
+  .hdr-canvas-wrap {
+    max-height: none;
+    min-height: auto;
+  }
+
+  .hdr-canvas-wrap {
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+    height: auto !important;
+    min-height: auto;
+  }
+
+  .utility-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .utility-btns {
+    grid-template-columns: 1fr;
+  }
+
+  .hdri-edit-card,
+  .preview-card {
+    min-height: 260px;
+  }
+
+  .utility-card {
+    margin-top: 0;
+    max-height: none;
+  }
+
+  .gui-merged-panel {
+    min-height: 220px;
+  }
+
+  .gui-merged-panel #guiDock {
+    min-height: 200px;
+  }
 }

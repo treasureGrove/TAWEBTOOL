@@ -20,16 +20,16 @@
 
 /* Header */
 .pl-head {
-    background: linear-gradient(135deg, rgba(255,255,255,0.82), rgba(241,255,250,0.72));
-    border: 1px solid rgba(55,177,140,0.28);
+    background: linear-gradient(135deg, var(--app-glass-strong), var(--app-glass));
+    border: 1px solid var(--app-line);
     border-radius: 14px;
     padding: 8px 14px;
     margin-bottom: 6px;
-    box-shadow: 0 6px 16px rgba(34,197,94,0.08);
+    box-shadow: 0 6px 16px var(--app-accent-hover);
     flex-shrink: 0;
 }
-.pl-head h1 { font-size: 18px; color: #1f3f37; margin: 0 0 2px 0; }
-.pl-head p { font-size: 12px; color: #4b5563; margin: 0; }
+.pl-head h1 { font-size: 18px; color: var(--app-text-heading); margin: 0 0 2px 0; }
+.pl-head p { font-size: 12px; color: var(--app-text); margin: 0; }
 
 /* Layout */
 .pl-layout {
@@ -45,11 +45,11 @@
     width: 100%;
     min-height: 0;
     min-width: 0;
-    background: rgba(255,255,255,0.72);
-    border: 1px solid rgba(55,177,140,0.22);
+    background: var(--app-glass);
+    border: 1px solid var(--app-line);
     border-radius: 14px;
     padding: 8px;
-    box-shadow: 0 8px 20px rgba(15,118,110,0.08);
+    box-shadow: 0 8px 20px var(--app-shadow-card);
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;
@@ -60,8 +60,8 @@
 
 /* Sections */
 .pl-section {
-    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(244,255,251,0.84));
-    border: 1px solid rgba(55,177,140,0.22);
+    background: linear-gradient(180deg, var(--app-glass-strong), var(--app-glass));
+    border: 1px solid var(--app-line);
     border-radius: 11px;
     padding: 8px;
     display: flex;
@@ -71,11 +71,11 @@
 .pl-section-title {
     font-size: 13px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--app-text);
 }
 .pl-hint {
     font-size: 11px;
-    color: #6b7280;
+    color: var(--app-muted);
     margin: 0;
 }
 
@@ -85,13 +85,13 @@
     align-items: center;
     gap: 8px;
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
 }
 .ctrl-row label {
     flex-shrink: 0;
     min-width: 90px;
     font-size: 12px;
-    color: #334155;
+    color: var(--app-text);
 }
 .ctrl-row input[type="range"] {
     flex: 1;
@@ -100,20 +100,20 @@
 .ctrl-row input[type="number"] {
     flex: 1;
     min-width: 0;
-    border: 1px solid rgba(55,177,140,0.3);
+    border: 1px solid var(--app-line);
     border-radius: 8px;
     padding: 5px 8px;
     font-size: 12px;
-    background: rgba(255,255,255,0.94);
+    background: var(--app-surface-input);
     font-family: inherit;
 }
 .ctrl-row select {
     flex: 1;
     min-width: 0;
-    border: 1px solid rgba(55,177,140,0.3);
+    border: 1px solid var(--app-line);
     border-radius: 9px;
     padding: 6px 8px;
-    background: rgba(255,255,255,0.94);
+    background: var(--app-surface-input);
     font-size: 12px;
     font-family: inherit;
 }
@@ -123,20 +123,20 @@
     text-align: center;
     font-size: 11px;
     padding: 3px 6px;
-    border: 1px solid rgba(55,177,140,0.25);
+    border: 1px solid var(--app-line);
     border-radius: 6px;
-    background: rgba(255,255,255,0.82);
-    color: #3f4b58;
+    background: var(--app-glass-strong);
+    color: var(--app-text);
 }
 
 /* Result Box */
 .pl-result {
     font-size: 12px;
     padding: 8px 10px;
-    background: linear-gradient(160deg, rgba(9,16,24,0.94), rgba(15,33,40,0.94));
+    background: var(--app-overlay-dark);
     border-radius: 8px;
-    border: 1px solid rgba(74,222,128,0.12);
-    color: #e2e8f0;
+    border: 1px solid var(--app-line-subtle);
+    color: var(--app-text-inverse);
     font-family: ui-monospace, 'Cascadia Code', monospace;
     line-height: 1.6;
     white-space: pre-wrap;
@@ -162,11 +162,11 @@
 }
 .pl-ref-label {
     flex: 1;
-    color: #334155;
+    color: var(--app-text);
 }
 .pl-ref-value {
     font-weight: 600;
-    color: #1f3f37;
+    color: var(--app-text-heading);
     font-family: ui-monospace, 'Cascadia Code', monospace;
     text-align: right;
 }
@@ -192,7 +192,7 @@
 .color-values {
     font-size: 12px;
     font-family: ui-monospace, 'Cascadia Code', monospace;
-    color: #1f3f37;
+    color: var(--app-text-heading);
 }
 
 /* Kelvin markers */
@@ -200,7 +200,7 @@
     display: flex;
     justify-content: space-between;
     font-size: 10px;
-    color: #6b7280;
+    color: var(--app-muted);
     padding: 2px 0;
 }
 
@@ -209,13 +209,13 @@
     width: 100%;
     display: block;
     border-radius: 8px;
-    border: 1px solid rgba(74,222,128,0.12);
+    border: 1px solid var(--app-line-subtle);
 }
 #skyCanvas {
-    background: #0a0f14;
+    background: var(--app-overlay-dark);
 }
 #falloffChart {
-    background: linear-gradient(160deg, rgba(9,16,24,0.96), rgba(15,33,40,0.96));
+    background: var(--app-overlay-dark);
 }
 #kelvinBand {
     height: 32px;
