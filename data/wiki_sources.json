@@ -47,7 +47,9 @@
       "title": "GDC Vault - Rendering Assassin's Creed Shadows",
       "url": "https://gdcvault.com/play/1035526/Rendering-Assassin-s-Creed-Shadows",
       "category": "技术分享",
-      "tags": ["GDC", "Rendering", "GPU Driven", "OpenWorld", "Optimization"]
+      "tags": ["GDC", "Rendering", "GPU Driven", "OpenWorld", "Optimization"],
+      "trusted": true,
+      "note": "GDC 渲染技术分享，优先判断是否能沉淀开放世界渲染、GPU Driven、性能优化或资源管线经验。"
     },
     {
       "id": "gdc-anime-pbr",
@@ -55,7 +57,9 @@
       "title": "GDC Vault - Anime Style and Physically Based Rendering",
       "url": "https://www.gdcvault.com/play/1027597/Technical-Artist-Summit-Finding-Harmony",
       "category": "技术分享",
-      "tags": ["GDC", "TechnicalArt", "PBR", "ToonShading", "Lighting"]
+      "tags": ["GDC", "TechnicalArt", "PBR", "ToonShading", "Lighting"],
+      "trusted": true,
+      "note": "GDC Technical Artist Summit 分享，优先判断是否能沉淀风格化渲染、PBR 与美术规范经验。"
     },
     {
       "id": "gdc-niagara-technical-art",
@@ -63,7 +67,9 @@
       "title": "GDC Vault - Technical Art with Unreal Niagara",
       "url": "https://gdcvault.com/play/1029331/Technical-Artist-Summit-Approaching-Technical",
       "category": "引擎实践",
-      "tags": ["GDC", "Unreal", "Niagara", "VFX", "GPUCompute"]
+      "tags": ["GDC", "Unreal", "Niagara", "VFX", "GPUCompute"],
+      "trusted": true,
+      "note": "GDC Technical Artist Summit / Unreal Niagara 技术美术分享，优先判断是否能沉淀 VFX、Niagara、GPU 模拟或工具链经验。"
     },
     {
       "id": "siggraph-advances-rt-rendering",
@@ -71,7 +77,9 @@
       "title": "SIGGRAPH Advances in Real-Time Rendering",
       "url": "https://advances.realtimerendering.com/",
       "category": "技术分享",
-      "tags": ["SIGGRAPH", "RealTimeRendering", "Rendering", "Research"]
+      "tags": ["SIGGRAPH", "RealTimeRendering", "Rendering", "Research"],
+      "trusted": true,
+      "note": "SIGGRAPH 实时渲染课程入口，优先收录有 production rendering、材质、光照、性能经验的内容。"
     },
     {
       "id": "unreal-rendering-docs",
@@ -79,7 +87,9 @@
       "title": "Unreal Engine Rendering and Graphics Documentation",
       "url": "https://dev.epicgames.com/documentation/unreal-engine/designing-visuals-rendering-and-graphics-with-unreal-engine?lang=en-US",
       "category": "引擎实践",
-      "tags": ["Unreal", "Rendering", "Materials", "Lighting", "VFX"]
+      "tags": ["Unreal", "Rendering", "Materials", "Lighting", "VFX"],
+      "trusted": true,
+      "note": "Unreal 官方渲染与图形文档入口，优先沉淀材质、光照、后处理、VFX 和渲染管线实践。"
     },
     {
       "id": "unity-urp-vfx-recipes",

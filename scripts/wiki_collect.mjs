@@ -623,8 +623,23 @@ async function collectPage(source) {
   const title = firstMatch(html, /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i) || firstMatch(html, /<title[^>]*>([\s\S]*?)<\/title>/i) || source.title;
   const readableText = extractReadableText(html);
   const summary = firstMatch(html, /<meta[^>]+name=["']description["'][^>]+content=["']([^"']+)["']/i) || textSlice(readableText);
-  const verdict = await classifyCandidateWithAi({ title, summary, text: readableText, source, memory: source.memory });
-  if (!verdict.include) return [];
+  const trustedContext = source.trusted
+    ? [
+        `可信技术分享来源：${source.title || source.id}`,
+        `页面标题：${title}`,
+        `页面描述：${summary}`,
+        `来源备注：${source.note || ''}`,
+        `默认分类：${source.category || ''}`,
+        `默认标签：${(source.tags || []).join(', ')}`,
+        readableText
+      ].join('\n')
+    : readableText;
+  const verdict = await classifyCandidateWithAi({ title, summary, text: trustedContext, source, memory: source.memory });
+  const trustedPass = source.trusted && verdict.score >= 6 && verdict.confidence >= 0.55;
+  if (!verdict.include && !trustedPass) return [];
+  if (trustedPass && !verdict.include) {
+    verdict.reason = `${verdict.reason || 'trusted technical source'}；可信技术分享源，作为待复核草稿收录`;
+  }
   const tags = verdict.tags.length ? verdict.tags : inferTags([title, summary, readableText].join(' '), source.tags || []);
   return [{
     id: idFor(source.url),

@@ -112,6 +112,34 @@
     "aiUpdatedAt": "2026-07-05"
   },
   {
+    "id": "gdcvault-com-play-1035526-rendering-assassin-s-creed-shadows-686be6c2f0",
+    "title": "Rendering",
+    "category": "技术分享",
+    "tags": [
+      "GDC",
+      "Rendering",
+      "GPU Driven",
+      "OpenWorld",
+      "Optimization",
+      "Assassin's Creed Shadows",
+      "Ray Traced GI"
+    ],
+    "summary": "GDC演讲解析《刺客信条：影》开放世界的渲染挑战，重点介绍GPU Driven管线、光照改进及动态天气系统对帧预算的影响，适合关心大世界渲染优化的TA参考。",
+    "content": "## 自动归纳\n\nGDC演讲解析《刺客信条：影》开放世界的渲染挑战，重点介绍GPU Driven管线、光照改进及动态天气系统对帧预算的影响，适合关心大世界渲染优化的TA参考。\n## 原文摘录\n> close The Number One Educational Resource for the Game Industry Session Name: Rendering 'Assassin's Creed Shadows' Overview: Assassin's Creed Shadows is a large systemic open world game with dynamic time of day cycles, a systemic weather system, and seasons.\n\n> Such a large world and dynamic setting poses many rendering challenges.\n\n> The talk focuses on a typical frame and walks the audience through the various steps required to produce the final render, focusing on gpu driven pipeline, lighting improvements and other new developments.\n\n> by The ECS Behind 'Warhammer 40000: Space Marine 2' by Design and Rendering Strategies for Blockbuster...\n## 文章阐述\n\n该GDC演讲以典型帧为例，详细拆解《刺客信条：影》在大型开放世界、动态昼夜和季节系统下的渲染流程。重点覆盖GPU Driven管线的实施，包括剔除、LOD选择和绘制调用优化，以及光线追踪全局光照的集成策略。演讲还讨论了光照改进，如间接光照缓存和天空光照的实时更新，以应对动态环境的质量和性能权衡。\n本文观点的重要性在于：大世界渲染的瓶颈通常在于带宽和显存管理，而GPU Driven管线通过减少CPU提交压力，将更多控制权转移给GPU，是现代开放游戏的必备技术。适用边界是PC/新一代主机平台，对于移动端或前代主机，需要大幅降低RT和计算复杂度。落地到项目中，应先以单个区域验证剔除效率，再逐步推广。\n关键技术包括：视锥剔除与遮挡剔除的结合、间接光照的时空重用、以及材质流送系统。TA在实施时应重点关注：GPU标记如GpuMarker/D3D12 Events的覆盖率，确保调试能回溯到对应Pass；光照变体的管理，减少运行时分支；以及显存预算内RT数据结构（如BVH）的维护。\n## TA 视角\n\n- 断言检查：确保GPU标记覆盖每个渲染Pass，便于帧分析工具定位耗时Pass。\n- 检查光照变体数量，避免无谓的Shader组合爆炸，尤其在动态天气系统下。\n- 验证GPU Driven剔除效率：对比传统CPU剔除，检查剔除率与绘制调用减少量。\n- 评估RT GI显存开销：计算BVH、间接光照缓冲等数据结构在目标平台上的预算。\n- 落地前按昼夜/季节状态制作性能预算表，避免极端天气下帧率波动超标。\n## 元信息\n- 分类：技术分享\n- 标签：GDC, Rendering, GPU Driven, OpenWorld, Optimization, Assassin's Creed Shadows, Ray Traced GI\n- 来源：GDC Vault - Rendering Assassin's Creed Shadows\n- 原文：https://gdcvault.com/play/1035526/Rendering-Assassin-s-Creed-Shadows",
+    "source": "collected",
+    "sourceId": "gdc-assassins-creed-shadows-rendering",
+    "sourceTitle": "GDC Vault - Rendering Assassin's Creed Shadows",
+    "sourceUrl": "https://gdcvault.com/play/1035526/Rendering-Assassin-s-Creed-Shadows",
+    "quality": "ai-draft",
+    "updatedAt": "2026-07-05",
+    "filterReason": "来自GDC的官方技术分享，详细介绍了《刺客信条：影》的渲染管线，包括GPU Driven管线、光线追踪全局光照、开放世界性能优化等实践，适合TA沉淀为规范或优化策略。",
+    "relevanceScore": 9,
+    "filterConfidence": 0.9,
+    "contentType": "教程",
+    "aiModel": "deepseek-v4-flash",
+    "aiUpdatedAt": "2026-07-05"
+  },
+  {
     "id": "developer-nvidia-com-blog-streamlining-resource-binding-with-end-to-end-support--5d2277747d",
     "title": "Streamlining Resource Binding with End-to-End Support for Vulkan Descriptor Heaps",
     "category": "图形API",
