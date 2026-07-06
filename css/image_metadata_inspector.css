@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --accent: var(--app-accent);
     --accent-strong: var(--app-accent-strong);
     --text-main: var(--app-text);
@@ -15,7 +15,6 @@
     position: fixed;
     min-height: 100vh;
     width: 100%;
-    background-attachment: fixed;
     z-index: -1;
 }
 

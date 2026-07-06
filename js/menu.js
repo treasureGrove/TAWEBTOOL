@@ -263,12 +263,7 @@ function initTopSearch() {
     input.addEventListener('keydown', function (event) {
         if (event.key === 'Enter' && currentMatches.length > 0) {
             event.preventDefault();
-            // Use page transition if available
-            if (typeof triggerExitTransition === 'function') {
-                triggerExitTransition(currentMatches[0].href);
-            } else {
-                window.location.href = currentMatches[0].href;
-            }
+            window.location.href = currentMatches[0].href;
         }
         if (event.key === 'Escape') {
             input.value = '';
@@ -285,55 +280,8 @@ function initTopSearch() {
 }
 
 // ─── Page Transition System ───
-// Dark-veil dissolve with subtle shimmer sweep & blur ramp.
-// Uses CSS animation + animationend event instead of JS timers.
+// Minimal: just navigate. Entry animations on each page handle the reveal.
 (function () {
-    var KEY = 'pt_transition';
-
-    function createVeil(className) {
-        var v = document.createElement('div');
-        v.id = 'pt-veil';
-        v.className = className;
-        v.style.cssText = 'position:fixed;inset:0;z-index:99999;pointer-events:all;';
-        return v;
-    }
-
-    // ── Enter phase: block content before first paint ──
-    var entering = false;
-    try { entering = sessionStorage.getItem(KEY) === '1'; } catch (e) {}
-    if (entering) {
-        try { sessionStorage.removeItem(KEY); } catch (e) {}
-        var veil = createVeil('veil-enter');
-        veil.style.opacity = '1'; // fully opaque until animation starts
-        document.documentElement.appendChild(veil);
-        window._ptVeil = veil;
-    }
-
-    function playEnterAnimation() {
-        var v = window._ptVeil;
-        if (!v) return;
-        window._ptVeil = null;
-        // Trigger CSS dissolve: blur reduces, opacity → 0, sweep passes
-        v.addEventListener('animationend', function () {
-            if (v.parentNode) v.parentNode.removeChild(v);
-        }, { once: true });
-        // Replace inline opacity with class-driven animation
-        v.style.opacity = '';
-        v.classList.add('dissolving');
-    }
-
-    // ── Exit phase ──
-    function triggerExitTransition(href) {
-        var v = createVeil('veil-exit');
-        document.documentElement.appendChild(v);
-        v.addEventListener('animationend', function () {
-            try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
-            window.location.href = href;
-        }, { once: true });
-    }
-
-    window.triggerExitTransition = triggerExitTransition;
-
     function isInternalLink(href) {
         if (!href) return false;
         if (href.charAt(0) === '#' || href.indexOf('javascript:') === 0) return false;
@@ -346,27 +294,15 @@ function initTopSearch() {
         }
     }
 
-    function interceptNavigation() {
-        document.addEventListener('click', function (event) {
-            var anchor = event.target.closest('a');
-            if (!anchor) return;
-            var href = anchor.getAttribute('href');
-            if (!isInternalLink(href)) return;
-            if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-            event.preventDefault();
-            triggerExitTransition(href);
-        });
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () {
-            interceptNavigation();
-            playEnterAnimation();
-        });
-    } else {
-        interceptNavigation();
-        playEnterAnimation();
-    }
+    document.addEventListener('click', function (event) {
+        var anchor = event.target.closest('a');
+        if (!anchor) return;
+        var href = anchor.getAttribute('href');
+        if (!isInternalLink(href)) return;
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        window.location.href = href;
+    });
 })();
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -1,4 +1,4 @@
-#main_bg {
+﻿#main_bg {
     background-image: url(../assets/images/background/index_bg.jpg);
     background-size: cover;
     background-repeat: no-repeat;
@@ -6,7 +6,6 @@
     position: fixed;
     min-height: 100vh;
     width: 100%;
-    background-attachment: fixed;
     z-index: -1;
 }
 

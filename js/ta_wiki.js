@@ -471,6 +471,15 @@
     }
   }
 
+  function debounce(fn, ms) {
+    var timer;
+    return function () {
+      var ctx = this, args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(function () { fn.apply(ctx, args); }, ms);
+    };
+  }
+
   async function init() {
     const builtin = getBuiltinEntries();
     const collected = await loadCollectedEntries();
@@ -480,7 +489,7 @@
     renderTopics();
     filterEntries();
 
-    searchInput.addEventListener('input', filterEntries);
+    searchInput.addEventListener('input', debounce(filterEntries, 180));
     categorySelect.addEventListener('change', filterEntries);
     sourceSelect.addEventListener('change', filterEntries);
     modesEl.addEventListener('click', (event) => {

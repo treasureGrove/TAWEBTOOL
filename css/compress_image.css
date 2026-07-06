@@ -1,4 +1,4 @@
-#panel,
+﻿#panel,
 .settings-panel,
 .queue-column,
 .upload-area,
@@ -24,7 +24,6 @@
     position: fixed;
     min-height: 100vh;
     width: 100%;
-    background-attachment: fixed;
     z-index: -1;
 }
 

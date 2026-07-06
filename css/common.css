@@ -57,8 +57,9 @@
 
     /* ── Motion ── */
     --app-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --app-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --app-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
     --app-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --app-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 body {
@@ -74,15 +75,15 @@ body {
     height: var(--app-top-height);
     margin: 0;
     width: auto;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(238, 249, 246, 0.72));
+    background: rgba(255, 255, 255, 0.92);
     z-index: 100;
-    border: 1px solid rgba(255, 255, 255, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     box-shadow: var(--app-shadow-subtle);
     border-radius: var(--app-radius-lg);
-    backdrop-filter: blur(18px) saturate(1.2);
-    -webkit-backdrop-filter: blur(18px) saturate(1.2);
     overflow: visible;
-    animation: appSurfaceIn 0.52s var(--app-ease) both;
+    opacity: 0;
+    transform: translateY(-12px);
+    animation: appRevealDown .45s var(--app-ease-spring) .1s forwards;
 }
 
 .top_search input {
@@ -113,17 +114,17 @@ body {
     height: calc(100vh - var(--app-waifu-safe-height) - 32px);
     z-index: 100;
     pointer-events: none;
-    animation: appSidebarIn 0.58s var(--app-ease) both;
+    opacity: 0;
+    transform: translateX(-20px) scale(0.97);
+    animation: appRevealRight .5s var(--app-ease-spring) both;
 }
 
 .left_menu ul.menu_root {
     width: 100%;
     height: 100%;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(233, 247, 243, 0.58)),
-        rgba(255, 255, 255, 0.62);
+    background: rgba(255, 255, 255, 0.92);
     box-shadow: var(--app-shadow-soft);
-    border: 1px solid rgba(255, 255, 255, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: var(--app-radius-lg);
     padding: 8px;
     margin: 0;
@@ -134,8 +135,6 @@ body {
     overflow-x: hidden;
     list-style: none;
     pointer-events: auto;
-    backdrop-filter: blur(20px) saturate(1.24);
-    -webkit-backdrop-filter: blur(20px) saturate(1.24);
     scrollbar-gutter: stable;
 }
 
@@ -153,11 +152,22 @@ body {
     border-radius: 13px;
     margin-bottom: 7px;
     cursor: pointer;
-    transition: transform .22s var(--app-ease), background .22s var(--app-ease), border-color .22s var(--app-ease), box-shadow .22s var(--app-ease), padding .28s var(--app-ease);
+    transition: transform .24s var(--app-ease-spring), background .2s var(--app-ease), border-color .2s var(--app-ease), box-shadow .24s var(--app-ease);
     transform: none;
     position: relative;
     overflow: clip;
+    opacity: 0;
+    animation: appRevealItem .35s var(--app-ease-spring) both;
 }
+
+.menu_root > .left_item:nth-child(1) { animation-delay: .08s; }
+.menu_root > .left_item:nth-child(2) { animation-delay: .12s; }
+.menu_root > .left_item:nth-child(3) { animation-delay: .16s; }
+.menu_root > .left_item:nth-child(4) { animation-delay: .20s; }
+.menu_root > .left_item:nth-child(5) { animation-delay: .24s; }
+.menu_root > .left_item:nth-child(6) { animation-delay: .28s; }
+.menu_root > .left_item:nth-child(7) { animation-delay: .32s; }
+.menu_root > .left_item:nth-child(8) { animation-delay: .36s; }
 
 .left_item::before {
     content: '';
@@ -174,7 +184,7 @@ body {
     background: rgba(255, 255, 255, 0.82);
     border-color: var(--app-line);
     box-shadow: 0 10px 22px rgba(20, 122, 99, 0.13);
-    transform: translateX(3px);
+    transform: translateX(4px) scale(1.015);
 }
 
 .left_item:hover::before {
@@ -184,7 +194,7 @@ body {
 .left_item.active {
     background: linear-gradient(135deg, rgba(232, 249, 244, 0.96), rgba(255, 255, 255, 0.9));
     border-color: var(--app-line-strong);
-    box-shadow: 0 10px 24px rgba(20, 122, 99, 0.16);
+    box-shadow: 0 10px 24px rgba(20, 122, 99, 0.16), inset 0 0 0 1px rgba(38, 168, 132, 0.08);
     font-weight: bold;
 }
 
@@ -341,15 +351,15 @@ body {
     margin: 0;
     padding: 20px;
     box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.74);
-    border: 1px solid rgba(255, 255, 255, 0.58);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: var(--app-radius-lg);
     box-shadow: var(--app-shadow-soft);
-    backdrop-filter: blur(14px) saturate(1.16);
-    -webkit-backdrop-filter: blur(14px) saturate(1.16);
     overflow-y: auto;
     z-index: 50;
-    animation: appSurfaceIn 0.58s var(--app-ease) .05s both;
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+    animation: appRevealUp .55s var(--app-ease-spring) .18s forwards;
 }
 
 #waifu {
@@ -403,14 +413,24 @@ body {
     transition: opacity 0.3s;
 }
 
-@keyframes appSidebarIn {
-    0% { opacity: 0; transform: translateX(-18px); filter: blur(8px); }
-    100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+@keyframes appRevealRight {
+    0%   { opacity: 0; transform: translateX(-20px) scale(0.97); }
+    100% { opacity: 1; transform: translateX(0) scale(1); }
 }
 
-@keyframes appSurfaceIn {
-    0% { opacity: 0; transform: translateY(10px) scale(0.992); filter: blur(8px); }
-    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+@keyframes appRevealDown {
+    0%   { opacity: 0; transform: translateY(-12px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes appRevealUp {
+    0%   { opacity: 0; transform: translateY(16px) scale(0.985); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes appRevealItem {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* 自定义滚动条样式 */
@@ -429,7 +449,6 @@ body {
     background: rgba(55, 177, 140, 0.6);
     border-radius: 10px;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -474,10 +493,9 @@ body {
     overflow-y: auto;
     padding: 8px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.96);
+    background: rgba(255, 255, 255, 0.97);
     border: 1px solid rgba(55, 177, 140, 0.25);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-    backdrop-filter: blur(10px);
 }
 
 .top_search_results[hidden] {
@@ -536,89 +554,8 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════
-   Page Transition – dark veil dissolve
-   ═══════════════════════════════════════════════════
-
-   Inline styles from menu.js provide:
-     position:fixed; inset:0; z-index:99999; pointer-events:all;
-
-   Classes .veil-exit / .veil-enter + .dissolving drive the animations.
-*/
-
-#pt-veil {
-    background:
-        radial-gradient(ellipse at 50% 35%, rgba(12, 32, 27, 0.88), rgba(5, 12, 9, 0.97));
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-/* ── Light sweep pseudo-element ── */
-#pt-veil::after {
-    content: '';
-    position: absolute;
-    top: -10%;
-    bottom: -10%;
-    left: -30%;
-    width: 50%;
-    background: linear-gradient(105deg,
-        transparent 0%,
-        rgba(200, 230, 220, 0.03) 40%,
-        rgba(200, 230, 220, 0.07) 46%,
-        rgba(220, 240, 234, 0.09) 50%,
-        rgba(200, 230, 220, 0.07) 54%,
-        rgba(200, 230, 220, 0.03) 60%,
-        transparent 100%);
-    pointer-events: none;
-    transform: skewX(-12deg);
-    opacity: 0;
-}
-
-/* ── Exit: veil sweeps in over current page ── */
-#pt-veil.veil-exit {
-    opacity: 0;
-    animation: veilAppear .46s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-#pt-veil.veil-exit::after {
-    animation: veilSweepIn .5s cubic-bezier(0.4, 0, 0.6, 1) .04s both;
-}
-
-@keyframes veilAppear {
-    0%   { opacity: 0; backdrop-filter: blur(0px); transform: scale(1.03); }
-    100% { opacity: 1; backdrop-filter: blur(8px); transform: scale(1); }
-}
-
-@keyframes veilSweepIn {
-    0%   { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
-    30%  { opacity: 1; }
-    70%  { opacity: 1; }
-    100% { transform: translateX(260%) skewX(-12deg); opacity: 0; }
-}
-
-/* ── Enter: veil dissolves revealing new page ── */
-#pt-veil.veil-enter {
-    /* opacity: 1 set inline by JS until .dissolving is added */
-}
-
-#pt-veil.veil-enter.dissolving {
-    animation: veilDissolve .56s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-#pt-veil.veil-enter.dissolving::after {
-    animation: veilSweepOut .6s cubic-bezier(0.4, 0, 0.6, 1) .02s both;
-}
-
-@keyframes veilDissolve {
-    0%   { opacity: 1; backdrop-filter: blur(8px); transform: scale(1); }
-    100% { opacity: 0; backdrop-filter: blur(1px); transform: scale(1.015); }
-}
-
-@keyframes veilSweepOut {
-    0%   { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
-    35%  { opacity: 1; }
-    65%  { opacity: 1; }
-    100% { transform: translateX(260%) skewX(-12deg); opacity: 0; }
-}
+   Reduced Motion
+   ═══════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

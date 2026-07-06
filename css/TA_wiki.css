@@ -17,13 +17,18 @@
 }
 
 @keyframes wikiFadeSlideIn {
-    0%   { opacity: 0; transform: translateY(8px) scale(0.98); filter: blur(4px); }
-    100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    0%   { opacity: 0; transform: translateY(10px) scale(0.98); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes wikiItemStagger {
-    0%   { opacity: 0; transform: translateX(-12px); }
-    100% { opacity: 1; transform: translateX(0); }
+    0%   { opacity: 0; transform: translateY(8px) scale(0.97); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes wikiRevealSection {
+    0%   { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes wikiShimmer {
@@ -70,10 +75,10 @@
     padding: 12px 18px;
     border: 1px solid var(--wiki-line);
     border-radius: 12px;
-    background: var(--wiki-glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    transition: border-color .22s var(--wiki-ease), box-shadow .22s var(--wiki-ease);
+    background: rgba(255, 255, 255, 0.92);
+    opacity: 0;
+    animation: wikiRevealSection .4s var(--wiki-ease-bounce) .05s forwards;
+    transition: border-color .18s var(--wiki-ease), box-shadow .18s var(--wiki-ease);
 }
 
 .wiki-header:hover {
@@ -114,7 +119,7 @@
     font-size: 13px;
     font-weight: 700;
     box-shadow: 0 4px 12px rgba(22, 143, 114, 0.24);
-    transition: transform .2s var(--wiki-ease-bounce), box-shadow .2s var(--wiki-ease);
+    transition: transform .24s var(--wiki-ease-bounce), box-shadow .24s var(--wiki-ease);
     cursor: default;
     position: relative;
     overflow: hidden;
@@ -139,25 +144,25 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
+    opacity: 0;
+    animation: wikiRevealSection .4s var(--wiki-ease-bounce) .12s forwards;
 }
 
 .wiki-stat {
     padding: 12px 14px;
     border: 1px solid var(--wiki-line);
     border-radius: 10px;
-    background: var(--wiki-glass);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.92);
     display: flex;
     flex-direction: column;
     gap: 2px;
-    transition: border-color .22s var(--wiki-ease), transform .22s var(--wiki-ease-bounce), box-shadow .22s var(--wiki-ease);
+    transition: border-color .18s var(--wiki-ease), transform .24s var(--wiki-ease-bounce), box-shadow .22s var(--wiki-ease);
     cursor: default;
 }
 
 .wiki-stat:hover {
     border-color: var(--wiki-accent-line);
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.01);
     box-shadow: 0 6px 18px rgba(22, 143, 114, 0.09);
 }
 
@@ -179,6 +184,8 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 10px;
+    opacity: 0;
+    animation: wikiRevealSection .4s var(--wiki-ease-bounce) .18s forwards;
 }
 
 .wiki-topic-block {
@@ -186,10 +193,8 @@
     padding: 12px 14px;
     border: 1px solid var(--wiki-line);
     border-radius: 11px;
-    background: var(--wiki-glass);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: border-color .22s var(--wiki-ease), box-shadow .22s var(--wiki-ease);
+    background: rgba(255, 255, 255, 0.92);
+    transition: border-color .18s var(--wiki-ease), box-shadow .18s var(--wiki-ease);
 }
 
 .wiki-topic-block:hover {
@@ -226,7 +231,7 @@
     cursor: pointer;
     font-size: 12px;
     font-weight: 500;
-    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), transform .18s var(--wiki-ease-bounce), box-shadow .18s var(--wiki-ease);
+    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), transform .22s var(--wiki-ease-bounce), box-shadow .22s var(--wiki-ease);
 }
 
 .wiki-topic-block button:hover {
@@ -250,9 +255,9 @@
     padding: 10px;
     border: 1px solid var(--wiki-line);
     border-radius: 11px;
-    background: var(--wiki-glass);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.92);
+    opacity: 0;
+    animation: wikiRevealSection .4s var(--wiki-ease-bounce) .24s forwards;
 }
 
 .wiki-toolbar input,
@@ -310,7 +315,7 @@
     font-size: 13px;
     font-weight: 550;
     cursor: pointer;
-    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), color .18s var(--wiki-ease), transform .18s var(--wiki-ease-bounce), box-shadow .18s var(--wiki-ease);
+    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), color .18s var(--wiki-ease), transform .22s var(--wiki-ease-bounce), box-shadow .22s var(--wiki-ease);
 }
 
 .wiki-modes button:hover {
@@ -334,6 +339,8 @@
     grid-template-columns: 300px minmax(0, 1fr);
     gap: 10px;
     overflow: hidden;
+    opacity: 0;
+    animation: wikiRevealSection .45s var(--wiki-ease-bounce) .3s forwards;
 }
 
 .wiki-list,
@@ -341,10 +348,8 @@
     min-height: 0;
     border: 1px solid var(--wiki-line);
     border-radius: 11px;
-    background: var(--wiki-glass);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    transition: border-color .22s var(--wiki-ease), box-shadow .22s var(--wiki-ease);
+    background: rgba(255, 255, 255, 0.92);
+    transition: border-color .18s var(--wiki-ease), box-shadow .18s var(--wiki-ease);
 }
 
 .wiki-list {
@@ -381,28 +386,23 @@
     color: var(--wiki-text);
     cursor: pointer;
     text-align: left;
-    transition: border-color .2s var(--wiki-ease), background .2s var(--wiki-ease), transform .2s var(--wiki-ease-bounce), box-shadow .2s var(--wiki-ease), opacity .3s var(--wiki-ease);
+    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), transform .22s var(--wiki-ease-bounce), box-shadow .22s var(--wiki-ease);
     opacity: 0;
-    animation: wikiItemStagger .4s var(--wiki-ease-out) forwards;
+    animation: wikiItemStagger .3s var(--wiki-ease-bounce) forwards;
     flex-shrink: 0;
 }
 
-.wiki-list .wiki-item:nth-child(1) { animation-delay: .03s; }
-.wiki-list .wiki-item:nth-child(2) { animation-delay: .05s; }
-.wiki-list .wiki-item:nth-child(3) { animation-delay: .07s; }
-.wiki-list .wiki-item:nth-child(4) { animation-delay: .09s; }
-.wiki-list .wiki-item:nth-child(5) { animation-delay: .11s; }
-.wiki-list .wiki-item:nth-child(6) { animation-delay: .13s; }
-.wiki-list .wiki-item:nth-child(7) { animation-delay: .15s; }
-.wiki-list .wiki-item:nth-child(8) { animation-delay: .17s; }
-.wiki-list .wiki-item:nth-child(9) { animation-delay: .19s; }
-.wiki-list .wiki-item:nth-child(10) { animation-delay: .21s; }
-.wiki-list .wiki-item:nth-child(n+11) { animation-delay: .23s; }
+.wiki-list .wiki-item:nth-child(1) { animation-delay: .02s; }
+.wiki-list .wiki-item:nth-child(2) { animation-delay: .04s; }
+.wiki-list .wiki-item:nth-child(3) { animation-delay: .06s; }
+.wiki-list .wiki-item:nth-child(4) { animation-delay: .08s; }
+.wiki-list .wiki-item:nth-child(5) { animation-delay: .1s; }
+.wiki-list .wiki-item:nth-child(n+6) { animation-delay: .12s; }
 
 .wiki-item:hover {
     background: rgba(249, 251, 252, 0.85);
     border-color: var(--wiki-line);
-    transform: translateX(3px);
+    transform: translateX(3px) scale(1.008);
     box-shadow: 0 4px 14px rgba(22, 143, 114, 0.08);
 }
 
@@ -500,7 +500,6 @@
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: rgba(22,143,114,0.2) transparent;
-    scroll-behavior: smooth;
 }
 
 .wiki-content::-webkit-scrollbar {
@@ -516,8 +515,7 @@
 
 .wiki-content.transitioning {
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity .18s var(--wiki-ease), transform .18s var(--wiki-ease);
+    transition: opacity .15s var(--wiki-ease);
 }
 
 .wiki-doc-shell {
@@ -529,14 +527,14 @@
 .wiki-doc-main {
     min-width: 0;
     padding: 26px 32px 36px;
-    animation: wikiFadeSlideIn .4s var(--wiki-ease-out) both;
+    animation: wikiFadeSlideIn .35s var(--wiki-ease-bounce) both;
 }
 
 .wiki-doc-side {
     border-left: 1px solid var(--wiki-line);
     background: rgba(249, 251, 252, 0.6);
     padding: 20px 18px;
-    animation: wikiFadeSlideIn .45s var(--wiki-ease-out) .06s both;
+    animation: wikiFadeSlideIn .35s var(--wiki-ease-bounce) .08s both;
 }
 
 /* ═══ Article Head ═══ */
@@ -600,13 +598,13 @@
     text-decoration: none;
     font-size: 12px;
     font-weight: 700;
-    transition: transform .2s var(--wiki-ease-bounce), box-shadow .2s var(--wiki-ease);
+    transition: transform .24s var(--wiki-ease-bounce), box-shadow .24s var(--wiki-ease);
     box-shadow: 0 4px 12px rgba(22, 143, 114, 0.2);
 }
 
 .wiki-source-link:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(22, 143, 114, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(22, 143, 114, 0.3);
 }
 
 .wiki-source-link:active {
@@ -729,13 +727,13 @@
     text-decoration: none;
     font-size: 12px;
     line-height: 1.4;
-    transition: background .16s var(--wiki-ease), color .16s var(--wiki-ease), transform .16s var(--wiki-ease-bounce);
+    transition: background .18s var(--wiki-ease), color .18s var(--wiki-ease), transform .2s var(--wiki-ease-bounce);
 }
 
 .wiki-toc a:hover {
     color: var(--wiki-accent);
     background: #fff;
-    transform: translateX(2px);
+    transform: translateX(3px);
 }
 
 .wiki-toc .level-3 {
@@ -758,13 +756,13 @@
     background: #fff;
     text-align: left;
     cursor: pointer;
-    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), transform .18s var(--wiki-ease-bounce), box-shadow .18s var(--wiki-ease);
+    transition: border-color .18s var(--wiki-ease), background .18s var(--wiki-ease), transform .22s var(--wiki-ease-bounce), box-shadow .22s var(--wiki-ease);
 }
 
 .wiki-related button:hover {
     border-color: var(--wiki-accent-line);
     background: var(--wiki-accent-soft);
-    transform: translateX(2px);
+    transform: translateX(3px) scale(1.01);
     box-shadow: 0 2px 8px rgba(22, 143, 114, 0.06);
 }
 
