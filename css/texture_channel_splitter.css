@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --accent: var(--app-accent);
     --accent-strong: var(--app-accent-strong);
     --text-main: var(--app-text);
@@ -8,7 +8,7 @@
 }
 
 #main_bg {
-    background-image: url(../assets/images/background/pbr_bg.jpg);
+    background-image: url(../assets/images/background/miku_2.webp);
     background-size: cover;
     background-position: center;
     position: fixed;

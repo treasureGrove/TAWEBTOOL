@@ -42,7 +42,7 @@
 }
 
 #main_bg {
-    background-image: url("https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2FtreasureGrove%2FTAWEBTOOL%2Fmain%2Fassets%2Fimages%2Fbackground%2Findex_bg.jpg&w=1920&output=webp&q=72");
+    background-image: url(../assets/images/background/miku_2.webp);
     background-size: cover;
     background-position: center;
     position: fixed;
@@ -51,7 +51,7 @@
     z-index: -1;
 }
 
-/* â•â•â• Panel Layout â•â•â• */
+/* ¨T¨T??Panel Layout ¨T¨T??*/
 .wiki-panel {
     display: grid;
     grid-template-rows: auto auto auto minmax(0, 1fr);
@@ -65,7 +65,7 @@
     color: var(--wiki-text);
 }
 
-/* â•â•â• Header â•â•â• */
+/* ¨T¨T??Header ¨T¨T??*/
 .wiki-header {
     display: flex;
     justify-content: space-between;
@@ -139,7 +139,7 @@
     box-shadow: 0 6px 18px rgba(22, 143, 114, 0.32);
 }
 
-/* â•â•â• Stats â•â•â• */
+/* ¨T¨T??Stats ¨T¨T??*/
 .wiki-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -179,7 +179,7 @@
     font-weight: 500;
 }
 
-/* â•â•â• Topics â•â•â• */
+/* ¨T¨T??Topics ¨T¨T??*/
 .wiki-topics {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -246,7 +246,7 @@
     font-size: 11px;
 }
 
-/* â•â•â• Toolbar â•â•â• */
+/* ¨T¨T??Toolbar ¨T¨T??*/
 .wiki-toolbar {
     display: grid;
     grid-template-columns: minmax(280px, 1fr) 160px 150px 56px;
@@ -299,7 +299,7 @@
     font-weight: 500;
 }
 
-/* â•â•â• Mode Buttons â•â•â• */
+/* ¨T¨T??Mode Buttons ¨T¨T??*/
 .wiki-modes {
     display: flex;
     gap: 6px;
@@ -332,7 +332,7 @@
     box-shadow: 0 4px 12px rgba(22, 143, 114, 0.22);
 }
 
-/* â•â•â• Main Layout: List + Content â•â•â• */
+/* ¨T¨T??Main Layout: List + Content ¨T¨T??*/
 .wiki-layout {
     min-height: 0;
     display: grid;
@@ -374,7 +374,7 @@
     background: rgba(22,143,114,0.42);
 }
 
-/* â•â•â• Wiki Item Cards â•â•â• */
+/* ¨T¨T??Wiki Item Cards ¨T¨T??*/
 .wiki-item {
     width: 100%;
     display: grid;
@@ -494,7 +494,7 @@
     transform: translateY(-1px);
 }
 
-/* â•â•â• Content Area â•â•â• */
+/* ¨T¨T??Content Area ¨T¨T??*/
 .wiki-content {
     overflow-y: auto;
     overflow-x: hidden;
@@ -537,7 +537,7 @@
     animation: wikiFadeSlideIn .35s var(--wiki-ease-bounce) .08s both;
 }
 
-/* â•â•â• Article Head â•â•â• */
+/* ¨T¨T??Article Head ¨T¨T??*/
 .wiki-article-head {
     padding-bottom: 14px;
     border-bottom: 1px solid var(--wiki-line);
@@ -615,7 +615,7 @@
     margin: 8px 0 12px;
 }
 
-/* â•â•â• Markdown Content â•â•â• */
+/* ¨T¨T??Markdown Content ¨T¨T??*/
 .wiki-markdown {
     max-width: 900px;
 }
@@ -700,7 +700,7 @@
     font-size: 13px;
 }
 
-/* â•â•â• Doc Sidebar â•â•â• */
+/* ¨T¨T??Doc Sidebar ¨T¨T??*/
 .wiki-side-section {
     margin-bottom: 20px;
 }
@@ -789,7 +789,7 @@
     font-size: 13px;
 }
 
-/* â•â•â• Responsive â•â•â• */
+/* ¨T¨T??Responsive ¨T¨T??*/
 @media (max-width: 1200px) {
     .wiki-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));

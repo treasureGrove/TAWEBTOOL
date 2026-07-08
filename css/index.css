@@ -1,5 +1,5 @@
 :root {
-    --main-bg-image: url("https://images.weserv.nl/?url=https%3A%2F%2Fraw.githubusercontent.com%2FtreasureGrove%2FTAWEBTOOL%2Fmain%2Fassets%2Fimages%2Fbackground%2Findex_bg.jpg&w=1920&output=webp&q=72");
+    --main-bg-image: url(../assets/images/background/index_bg.webp);
 }
 
 #main_bg {

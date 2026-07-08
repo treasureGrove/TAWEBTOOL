@@ -1,5 +1,5 @@
-﻿#main_bg {
-    background-image: url(../assets/images/background/pbr_bg.jpg);
+#main_bg {
+    background-image: url(../assets/images/background/miku_gothic.webp);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
@@ -18,7 +18,7 @@
     overflow: hidden;
 }
 
-/* 左侧图片队列区 */
+/* ??????????? */
 .queue-sidebar {
     width: 280px;
     flex-shrink: 0;
@@ -28,7 +28,7 @@
     overflow: hidden;
 }
 
-/* 右侧主内容区 */
+/* ??????????? */
 .main-content {
     flex: 1;
     display: flex;
@@ -356,7 +356,7 @@
 }
 
 .file-list:empty::before {
-    content: '暂无图片';
+    content: '??????';
     display: flex;
     align-items: center;
     justify-content: center;
@@ -613,7 +613,7 @@
     font-family: "Yu Gothic UI", sans-serif;
 }
 
-/* 对比查看模态框 */
+/* ???????? */
 .comparison-modal {
     position: fixed;
     top: 0;
@@ -876,7 +876,7 @@
     font-size: 16px;
 }
 
-/* 文件状态标签样式 */
+/* ??????????? */
 .file-status-badge {
     display: inline-block;
     padding: 3px 8px;
@@ -922,13 +922,13 @@
     }
 }
 
-/* 优化文件列表背景 */
+/* ???????��???? */
 .file-list {
     background: var(--app-glass-strong);
     box-shadow: inset 0 2px 8px rgba(10, 36, 34, 0.04), 0 2px 12px rgba(10, 36, 34, 0.08);
 }
 
-/* 优化空状态显示 */
+/* ?????????? */
 .file-list:empty::before {
     color: var(--app-text-inverse-muted);
     font-size: 13px;
@@ -936,7 +936,7 @@
     opacity: 0.7;
 }
 
-/* 增强文件项悬停效果 */
+/* ???????????��?? */
 .file-item {
     position: relative;
     width: 95%;

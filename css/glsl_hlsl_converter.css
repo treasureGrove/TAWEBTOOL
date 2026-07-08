@@ -1,11 +1,11 @@
 #main_bg {
-    background-image:
-        radial-gradient(circle at top left, rgba(55, 177, 140, 0.2), transparent 30%),
-        radial-gradient(circle at top right, rgba(38, 168, 132, 0.12), transparent 24%),
-        linear-gradient(135deg, rgba(7, 20, 17, 0.08), rgba(255, 255, 255, 0));
-    background-color: #edf6f4;
+    background-image: url(../assets/images/background/miku_gothic.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     position: fixed;
-    inset: 0;
+    min-height: 100vh;
+    width: 100%;
     z-index: -1;
 }
 

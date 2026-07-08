@@ -1,3 +1,14 @@
+#main_bg {
+    background-image: url(../assets/images/background/miku_4.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    width: 100%;
+    z-index: -1;
+}
+
 .ps-panel {
   padding: 0 !important;
   background: var(--app-overlay-dark) !important;
