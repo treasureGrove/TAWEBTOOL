@@ -40,6 +40,23 @@ var MENU_DATA = [
     { name: '关于', icon: 'icon-about', items: [] },
 ];
 
+// ─── Inject favicon ───
+(function() {
+    var link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/png';
+    link.sizes = '32x32';
+    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
+    link.href = isRoot ? 'assets/images/icon/favicon-32x32.png' : '../assets/images/icon/favicon-32x32.png';
+    document.head.appendChild(link);
+
+    var apple = document.createElement('link');
+    apple.rel = 'apple-touch-icon';
+    apple.sizes = '180x180';
+    apple.href = isRoot ? 'assets/images/icon/apple-touch-icon.png' : '../assets/images/icon/apple-touch-icon.png';
+    document.head.appendChild(apple);
+})();
+
 // ─── Build sidebar HTML ───
 function buildMenuHTML() {
     var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
