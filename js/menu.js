@@ -18,7 +18,6 @@ var MENU_DATA = [
     ]},
     { name: '3D工具', icon: 'icon-3d', items: [
         { label: '模型预览器', href: 'model_previewer.html', keywords: ['3D模型', 'glb', 'gltf', 'fbx', 'obj', 'model viewer', '预览', '3d', '三维', 'mesh', '模型查看', 'usdz'] },
-        { label: '3D城市地形下载', href: '3d_city.html', keywords: ['地图', '地形', '建筑', '城市', 'city', 'terrain', 'heightmap', 'osm', 'openstreetmap', 'blender', 'gis', 'dem', '地理'] },
     ]},
     { name: '视频处理', icon: 'icon-video', items: [
         { label: '视频剪辑', href: 'video_cut.html', keywords: ['裁剪', '截取', 'mp4', 'cut', 'trim', 'video editor', '切割', '剪辑', 'mov', '片段', '时间轴'] },
