@@ -12,6 +12,7 @@ var MENU_DATA = [
         { label: '贴图通道分离', href: 'texture_channel_splitter.html', keywords: ['通道分离', '通道拆分', 'RGBA分离', '直方图', 'split', 'extract', '分离', '拆图', 'channel pack', '解包'] },
         { label: 'PBR贴图生成器', href: 'pbr_texture_generator.html', keywords: ['法线', '粗糙度', '金属度', '材质', 'normal', 'roughness', 'metallic', 'ao', 'height', 'displacement', 'pbr', '贴图', '生成'] },
         { label: 'Tiling贴图预览', href: 'tiling_texture.html', keywords: ['无缝', '平铺', 'UV', '接缝', 'tiling', 'seamless', 'tile', '重复', '四方连续', '贴图平铺', '循环'] },
+        { label: '拼贴图工具', href: 'collage_texture.html', keywords: ['拼贴', '排列', '网格', 'grid', 'collage', '贴图拼接', '排版', '纹理矩阵', '铺满', '矩阵排列'] },
         { label: 'HDR编辑器', href: 'hdr_editor.html', keywords: ['hdr', '环境贴图', 'exr', 'hdri', '全景', 'env', 'ibl', 'skybox', 'cubemap', '360', 'environ', 'pano'] },
         { label: '在线PS', href: 'ps_online.html', keywords: ['Photoshop', '图片编辑', 'ps', 'photopea', '修图', '图层', '扣图', '去背', 'p图', 'design'] },
     ]},

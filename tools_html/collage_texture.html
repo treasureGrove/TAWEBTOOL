@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="在线贴图拼贴排列工具，将多张贴图按网格排列拼接，支持铺满和Tiling两种模式。">
+    <meta name="keywords" content="拼贴图,贴图排列,网格拼贴,纹理矩阵,collage,texture grid">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/collage_texture.html">
+    <meta property="og:title" content="拼贴图工具">
+    <meta property="og:description" content="在线贴图拼贴排列工具，将多张贴图按网格排列拼接，支持铺满和Tiling两种模式。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/collage_texture.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="拼贴图工具">
+    <meta name="twitter:description" content="在线贴图拼贴排列工具，将多张贴图按网格排列拼接，支持铺满和Tiling两种模式。">
+    <title>拼贴图工具</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/collage_texture.css">
+</head>
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <h1 class="cl-title">拼贴图工具</h1>
+
+        <div class="cl-body">
+            <div class="cl-ctrl">
+                <div class="cl-block">
+                    <div class="cl-block-head">贴图 <span id="clCount">0</span></div>
+                    <label class="cl-drop" id="clDropZone">
+                        <span>拖拽或点击上传</span>
+                        <small>JPG / PNG / WEBP / BMP，可多选</small>
+                    </label>
+                    <input type="file" id="clFileInput" accept="image/*" multiple hidden>
+                    <div class="cl-list" id="clSpriteList"></div>
+                    <button class="cl-clear" id="clClearBtn">清空列表</button>
+                </div>
+
+                <div class="cl-block">
+                    <div class="cl-block-head">网格</div>
+                    <div class="cl-row">
+                        <span>列</span><input id="clCols" type="number" min="1" max="12" value="2">
+                        <span>行</span><input id="clRows" type="number" min="1" max="12" value="2">
+                    </div>
+                    <div class="cl-row">
+                        <span>尺寸</span><input id="clOutWidth" type="number" min="256" max="4096" step="64" value="1024">
+                        <span class="cl-muted">px (方形)</span>
+                    </div>
+                    <div class="cl-dim">每格 <b id="clCellInfo">512×512</b> px &nbsp; 输出 <b id="clOutSize">1024×1024</b></div>
+                </div>
+
+                <div class="cl-block">
+                    <div class="cl-block-head">模式</div>
+                    <label class="cl-chk" id="clKeepAspectRow"><input type="checkbox" id="clKeepAspect"> 保持原图比例</label>
+                </div>
+            </div>
+
+            <div class="cl-out">
+                <div class="cl-canvas">
+                    <canvas id="clPreview" width="512" height="512"></canvas>
+                </div>
+                <div class="cl-foot">
+                    <span class="cl-muted" id="clInfo">上传贴图开始</span>
+                    <div class="cl-foot-r">
+                        <select class="cl-fmt" id="clFormat"><option value="png">PNG</option><option value="tga">TGA</option></select>
+                        <button class="cl-btn" id="clDownloadBtn" disabled>下载</button>
+                        <button class="cl-zoom" id="clZoomOut">−</button>
+                        <span class="cl-muted" id="clZoomLabel">100%</span>
+                        <button class="cl-zoom" id="clZoomIn">+</button>
+                        <button class="cl-zoom" id="clZoomFit">⊡</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../third_part/tga-encoder.js"></script>
+    <script src="../js/collage_texture.js"></script>
+</body>
+</html>
