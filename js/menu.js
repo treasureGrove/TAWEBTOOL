@@ -59,19 +59,7 @@ var MENU_DATA = [
     document.head.appendChild(apple);
 })();
 
-// ─── Inject webfont (霞鹜文楷 LXGW WenKai Screen) ───
-(function() {
-    var preconnect = document.createElement('link');
-    preconnect.rel = 'preconnect';
-    preconnect.href = 'https://cdn.jsdelivr.net';
-    preconnect.crossOrigin = 'anonymous';
-    document.head.appendChild(preconnect);
-
-    var font = document.createElement('link');
-    font.rel = 'stylesheet';
-    font.href = 'https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css';
-    document.head.appendChild(font);
-})();
+// ─── Webfont now loaded via static <link> in <head> ───
 
 // ─── Build sidebar HTML ───
 function buildMenuHTML() {
