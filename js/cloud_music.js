@@ -201,7 +201,7 @@
     }
 
     const html = `<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>一起听悬浮播放器</title><style>
-    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,\"Microsoft YaHei\",sans-serif}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:\"LXGW WenKai Screen\",\"Kaiti SC\",\"KaiTi\",serif}
     body{padding:14px;background:#111827;color:#f8fafc}
     .card{border:1px solid #374151;border-radius:12px;padding:14px;background:#1f2937}
     .title{font-size:18px;font-weight:700}.meta{font-size:12px;color:#cbd5e1;margin-top:4px}

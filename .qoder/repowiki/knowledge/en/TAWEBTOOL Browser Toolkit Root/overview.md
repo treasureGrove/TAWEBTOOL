@@ -1,0 +1,1 @@
+Zero-dependency single-page toolkit that wires standalone technical-art tools into a shared sidebar shell with centralized routing, theming, and WebAssembly runtimes.

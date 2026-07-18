@@ -10,7 +10,7 @@
 }
 
 #panel {
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     padding: 14px !important;
     display: flex;
     gap: 16px;
@@ -55,7 +55,7 @@
     font-weight: 700;
     color: var(--app-text);
     margin-bottom: 8px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     letter-spacing: -0.5px;
 }
 
@@ -116,13 +116,13 @@
     font-weight: 600;
     color: var(--app-text);
     margin: 0 0 3px 0;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .upload-content .sub-text {
     font-size: 11px;
     color: var(--app-muted);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     margin: 0;
 }
 
@@ -169,7 +169,7 @@
     font-weight: 700;
     color: var(--app-accent);
     margin-bottom: 6px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     letter-spacing: 0.3px;
     text-transform: uppercase;
 }
@@ -179,7 +179,7 @@
     padding: 3px 6px;
     font-size: 9px;
     color: var(--app-muted);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     background: var(--app-accent-hover);
     border-radius: 4px;
     border-left: 2px solid var(--app-line-strong);
@@ -191,7 +191,7 @@
     padding: 2px 6px;
     font-size: 9px;
     color: var(--app-muted);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     border-radius: 4px;
     font-weight: 600;
     display: inline-block;
@@ -269,7 +269,7 @@
     background: #fff;
     box-sizing: border-box;
     transition: all 0.2s ease;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     cursor: pointer;
     font-weight: 500;
 }
@@ -428,7 +428,7 @@
     margin-bottom: 4px;
     font-weight: 500;
     word-break: break-all;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -441,13 +441,13 @@
 .file-size {
     font-size: 10px;
     color: var(--app-muted);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .file-result {
     font-size: 10px;
     color: var(--app-accent);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     text-align: left;
 }
 
@@ -475,7 +475,7 @@
     font-size: 10px;
     font-weight: 600;
     transition: all 0.2s;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     flex: 1;
     min-width: 40px;
 }
@@ -537,7 +537,7 @@
     font-size: 13px;
     cursor: pointer;
     transition: all 0.2s;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .btn-primary {
@@ -610,7 +610,7 @@
     text-align: center;
     font-size: 14px;
     color: var(--app-text);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 /* ???????? */
@@ -657,13 +657,13 @@
     margin: 0 0 5px 0;
     font-size: 20px;
     color: var(--app-text);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .current-file-name {
     font-size: 13px;
     color: var(--app-muted);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     word-break: break-all;
 }
 
@@ -765,7 +765,7 @@
     border-radius: 20px;
     backdrop-filter: blur(10px);
     z-index: 10;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .label-left {
@@ -884,7 +884,7 @@
     font-size: 10px;
     font-weight: 600;
     margin-top: 4px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     letter-spacing: 0.3px;
 }
 
@@ -922,7 +922,7 @@
     }
 }
 
-/* ???????§Ò???? */
+/* ???????ï¿½ï¿½???? */
 .file-list {
     background: var(--app-glass-strong);
     box-shadow: inset 0 2px 8px rgba(10, 36, 34, 0.04), 0 2px 12px rgba(10, 36, 34, 0.08);
@@ -936,7 +936,7 @@
     opacity: 0.7;
 }
 
-/* ???????????§¹?? */
+/* ???????????ï¿½ï¿½?? */
 .file-item {
     position: relative;
     width: 95%;

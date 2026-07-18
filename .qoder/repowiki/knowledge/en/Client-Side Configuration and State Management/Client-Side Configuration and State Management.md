@@ -1,3 +1,19 @@
+---
+kind: configuration_system
+name: Client-Side Configuration and State Management
+category: configuration_system
+scope:
+    - '**'
+source_files:
+    - tokens.json
+    - js/3d_city.js
+    - js/chatgpt.js
+    - js/cloud_music.js
+    - js/menu.js
+    - js/ai_upscale.js
+    - js/ai_frame_interpolation.js
+---
+
 The repository employs a decentralized, client-side configuration strategy typical of static web applications. It lacks a centralized configuration management system (such as environment variables, build-time config injection, or a unified settings service). Instead, configuration is handled through three distinct patterns:
 
 ### 1. Hardcoded Secrets and API Keys

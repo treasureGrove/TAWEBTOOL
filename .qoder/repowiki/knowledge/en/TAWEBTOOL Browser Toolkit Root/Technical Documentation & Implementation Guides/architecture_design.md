@@ -1,0 +1,5 @@
+Documentation-only leaf module under `doc/`, containing seven standalone Markdown guides that serve as implementation references for sibling source modules:
+- AI inference guides (`AI图片超分辨率技术实现文档.md`, `AI视频补帧功能说明.md`) document ONNX Runtime Web + WebGPU Real-ESRGAN usage, including the critical `graphOptimizationLevel: 'disabled'` workaround.
+- Media pipeline docs (`下载mp4-muxer说明.md`, `视频剪辑_CDN跨域解决方案.md`, `视频剪辑工具使用说明.md`) cover the native-browser-API video editor (MediaRecorder + Canvas) chosen over FFmpeg.wasm to support `file://` usage without a local server.
+- Knowledge-base specs (`TA知识库需求.md`, `TA知识库自动更新说明.md`) describe the TA knowledge base feature requirements and auto-update mechanism.
+No executable code, build manifests, or interface definitions exist here; files are cross-referenced by path from the rest of the repository but have no internal dependencies on each other.

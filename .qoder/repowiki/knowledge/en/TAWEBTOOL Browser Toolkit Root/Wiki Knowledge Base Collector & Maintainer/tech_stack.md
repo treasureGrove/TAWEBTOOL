@@ -1,0 +1,1 @@
+Node.js native ESM (`node:fs/promises`, `node:url`, `node:crypto`) with built-in `fetch`; DeepSeek-compatible OpenAI-style `/chat/completions` API (configurable via `WIKI_AI_BASE_URL`, default `https://api.deepseek.com`); optional `opencode` CLI for human-in-the-loop review; `curl` + `git` + `mail` used by the shell layer.

@@ -1,3 +1,16 @@
+---
+kind: logging_system
+name: Browser-Native Logging via Console API
+category: logging_system
+scope:
+    - '**'
+source_files:
+    - js/ai_upscale.js
+    - js/ai_frame_interpolation.js
+    - js/3d_city.js
+    - third_part/ort-wasm-simd-threaded.js
+---
+
 The repository employs a **browser-native logging strategy** relying exclusively on the standard `console` API (`console.log`, `console.warn`, `console.error`). There is no dedicated logging framework, middleware, or centralized logging service.
 
 ### 1. Logging Approach

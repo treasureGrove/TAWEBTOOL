@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: docs
-title: AI Media Processing Documentation
+title: Technical Documentation & Implementation Guides
 scope:
     - doc/
 source_files: []

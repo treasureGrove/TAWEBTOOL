@@ -10,7 +10,7 @@
 }
 
 #panel {
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     backdrop-filter: blur(2px);
     overflow: hidden;
     display: flex;

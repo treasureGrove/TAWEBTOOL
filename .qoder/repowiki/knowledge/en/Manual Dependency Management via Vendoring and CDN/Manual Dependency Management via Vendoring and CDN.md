@@ -1,3 +1,17 @@
+---
+kind: dependency_management
+name: Manual Dependency Management via Vendoring and CDN
+category: dependency_management
+scope:
+    - '**'
+source_files:
+    - third_part/
+    - scripts/fetch_models.sh
+    - models/README.md
+    - js/ai_upscale.js
+    - js/ai_frame_interpolation.js
+---
+
 This repository employs a manual, file-based dependency management strategy typical of static web applications without a package manager (e.g., no `package.json`, `go.mod`, or `requirements.txt`).
 
 ### 1. Dependency Acquisition Strategy

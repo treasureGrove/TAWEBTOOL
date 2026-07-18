@@ -1,0 +1,2 @@
+- Each guide follows a consistent structure: problem statement → solution comparison table → step-by-step implementation with inline JavaScript snippets → performance/compatibility matrix → FAQ/future improvements.
+- Technical decisions are justified through explicit trade-off tables comparing alternatives (e.g., FFmpeg.wasm vs. native browser APIs), documenting pros, cons, and applicable scenarios before recommending a path.

@@ -1,6 +1,6 @@
 :root{--ac:var(--app-accent);--acs:var(--app-accent-strong);--t:var(--app-text);--m:var(--app-muted);--ln:var(--app-line-subtle);--card:var(--app-card)}
 #main_bg{background-image:url(../assets/images/background/miku_gothic.webp);background-size:cover;background-position:center;position:fixed;min-height:100vh;width:100%;z-index:-1}
-#panel{font-family:"Yu Gothic UI",sans-serif;display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(245,252,249,.62));border:1px solid rgba(255,255,255,.45)}
+#panel{font-family: var(--app-font-serif);display:flex;flex-direction:column;overflow-y:auto;background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(245,252,249,.62));border:1px solid rgba(255,255,255,.45)}
 
 .cl-title{font-size:20px;color:var(--t);margin-bottom:12px}
 .cl-body{display:grid;grid-template-columns:240px 1fr;gap:12px;align-items:stretch;flex:1;min-height:0}
@@ -19,7 +19,7 @@
 .cl-drop small{font-size:11px;color:var(--m)}
 
 .cl-row{display:flex;align-items:center;gap:4px;margin-bottom:5px;font-size:12px;color:var(--t)}
-.cl-row input[type=number]{width:52px;padding:4px 4px;border:1px solid var(--ln);border-radius:5px;font-size:12px;background:var(--app-surface-input);font-family:"Yu Gothic UI",sans-serif;text-align:center;color:var(--t)}
+.cl-row input[type=number]{width:52px;padding:4px 4px;border:1px solid var(--ln);border-radius:5px;font-size:12px;background:var(--app-surface-input);font-family: var(--app-font-serif);text-align:center;color:var(--t)}
 .cl-muted{font-size:11px;color:var(--m)}
 .cl-dim{font-size:10px;color:var(--m);margin-top:4px}
 .cl-dim b{color:var(--t)}
@@ -28,7 +28,7 @@
 .cl-chk input{accent-color:var(--ac)}
 
 .cl-list{max-height:140px;overflow-y:auto;margin-top:8px}
-.cl-clear{width:100%;margin-top:6px;padding:5px 0;background:none;border:1px solid var(--ln);border-radius:6px;color:var(--m);font-size:11px;cursor:pointer;font-family:"Yu Gothic UI",sans-serif;transition:all .18s}
+.cl-clear{width:100%;margin-top:6px;padding:5px 0;background:none;border:1px solid var(--ln);border-radius:6px;color:var(--m);font-size:11px;cursor:pointer;font-family: var(--app-font-serif);transition:all .18s}
 .cl-clear:hover{background:var(--app-accent-hover);color:var(--acs)}
 
 /* sprite item */
@@ -49,10 +49,10 @@
 .cl-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 2px 2px;flex-shrink:0;flex-wrap:wrap}
 .cl-foot-r{display:flex;align-items:center;gap:5px;flex-shrink:0}
 
-.cl-btn{padding:6px 14px;background:linear-gradient(135deg,var(--ac),var(--acs));color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family:"Yu Gothic UI",sans-serif;transition:all .18s;box-shadow:0 3px 10px rgba(35,126,102,.22)}
+.cl-btn{padding:6px 14px;background:linear-gradient(135deg,var(--ac),var(--acs));color:#fff;border:none;border-radius:7px;cursor:pointer;font-size:12px;font-family: var(--app-font-serif);transition:all .18s;box-shadow:0 3px 10px rgba(35,126,102,.22)}
 .cl-btn:disabled{background:var(--app-line);cursor:not-allowed;box-shadow:none}
 
-.cl-zoom{padding:4px 8px;background:var(--app-accent-hover);color:var(--acs);border:1px solid var(--ln);border-radius:5px;cursor:pointer;font-size:13px;font-family:"Yu Gothic UI",sans-serif;line-height:1;transition:all .18s}
+.cl-zoom{padding:4px 8px;background:var(--app-accent-hover);color:var(--acs);border:1px solid var(--ln);border-radius:5px;cursor:pointer;font-size:13px;font-family: var(--app-font-serif);line-height:1;transition:all .18s}
 .cl-zoom:hover{background:var(--app-accent-pressed)}
 
-.cl-fmt{padding:5px 6px;border:1px solid var(--ln);border-radius:5px;font-size:11px;background:var(--app-surface-input);font-family:"Yu Gothic UI",sans-serif;color:var(--t);cursor:pointer}
+.cl-fmt{padding:5px 6px;border:1px solid var(--ln);border-radius:5px;font-size:11px;background:var(--app-surface-input);font-family: var(--app-font-serif);color:var(--t);cursor:pointer}

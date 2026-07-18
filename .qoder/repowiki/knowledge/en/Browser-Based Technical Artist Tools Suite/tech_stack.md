@@ -1,1 +1,0 @@
-ONNX Runtime Web 1.17.1 (WASM + WebGPU) and FFmpeg.wasm bundles under `third_part/` are the cross-cutting inference/media runtimes used by multiple tools.

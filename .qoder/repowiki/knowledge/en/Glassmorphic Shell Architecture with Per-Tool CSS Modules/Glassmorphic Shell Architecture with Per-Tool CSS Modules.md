@@ -1,3 +1,22 @@
+---
+kind: frontend_style
+name: Glassmorphic Shell Architecture with Per-Tool CSS Modules
+category: frontend_style
+scope:
+    - '**'
+source_files:
+    - css/common.css
+    - css/index.css
+    - css/chatgpt.css
+    - css/ai_upscale.css
+    - css/model_previewer.css
+    - css/color_space_converter.css
+    - css/TA_wiki.css
+    - index.html
+    - assets/images/background/index_bg.jpg
+    - assets/images/background/pbr_bg.jpg
+---
+
 ## System Overview
 
 This repository uses a **vanilla CSS architecture** organized around a unified navigation shell (`common.css`) and per-tool module stylesheets. There is no CSS framework (Tailwind, Bootstrap) or preprocessor (Sass/Less). Styling relies on inline SVG icons, CSS custom properties (scoped to specific tools), glassmorphism effects, and a consistent teal accent color (#37b18c / #2fa888).

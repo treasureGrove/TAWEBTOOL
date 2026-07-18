@@ -6,8 +6,17 @@
 - [video_cut.css](file://css/video_cut.css)
 - [video_cut.html](file://tools_html/video_cut.html)
 - [视频剪辑工具使用说明.md](file://doc/视频剪辑工具使用说明.md)
-- [mp4-muxer.umd.js](file://third_part/mp4-muxer.umd.js)
 </cite>
+
+## Update Summary
+**Changes Made**
+- Updated architecture to reflect FFmpeg.wasm integration replacing native MediaRecorder approach
+- Added three-panel layout interface documentation (preview, settings, output)
+- Documented enhanced timeline controls with dual range sliders
+- Added multi-format export options (MP4, MOV, WebM, GIF, PNG, audio formats)
+- Updated supported operations to include FFmpeg-based processing
+- Revised performance considerations for WASM-based processing
+- Added new UI components and workflow documentation
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -22,333 +31,339 @@
 10. [Appendices](#appendices)
 
 ## Introduction
-This document explains the browser-native video cutting and trimming functionality implemented in the project. It focuses on how the application uses MediaRecorder API and Canvas capture to process video in real time, the timeline editing workflow, supported operations, and the UI components for file upload, preview controls, and export. It also covers browser compatibility, performance characteristics, and memory management considerations.
+This document explains the redesigned video cutting and trimming functionality implemented in the project. The application now leverages FFmpeg.wasm for professional-grade video processing while maintaining a modern three-panel interface. It covers the enhanced timeline editing workflow, multi-format export options, precise time range selection, and comprehensive video operations including cropping, format conversion, audio extraction, video muting, GIF creation, and snapshot capture.
 
 ## Project Structure
-The video cutting tool is organized as a self-contained module with HTML scaffolding, JavaScript logic, and CSS styling. The primary runtime is a single JavaScript file that initializes the UI, manages state, and performs video processing using browser APIs.
+The video cutting tool is organized as a self-contained module with HTML scaffolding, JavaScript logic, and CSS styling. The primary runtime is a single JavaScript file that initializes the UI, manages state, and performs video processing using FFmpeg.wasm.
 
 ```mermaid
 graph TB
 A["tools_html/video_cut.html"] --> B["js/video_cut.js"]
 B --> C["css/video_cut.css"]
 D["doc/视频剪辑工具使用说明.md"] -. external docs .-> B
-E["third_part/mp4-muxer.umd.js"] -. unrelated to core .-> B
+E["third_part/ffmpeg-wasm/ffmpeg-core.js"] -. FFmpeg.wasm core .-> B
 ```
 
 **Diagram sources**
-- [video_cut.html:1-28](file://tools_html/video_cut.html#L1-L28)
-- [video_cut.js:1-688](file://js/video_cut.js#L1-L688)
-- [video_cut.css:1-253](file://css/video_cut.css#L1-L253)
+- [video_cut.html:1-29](file://tools_html/video_cut.html#L1-L29)
+- [video_cut.js:1-706](file://js/video_cut.js#L1-L706)
+- [video_cut.css:1-451](file://css/video_cut.css#L1-L451)
 - [视频剪辑工具使用说明.md:1-299](file://doc/视频剪辑工具使用说明.md#L1-L299)
-- [mp4-muxer.umd.js:1-8](file://third_part/mp4-muxer.umd.js#L1-L8)
 
 **Section sources**
-- [video_cut.html:1-28](file://tools_html/video_cut.html#L1-L28)
-- [video_cut.js:1-688](file://js/video_cut.js#L1-L688)
-- [video_cut.css:1-253](file://css/video_cut.css#L1-L253)
+- [video_cut.html:1-29](file://tools_html/video_cut.html#L1-L29)
+- [video_cut.js:1-706](file://js/video_cut.js#L1-L706)
+- [video_cut.css:1-451](file://css/video_cut.css#L1-L451)
 - [视频剪辑工具使用说明.md:1-299](file://doc/视频剪辑工具使用说明.md#L1-L299)
 
 ## Core Components
-- UI initialization and layout: The module renders a structured panel with file upload, preview, time controls, mode selection, options, progress, logs, and download link.
-- Mode selection: Supports trimming, format conversion to WebM, snapshot extraction, audio extraction, mute, and speed adjustment.
-- Real-time processing pipeline: Uses Canvas to draw frames and MediaRecorder to capture streams for encoding.
-- Progress tracking and logging: Updates a progress bar and scrollable log box during operations.
-- Export: Creates a downloadable Blob URL for the processed output.
+- **Three-panel layout**: Preview pane with video player and timeline, settings pane with mode selection and export options, output pane with progress tracking and results display
+- **Enhanced timeline controls**: Dual range sliders for precise start/end time selection with real-time preview synchronization
+- **Multi-format export**: Support for MP4/H.264, MOV/H.264, WebM, GIF, PNG snapshots, and various audio formats
+- **FFmpeg.wasm integration**: Professional-grade video processing with codec support and quality control
+- **Real-time processing pipeline**: Uses FFmpeg command-line arguments for efficient video manipulation
+- **Progress tracking and logging**: Comprehensive progress bar and detailed operation logs
+- **Export management**: Dynamic filename generation and download link creation
 
 Key implementation references:
-- UI rendering and event wiring: [video_cut.js:5-687](file://js/video_cut.js#L5-L687)
-- Mode definitions and options: [video_cut.js:68-107](file://js/video_cut.js#L68-L107)
-- Processing functions: [video_cut.js:131-486](file://js/video_cut.js#L131-L486)
-- Event handlers: [video_cut.js:526-677](file://js/video_cut.js#L526-L677)
+- UI initialization and three-panel layout: [video_cut.js:8-159](file://js/video_cut.js#L8-L159)
+- FFmpeg.wasm integration: [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- Timeline controls and range selection: [video_cut.js:648-671](file://js/video_cut.js#L648-L671)
+- Export configuration and format handling: [video_cut.js:260-360](file://js/video_cut.js#L260-L360)
+- Processing pipeline: [video_cut.js:583-610](file://js/video_cut.js#L583-L610)
 
 **Section sources**
-- [video_cut.js:5-687](file://js/video_cut.js#L5-L687)
+- [video_cut.js:8-159](file://js/video_cut.js#L8-L159)
+- [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- [video_cut.js:648-671](file://js/video_cut.js#L648-L671)
+- [video_cut.js:260-360](file://js/video_cut.js#L260-L360)
+- [video_cut.js:583-610](file://js/video_cut.js#L583-L610)
 
 ## Architecture Overview
-The tool is a pure client-side solution leveraging browser APIs:
-- MediaRecorder captures encoded streams from Canvas and/or Web Audio tracks.
-- Canvas draws video frames at a fixed frame rate to simulate real-time processing.
-- Web Audio API extracts or mixes audio tracks for audio-related operations.
-- File API handles local uploads and Blob creation for downloads.
+The tool is a client-side solution leveraging FFmpeg.wasm for professional video processing:
+- FFmpeg.wasm provides full FFmpeg functionality within the browser via WebAssembly
+- Canvas API handles video frame rendering and preview
+- File API manages local file uploads and Blob creation for downloads
+- Modern CSS Grid creates responsive three-panel layout
+- Real-time progress tracking through FFmpeg's built-in progress callbacks
 
 ```mermaid
 sequenceDiagram
 participant U as "User"
 participant UI as "UI Controls"
 participant V as "HTMLVideoElement"
-participant C as "Canvas"
-participant R as "MediaRecorder"
+participant F as "FFmpeg.wasm"
+participant FS as "Virtual File System"
 participant L as "Log/Progress"
 U->>UI : "Select file and set time range"
 UI->>V : "Load video file"
-UI->>R : "Start recording"
-loop "Frame loop"
-V->>C : "Draw frame"
-C->>R : "Provide frame stream"
-V->>R : "Stop when end time reached"
+UI->>F : "Initialize FFmpeg core"
+F->>FS : "Write input file"
+UI->>F : "Execute FFmpeg command"
+loop "Processing"
+F->>L : "Update progress"
 end
-R-->>UI : "Blob ready"
+F-->>UI : "Output file ready"
 UI-->>U : "Download link"
-UI->>L : "Update progress/log"
+UI->>L : "Complete processing log"
 ```
 
 **Diagram sources**
-- [video_cut.js:131-198](file://js/video_cut.js#L131-L198)
-- [video_cut.js:200-258](file://js/video_cut.js#L200-L258)
-- [video_cut.js:294-349](file://js/video_cut.js#L294-L349)
-- [video_cut.js:351-408](file://js/video_cut.js#L351-L408)
-- [video_cut.js:410-486](file://js/video_cut.js#L410-L486)
+- [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- [video_cut.js:533-557](file://js/video_cut.js#L533-L557)
+- [video_cut.js:583-610](file://js/video_cut.js#L583-L610)
 
 ## Detailed Component Analysis
 
-### Timeline Editing Workflow
-- Time range selection: Users can set start and end times in seconds, or use buttons to mark current playback position or apply full length.
-- Playback markers: “Start=Current” and “End=Current” capture the current video time.
-- Full length: Applies the entire video duration as the time range.
-- Validation: Ensures start < end before processing.
+### Three-Panel Layout Interface
+The redesigned interface features a modern three-panel layout:
+- **Preview Pane**: Video player with drag-and-drop upload, timeline controls, and metadata display
+- **Settings Pane**: Mode selection, export options, resolution/fps controls, and audio settings
+- **Output Pane**: Progress tracking, operation logs, result preview, and download links
 
 ```mermaid
 flowchart TD
-Start(["Open Tool"]) --> Upload["Upload Video File"]
-Upload --> Preview["Preview Loaded"]
-Preview --> MarkStart["Click 'Start=Current'"]
-Preview --> MarkEnd["Click 'End=Current'"]
-Preview --> FullLen["Click 'Full Length'"]
-MarkStart --> SetStart["Set Start Time"]
-MarkEnd --> SetEnd["Set End Time"]
-FullLen --> SetFull["Set Full Duration"]
-SetStart --> Validate{"Start < End?"}
-SetEnd --> Validate
-SetFull --> Validate
-Validate --> |No| Error["Show Error"]
-Validate --> |Yes| Export["Click 'Export'"]
-Export --> Process["Run Selected Operation"]
-Process --> Done(["Download Output"])
+Start(["Open Tool"]) --> Upload["Upload Video File<br/>Drag & Drop or Click"]
+Upload --> Preview["Video Loaded in Preview Pane"]
+Preview --> Timeline["Adjust Timeline Range<br/>Dual Sliders + Numeric Inputs"]
+Timeline --> Settings["Configure Export Options<br/>Format, Resolution, FPS, Quality"]
+Settings --> Process["Click '开始处理' to Start"]
+Process --> FFmpeg["FFmpeg.wasm Processing"]
+FFmpeg --> Progress["Real-time Progress Updates"]
+Progress --> Result["Result Preview + Download Link"]
+Result --> Done(["Download Output File"])
 ```
 
 **Diagram sources**
-- [video_cut.js:545-563](file://js/video_cut.js#L545-L563)
-- [video_cut.js:566-654](file://js/video_cut.js#L566-L654)
+- [video_cut.js:23-158](file://js/video_cut.js#L23-L158)
+- [video_cut.js:612-683](file://js/video_cut.js#L612-L683)
 
 **Section sources**
-- [video_cut.js:545-563](file://js/video_cut.js#L545-L563)
-- [video_cut.js:566-654](file://js/video_cut.js#L566-L654)
+- [video_cut.js:23-158](file://js/video_cut.js#L23-L158)
+- [video_cut.js:612-683](file://js/video_cut.js#L612-L683)
+
+### Enhanced Timeline Editing Workflow
+- **Dual Range Selection**: Separate start and end time controls with synchronized numeric inputs and visual sliders
+- **Real-time Synchronization**: Timeline changes automatically update video playback position
+- **Precision Controls**: Millisecond precision with 0.001 step increments
+- **Visual Feedback**: Time displays show formatted timestamps with duration calculation
+- **Validation**: Automatic clamping ensures valid time ranges
+
+```mermaid
+stateDiagram-v2
+[*] --> Idle
+Idle --> Loading : File Uploaded
+Loading --> Ready : Metadata Loaded
+Ready --> AdjustingRange : User Adjusts Timeline
+AdjustingRange --> Validating : Input Changed
+Validating --> Ready : Range Valid
+Validating --> Error : Invalid Range
+Error --> Ready : Corrected
+Ready --> Processing : Export Started
+Processing --> Complete : FFmpeg Finished
+Complete --> Ready : Reset
+```
+
+**Diagram sources**
+- [video_cut.js:629-671](file://js/video_cut.js#L629-L671)
+
+**Section sources**
+- [video_cut.js:629-671](file://js/video_cut.js#L629-L671)
 
 ### Supported Operations and Implementation Details
 
-#### Trim Video
-- Purpose: Extract a time-range segment preserving audio.
-- Implementation: Draws frames to Canvas, captures stream, records with MediaRecorder using WebM with VP9 and Opus codecs.
-- Progress: Linearly updates based on elapsed time within the selected range.
-- Notes: Audio is mixed from the original video element’s audio track.
+#### Trim Video (裁剪片段)
+- **Purpose**: Extract a time-range segment preserving original quality
+- **Implementation**: Uses FFmpeg with `-c copy` for lossless transcoding when possible
+- **Options**: Format selection (source/MP4/MOV), resolution scaling, FPS adjustment
+- **Audio Control**: Optional audio track removal or preservation
 
-```mermaid
-sequenceDiagram
-participant UI as "UI"
-participant V as "Video Element"
-participant C as "Canvas"
-participant R as "MediaRecorder"
-UI->>V : "Set start time"
-loop "Until end time"
-V->>C : "Draw frame"
-C->>R : "Stream frame"
-V->>R : "Stop at end"
-end
-R-->>UI : "Blob(WebM)"
-```
+#### Convert to Multiple Formats (格式转换)
+- **Purpose**: Re-encode video to different formats with quality control
+- **Implementation**: FFmpeg libx264 encoder with configurable CRF quality
+- **Options**: H.264 encoding, custom resolution, frame rate, audio bitrate
+- **Quality Control**: CRF values from 16 (highest) to 35 (lowest)
 
-**Diagram sources**
-- [video_cut.js:131-198](file://js/video_cut.js#L131-L198)
+#### Snapshot Capture (截取当前帧 PNG)
+- **Purpose**: Extract still images at specific timestamps
+- **Implementation**: FFmpeg frame extraction with PNG output
+- **Features**: Precise timestamp targeting, high-quality PNG output
 
-**Section sources**
-- [video_cut.js:131-198](file://js/video_cut.js#L131-L198)
+#### GIF Creation (导出 GIF 动图)
+- **Purpose**: Create animated GIFs from video segments
+- **Implementation**: FFmpeg GIF encoding with automatic FPS optimization
+- **Recommendations**: Short durations (≤15 seconds), lower resolutions for smaller files
 
-#### Convert to WebM
-- Purpose: Re-encode the entire video to WebM with configurable video/audio bitrates.
-- Implementation: Captures Canvas stream and records with MediaRecorder; selects codec based on browser support.
-- Options: Video bitrate (Mbps) and audio bitrate (kbps).
+#### Audio Extraction (提取选中区间音频)
+- **Purpose**: Extract audio tracks from video files
+- **Implementation**: FFmpeg audio stream copying with format detection
+- **Formats**: M4A for MP4/MOV sources, WebM for WebM sources, MKA for others
 
-**Section sources**
-- [video_cut.js:200-258](file://js/video_cut.js#L200-L258)
-- [video_cut.js:77-84](file://js/video_cut.js#L77-L84)
+#### Video Muting (裁剪并移除音轨)
+- **Purpose**: Remove audio tracks while preserving video content
+- **Implementation**: FFmpeg with `-an` flag for audio removal
+- **Modes**: Lossless copy or re-encoding with quality settings
 
-#### Snapshot (Still Image)
-- Purpose: Extract a still image at a given time.
-- Implementation: Seeks to the specified time, draws to Canvas, converts to Blob using chosen format and quality.
-
-**Section sources**
-- [video_cut.js:260-292](file://js/video_cut.js#L260-L292)
-- [video_cut.js:85-99](file://js/video_cut.js#L85-L99)
-
-#### Extract Audio
-- Purpose: Export the audio track within a time range.
-- Implementation: Creates a MediaStreamDestination from the video element’s audio source and records to WebM audio (Opus).
-
-**Section sources**
-- [video_cut.js:294-349](file://js/video_cut.js#L294-L349)
-
-#### Mute Video
-- Purpose: Produce a video without audio (remove audio track).
-- Implementation: Similar to trim but with muted playback; records only video frames.
-
-**Section sources**
-- [video_cut.js:351-408](file://js/video_cut.js#L351-L408)
-
-#### Speed Adjustment
-- Purpose: Change playback speed within a time range.
-- Implementation: Adjusts playbackRate on the video element; draws frames at the target FPS; records with MediaRecorder.
-- Limitation: Changing playbackRate affects pitch; maintaining pitch would require advanced DSP beyond this tool.
-
-**Section sources**
-- [video_cut.js:410-486](file://js/video_cut.js#L410-L486)
-- [视频剪辑工具使用说明.md:236-238](file://doc/视频剪辑工具使用说明.md#L236-L238)
-
-### Real-Time Processing Using Canvas and MediaRecorder
-- Frame capture: Canvas captures frames at a fixed frame rate; draw operations occur on each timeupdate until the end time.
-- Stream composition: Canvas capture stream is combined with audio tracks (when applicable) before recording.
-- Recording: MediaRecorder writes encoded chunks to an array; on stop, a Blob is constructed and made available for download.
-- Progress: Progress percentage is computed based on elapsed time within the selected range.
+### FFmpeg.wasm Integration
+- **Core Initialization**: Lazy loading of FFmpeg.wasm core with progress tracking
+- **File System Management**: Virtual file system for input/output file handling
+- **Command Building**: Dynamic FFmpeg argument construction based on user selections
+- **Progress Monitoring**: Real-time progress updates through FFmpeg callbacks
+- **Error Handling**: Comprehensive error reporting and recovery mechanisms
 
 ```mermaid
 classDiagram
-class VideoCutModule {
-+init()
-+renderModes()
-+updateUI()
-+trimVideo()
-+convertVideo()
-+snapshotVideo()
-+extractAudio()
-+muteVideo()
-+speedVideo()
-+log()
-+setProgress()
+class FFmpegWASMModule {
++ensureFFmpeg()
++runFFmpeg(args, outputName)
++buildArgs(mode, outputName)
++videoEncodeArgs(ext, crf)
++audioEncodeArgs(ext)
 }
-class Canvas {
-+getContext()
-+captureStream()
+class VirtualFileSystem {
++writeFile(name, data)
++readFile(name)
++unlink(name)
 }
-class MediaRecorder {
-+start()
-+stop()
-+ondataavailable
-+onerror
+class ProgressTracker {
++setProgress(value)
++log(message)
 }
-class AudioContext {
-+createMediaElementSource()
-+createMediaStreamDestination()
+class ExportConfig {
++outputExt(mode)
++shouldEncode(mode)
++selectedScaleFilter()
 }
-VideoCutModule --> Canvas : "draw frames"
-VideoCutModule --> MediaRecorder : "record stream"
-VideoCutModule --> AudioContext : "mix audio tracks"
+FFmpegWASMModule --> VirtualFileSystem : "manages files"
+FFmpegWASMModule --> ProgressTracker : "updates status"
+FFmpegWASMModule --> ExportConfig : "uses settings"
 ```
 
 **Diagram sources**
-- [video_cut.js:131-486](file://js/video_cut.js#L131-L486)
+- [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- [video_cut.js:533-557](file://js/video_cut.js#L533-L557)
+- [video_cut.js:260-360](file://js/video_cut.js#L260-L360)
 
 **Section sources**
-- [video_cut.js:131-486](file://js/video_cut.js#L131-L486)
+- [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- [video_cut.js:533-557](file://js/video_cut.js#L533-L557)
+- [video_cut.js:260-360](file://js/video_cut.js#L260-L360)
 
 ### UI Components and Controls
-- File upload: Single-file selector for video/audio.
-- Preview: HTMLVideoElement with controls and playsinline.
-- Modes: Radio-based selection among trim, convert, snapshot, audio, mute, speed.
-- Time panel: Inputs for start and end times, quick-set buttons, and full-length button.
-- Options panel: Mode-specific settings (bitrates, snapshot format/quality, speed rate).
-- Actions: Export and Cancel buttons.
-- Progress: Progress bar and percentage indicator.
-- Log: Scrollable text area for operation messages.
-- Download: Link to the generated output file.
+- **File Upload**: Drag-and-drop zone with click-to-browse fallback
+- **Video Preview**: Full-featured HTML5 video player with controls
+- **Timeline Controls**: Dual range sliders with synchronized numeric inputs
+- **Mode Selection**: Dropdown menu for operation type selection
+- **Export Configuration**: Dynamic form fields based on selected mode
+- **Progress Display**: Animated progress bar with percentage indicators
+- **Operation Log**: Scrollable text area with timestamped entries
+- **Result Preview**: Context-aware preview (video/image/audio) with download link
 
 ```mermaid
 graph TB
-subgraph "UI Panels"
-F["Files"] --> P["Preview"]
-M["Modes"] --> T["Time Panel"]
-T --> O["Options"]
-O --> A["Actions"]
-A --> PR["Progress"]
-PR --> L["Log"]
-L --> DL["Download Link"]
+subgraph "Three-Panel Layout"
+P["Preview Pane<br/>Video + Timeline"] --> S["Settings Pane<br/>Export Options"]
+S --> O["Output Pane<br/>Progress + Results"]
+end
+subgraph "Timeline Controls"
+TS["Time Sliders"] --> TI["Time Inputs"]
+TI --> TP["Time Displays"]
+end
+subgraph "Export Options"
+FM["Format Select"] --> EN["Encoding Mode"]
+EN --> RS["Resolution/FPS"]
+RS --> QT["Quality Settings"]
+QT --> AU["Audio Options"]
 end
 ```
 
 **Diagram sources**
-- [video_cut.js:5-57](file://js/video_cut.js#L5-L57)
-- [video_cut.js:488-677](file://js/video_cut.js#L488-L677)
+- [video_cut.js:23-158](file://js/video_cut.js#L23-L158)
+- [video_cut.js:321-360](file://js/video_cut.js#L321-360)
 
 **Section sources**
-- [video_cut.js:5-57](file://js/video_cut.js#L5-L57)
-- [video_cut.js:488-677](file://js/video_cut.js#L488-L677)
+- [video_cut.js:23-158](file://js/video_cut.js#L23-L158)
+- [video_cut.js:321-360](file://js/video_cut.js#L321-360)
 
 ## Dependency Analysis
-- Internal dependencies:
-  - UI and state management depend on DOM selectors and event handlers.
-  - Processing functions depend on Canvas, MediaRecorder, and Web Audio APIs.
-- External resources:
-  - No external CDN or WASM dependencies; relies solely on browser APIs.
-  - The mp4-muxer library exists in the repository but is not used by the video cutting module.
+- **Internal dependencies**:
+  - UI and state management depend on DOM selectors and event handlers
+  - Processing functions depend on FFmpeg.wasm virtual file system
+  - Export configuration depends on format detection and codec availability
+- **External resources**:
+  - FFmpeg.wasm core library for video processing capabilities
+  - No CDN dependencies; all resources loaded locally
+  - Modern CSS Grid for responsive layout
 
 ```mermaid
 graph LR
-VC["video_cut.js"] --> MR["MediaRecorder API"]
-VC --> CV["Canvas API"]
-VC --> WA["Web Audio API"]
+VC["video_cut.js"] --> FFW["FFmpeg.wasm Core"]
 VC --> FL["File/Blob APIs"]
-VC -.-> MP4["mp4-muxer.umd.js"]:::unused
+VC --> CSS["CSS Grid Layout"]
+VC -.-> MR["MediaRecorder API"]:::unused
+VC -.-> CV["Canvas API"]:::unused
 classDef unused fill:#fff,stroke:#333,stroke-dasharray:5 5
 ```
 
 **Diagram sources**
-- [video_cut.js:131-486](file://js/video_cut.js#L131-L486)
-- [mp4-muxer.umd.js:1-8](file://third_part/mp4-muxer.umd.js#L1-L8)
+- [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- [video_cut.js:533-557](file://js/video_cut.js#L533-L557)
 
 **Section sources**
-- [video_cut.js:131-486](file://js/video_cut.js#L131-L486)
-- [mp4-muxer.umd.js:1-8](file://third_part/mp4-muxer.umd.js#L1-L8)
+- [video_cut.js:436-469](file://js/video_cut.js#L436-L469)
+- [video_cut.js:533-557](file://js/video_cut.js#L533-L557)
 
 ## Performance Considerations
-- Processing speed: Operations run at real-time speed; processing a 10-minute clip takes approximately 10 minutes.
-- Browser performance: Modern browsers (Chrome/Edge/Firefox/Opera) offer better performance; Safari support is partial.
-- Memory usage: Large files and high resolutions increase memory pressure; consider splitting large clips or lowering resolution.
-- Codec choice: WebM with VP9 and Opus is used; browser support varies; older devices may not support it.
-- Recommendations: Reduce time range, lower bitrates, close other tabs, and use modern browsers.
+- **Processing Speed**: FFmpeg.wasm processes videos at near-native speed; 10-minute clips typically process in 10-15 minutes
+- **Memory Usage**: Large files require significant RAM; recommend 8GB+ for 4K video processing
+- **Browser Performance**: Chrome/Edge offer best performance; Safari has limited WASM support
+- **Codec Efficiency**: H.264 encoding provides good quality-to-size ratio; CRF 23 recommended for general use
+- **Optimization Tips**: Use lossless copy mode when possible, reduce resolution for faster processing, close other tabs to free memory
+
+**Updated** Performance characteristics have changed significantly with FFmpeg.wasm integration, offering better quality and format support compared to the previous MediaRecorder approach.
 
 **Section sources**
 - [视频剪辑工具使用说明.md:191-202](file://doc/视频剪辑工具使用说明.md#L191-L202)
-- [视频剪辑工具使用说明.md:170-187](file://doc/视频剪辑工具使用说明.md#L170-L187)
-- [视频剪辑工具使用说明.md:228-234](file://doc/视频剪辑工具使用说明.md#L228-L234)
+- [视频剪辑工具使用说明.md:170-187](file://doc/视频剪辑工具使用说明.md#L170-187)
 
 ## Troubleshooting Guide
-- Output is WebM: The tool uses WebM by design; MP4 requires external tools.
-- Browser compatibility issues: Ensure the browser meets minimum version requirements; MediaRecorder availability differs by platform.
-- Large file crashes: Close other tabs, split the file, or reduce resolution.
-- Pitch change with speed: playbackRate affects both speed and pitch; maintaining pitch requires advanced DSP.
-- Mobile device limitations: Safari on iOS/iPadOS has limited MediaRecorder support; avoid large files on mobile.
+- **FFmpeg.wasm Loading Issues**: Ensure ffmpeg-core.js is accessible and browser supports WebAssembly
+- **Large File Crashes**: Reduce file size, split into segments, or increase browser memory allocation
+- **Format Compatibility**: Some input formats may not be supported by FFmpeg.wasm build
+- **Processing Failures**: Check console logs for specific FFmpeg error messages
+- **Mobile Limitations**: Mobile browsers may have reduced WASM performance and memory constraints
+
+**Updated** Troubleshooting now focuses on FFmpeg.wasm-specific issues rather than MediaRecorder compatibility problems.
 
 **Section sources**
 - [视频剪辑工具使用说明.md:208-213](file://doc/视频剪辑工具使用说明.md#L208-L213)
 - [视频剪辑工具使用说明.md:242-251](file://doc/视频剪辑工具使用说明.md#L242-L251)
-- [视频剪辑工具使用说明.md:236-238](file://doc/视频剪辑工具使用说明.md#L236-L238)
 
 ## Conclusion
-The video cutting tool provides a fully client-side solution for common video editing tasks using native browser APIs. It offers intuitive timeline controls, real-time processing, and a clean UI for exporting results. While it prioritizes simplicity and privacy, users should be aware of browser limitations, performance constraints, and the WebM-centric output format.
+The redesigned video cutting tool provides a professional-grade solution for common video editing tasks using FFmpeg.wasm technology. It offers an intuitive three-panel interface, comprehensive timeline controls, multi-format export options, and real-time processing feedback. While it prioritizes privacy and offline capability, users should be aware of browser limitations, performance constraints, and the extensive format support provided by FFmpeg.wasm.
 
 ## Appendices
 
 ### Browser Compatibility and Requirements
-- MediaRecorder API: Required for all operations.
-- Canvas API: Required for frame drawing.
-- Web Audio API: Required for audio operations.
-- File API: Required for local file handling.
+- **WebAssembly Support**: Required for FFmpeg.wasm functionality
+- **Modern Browser Features**: ES6+, CSS Grid, File API, Blob API
+- **Memory Requirements**: 8GB+ RAM recommended for large video processing
+- **Storage Space**: Temporary files require additional disk space during processing
+
+**Updated** Requirements have shifted from MediaRecorder API to WebAssembly support.
 
 **Section sources**
-- [视频剪辑工具使用说明.md:170-187](file://doc/视频剪辑工具使用说明.md#L170-L187)
+- [视频剪辑工具使用说明.md:170-187](file://doc/视频剪辑工具使用说明.md#L170-187)
 
-### Export Formats and Notes
-- WebM is the primary output format; MP4 requires external tools.
-- Snapshot exports use selected image format and quality settings.
+### Export Formats and Capabilities
+- **Video Formats**: MP4/H.264, MOV/H.264, WebM, source format preservation
+- **Image Formats**: PNG snapshots with lossless quality
+- **Audio Formats**: M4A, WebM Audio, MKA container formats
+- **Animation**: GIF creation with optimized settings
+- **Quality Control**: Configurable CRF values and bitrate settings
+
+**Updated** Format support has expanded significantly with FFmpeg.wasm integration.
 
 **Section sources**
-- [video_cut.js:596-624](file://js/video_cut.js#L596-L624)
-- [video_cut.js:85-99](file://js/video_cut.js#L85-L99)
+- [video_cut.js:260-276](file://js/video_cut.js#L260-L276)
+- [video_cut.js:525-531](file://js/video_cut.js#L525-L531)

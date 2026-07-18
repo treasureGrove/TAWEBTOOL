@@ -35,7 +35,7 @@
   flex-direction: column;
   gap: 12px;
   color: var(--vc-text);
-  font-family: "Yu Gothic UI", "Segoe UI", sans-serif;
+  font-family: var(--app-font-serif);
 }
 
 .vc-head {

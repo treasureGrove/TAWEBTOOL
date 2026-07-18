@@ -1,3 +1,15 @@
+---
+kind: build_system
+name: Static Web Asset Delivery with Manual Model Fetching
+category: build_system
+scope:
+    - '**'
+source_files:
+    - scripts/fetch_models.sh
+    - third_part/
+    - index.html
+---
+
 This repository operates as a static web application without a formal build system, CI/CD pipeline, or package manager configuration. 
 
 **System Approach:**

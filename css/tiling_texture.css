@@ -18,7 +18,7 @@
 }
 
 #panel {
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -140,7 +140,7 @@
     border-radius: 7px;
     font-size: 13px;
     background: var(--app-surface-input);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     flex: 1;
 }
 
@@ -171,7 +171,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     transition: all 0.2s;
     box-shadow: 0 4px 12px rgba(35,126,102,0.28);
     width: 100%;

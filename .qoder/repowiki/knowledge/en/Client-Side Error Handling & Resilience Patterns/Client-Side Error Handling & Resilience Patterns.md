@@ -1,3 +1,16 @@
+---
+kind: error_handling
+name: Client-Side Error Handling & Resilience Patterns
+category: error_handling
+scope:
+    - '**'
+source_files:
+    - js/ai_draw.js
+    - js/ai_frame_interpolation.js
+    - js/ai_upscale.js
+    - js/3d_city.js
+---
+
 The repository employs a **defensive, client-side error handling strategy** tailored for browser-based AI and multimedia tools. It relies on standard JavaScript `try/catch` blocks, promise rejection handling, and custom status reporting mechanisms to manage failures in network requests, WebAssembly/ONNX Runtime initialization, and media processing.
 
 ### 1. Core Approach: Try-Catch & Status Reporting

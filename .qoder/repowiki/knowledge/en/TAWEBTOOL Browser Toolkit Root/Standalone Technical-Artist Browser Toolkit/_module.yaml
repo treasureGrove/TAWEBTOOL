@@ -1,6 +1,6 @@
 schema_version: 1
 module_path: tools
-title: Client-Side Technical Artist Tools Suite
+title: Standalone Technical-Artist Browser Toolkit
 scope:
     - tools_html/
     - js/
@@ -8,4 +8,5 @@ scope:
 source_files: []
 depends_on: []
 related_to:
+    - path: scripts
     - path: third_party_libs

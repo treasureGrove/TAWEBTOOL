@@ -1,10 +1,14 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: "Yu Gothic UI";
+    font-family: var(--app-font-serif);
 }
 
 :root {
+    /* ── Typography ── */
+    --app-font-serif: "LXGW WenKai Screen", "LXGW WenKai", "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", "SimSun", serif;
+    --app-font-mono: ui-monospace, "Cascadia Code", Consolas, "SFMono-Regular", Menlo, "Courier New", monospace;
+
     --app-sidebar-width: clamp(220px, 16.5vw, 292px);
     --app-shell-gap: 16px;
     --app-top-height: 48px;
@@ -65,6 +69,10 @@
 body {
     color: var(--app-text);
     background: #071411;
+}
+
+code, pre, kbd, samp {
+    font-family: var(--app-font-mono);
 }
 
 .top_search {
@@ -402,7 +410,7 @@ body {
     color: #333;
     opacity: 0;
     transition: opacity 0.3s, transform 0.3s var(--app-ease);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     word-wrap: break-word;
     z-index: 998;
 }

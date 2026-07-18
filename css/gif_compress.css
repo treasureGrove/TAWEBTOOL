@@ -27,7 +27,7 @@
 }
 
 #panel {
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -40,7 +40,7 @@
     color: var(--text-main);
     margin-bottom: 12px;
     letter-spacing: 0.2px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .workbench-layout {
@@ -76,7 +76,7 @@
     margin-bottom: 8px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .preview-area {
@@ -101,14 +101,14 @@
 .preview-placeholder {
     font-size: 14px;
     color: var(--text-sub);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .preview-info {
     margin-top: 8px;
     font-size: 13px;
     color: var(--text-sub);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     min-height: 20px;
 }
 
@@ -167,13 +167,13 @@
     font-size: 16px;
     color: var(--app-text);
     margin: 8px 0;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .upload-content .sub-text {
     font-size: 13px;
     color: var(--text-sub);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .settings-panel {
@@ -199,7 +199,7 @@
     font-size: 14px;
     color: var(--text-main);
     margin-bottom: 6px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .setting-group select,
@@ -212,7 +212,7 @@
     background: var(--app-surface-input);
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .setting-group select:focus {
@@ -230,7 +230,7 @@
     margin-top: 6px;
     font-size: 12px;
     color: var(--text-sub);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .action-buttons {
@@ -249,7 +249,7 @@
     font-size: 15px;
     cursor: pointer;
     transition: all 0.2s;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .btn-primary {
@@ -311,7 +311,7 @@
     margin-top: 8px;
     font-size: 13px;
     color: var(--text-sub);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 @media (max-width: 1000px) {

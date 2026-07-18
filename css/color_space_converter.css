@@ -18,7 +18,7 @@
 }
 
 #panel {
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -96,7 +96,7 @@
     background: var(--app-surface-input);
     width: 80px;
     box-sizing: border-box;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .cs-row select { width: auto; min-width: 120px; }
@@ -241,7 +241,7 @@
     border-radius: 7px;
     font-size: 13px;
     background: var(--app-surface-input);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .cs-btn {
@@ -252,7 +252,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     transition: all 0.2s;
     box-shadow: var(--app-shadow-subtle);
 }
@@ -277,7 +277,7 @@
     border-radius: 7px;
     cursor: pointer;
     font-size: 13px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     transition: all 0.2s;
 }
 

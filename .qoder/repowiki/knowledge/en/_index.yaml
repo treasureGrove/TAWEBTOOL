@@ -3,11 +3,11 @@ schema_version: 1
 locale: en-US
 branch: main
 nodes_managed: true
-exported_at: "2026-07-01T07:24:02Z"
+exported_at: "2026-07-06T03:58:23Z"
 modules:
     "":
-        dir_name: Browser-Based Technical Artist Tools Suite
-        title: Browser-Based Technical Artist Tools Suite
+        dir_name: TAWEBTOOL Browser Toolkit Root
+        title: TAWEBTOOL Browser Toolkit Root
         scope:
             - index.html
             - tokens.json
@@ -127,100 +127,31 @@ modules:
         source_files: []
         children:
             - docs
+            - scripts
             - third_party_libs
             - tools
         depends_on: []
         related_to: []
-    build_system:
-        dir_name: Static Web Asset Delivery with Manual Model Fetching
-        title: Static Web Asset Delivery with Manual Model Fetching
-        scope: []
-        source_files:
-            - scripts/fetch_models.sh
-            - third_part/
-            - index.html
-        children: []
-        depends_on: []
-        related_to: []
-    configuration_system:
-        dir_name: Client-Side Configuration and State Management
-        title: Client-Side Configuration and State Management
-        scope: []
-        source_files:
-            - tokens.json
-            - js/3d_city.js
-            - js/chatgpt.js
-            - js/cloud_music.js
-            - js/menu.js
-            - js/ai_upscale.js
-            - js/ai_frame_interpolation.js
-        children: []
-        depends_on: []
-        related_to: []
-    dependency_management:
-        dir_name: Manual Dependency Management via Vendoring and CDN
-        title: Manual Dependency Management via Vendoring and CDN
-        scope: []
-        source_files:
-            - third_part/
-            - scripts/fetch_models.sh
-            - models/README.md
-            - js/ai_upscale.js
-            - js/ai_frame_interpolation.js
-        children: []
-        depends_on: []
-        related_to: []
     docs:
-        dir_name: AI Media Processing Documentation
-        title: AI Media Processing Documentation
+        dir_name: Technical Documentation & Implementation Guides
+        title: Technical Documentation & Implementation Guides
         scope:
             - doc/
         source_files: []
         children: []
         depends_on: []
         related_to: []
-    error_handling:
-        dir_name: Client-Side Error Handling & Resilience Patterns
-        title: Client-Side Error Handling & Resilience Patterns
-        scope: []
-        source_files:
-            - js/ai_draw.js
-            - js/ai_frame_interpolation.js
-            - js/ai_upscale.js
-            - js/3d_city.js
+    scripts:
+        dir_name: Wiki Knowledge Base Collector & Maintainer
+        title: Wiki Knowledge Base Collector & Maintainer
+        scope:
+            - scripts/
+            - data/
+        source_files: []
         children: []
         depends_on: []
-        related_to: []
-    frontend_style:
-        dir_name: Glassmorphic Shell Architecture with Per-Tool CSS Modules
-        title: Glassmorphic Shell Architecture with Per-Tool CSS Modules
-        scope: []
-        source_files:
-            - css/common.css
-            - css/index.css
-            - css/chatgpt.css
-            - css/ai_upscale.css
-            - css/model_previewer.css
-            - css/color_space_converter.css
-            - css/TA_wiki.css
-            - index.html
-            - assets/images/background/index_bg.jpg
-            - assets/images/background/pbr_bg.jpg
-        children: []
-        depends_on: []
-        related_to: []
-    logging_system:
-        dir_name: Browser-Native Logging via Console API
-        title: Browser-Native Logging via Console API
-        scope: []
-        source_files:
-            - js/ai_upscale.js
-            - js/ai_frame_interpolation.js
-            - js/3d_city.js
-            - third_part/ort-wasm-simd-threaded.js
-        children: []
-        depends_on: []
-        related_to: []
+        related_to:
+            - path: tools
     third_party_libs:
         dir_name: Client-Side Media Processing & Codec Utilities
         title: Client-Side Media Processing & Codec Utilities
@@ -232,8 +163,8 @@ modules:
         related_to:
             - path: tools
     tools:
-        dir_name: Client-Side Technical Artist Tools Suite
-        title: Client-Side Technical Artist Tools Suite
+        dir_name: Standalone Technical-Artist Browser Toolkit
+        title: Standalone Technical-Artist Browser Toolkit
         scope:
             - tools_html/
             - js/
@@ -242,4 +173,5 @@ modules:
         children: []
         depends_on: []
         related_to:
+            - path: scripts
             - path: third_party_libs

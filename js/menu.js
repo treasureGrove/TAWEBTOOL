@@ -37,7 +37,9 @@ var MENU_DATA = [
     { name: '和我一起听', icon: 'icon-music', items: [
         { label: '网易云音乐', href: 'cloud_music.html', keywords: ['音乐', '歌曲', '歌单', 'music', 'netease', '播放器', '听歌', 'mp3', 'player', '电台', 'fm'] },
     ]},
-    { name: '关于', icon: 'icon-about', items: [] },
+    { name: '关于', icon: 'icon-about', items: [
+        { label: '关于作者', href: 'about.html', keywords: ['关于', '作者', 'about', 'author', '宝藏小树林', 'treasuregrove', 'bilibili', 'b站', '联系', 'contact', '主页', '个人'] },
+    ]},
 ];
 
 // ─── Inject favicon ───
@@ -55,6 +57,20 @@ var MENU_DATA = [
     apple.sizes = '180x180';
     apple.href = isRoot ? 'assets/images/icon/apple-touch-icon.png' : '../assets/images/icon/apple-touch-icon.png';
     document.head.appendChild(apple);
+})();
+
+// ─── Inject webfont (霞鹜文楷 LXGW WenKai Screen) ───
+(function() {
+    var preconnect = document.createElement('link');
+    preconnect.rel = 'preconnect';
+    preconnect.href = 'https://cdn.jsdelivr.net';
+    preconnect.crossOrigin = 'anonymous';
+    document.head.appendChild(preconnect);
+
+    var font = document.createElement('link');
+    font.rel = 'stylesheet';
+    font.href = 'https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css';
+    document.head.appendChild(font);
 })();
 
 // ─── Build sidebar HTML ───

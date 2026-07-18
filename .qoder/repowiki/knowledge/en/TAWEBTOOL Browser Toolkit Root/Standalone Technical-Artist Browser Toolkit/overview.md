@@ -1,0 +1,1 @@
+Zero-dependency, single-page browser toolkit for technical artists offering AI chat, 3D/geospatial preview, image/video processing, shader utilities, and a searchable knowledge base.

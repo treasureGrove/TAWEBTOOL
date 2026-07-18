@@ -1,3 +1,0 @@
-- This is a documentation-only leaf module containing Markdown files in the `doc/` directory.
-- Covers three distinct technical areas: AI image/video processing (`AI图片超分辨率技术实现文档.md`, `AI视频补帧功能说明.md`), media muxing (`下载mp4-muxer说明.md`), and video editing with CDN integration (`视频剪辑_CDN跨域解决方案.md`, `视频剪辑工具使用说明.md`).
-- No executable code, build manifests, or interface definitions exist within this scope; it serves purely as reference material for related implementation modules.

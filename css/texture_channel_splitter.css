@@ -18,7 +18,7 @@
 }
 
 #panel {
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -126,7 +126,7 @@
     border-radius: 7px;
     font-size: 13px;
     background: var(--app-surface-input);
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
 }
 
 .sp-btn {
@@ -137,7 +137,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     transition: all 0.2s;
     box-shadow: 0 4px 12px rgba(35,126,102,0.28);
     margin-top: 10px;
@@ -224,7 +224,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 11px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     transition: background 0.2s;
 }
 
@@ -238,7 +238,7 @@
     border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
-    font-family: "Yu Gothic UI", sans-serif;
+    font-family: var(--app-font-serif);
     transition: all 0.2s;
     margin-top: 14px;
     box-shadow: 0 4px 12px rgba(35,126,102,0.28);

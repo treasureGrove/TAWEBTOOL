@@ -1,1 +1,0 @@
-Standalone browser-based tool collection for technical artists, providing AI chat, 3D preview, image/video processing, shader utilities, and a searchable knowledge base without server dependencies.

@@ -340,7 +340,7 @@
 
     // Labels
     ctx.fillStyle = '#9ca3af';
-    ctx.font = '10px "Yu Gothic UI"';
+    ctx.font = '10px "LXGW WenKai Screen", "KaiTi", serif';
     ctx.textAlign = 'center';
     for (var k = 0; k <= 4; k++) {
       var d = (0.5 + (maxDist - 0.5) * k / 4).toFixed(1);
@@ -371,7 +371,7 @@
       ctx.arc(mx, my, 4, 0, 2 * PI);
       ctx.fill();
       ctx.fillStyle = '#fbbf24';
-      ctx.font = '11px "Yu Gothic UI"';
+      ctx.font = '11px "LXGW WenKai Screen", "KaiTi", serif';
       ctx.textAlign = 'left';
       ctx.fillText(mLux.toFixed(1) + ' lux', mx + 8, my - 6);
     }

@@ -1,0 +1,5 @@
+- `index.html` is the SPA launcher; it loads `js/menu.js`, which renders the global sidebar and search bar from one source of truth (`MENU_DATA`).
+- Each tool is an independent HTML+JS pair under `tools_html/` + `js/`; the only cross-cutting dependency is `menu.js`, included by every page.
+- A subset of tools opt into the shared workbench by placing their markup inside `<div id="panel" data-local-tool="...">`; `js/local_workbench.js` detects this attribute and calls a convention-named `initXxxTool(host)` exposed on `window`, so the host chrome (sidebar, theme) is reused without duplicating layout code.
+- All pages import `css/common.css` plus a per-tool stylesheet; visual tokens are centralized in `tokens.json` consumed by every CSS file.
+- AI/video-capable tools share the same runtime layer: ONNX Runtime Web 1.17.1 and FFmpeg.wasm are loaded once from `third_part/` rather than duplicated per tool, enabling GPU/CPU fallback paths across multiple features.
