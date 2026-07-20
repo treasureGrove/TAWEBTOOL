@@ -226,11 +226,59 @@
     cursor: pointer;
 }
 
+.setting-group input[type="checkbox"] {
+    accent-color: var(--app-accent);
+}
+
+.setting-group input[type="number"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line-soft);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--app-surface-input);
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: var(--app-font-serif);
+}
+
+.setting-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 3px var(--app-accent-hover);
+}
+
+.setting-group input[type="number"]:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .setting-hint {
     margin-top: 6px;
     font-size: 12px;
     color: var(--text-sub);
     font-family: var(--app-font-serif);
+}
+
+.mode-switch {
+    margin-top: 4px;
+    padding: 10px 0 0;
+    border-top: 1px solid var(--line-soft);
+}
+
+.mode-switch label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-main);
+    cursor: pointer;
+    font-family: var(--app-font-serif);
+}
+
+.mode-switch input[type="checkbox"] {
+    width: auto;
+    accent-color: var(--app-accent);
 }
 
 .action-buttons {

@@ -20,6 +20,7 @@
     <meta name="twitter:description" content="免费在线GIF动图压缩工具，减小GIF文件体积，支持调整帧率、尺寸和质量，适合表情包和动画优化。">
     <title>GIF压缩器 - TA工具箱</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/gif_compress.css">
@@ -68,13 +69,13 @@
                                 <polyline points="17 8 12 3 7 8"></polyline>
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
-                            <p>拖拽GIF文件到此处或点击选择</p>
-                            <p class="sub-text">仅支持 GIF 格式</p>
+                            <p>拖拽GIF文件到此处、点击选择 或 Ctrl+V 粘贴</p>
+                            <p class="sub-text">仅支持 GIF 格式，支持从剪贴板粘贴</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="settings-panel">
+                <div class="settings-panel" id="manualSettings">
                     <div class="setting-group">
                         <label>缩放比例 <span id="scaleValue">100</span>%</label>
                         <input type="range" id="scale" min="10" max="100" value="100" step="5">
@@ -102,6 +103,21 @@
                         <input type="range" id="lossy" min="0" max="200" value="0" step="10">
                         <div class="setting-hint">0 = 无损, 数值越大压缩越强但画质越差</div>
                     </div>
+                </div>
+
+                <div class="settings-panel" id="targetSettings" style="display:none;">
+                    <div class="setting-group">
+                        <label>目标文件大小以内 (KB)</label>
+                        <input type="number" id="targetSize" value="500" min="1" step="50">
+                        <div class="setting-hint">自动调整参数使压缩结果不超过目标体积</div>
+                    </div>
+                </div>
+
+                <div class="mode-switch">
+                    <label>
+                        <input type="checkbox" id="targetSizeToggle">
+                        按目标文件大小以内压缩
+                    </label>
                 </div>
 
                 <div class="action-buttons">
