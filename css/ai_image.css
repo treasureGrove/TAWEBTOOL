@@ -267,6 +267,76 @@
     background: var(--chat-surface, #f5f5f5);
 }
 
+.task-list {
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.task-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--chat-muted, #888);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: var(--chat-surface, #f5f5f5);
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.task-done {
+    opacity: 0.6;
+}
+
+.task-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.task-dot-active {
+    background: var(--chat-accent, #26a884);
+    animation: taskPulse 1.2s infinite;
+}
+
+.task-dot-done {
+    background: var(--chat-muted, #aaa);
+}
+
+@keyframes taskPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.task-prompt {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.task-timer {
+    font-size: 10px;
+    color: var(--chat-muted, #aaa);
+    flex-shrink: 0;
+}
+
+.task-check {
+    color: var(--chat-accent, #26a884);
+    flex-shrink: 0;
+    font-size: 12px;
+}
+
 .typing-dot {
     display: inline-block;
     animation: typingBounce 1.4s infinite ease-in-out both;
