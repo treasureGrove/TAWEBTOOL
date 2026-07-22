@@ -24,6 +24,7 @@
           <div id="videoGallery" class="ai-image-gallery video-gallery"></div>
         </div>
         <div class="ai-image-main">
+          <div class="ai-image-result-header">生成结果</div>
           <div id="videoResult" class="ai-image-result">
             <div class="ai-image-empty">
               <div class="ai-image-empty-icon">
@@ -32,7 +33,7 @@
                   <polygon points="24,22 24,42 42,32"/>
                 </svg>
               </div>
-              <p>生成的视频将显示在这里</p>
+              <p>点击"生成视频"查看结果</p>
             </div>
           </div>
         </div>

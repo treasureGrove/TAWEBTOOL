@@ -21,6 +21,7 @@
           <div id="imageGallery" class="ai-image-gallery"></div>
         </div>
         <div class="ai-image-main">
+          <div class="ai-image-result-header">生成结果</div>
           <div id="imageResult" class="ai-image-result">
             <div class="ai-image-empty">
               <div class="ai-image-empty-icon">
@@ -30,7 +31,7 @@
                   <path d="M8 44l10-10 8 8 12-12 18 14"/>
                 </svg>
               </div>
-              <p>生成的图片将显示在这里</p>
+              <p>点击"生成图片"查看结果</p>
             </div>
           </div>
         </div>
