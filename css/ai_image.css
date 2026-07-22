@@ -1,9 +1,20 @@
+.tool-shell {
+    height: calc(100vh - var(--app-top-height) - var(--app-shell-gap) * 3);
+    grid-template-rows: auto 1fr;
+}
+
+#toolMain.card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .ai-image-tool {
     display: flex;
     flex-direction: row;
     gap: 20px;
     height: 100%;
-    min-height: 500px;
+    min-height: 400px;
 }
 
 .ai-image-main {
@@ -20,6 +31,7 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    overflow-y: auto;
 }
 
 .ai-image-header h2 {
