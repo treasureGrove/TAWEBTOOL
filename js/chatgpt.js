@@ -118,7 +118,7 @@
     const systemPrompt = '你是一个简洁、友好的中文 AI 助手。';
     const requestTimeoutMs = 60000;
     const timeoutRetryLimit = 1;
-    let currentModel = localStorage.getItem(modelStoreKey) || 'deepseek-chat';
+    let currentModel = localStorage.getItem(modelStoreKey) || '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
     const MODEL_NAMES = {
       'deepseek-chat': 'DeepSeek',
