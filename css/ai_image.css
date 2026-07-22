@@ -1,7 +1,11 @@
+#panel[data-local-tool] {
+    overflow: hidden;
+}
+
 .tool-shell {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--app-top-height) - var(--app-shell-gap) * 3);
+    height: 100%;
     overflow: hidden;
 }
 
