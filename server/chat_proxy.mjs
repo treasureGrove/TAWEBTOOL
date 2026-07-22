@@ -233,6 +233,70 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'POST' && req.url === '/api/image') {
+    const chunks = [];
+    req.on('data', (c) => chunks.push(c));
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(Buffer.concat(chunks).toString());
+        const prompt = payload.prompt || '';
+        if (!prompt) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: '请输入描述文字' } }));
+          return;
+        }
+
+        const apiKey = KEYS.zhipu;
+        if (!apiKey) {
+          res.writeHead(502, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: '服务暂不可用' } }));
+          return;
+        }
+
+        const postData = JSON.stringify({ model: 'cogview-3-flash', prompt });
+        const url = new URL('https://open.bigmodel.cn/api/paas/v4/images/generations');
+
+        const upstream = await new Promise((resolve, reject) => {
+          const opts = {
+            hostname: url.hostname, port: 443, path: url.pathname,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(postData),
+              Authorization: `Bearer ${apiKey}`,
+              Host: url.hostname,
+            },
+            timeout: 120000,
+          };
+          const req = httpsRequest(opts, (upRes) => {
+            const chunks = [];
+            upRes.on('data', (c) => chunks.push(c));
+            upRes.on('end', () => resolve({ status: upRes.statusCode, body: Buffer.concat(chunks).toString() }));
+          });
+          req.on('error', reject);
+          req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
+          req.write(postData);
+          req.end();
+        });
+
+        if (upstream.status >= 400) {
+          console.warn(`[chat-proxy] image gen error: ${upstream.body}`);
+          res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
+          res.end(upstream.body);
+          return;
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(upstream.body);
+      } catch (err) {
+        console.error('[chat-proxy] image error:', err.message);
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: { message: err.message } }));
+      }
+    });
+    return;
+  }
+
   res.writeHead(404);
   res.end('Not Found');
 });

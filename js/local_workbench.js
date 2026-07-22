@@ -9,7 +9,8 @@
     model_previewer: { title: '模型预览器', intro: '本地 GLB/GLTF 预览（CDN: model-viewer）。' },
     ps_online: { title: '在线 PS', intro: '开箱即用 Photopea。' },
     video_cut: { title: '视频剪辑工作台', intro: '基于开源 FFmpeg.wasm 的浏览器本地剪辑与多模式导出。' },
-    ai_draw: { title: 'AI 绘画工作台', intro: 'Prompt 驱动的快速出图工作流，支持预设、历史和参数复制。' }
+    ai_draw: { title: 'AI 绘画工作台', intro: 'Prompt 驱动的快速出图工作流，支持预设、历史和参数复制。' },
+    ai_image: { title: 'AI 通用生图', intro: '基于 Cogview-3-Flash，输入文字描述即可生成图片。' }
   };
 
   const designToolLinks = {
@@ -183,6 +184,7 @@
     if (key === 'video_cut') return initVideoCut(main);
     if (key === 'chatgpt') return initChatTool(main);
     if (key === 'ai_draw') return initAiDrawTool(main);
+    if (key === 'ai_image') return initAiImageTool(main);
 
   renderDefault(main, key);
   }
