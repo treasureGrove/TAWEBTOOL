@@ -7,6 +7,8 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    flex: 1;
+    min-height: 0;
 }
 
 .ai-image-tool {
@@ -23,6 +25,7 @@
     flex-direction: column;
     gap: 16px;
     min-width: 0;
+    overflow: hidden;
 }
 
 .ai-image-sidebar {
@@ -31,7 +34,14 @@
     display: flex;
     flex-direction: column;
     gap: 14px;
+    overflow: hidden;
+    max-height: 100%;
+}
+
+.ai-image-sidebar .ai-image-gallery {
+    flex: 1;
     overflow-y: auto;
+    min-height: 0;
 }
 
 .ai-image-header h2 {
@@ -98,12 +108,12 @@
 
 .ai-image-result {
     flex: 1;
-    min-height: 200px;
     border-radius: 12px;
-    overflow: hidden;
+    overflow-y: auto;
     display: flex;
     align-items: flex-start;
     justify-content: center;
+    min-height: 0;
 }
 
 .ai-image-empty {
