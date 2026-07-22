@@ -163,8 +163,9 @@
         host.innerHTML = template();
 
         var prefix = assetPrefix();
-        var ffmpeg = null;
-        var ffmpegLoading = null;
+        var ffmpegWorker = null;
+        var workerReady = false;
+        var workerCallbacks = {};
         var objectUrl = '';
         var resultUrl = '';
         var state = {
@@ -417,55 +418,38 @@
             log('素材已导入: ' + file.name);
         }
 
-        function loadScript(src) {
-            return new Promise(function (resolve, reject) {
-                var existing = document.querySelector('script[src="' + src + '"]');
-                if (existing) {
-                    existing.addEventListener('load', resolve, { once: true });
-                    if (window.createFFmpegCore) resolve();
-                    return;
+        function initWorker() {
+            if (ffmpegWorker) return;
+            ffmpegWorker = new Worker(prefix + '../js/video_cut_worker.js');
+            ffmpegWorker.onmessage = function (e) {
+                var d = e.data;
+                if (d.type === 'ready') {
+                    workerReady = true;
+                    log('FFmpeg Worker 就绪');
+                } else if (d.type === 'log') {
+                    log(d.data);
+                } else if (d.type === 'progress') {
+                    setProgress(8 + d.data * 0.88);
+                } else if (d.type === 'result') {
+                    setProgress(96);
+                    if (workerCallbacks.resolve) workerCallbacks.resolve(new Uint8Array(d.data));
+                    workerCallbacks = {};
+                } else if (d.type === 'error') {
+                    if (workerCallbacks.reject) { workerCallbacks.reject(new Error(d.data)); }
+                    else { log('Worker 错误: ' + d.data); }
+                    workerCallbacks = {};
                 }
-                var script = document.createElement('script');
-                script.src = src;
-                script.onload = resolve;
-                script.onerror = function () { reject(new Error('无法加载 ' + src)); };
-                document.head.appendChild(script);
-            });
+            };
         }
 
         async function ensureFFmpeg() {
-            if (ffmpeg) return ffmpeg;
-            if (ffmpegLoading) return ffmpegLoading;
-            ffmpegLoading = (async function () {
-                if (!window.createFFmpegCore) {
-                    await loadScript(prefix + 'third_part/ffmpeg-wasm/ffmpeg-core.js');
-                }
-                if (!window.createFFmpegCore) {
-                    throw new Error('FFmpeg 核心未加载');
-                }
-                log('初始化 FFmpeg.wasm...');
-                setProgress(3);
-                var core = await window.createFFmpegCore({
-                    print: function (message) { if (message) log(String(message)); },
-                    printErr: function (message) { if (message) log(String(message)); }
-                });
-                if (core.setLogger) {
-                    core.setLogger(function (entry) {
-                        if (entry && entry.message) log(entry.message);
-                    });
-                }
-                if (core.setProgress) {
-                    core.setProgress(function (entry) {
-                        if (entry && typeof entry.progress === 'number') {
-                            setProgress(8 + entry.progress * 86);
-                        }
-                    });
-                }
-                ffmpeg = core;
-                log('FFmpeg.wasm 已就绪');
-                return ffmpeg;
-            })();
-            return ffmpegLoading;
+            if (!ffmpegWorker) initWorker();
+            if (workerReady) return;
+            return new Promise(function (resolve) {
+                var check = setInterval(function () {
+                    if (workerReady) { clearInterval(check); resolve(); }
+                }, 100);
+            });
         }
 
         function readFileAsUint8Array(file) {
@@ -474,6 +458,22 @@
                 reader.onload = function () { resolve(new Uint8Array(reader.result)); };
                 reader.onerror = function () { reject(new Error('读取文件失败')); };
                 reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function runFFmpeg(args, outputName) {
+            return new Promise(async function (resolve, reject) {
+                await ensureFFmpeg();
+                workerCallbacks = { resolve: resolve, reject: reject };
+                var data = await readFileAsUint8Array(state.file);
+                setProgress(4);
+                ffmpegWorker.postMessage({
+                    type: 'run',
+                    inName: state.inputName,
+                    outName: outputName,
+                    args: args,
+                    fileData: data
+                }, [data.buffer]);
             });
         }
 
@@ -528,32 +528,6 @@
 
         function audioEncodeArgs(ext) {
             return ['-c:a', 'aac', '-b:a', '160k'];
-        }
-
-        async function runFFmpeg(args, outputName) {
-            var core = await ensureFFmpeg();
-            var data = await readFileAsUint8Array(state.file);
-            try {
-                core.FS.unlink(state.inputName);
-            } catch (ignore) {}
-            try {
-                core.FS.unlink(outputName);
-            } catch (ignore2) {}
-            core.FS.writeFile(state.inputName, data);
-            log('执行命令: ffmpeg ' + args.join(' '));
-            setProgress(8);
-            var ret = core.exec.apply(core, args);
-            if (core.reset) core.reset();
-            if (ret !== 0) {
-                throw new Error('FFmpeg 返回错误码 ' + ret);
-            }
-            setProgress(96);
-            var output = core.FS.readFile(outputName);
-            try {
-                core.FS.unlink(state.inputName);
-                core.FS.unlink(outputName);
-            } catch (ignore3) {}
-            return output;
         }
 
         function showResult(bytes, filename, mode) {
@@ -676,9 +650,9 @@
         el.audioMode.addEventListener('change', updateExportControls);
         el.runBtn.addEventListener('click', startProcess);
         el.stopBtn.addEventListener('click', function () {
-            if (ffmpeg && state.processing) {
-                ffmpeg.reset && ffmpeg.reset();
-                log('当前核心不支持中断正在执行的同步命令，任务结束前请等待浏览器响应。');
+            if (state.processing) {
+                if (ffmpegWorker) ffmpegWorker.terminate();
+                log('任务已终止');
             }
         });
 

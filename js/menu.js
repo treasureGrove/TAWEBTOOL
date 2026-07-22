@@ -21,6 +21,7 @@ var MENU_DATA = [
     ]},
     { name: '视频处理', icon: 'icon-video', items: [
         { label: '视频剪辑', href: 'video_cut.html', keywords: ['裁剪', '截取', 'mp4', 'cut', 'trim', 'video editor', '切割', '剪辑', 'mov', '片段', '时间轴'] },
+        { label: '视频格式转换', href: 'video_format_cover.html', keywords: ['转码', '格式', 'mp4', 'webm', 'avi', 'mov', 'mkv', 'gif', 'convert', '转格式', 'ffmpeg', '编码'] },
     ]},
     { name: '游戏工具', icon: 'icon-game', items: [
         { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集', 'spritesheet', 'pack', '贴图集', '合并', 'sprite sheet', '帧动画'] },

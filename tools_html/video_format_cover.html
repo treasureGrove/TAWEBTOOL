@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="免费在线视频格式转换工具，支持MP4/WebM/AVI/MOV/MKV/GIF互转、分辨率调整，FFmpeg WASM引擎纯浏览器本地处理。">
+    <meta name="keywords" content="视频转换,格式转码,MP4,WebM,AVI,MOV,GIF转视频,ffmpeg,视频编码,TA工具箱,技术美术工具箱">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/video_format_cover.html">
+
+    <meta property="og:title" content="视频格式转换 - TA工具箱">
+    <meta property="og:description" content="免费在线视频格式转换，支持MP4/WebM/AVI/MOV/MKV/GIF互转、分辨率调整，FFmpeg WASM引擎。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/video_format_cover.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="视频格式转换 - TA工具箱">
+    <meta name="twitter:description" content="免费在线视频格式转换，支持MP4/WebM/AVI/MOV/MKV/GIF互转，FFmpeg WASM引擎。">
+    <title>视频格式转换 - TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/video_format_cover.css">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <div class="vfc-head">
+            <h1>视频格式转换</h1>
+            <p>基于 FFmpeg WASM，纯浏览器本地处理。支持 MP4 / WebM / AVI / MOV / MKV / GIF 互转，分辨率调整。</p>
+        </div>
+
+        <div class="vfc-layout">
+            <div class="vfc-upload-card">
+                <input id="vfcFile" type="file" accept="video/*,image/gif" hidden>
+                <div class="vfc-dropzone" id="vfcDropzone">
+                    <div id="vfcDropInner">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <span>拖拽视频 / GIF 到此处或点击选择</span>
+                        <small>MP4 · WebM · AVI · MOV · MKV · GIF · WMV · FLV</small>
+                    </div>
+                    <video id="vfcPreview" controls playsinline class="vfc-preview-media" hidden></video>
+                    <img id="vfcPreviewGif" class="vfc-preview-media" hidden>
+                </div>
+                <div class="vfc-meta" id="vfcMeta">未选择文件</div>
+            </div>
+
+            <div class="vfc-settings">
+                <div class="vfc-row">
+                    <div class="vfc-field">
+                        <span class="vfc-label">输出格式</span>
+                        <div class="vfc-fmt-bar">
+                            <label class="vfc-fmt"><input type="radio" name="fmt" value="mp4" checked> MP4</label>
+                            <label class="vfc-fmt"><input type="radio" name="fmt" value="webm"> WebM</label>
+                            <label class="vfc-fmt"><input type="radio" name="fmt" value="gif"> GIF</label>
+                            <label class="vfc-fmt"><input type="radio" name="fmt" value="avi"> AVI</label>
+                            <label class="vfc-fmt"><input type="radio" name="fmt" value="mov"> MOV</label>
+                            <label class="vfc-fmt"><input type="radio" name="fmt" value="mkv"> MKV</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vfc-row vfc-row-4">
+                    <div class="vfc-field">
+                        <span class="vfc-label">分辨率预设</span>
+                        <div class="vfc-preset-bar">
+                            <button data-w="1920" data-h="1080">1080p</button>
+                            <button data-w="1280" data-h="720">720p</button>
+                            <button data-w="854" data-h="480">480p</button>
+                            <button data-w="0" data-h="0" class="active">原始</button>
+                        </div>
+                    </div>
+                    <div class="vfc-field">
+                        <span class="vfc-label">宽度</span>
+                        <input id="vfcWidth" type="number" min="0" max="3840" step="2" value="0">
+                    </div>
+                    <div class="vfc-field">
+                        <span class="vfc-label">高度</span>
+                        <input id="vfcHeight" type="number" min="0" max="2160" step="2" value="0">
+                    </div>
+                    <div class="vfc-field">
+                        <span class="vfc-label">帧率</span>
+                        <input id="vfcFps" type="number" min="0" max="60" step="1" value="0" placeholder="原始">
+                    </div>
+                </div>
+
+                <div class="vfc-row vfc-row-3">
+                    <div class="vfc-field">
+                        <span class="vfc-label">码率 (Mbps)</span>
+                        <input id="vfcBitrate" type="number" min="0.1" max="20" step="0.5" value="4">
+                    </div>
+                    <div class="vfc-field">
+                        <span class="vfc-label">开始时间 (s)</span>
+                        <input id="vfcStart" type="number" min="0" step="0.1" value="0">
+                    </div>
+                    <div class="vfc-field">
+                        <span class="vfc-label">结束时间 (s)</span>
+                        <input id="vfcEnd" type="number" min="0" step="0.1" value="0" placeholder="全部">
+                    </div>
+                </div>
+
+                <div class="vfc-actions">
+                    <span id="vfcEngineBadge" class="vfc-badge loading">引擎加载中...</span>
+                    <button id="vfcConvertBtn" class="vfc-btn-primary" disabled>开始转换</button>
+                    <button id="vfcCancelBtn" class="vfc-btn-ghost" disabled>取消</button>
+                </div>
+            </div>
+
+            <div class="vfc-output" id="vfcProgressSection" style="display:none">
+                <div class="vfc-section">
+                    <span class="vfc-label">转换进度</span>
+                    <div class="vfc-progress-bar"><div class="vfc-progress-fill" id="vfcProgressFill"></div></div>
+                    <div class="vfc-progress-text" id="vfcProgressText">0%</div>
+                    <pre id="vfcLog" class="vfc-log"></pre>
+                </div>
+            </div>
+
+            <div class="vfc-output" id="vfcResultSection" style="display:none">
+                <div class="vfc-section">
+                    <span class="vfc-label">转换结果</span>
+                    <video id="vfcResultVideo" controls playsinline class="vfc-result-media" hidden></video>
+                    <img id="vfcResultGif" class="vfc-result-media" hidden>
+                    <div id="vfcResultInfo"></div>
+                    <a id="vfcDownload" class="vfc-btn-primary" hidden>下载文件</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/video_format_cover.js"></script>
+</body>
+
+</html>

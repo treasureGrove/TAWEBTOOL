@@ -1,0 +1,120 @@
+#main_bg {
+    background-image: url(../assets/images/background/miku_vivid.webp);
+    background-size: cover; background-position: center;
+    position: fixed; min-height: 100vh; width: 100%; z-index: -1;
+}
+
+.vfc-head { margin-bottom: 10px; }
+.vfc-head h1 { margin: 0 0 4px; font-size: 22px; font-weight: 750; color: var(--app-text); }
+.vfc-head p { margin: 0; font-size: 13px; color: var(--app-muted); line-height: 1.7; }
+
+.vfc-layout { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── Upload ── */
+.vfc-upload-card {
+    border: 1px solid var(--app-line); border-radius: 14px;
+    background: rgba(255,255,255,0.78); overflow: hidden;
+}
+.vfc-dropzone {
+    min-height: 120px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background .2s;
+}
+.vfc-dropzone:hover { background: rgba(38,168,132,0.05); }
+.vfc-dropzone.dragover { background: rgba(38,168,132,0.1); }
+
+#vfcDropInner { text-align: center; color: var(--app-muted); padding: 28px 20px; }
+#vfcDropInner svg { display: block; margin: 0 auto 8px; opacity: .5; }
+#vfcDropInner span { display: block; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+#vfcDropInner small { font-size: 11px; }
+
+.vfc-preview-media { width: 100%; max-height: 260px; object-fit: contain; border-radius: 0 0 14px 14px; }
+.vfc-meta { padding: 8px 14px; font-size: 12px; color: var(--app-muted); border-top: 1px solid var(--app-line-subtle); }
+
+/* ── Settings ── */
+.vfc-settings {
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 16px; border: 1px solid var(--app-line); border-radius: 14px;
+    background: rgba(255,255,255,0.78);
+}
+
+.vfc-row { display: flex; gap: 12px; }
+.vfc-row-4 > * { flex: 1; }
+.vfc-row-3 > * { flex: 1; }
+
+.vfc-field { min-width: 0; }
+.vfc-label { font-size: 13px; font-weight: 700; color: var(--app-accent-strong); display: block; margin-bottom: 6px; }
+
+.vfc-fmt-bar { display: flex; flex-wrap: wrap; gap: 6px; }
+.vfc-fmt {
+    padding: 6px 14px; border: 1px solid var(--app-line); border-radius: 8px;
+    cursor: pointer; font-size: 13px; color: var(--app-text); transition: all .18s;
+}
+.vfc-fmt input { display: none; }
+.vfc-fmt:has(input:checked) { background: var(--app-accent); color: #fff; border-color: var(--app-accent); }
+
+.vfc-preset-bar { display: flex; gap: 6px; flex-wrap: wrap; }
+.vfc-preset-bar button {
+    padding: 4px 12px; border: 1px solid var(--app-line); border-radius: 6px;
+    background: #fff; font-size: 12px; color: var(--app-text); cursor: pointer;
+    font-family: var(--app-font-serif); transition: all .18s;
+}
+.vfc-preset-bar button:hover, .vfc-preset-bar button.active {
+    background: var(--app-accent); color: #fff; border-color: var(--app-accent);
+}
+
+input[type="number"], input[type="text"] {
+    padding: 7px 10px; border: 1px solid var(--app-line); border-radius: 8px;
+    font-size: 13px; background: #fff; box-sizing: border-box; width: 100%;
+    font-family: var(--app-font-serif); transition: border-color .18s;
+}
+input:focus { outline: none; border-color: var(--app-accent); box-shadow: 0 0 0 3px var(--app-accent-hover); }
+
+.vfc-actions { display: flex; align-items: center; gap: 10px; padding-top: 4px; }
+
+.vfc-badge { font-size: 12px; padding: 4px 10px; border-radius: 6px; }
+.vfc-badge.loading { color: #d97706; background: rgba(217,119,6,.12); }
+.vfc-badge.ready { color: var(--app-accent); background: var(--app-accent-hover); }
+.vfc-badge.error { color: #dc2626; background: rgba(220,38,38,.12); }
+
+.vfc-btn-primary {
+    padding: 10px 24px; border: none; border-radius: 10px;
+    background: linear-gradient(135deg, var(--app-accent), var(--app-accent-strong));
+    color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+    text-decoration: none; display: inline-block;
+    font-family: var(--app-font-serif); transition: all .18s;
+}
+.vfc-btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+.vfc-btn-primary:hover:not(:disabled) { box-shadow: 0 4px 14px var(--app-accent-glow); }
+
+.vfc-btn-ghost {
+    padding: 9px 18px; border: 1px solid var(--app-line); border-radius: 10px;
+    background: #fff; color: var(--app-text); font-size: 13px; cursor: pointer;
+    font-family: var(--app-font-serif);
+}
+.vfc-btn-ghost:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ── Output ── */
+.vfc-output .vfc-section {
+    padding: 16px; border: 1px solid var(--app-line); border-radius: 14px;
+    background: rgba(255,255,255,0.78);
+}
+
+.vfc-progress-bar { height: 6px; background: rgba(38,168,132,.12); border-radius: 3px; overflow: hidden; margin-bottom: 4px; }
+.vfc-progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--app-accent), #7bd8bd); border-radius: 3px; transition: width .3s; }
+.vfc-progress-text { font-size: 12px; color: var(--app-accent-strong); font-weight: 600; margin-bottom: 8px; }
+
+.vfc-log {
+    margin: 4px 0 0; padding: 10px 12px; background: #0d1f1a;
+    color: #64d8b4; border-radius: 8px; font-size: 11px; line-height: 1.6;
+    max-height: 140px; overflow-y: auto; white-space: pre-wrap;
+    font-family: var(--app-font-mono);
+}
+
+.vfc-result-media { width: 100%; max-height: 260px; border-radius: 8px; margin-bottom: 8px; }
+#vfcResultInfo { font-size: 12px; color: var(--app-muted); margin-bottom: 10px; }
+
+@media (max-width: 800px) {
+    .vfc-row, .vfc-row-4, .vfc-row-3 { flex-direction: column; }
+    .vfc-fmt-bar { gap: 4px; }
+    .vfc-fmt { padding: 5px 10px; font-size: 12px; }
+}
