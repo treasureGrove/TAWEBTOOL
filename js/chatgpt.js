@@ -91,7 +91,7 @@
             </button>
           </div>
           <div class="chat-input-toolbar">
-            <span class="hint">已接入智谱 GLM-4.7-Flash，免登录使用，避免输入敏感信息。</span>
+            <span class="hint">已接入 DeepSeek，免登录使用，避免输入敏感信息。</span>
             <button id="clearChat" class="ghost-btn" type="button">清空对话</button>
           </div>
         </div>
@@ -106,7 +106,6 @@
     const chatTool = host.querySelector('.chat-tool');
     const storeKey = 'tool-chatgpt-messages';
     const systemPrompt = '你是一个简洁、友好的中文 AI 助手。';
-    const zhipuApiKey = '48ca4cce66704a418ec6e25f2f4d5cdd.tCF9NFIxQjsM8ucW';
     const requestTimeoutMs = 60000;
     const timeoutRetryLimit = 1;
     let pending = false;
@@ -222,14 +221,13 @@
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
           try {
-            res = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
+            res = await fetch('/api/chat', {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${zhipuApiKey}`
+                'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                model: 'glm-4.7-flash',
+                model: 'deepseek-chat',
                 messages,
                 temperature: 0.7,
                 stream: false
