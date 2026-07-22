@@ -91,7 +91,8 @@
             </button>
           </div>
           <div class="chat-input-toolbar">
-            <span class="hint">已接入 DeepSeek，免登录使用，避免输入敏感信息。</span>
+            <span class="chat-model-label">DeepSeek</span>
+            <span class="hint">已接入 DeepSeek / 智谱 双模型，免登录使用，避免输入敏感信息。</span>
             <button id="clearChat" class="ghost-btn" type="button">清空对话</button>
           </div>
         </div>
@@ -104,10 +105,25 @@
     const clearBtn = $('clearChat');
     const emptyState = $('chatEmptyState');
     const chatTool = host.querySelector('.chat-tool');
+    const modelLabel = host.querySelector('.chat-model-label');
     const storeKey = 'tool-chatgpt-messages';
     const systemPrompt = '你是一个简洁、友好的中文 AI 助手。';
     const requestTimeoutMs = 60000;
     const timeoutRetryLimit = 1;
+    let currentModel = 'deepseek-chat';
+
+    const MODEL_NAMES = {
+      'deepseek-chat': 'DeepSeek',
+      'deepseek-v4-flash': 'DeepSeek',
+      'deepseek-reasoner': 'DeepSeek R1',
+      'glm-4.7-flash': '智谱 GLM-4.7',
+      'glm-4-flash': '智谱 GLM-4',
+    };
+
+    function updateModelLabel(name) {
+      currentModel = name;
+      if (modelLabel) modelLabel.textContent = MODEL_NAMES[name] || name;
+    }
     let pending = false;
     let history = [];
 
@@ -253,6 +269,7 @@
 
         const answer = normalizeAssistantContent(data?.choices?.[0]?.message?.content).trim() || '暂时没有生成内容，请稍后再试。';
         loadingNode.remove();
+        updateModelLabel(data.model);
         appendMessage('assistant', answer);
       } catch (err) {
         loadingNode.remove();

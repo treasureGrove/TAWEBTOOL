@@ -326,6 +326,17 @@
     flex: 1;
 }
 
+.chat-model-label {
+    background: var(--chat-accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    line-height: 1.5;
+}
+
 .ghost-btn {
     background: transparent;
     border: 1px solid var(--chat-border);
