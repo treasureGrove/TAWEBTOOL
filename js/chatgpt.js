@@ -290,12 +290,12 @@
         loadingNode.remove();
 
         if (data._fallback) {
-          const fbLabel = MODEL_NAMES[data._provider] || data._provider;
-          updateModelLabel(data._provider);
-          if (modelSelect) modelSelect.value = data._provider;
-          currentModel = data._provider;
+          const fbName = MODEL_NAMES[data.model] || data._requested || data.model;
+          updateModelLabel(data.model);
+          if (modelSelect) modelSelect.value = data.model;
+          currentModel = data.model;
           localStorage.setItem(modelStoreKey, currentModel);
-          appendMessage('assistant', `_(${fbLabel} 备份响应)_\n\n${answer}`);
+          appendMessage('assistant', `_(${fbName} 备份响应)_\n\n${answer}`);
         } else {
           updateModelLabel(data.model);
           appendMessage('assistant', answer);

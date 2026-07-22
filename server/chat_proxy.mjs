@@ -28,47 +28,45 @@ const PROVIDERS = [
     name: 'deepseek',
     models: ['deepseek-chat', 'deepseek-reasoner'],
     url: 'https://api.deepseek.com/v1/chat/completions',
+    fallback: true,
   },
   {
     name: 'zhipu',
     models: ['glm-4.7-flash', 'glm-4-flash'],
     url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+    fallback: true,
   },
   {
     name: 'siliconflow',
-    models: [
-      'Qwen/Qwen2.5-7B-Instruct',
-      'Qwen/Qwen2.5-14B-Instruct',
-      'Qwen/Qwen2.5-32B-Instruct',
-      'Pro/Qwen/Qwen2.5-7B-Instruct',
-    ],
+    models: ['Qwen/Qwen2.5-7B-Instruct', 'Qwen/Qwen2.5-14B-Instruct', 'Qwen/Qwen2.5-32B-Instruct'],
     url: 'https://api.siliconflow.cn/v1/chat/completions',
+    fallback: false,
   },
 ];
 
 const KEYS = loadKeys();
 
-function mapModelToProvider(requestedModel) {
+function mapModelToProvider(id) {
   for (const p of PROVIDERS) {
-    if (p.models.includes(requestedModel)) return p;
+    if (p.models.includes(id)) return { provider: p, index: p.models.indexOf(id) };
   }
-  return PROVIDERS[0];
+  return { provider: PROVIDERS[0], index: 0 };
 }
 
-async function proxyRequest(provider, body) {
+async function proxyRequest(provider, model, body) {
   const url = new URL(provider.url);
   const apiKey = KEYS[provider.name];
-  if (!apiKey) throw new Error(`No API key for ${provider.name}`);
+  if (!apiKey) throw new Error(`No key for ${provider.name}`);
+
+  const postData = JSON.stringify({
+    model,
+    messages: body.messages,
+    temperature: body.temperature ?? 0.7,
+    max_tokens: body.max_tokens ?? 4096,
+    stream: false,
+  });
 
   return new Promise((resolve, reject) => {
-    const postData = JSON.stringify({
-      model: body.model,
-      messages: body.messages,
-      temperature: body.temperature ?? 0.7,
-      max_tokens: body.max_tokens ?? 4096,
-      stream: false,
-    });
-
     const opts = {
       hostname: url.hostname,
       port: 443,
@@ -87,40 +85,63 @@ async function proxyRequest(provider, body) {
       const chunks = [];
       upstreamRes.on('data', (c) => chunks.push(c));
       upstreamRes.on('end', () => {
-        resolve({
-          status: upstreamRes.statusCode,
-          body: Buffer.concat(chunks),
-          provider: provider.name,
-        });
+        resolve({ status: upstreamRes.statusCode, body: Buffer.concat(chunks) });
       });
     });
 
     req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error('upstream timeout')); });
+    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
     req.write(postData);
     req.end();
   });
 }
 
 function isRateLimited(status, body) {
-  if (status === 429 || status === 403) return true;
+  if (status === 429) return true;
   try {
     const d = JSON.parse(body.toString());
-    const msg = (d?.error?.message || d?.message || '').toLowerCase();
-    if (msg.includes('rate') || msg.includes('速率') || msg.includes('limit') || msg.includes('quota')) return true;
+    const msg = (d?.error?.message || '').toLowerCase();
+    return msg.includes('rate limit') || msg.includes('速率限制');
   } catch {}
   return false;
 }
 
-function injectProviderField(body, providerName, fallback, requestedModel) {
+function extractError(status, body) {
   try {
     const d = JSON.parse(body.toString());
-    d._provider = providerName;
-    d._fallback = fallback || false;
+    return d?.error?.message || d?.message || `HTTP ${status}`;
+  } catch {}
+  return `HTTP ${status}`;
+}
+
+function addMeta(body, wasFallback, requestedModel) {
+  try {
+    const d = JSON.parse(body.toString());
+    d._fallback = wasFallback;
     d._requested = requestedModel;
     return Buffer.from(JSON.stringify(d));
   } catch {}
   return body;
+}
+
+async function tryProviderModels(provider, startIndex, payload) {
+  for (let i = startIndex; i < provider.models.length; i++) {
+    try {
+      const upstream = await proxyRequest(provider, provider.models[i], payload);
+      if (isRateLimited(upstream.status, upstream.body)) {
+        console.warn(`[chat-proxy] ${provider.name}/${provider.models[i]} rate limited`);
+        continue;
+      }
+      if (upstream.status >= 400) {
+        console.warn(`[chat-proxy] ${provider.name}/${provider.models[i]} HTTP ${upstream.status}: ${extractError(upstream.status, upstream.body)}`);
+        continue;
+      }
+      return upstream;
+    } catch (err) {
+      console.error(`[chat-proxy] ${provider.name}/${provider.models[i]} error:`, err.message);
+    }
+  }
+  return null;
 }
 
 const server = createServer(async (req, res) => {
@@ -128,19 +149,13 @@ const server = createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
+  if (req.method === 'OPTIONS') { res.writeHead(204); res.end(); return; }
 
   if (req.method === 'GET' && req.url === '/api/models') {
     const models = [];
     for (const p of PROVIDERS) {
       if (!KEYS[p.name]) continue;
-      for (const m of p.models) {
-        models.push({ id: m, provider: p.name });
-      }
+      for (const m of p.models) models.push({ id: m, provider: p.name });
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ models, default: PROVIDERS[0].models[0] }));
@@ -154,58 +169,30 @@ const server = createServer(async (req, res) => {
       try {
         const payload = JSON.parse(Buffer.concat(chunks).toString());
         const requestedModel = payload.model || PROVIDERS[0].models[0];
-        const primaryProvider = mapModelToProvider(requestedModel);
+        const { provider, index } = mapModelToProvider(requestedModel);
 
-        let lastError = null;
-
-        for (const provider of PROVIDERS) {
-          if (!KEYS[provider.name]) continue;
-
-          const matched = provider.name === primaryProvider.name;
-          if (!matched) continue;
-
-          try {
-            const upstream = await proxyRequest(provider, payload);
-            if (isRateLimited(upstream.status, upstream.body)) {
-              console.warn(`[chat-proxy] ${provider.name} rate limited, falling back...`);
-              lastError = { message: `${provider.name} 超限` };
-              continue;
-            }
-            if (upstream.status >= 400) {
-              lastError = { message: `${provider.name}: HTTP ${upstream.status}` };
-              continue;
-            }
-            res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
-            res.end(injectProviderField(upstream.body, provider.name, false, requestedModel));
-            return;
-          } catch (err) {
-            console.error(`[chat-proxy] ${provider.name} error:`, err.message);
-            lastError = { message: `${provider.name}: ${err.message}` };
-          }
+        const result = await tryProviderModels(provider, index, payload);
+        if (result) {
+          res.writeHead(result.status, { 'Content-Type': 'application/json' });
+          res.end(addMeta(result.body, false, requestedModel));
+          return;
         }
 
-        for (const provider of PROVIDERS) {
-          if (!KEYS[provider.name]) continue;
-          if (provider.name === primaryProvider.name) continue;
-
-          try {
-            const body = { ...payload, model: provider.models[0] };
-            const upstream = await proxyRequest(provider, body);
-            if (isRateLimited(upstream.status, upstream.body)) {
-              console.warn(`[chat-proxy] ${provider.name} fallback also rate limited`);
-              continue;
+        if (provider.fallback) {
+          for (const fb of PROVIDERS) {
+            if (!KEYS[fb.name]) continue;
+            if (fb.name === provider.name) continue;
+            const fbResult = await tryProviderModels(fb, 0, payload);
+            if (fbResult) {
+              res.writeHead(fbResult.status, { 'Content-Type': 'application/json' });
+              res.end(addMeta(fbResult.body, true, requestedModel));
+              return;
             }
-            if (upstream.status >= 400) continue;
-            res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
-            res.end(injectProviderField(upstream.body, provider.name, true, requestedModel));
-            return;
-          } catch (err) {
-            console.error(`[chat-proxy] ${provider.name} fallback error:`, err.message);
           }
         }
 
         res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: lastError || { message: '所有模型暂不可用' } }));
+        res.end(JSON.stringify({ error: { message: '当前模型暂不可用，请尝试其他模型' } }));
       } catch (err) {
         console.error('[chat-proxy] Parse error:', err.message);
         res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -220,8 +207,8 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`[chat-proxy] Listening on ${HOST}:${PORT}`);
+  console.log(`[chat-proxy] ${HOST}:${PORT}`);
   for (const p of PROVIDERS) {
-    console.log(`[chat-proxy] ${p.name}: ${KEYS[p.name] ? 'ready' : 'no key'} (${p.models.length} models)`);
+    console.log(`[chat-proxy] ${p.name}: ${KEYS[p.name] ? 'ready' : 'no key'} [${p.models.join(', ')}]`);
   }
 });
