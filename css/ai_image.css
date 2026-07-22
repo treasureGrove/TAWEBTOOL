@@ -218,13 +218,13 @@
 
 .gallery-item img {
     width: 100%;
+    aspect-ratio: 1/1;
     object-fit: cover;
     display: block;
-    max-height: 180px;
 }
 
-.video-gallery .gallery-item {
-    aspect-ratio: auto;
+.video-gallery .gallery-item img {
+    aspect-ratio: 16/9;
 }
 
 .video-thumb {
