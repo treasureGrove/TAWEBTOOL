@@ -2,5 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://tools.treasuregrove.art/sitemap.xml
-
-Host: tools.treasuregrove.art
