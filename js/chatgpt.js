@@ -94,7 +94,11 @@
             <div class="chat-model-picker">
                 <select id="modelSelect" class="chat-model-select">
                   <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Llama 3.3 70B</option>
-                  <option value="glm-4.7-flash">智谱 GLM-4.7</option>
+                  <option value="glm-4.7-flash">GLM-4.7</option>
+                  <option value="glm-4-flash">GLM-4-Flash</option>
+                  <option value="glm-4.6v-flash">GLM-4.6V</option>
+                  <option value="glm-4.1v-thinking-flash">GLM-4.1V-Thinking</option>
+                  <option value="glm-4v-flash">GLM-4V</option>
                 </select>
               <span class="chat-model-label">DeepSeek</span>
             </div>
@@ -120,8 +124,11 @@
     let currentModel = localStorage.getItem(modelStoreKey) || '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
     const MODEL_NAMES = {
-      'glm-4.7-flash': '智谱 GLM-4.7',
-      'glm-4-flash': '智谱 GLM-4',
+      'glm-4.7-flash': 'GLM-4.7',
+      'glm-4-flash': 'GLM-4-Flash',
+      'glm-4.6v-flash': 'GLM-4.6V',
+      'glm-4.1v-thinking-flash': 'GLM-4.1V-Thinking',
+      'glm-4v-flash': 'GLM-4V',
       '@cf/meta/llama-3.3-70b-instruct-fp8-fast': 'Llama 3.3 70B',
     };
 

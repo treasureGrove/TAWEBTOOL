@@ -41,7 +41,7 @@ const PROVIDERS = [
   },
   {
     name: 'zhipu',
-    models: ['glm-4.7-flash', 'glm-4-flash'],
+    models: ['glm-4.7-flash', 'glm-4-flash', 'glm-4.6v-flash', 'glm-4.1v-thinking-flash', 'glm-4v-flash'],
     url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
     fallback: true,
     type: 'openai',
