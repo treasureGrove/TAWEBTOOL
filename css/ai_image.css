@@ -3,6 +3,7 @@
     flex-direction: row;
     gap: 20px;
     height: 100%;
+    min-height: 500px;
 }
 
 .ai-image-main {
@@ -190,6 +191,27 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     background: var(--chat-surface, #f5f5f5);
+}
+
+.video-gallery .gallery-item {
+    aspect-ratio: auto;
+}
+
+.video-thumb {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-play-icon {
+    opacity: 0.7;
+}
+
+.gallery-item:hover .video-play-icon {
+    opacity: 1;
 }
 
 .gallery-item-time {
