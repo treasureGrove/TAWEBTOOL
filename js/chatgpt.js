@@ -92,10 +92,13 @@
           </div>
           <div class="chat-input-toolbar">
             <div class="chat-model-picker">
-              <select id="modelSelect" class="chat-model-select">
-                <option value="deepseek-chat">DeepSeek</option>
-                <option value="glm-4.7-flash">智谱 GLM-4.7</option>
-              </select>
+                <select id="modelSelect" class="chat-model-select">
+                  <option value="deepseek-chat">DeepSeek</option>
+                  <option value="glm-4.7-flash">智谱 GLM-4.7</option>
+                  <option value="Qwen/Qwen2.5-7B-Instruct">通义千问 7B</option>
+                  <option value="Qwen/Qwen2.5-14B-Instruct">通义千问 14B</option>
+                  <option value="Qwen/Qwen2.5-32B-Instruct">通义千问 32B</option>
+                </select>
               <span class="chat-model-label">DeepSeek</span>
             </div>
             <button id="clearChat" class="ghost-btn" type="button">清空对话</button>
@@ -125,6 +128,10 @@
       'deepseek-reasoner': 'DeepSeek R1',
       'glm-4.7-flash': '智谱 GLM-4.7',
       'glm-4-flash': '智谱 GLM-4',
+      'Qwen/Qwen2.5-7B-Instruct': '通义千问 7B',
+      'Qwen/Qwen2.5-14B-Instruct': '通义千问 14B',
+      'Qwen/Qwen2.5-32B-Instruct': '通义千问 32B',
+      'Pro/Qwen/Qwen2.5-7B-Instruct': '通义千问 Pro',
     };
 
     function updateModelLabel(name) {
@@ -281,8 +288,18 @@
 
         const answer = normalizeAssistantContent(data?.choices?.[0]?.message?.content).trim() || '暂时没有生成内容，请稍后再试。';
         loadingNode.remove();
-        updateModelLabel(data.model);
-        appendMessage('assistant', answer);
+
+        if (data._fallback) {
+          const fbLabel = MODEL_NAMES[data._provider] || data._provider;
+          updateModelLabel(data._provider);
+          if (modelSelect) modelSelect.value = data._provider;
+          currentModel = data._provider;
+          localStorage.setItem(modelStoreKey, currentModel);
+          appendMessage('assistant', `_(${fbLabel} 备份响应)_\n\n${answer}`);
+        } else {
+          updateModelLabel(data.model);
+          appendMessage('assistant', answer);
+        }
       } catch (err) {
         loadingNode.remove();
         const message = err?.name === 'AbortError' ? '请求超时，请稍后重试。' : `请求失败：${err.message}。请稍后重试。`;

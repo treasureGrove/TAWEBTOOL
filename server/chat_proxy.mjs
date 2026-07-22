@@ -8,36 +8,52 @@ const HOST = '127.0.0.1';
 
 function loadKeys() {
   const keys = {};
-
   try {
     const authPath = join(process.env.HOME || '/root', '.local/share/opencode/auth.json');
     const auth = JSON.parse(readFileSync(authPath, 'utf8'));
     if (auth.deepseek?.key) keys.deepseek = auth.deepseek.key.trim();
   } catch {}
-
   try {
     const cfgPath = join(import.meta.dirname, 'chat_keys.json');
     const cfg = JSON.parse(readFileSync(cfgPath, 'utf8'));
-    if (cfg.zhipu) keys.zhipu = cfg.zhipu.trim();
+    for (const [k, v] of Object.entries(cfg)) {
+      keys[k] = String(v).trim();
+    }
   } catch {}
-
   return keys;
 }
 
 const PROVIDERS = [
   {
     name: 'deepseek',
-    model: 'deepseek-chat',
+    models: ['deepseek-chat', 'deepseek-reasoner'],
     url: 'https://api.deepseek.com/v1/chat/completions',
   },
   {
     name: 'zhipu',
-    model: 'glm-4.7-flash',
+    models: ['glm-4.7-flash', 'glm-4-flash'],
     url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+  },
+  {
+    name: 'siliconflow',
+    models: [
+      'Qwen/Qwen2.5-7B-Instruct',
+      'Qwen/Qwen2.5-14B-Instruct',
+      'Qwen/Qwen2.5-32B-Instruct',
+      'Pro/Qwen/Qwen2.5-7B-Instruct',
+    ],
+    url: 'https://api.siliconflow.cn/v1/chat/completions',
   },
 ];
 
 const KEYS = loadKeys();
+
+function mapModelToProvider(requestedModel) {
+  for (const p of PROVIDERS) {
+    if (p.models.includes(requestedModel)) return p;
+  }
+  return PROVIDERS[0];
+}
 
 async function proxyRequest(provider, body) {
   const url = new URL(provider.url);
@@ -46,7 +62,7 @@ async function proxyRequest(provider, body) {
 
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({
-      model: provider.model,
+      model: body.model,
       messages: body.messages,
       temperature: body.temperature ?? 0.7,
       max_tokens: body.max_tokens ?? 4096,
@@ -73,8 +89,8 @@ async function proxyRequest(provider, body) {
       upstreamRes.on('end', () => {
         resolve({
           status: upstreamRes.statusCode,
-          headers: upstreamRes.headers,
           body: Buffer.concat(chunks),
+          provider: provider.name,
         });
       });
     });
@@ -87,19 +103,30 @@ async function proxyRequest(provider, body) {
 }
 
 function isRateLimited(status, body) {
-  if (status === 429) return true;
+  if (status === 429 || status === 403) return true;
   try {
     const d = JSON.parse(body.toString());
     const msg = (d?.error?.message || d?.message || '').toLowerCase();
-    if (msg.includes('rate') || msg.includes('速率') || msg.includes('限制')) return true;
+    if (msg.includes('rate') || msg.includes('速率') || msg.includes('limit') || msg.includes('quota')) return true;
   } catch {}
   return false;
+}
+
+function injectProviderField(body, providerName, fallback, requestedModel) {
+  try {
+    const d = JSON.parse(body.toString());
+    d._provider = providerName;
+    d._fallback = fallback || false;
+    d._requested = requestedModel;
+    return Buffer.from(JSON.stringify(d));
+  } catch {}
+  return body;
 }
 
 const server = createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', 'https://tools.treasuregrove.art');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -108,14 +135,15 @@ const server = createServer(async (req, res) => {
   }
 
   if (req.method === 'GET' && req.url === '/api/models') {
+    const models = [];
+    for (const p of PROVIDERS) {
+      if (!KEYS[p.name]) continue;
+      for (const m of p.models) {
+        models.push({ id: m, provider: p.name });
+      }
+    }
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({
-      models: [
-        { id: 'deepseek-chat', name: 'DeepSeek', desc: '优先使用，满额后自动切换' },
-        { id: 'glm-4.7-flash', name: '智谱 GLM', desc: 'DeepSeek 超限后备' },
-      ],
-      default: 'deepseek-chat',
-    }));
+    res.end(JSON.stringify({ models, default: PROVIDERS[0].models[0] }));
     return;
   }
 
@@ -125,34 +153,30 @@ const server = createServer(async (req, res) => {
     req.on('end', async () => {
       try {
         const payload = JSON.parse(Buffer.concat(chunks).toString());
-        const requestedModel = payload.model || 'deepseek-chat';
+        const requestedModel = payload.model || PROVIDERS[0].models[0];
+        const primaryProvider = mapModelToProvider(requestedModel);
 
         let lastError = null;
 
         for (const provider of PROVIDERS) {
           if (!KEYS[provider.name]) continue;
-          const matched = requestedModel === provider.model
-            || (requestedModel === 'deepseek-chat' && provider.name === 'deepseek')
-            || (requestedModel === 'glm-4.7-flash' && provider.name === 'zhipu');
 
+          const matched = provider.name === primaryProvider.name;
           if (!matched) continue;
 
           try {
             const upstream = await proxyRequest(provider, payload);
             if (isRateLimited(upstream.status, upstream.body)) {
-              console.warn(`[chat-proxy] ${provider.name} rate limited, trying next...`);
-              lastError = { message: `${provider.name} 速率限制，正在切换备用模型...` };
+              console.warn(`[chat-proxy] ${provider.name} rate limited, falling back...`);
+              lastError = { message: `${provider.name} 超限` };
               continue;
             }
             if (upstream.status >= 400) {
               lastError = { message: `${provider.name}: HTTP ${upstream.status}` };
               continue;
             }
-            res.writeHead(upstream.status, {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-cache',
-            });
-            res.end(upstream.body);
+            res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
+            res.end(injectProviderField(upstream.body, provider.name, false, requestedModel));
             return;
           } catch (err) {
             console.error(`[chat-proxy] ${provider.name} error:`, err.message);
@@ -160,8 +184,28 @@ const server = createServer(async (req, res) => {
           }
         }
 
+        for (const provider of PROVIDERS) {
+          if (!KEYS[provider.name]) continue;
+          if (provider.name === primaryProvider.name) continue;
+
+          try {
+            const body = { ...payload, model: provider.models[0] };
+            const upstream = await proxyRequest(provider, body);
+            if (isRateLimited(upstream.status, upstream.body)) {
+              console.warn(`[chat-proxy] ${provider.name} fallback also rate limited`);
+              continue;
+            }
+            if (upstream.status >= 400) continue;
+            res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
+            res.end(injectProviderField(upstream.body, provider.name, true, requestedModel));
+            return;
+          } catch (err) {
+            console.error(`[chat-proxy] ${provider.name} fallback error:`, err.message);
+          }
+        }
+
         res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: lastError || { message: '所有模型均不可用' } }));
+        res.end(JSON.stringify({ error: lastError || { message: '所有模型暂不可用' } }));
       } catch (err) {
         console.error('[chat-proxy] Parse error:', err.message);
         res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -178,6 +222,6 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   console.log(`[chat-proxy] Listening on ${HOST}:${PORT}`);
   for (const p of PROVIDERS) {
-    console.log(`[chat-proxy] ${p.name}: ${KEYS[p.name] ? 'ready' : 'no key'}`);
+    console.log(`[chat-proxy] ${p.name}: ${KEYS[p.name] ? 'ready' : 'no key'} (${p.models.length} models)`);
   }
 });
