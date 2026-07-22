@@ -31,11 +31,13 @@ function loadKeys() {
 
 const PROVIDERS = [
   {
-    name: 'deepseek',
-    models: ['deepseek-chat', 'deepseek-reasoner'],
-    url: 'https://api.deepseek.com/v1/chat/completions',
+    name: 'cloudflare',
+    models: [
+      '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+    ],
+    url: 'https://api.cloudflare.com/client/v4/accounts/{account}/ai/run/{model}',
     fallback: true,
-    type: 'openai',
+    type: 'cloudflare',
   },
   {
     name: 'zhipu',
@@ -43,15 +45,6 @@ const PROVIDERS = [
     url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
     fallback: true,
     type: 'openai',
-  },
-  {
-    name: 'cloudflare',
-    models: [
-      '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
-    ],
-    url: 'https://api.cloudflare.com/client/v4/accounts/{account}/ai/run/{model}',
-    fallback: false,
-    type: 'cloudflare',
   },
 ];
 

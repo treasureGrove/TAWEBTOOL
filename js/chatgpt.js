@@ -94,7 +94,6 @@
             <div class="chat-model-picker">
                 <select id="modelSelect" class="chat-model-select">
                   <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Llama 3.3 70B</option>
-                  <option value="deepseek-chat">DeepSeek</option>
                   <option value="glm-4.7-flash">智谱 GLM-4.7</option>
                 </select>
               <span class="chat-model-label">DeepSeek</span>
@@ -121,9 +120,6 @@
     let currentModel = localStorage.getItem(modelStoreKey) || '@cf/meta/llama-3.3-70b-instruct-fp8-fast';
 
     const MODEL_NAMES = {
-      'deepseek-chat': 'DeepSeek',
-      'deepseek-v4-flash': 'DeepSeek',
-      'deepseek-reasoner': 'DeepSeek R1',
       'glm-4.7-flash': '智谱 GLM-4.7',
       'glm-4-flash': '智谱 GLM-4',
       '@cf/meta/llama-3.3-70b-instruct-fp8-fast': 'Llama 3.3 70B',
