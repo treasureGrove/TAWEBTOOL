@@ -116,17 +116,7 @@
         <priority>0.7</priority>
     </url>
     <url>
-        <loc>https://tools.treasuregrove.art/tools_html/video_converter.html</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
         <loc>https://tools.treasuregrove.art/tools_html/video_cut.html</loc>
-        <changefreq>monthly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    <url>
-        <loc>https://tools.treasuregrove.art/tools_html/video_format_cover.html</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
