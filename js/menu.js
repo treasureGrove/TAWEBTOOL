@@ -3,6 +3,7 @@ var MENU_DATA = [
     { name: 'AI工具箱', icon: 'icon-ai', items: [
         { label: 'ChatGPT', href: 'chatgpt.html', keywords: ['聊天', 'AI问答', '大模型', 'LLM', 'gpt', 'claude', '对话', '助手', 'chat', 'ai'] },
         { label: 'AI生图', href: 'ai_image.html', keywords: ['AI绘图', 'AI生图', '图片生成', '文生图', 'cogview', '画图', '出图', '生成图片'] },
+        { label: 'AI生视频', href: 'ai_video.html', keywords: ['AI视频', '视频生成', '文生视频', 'cogvideox', '生成视频', 'AI短片'] },
         { label: 'AI高清放大', href: 'ai_upscale.html', keywords: ['超分辨率', '图片放大', 'upscale', 'super resolution', '放大', '清晰', 'esrgan', 'real-esrgan', 'waifu', '2x', '4x'] },
         { label: 'AI绘画', href: 'ai_draw.html', keywords: ['文生图', '画图', '生成图片', 'stable diffusion', 'prompt', '绘图', '描画', 'sd', 'txt2img', 'image generation', '绘画', '出图'] },
     ]},

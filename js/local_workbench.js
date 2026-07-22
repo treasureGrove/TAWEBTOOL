@@ -10,7 +10,8 @@
     ps_online: { title: '在线 PS', intro: '开箱即用 Photopea。' },
     video_cut: { title: '视频剪辑工作台', intro: '基于开源 FFmpeg.wasm 的浏览器本地剪辑与多模式导出。' },
     ai_draw: { title: 'AI 绘画工作台', intro: 'Prompt 驱动的快速出图工作流，支持预设、历史和参数复制。' },
-    ai_image: { title: 'AI 通用生图', intro: '基于 Cogview-3-Flash，输入文字描述即可生成图片。' }
+    ai_image: { title: 'AI 通用生图', intro: '基于 Cogview-3-Flash，输入文字描述即可生成图片。' },
+    ai_video: { title: 'AI 生视频', intro: '基于 CogVideoX-Flash，输入文字描述生成短视频。' }
   };
 
   const designToolLinks = {
@@ -185,6 +186,7 @@
     if (key === 'chatgpt') return initChatTool(main);
     if (key === 'ai_draw') return initAiDrawTool(main);
     if (key === 'ai_image') return initAiImageTool(main);
+    if (key === 'ai_video') return initAiVideoTool(main);
 
   renderDefault(main, key);
   }

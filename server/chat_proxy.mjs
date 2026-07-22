@@ -297,6 +297,101 @@ const server = createServer(async (req, res) => {
     return;
   }
 
+  if (req.method === 'POST' && req.url === '/api/video') {
+    const chunks = [];
+    req.on('data', (c) => chunks.push(c));
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(Buffer.concat(chunks).toString());
+        const prompt = payload.prompt || '';
+        if (!prompt) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: '请输入描述文字' } }));
+          return;
+        }
+
+        const apiKey = KEYS.zhipu;
+        if (!apiKey) {
+          res.writeHead(502, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: '服务暂不可用' } }));
+          return;
+        }
+
+        const url = new URL('https://open.bigmodel.cn/api/paas/v4/videos/generations');
+        const postData = JSON.stringify({ model: 'cogvideox-flash', prompt });
+
+        const upstream = await new Promise((resolve, reject) => {
+          const opts = {
+            hostname: url.hostname, port: 443, path: url.pathname,
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': Buffer.byteLength(postData),
+              Authorization: `Bearer ${apiKey}`, Host: url.hostname,
+            },
+            timeout: 60000,
+          };
+          const r = httpsRequest(opts, (upRes) => {
+            const chunks = [];
+            upRes.on('data', (c) => chunks.push(c));
+            upRes.on('end', () => resolve({ status: upRes.statusCode, body: Buffer.concat(chunks).toString() }));
+          });
+          r.on('error', reject);
+          r.on('timeout', () => { r.destroy(); reject(new Error('timeout')); });
+          r.write(postData); r.end();
+        });
+
+        if (upstream.status >= 400) {
+          res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
+          res.end(upstream.body);
+          return;
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(upstream.body);
+      } catch (err) {
+        console.error('[chat-proxy] video error:', err.message);
+        res.writeHead(502, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: { message: err.message } }));
+      }
+    });
+    return;
+  }
+
+  if (req.method === 'GET' && req.url && req.url.startsWith('/api/video/status/')) {
+    const taskId = req.url.split('/api/video/status/')[1];
+    if (!taskId) { res.writeHead(400); res.end('missing task id'); return; }
+
+    try {
+      const apiKey = KEYS.zhipu;
+      if (!apiKey) { res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: { message: '服务暂不可用' } })); return; }
+
+      const url = new URL(`https://open.bigmodel.cn/api/paas/v4/async-result/${taskId}`);
+      const upstream = await new Promise((resolve, reject) => {
+        const opts = {
+          hostname: url.hostname, port: 443, path: url.pathname, method: 'GET',
+          headers: { Authorization: `Bearer ${apiKey}`, Host: url.hostname },
+          timeout: 30000,
+        };
+        const r = httpsRequest(opts, (upRes) => {
+          const chunks = [];
+          upRes.on('data', (c) => chunks.push(c));
+          upRes.on('end', () => resolve({ status: upRes.statusCode, body: Buffer.concat(chunks).toString() }));
+        });
+        r.on('error', reject);
+        r.on('timeout', () => { r.destroy(); reject(new Error('timeout')); });
+        r.end();
+      });
+
+      res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
+      res.end(upstream.body);
+    } catch (err) {
+      console.error('[chat-proxy] video status error:', err.message);
+      res.writeHead(502, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: { message: err.message } }));
+    }
+    return;
+  }
+
   res.writeHead(404);
   res.end('Not Found');
 });
