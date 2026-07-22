@@ -19,6 +19,7 @@ const PRIORITIES = {
     'model_previewer.html':    { freq: 'monthly', pri: 0.8 },
     'video_cut.html':          { freq: 'monthly', pri: 0.8 },
     'video_format_cover.html': { freq: 'monthly', pri: 0.8 },
+    'video_converter.html':     { freq: 'monthly', pri: 0.8 },
     'sprite_sheet_packer.html':{ freq: 'monthly', pri: 0.8 },
     'shader_library.html':     { freq: 'monthly', pri: 0.8 },
     'glsl_hlsl_converter.html':{ freq: 'monthly', pri: 0.9 },

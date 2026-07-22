@@ -49,7 +49,6 @@
   var pmremGen = null;
   var loaders = {};
   var isAnimPlaying = false;
-  var autoRotateSpeed = 0.005;
   var originalMaterials = new WeakMap(); // for wireframe restore
 
   /* ========== Init ========== */
@@ -133,6 +132,8 @@
     controls.minDistance = 0.1;
     controls.maxDistance = 100;
     controls.target.set(0, 0.5, 0);
+    controls.autoRotate = false;
+    controls.autoRotateSpeed = 0.8;
     resizeRenderer();
   }
 
@@ -162,9 +163,6 @@
     if (mixer && isAnimPlaying) {
       mixer.update(delta);
       updateAnimTimeline();
-    }
-    if ($('chkAutoRotate').checked && currentModel) {
-      currentModel.rotation.y += autoRotateSpeed;
     }
     renderer.render(scene, camera);
   }
@@ -741,6 +739,26 @@
     // Grid
     $('chkGrid').addEventListener('change', function () {
       gridHelper.visible = this.checked;
+    });
+
+    // Auto-rotate
+    $('chkAutoRotate').addEventListener('change', function () {
+      controls.autoRotate = this.checked;
+      $('autoRotateBadge').style.display = this.checked ? '' : 'none';
+      $('autoRotateSpeedRow').style.display = this.checked ? '' : 'none';
+    });
+    $('autoRotateSpeed').addEventListener('input', function () {
+      var v = parseFloat(this.value);
+      controls.autoRotateSpeed = v;
+      $('autoRotateSpeedVal').textContent = v.toFixed(1) + 'x';
+      $('autoRotateBadge').textContent = v.toFixed(1) + 'x';
+    });
+
+    // Reset view
+    $('btnResetView').addEventListener('click', function () {
+      camera.position.set(2, 1.5, 2);
+      controls.target.set(0, 0.5, 0);
+      controls.update();
     });
 
     // Environment preset
