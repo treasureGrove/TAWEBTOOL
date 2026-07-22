@@ -14,10 +14,16 @@ function loadKeys() {
     if (auth.deepseek?.key) keys.deepseek = auth.deepseek.key.trim();
   } catch {}
   try {
-    const cfgPath = join(import.meta.dirname, 'chat_keys.json');
-    const cfg = JSON.parse(readFileSync(cfgPath, 'utf8'));
-    for (const [k, v] of Object.entries(cfg)) {
-      keys[k] = String(v).trim();
+    for (const cfgPath of [
+      join(process.env.HOME || '/root', '.config/tools/chat_keys.json'),
+      join(import.meta.dirname, 'chat_keys.json'),
+    ]) {
+      try {
+        const cfg = JSON.parse(readFileSync(cfgPath, 'utf8'));
+        for (const [k, v] of Object.entries(cfg)) {
+          keys[k] = String(v).trim();
+        }
+      } catch {}
     }
   } catch {}
   return keys;
@@ -29,18 +35,23 @@ const PROVIDERS = [
     models: ['deepseek-chat', 'deepseek-reasoner'],
     url: 'https://api.deepseek.com/v1/chat/completions',
     fallback: true,
+    type: 'openai',
   },
   {
     name: 'zhipu',
     models: ['glm-4.7-flash', 'glm-4-flash'],
     url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
     fallback: true,
+    type: 'openai',
   },
   {
-    name: 'siliconflow',
-    models: ['Qwen/Qwen2.5-7B-Instruct', 'Qwen/Qwen2.5-14B-Instruct', 'Qwen/Qwen2.5-32B-Instruct'],
-    url: 'https://api.siliconflow.cn/v1/chat/completions',
+    name: 'cloudflare',
+    models: [
+      '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+    ],
+    url: 'https://api.cloudflare.com/client/v4/accounts/{account}/ai/run/{model}',
     fallback: false,
+    type: 'cloudflare',
   },
 ];
 
@@ -53,18 +64,25 @@ function mapModelToProvider(id) {
   return { provider: PROVIDERS[0], index: 0 };
 }
 
+function buildUrl(provider, model) {
+  let url = provider.url;
+  if (provider.type === 'cloudflare') {
+    const account = KEYS.cloudflare_account || '';
+    url = url.replace('{account}', account).replace('{model}', model);
+  }
+  return url;
+}
+
 async function proxyRequest(provider, model, body) {
-  const url = new URL(provider.url);
   const apiKey = KEYS[provider.name];
   if (!apiKey) throw new Error(`No key for ${provider.name}`);
 
-  const postData = JSON.stringify({
-    model,
-    messages: body.messages,
-    temperature: body.temperature ?? 0.7,
-    max_tokens: body.max_tokens ?? 4096,
-    stream: false,
-  });
+  const targetUrl = buildUrl(provider, model);
+  const url = new URL(targetUrl);
+
+  const reqBody = provider.type === 'cloudflare'
+    ? JSON.stringify({ messages: body.messages, temperature: body.temperature ?? 0.7, max_tokens: body.max_tokens ?? 4096 })
+    : JSON.stringify({ model, messages: body.messages, temperature: body.temperature ?? 0.7, max_tokens: body.max_tokens ?? 4096, stream: false });
 
   return new Promise((resolve, reject) => {
     const opts = {
@@ -74,7 +92,7 @@ async function proxyRequest(provider, model, body) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(postData),
+        'Content-Length': Buffer.byteLength(reqBody),
         Authorization: `Bearer ${apiKey}`,
         Host: url.hostname,
       },
@@ -85,15 +103,42 @@ async function proxyRequest(provider, model, body) {
       const chunks = [];
       upstreamRes.on('data', (c) => chunks.push(c));
       upstreamRes.on('end', () => {
-        resolve({ status: upstreamRes.statusCode, body: Buffer.concat(chunks) });
+        let body = Buffer.concat(chunks);
+        if (provider.type === 'cloudflare') {
+          try {
+            const d = JSON.parse(body.toString());
+            if (d.success && d.result) {
+              const r = d.result;
+              delete r.response;
+              if (r.choices?.[0]?.message) {
+                const msg = r.choices[0].message;
+                let content = msg.content || msg.reasoning_content || msg.reasoning || '';
+                r.choices[0].message = {
+                  role: msg.role,
+                  content,
+                };
+              }
+              body = Buffer.from(JSON.stringify(r));
+            }
+          } catch {}
+        }
+        resolve({ status: upstreamRes.statusCode, body });
       });
     });
 
     req.on('error', reject);
     req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
-    req.write(postData);
+    req.write(reqBody);
     req.end();
   });
+}
+
+function extractError(status, body) {
+  try {
+    const d = JSON.parse(body.toString());
+    return d?.error?.message || d?.message || d?.errors?.[0]?.message || `HTTP ${status}`;
+  } catch {}
+  return `HTTP ${status}`;
 }
 
 function isRateLimited(status, body) {
@@ -104,14 +149,6 @@ function isRateLimited(status, body) {
     return msg.includes('rate limit') || msg.includes('速率限制');
   } catch {}
   return false;
-}
-
-function extractError(status, body) {
-  try {
-    const d = JSON.parse(body.toString());
-    return d?.error?.message || d?.message || `HTTP ${status}`;
-  } catch {}
-  return `HTTP ${status}`;
 }
 
 function addMeta(body, wasFallback, requestedModel) {
@@ -155,6 +192,7 @@ const server = createServer(async (req, res) => {
     const models = [];
     for (const p of PROVIDERS) {
       if (!KEYS[p.name]) continue;
+      if (p.name === 'cloudflare' && !KEYS.cloudflare_account) continue;
       for (const m of p.models) models.push({ id: m, provider: p.name });
     }
     res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -209,6 +247,10 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   console.log(`[chat-proxy] ${HOST}:${PORT}`);
   for (const p of PROVIDERS) {
+    if (p.name === 'cloudflare' && !KEYS.cloudflare_account) {
+      console.log(`[chat-proxy] ${p.name}: skipping (no account)`);
+      continue;
+    }
     console.log(`[chat-proxy] ${p.name}: ${KEYS[p.name] ? 'ready' : 'no key'} [${p.models.join(', ')}]`);
   }
 });

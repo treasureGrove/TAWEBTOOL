@@ -93,11 +93,9 @@
           <div class="chat-input-toolbar">
             <div class="chat-model-picker">
                 <select id="modelSelect" class="chat-model-select">
+                  <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Llama 3.3 70B</option>
                   <option value="deepseek-chat">DeepSeek</option>
                   <option value="glm-4.7-flash">智谱 GLM-4.7</option>
-                  <option value="Qwen/Qwen2.5-7B-Instruct">通义千问 7B</option>
-                  <option value="Qwen/Qwen2.5-14B-Instruct">通义千问 14B</option>
-                  <option value="Qwen/Qwen2.5-32B-Instruct">通义千问 32B</option>
                 </select>
               <span class="chat-model-label">DeepSeek</span>
             </div>
@@ -128,10 +126,7 @@
       'deepseek-reasoner': 'DeepSeek R1',
       'glm-4.7-flash': '智谱 GLM-4.7',
       'glm-4-flash': '智谱 GLM-4',
-      'Qwen/Qwen2.5-7B-Instruct': '通义千问 7B',
-      'Qwen/Qwen2.5-14B-Instruct': '通义千问 14B',
-      'Qwen/Qwen2.5-32B-Instruct': '通义千问 32B',
-      'Pro/Qwen/Qwen2.5-7B-Instruct': '通义千问 Pro',
+      '@cf/meta/llama-3.3-70b-instruct-fp8-fast': 'Llama 3.3 70B',
     };
 
     function updateModelLabel(name) {
