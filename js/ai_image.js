@@ -18,6 +18,7 @@
               生成图片
             </button>
           </div>
+          <div id="taskList" class="task-list"></div>
           <div id="imageGallery" class="ai-image-gallery"></div>
         </div>
         <div class="ai-image-main">
@@ -42,19 +43,13 @@
     const generateBtn = $('generateBtn');
     const resultArea = $('imageResult');
     const gallery = $('imageGallery');
+    const taskList = $('taskList');
     const storeKey = 'tool-ai-image-history';
     let pending = false;
     let history = [];
 
-    function loadHistory() {
-      try { history = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) { history = []; }
-      renderGallery();
-    }
-
-    function saveHistory() {
-      localStorage.setItem(storeKey, JSON.stringify(history));
-      renderGallery();
-    }
+    function loadHistory() { try { history = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) { history = []; } renderGallery(); }
+    function saveHistory() { localStorage.setItem(storeKey, JSON.stringify(history)); renderGallery(); }
 
     function renderGallery() {
       if (history.length === 0) { gallery.innerHTML = ''; return; }
@@ -65,12 +60,10 @@
           <div class="gallery-item-time">${item.time}</div>
         </div>
       `).join('');
-
       gallery.querySelectorAll('.gallery-item').forEach(item => {
         item.addEventListener('click', () => {
           const idx = parseInt(item.dataset.index);
-          const img = history[idx];
-          showResult(img.url, img.prompt);
+          if (history[idx]) showResult(history[idx].url, history[idx].prompt);
         });
       });
     }
@@ -87,25 +80,20 @@
         try {
           const blob = await fetch(url).then(r => r.blob());
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = 'ai-generated.png';
-          a.click();
+          a.href = URL.createObjectURL(blob); a.download = 'ai-generated.png'; a.click();
           URL.revokeObjectURL(a.href);
         } catch (_) {}
       });
     }
 
-    function showError(msg) {
-      resultArea.innerHTML = `<div class="ai-image-error">${msg}</div>`;
-    }
+    function showError(msg) { resultArea.innerHTML = `<div class="ai-image-error">${msg}</div>`; }
+    function showLoading() { resultArea.innerHTML = '<div class="ai-image-loading"><span class="typing-dot">●</span><span class="typing-dot">●</span><span class="typing-dot">●</span><p>正在生成...</p></div>'; }
+    function updateButtonState() { generateBtn.disabled = pending || !promptInput.value.trim(); }
 
-    function showLoading() {
-      resultArea.innerHTML = '<div class="ai-image-loading"><span class="typing-dot">●</span><span class="typing-dot">●</span><span class="typing-dot">●</span><p>正在生成...</p></div>';
+    function showTask(prompt) {
+      taskList.innerHTML = `<div class="task-header">进行中</div><div class="task-item"><span class="task-dot task-dot-active"></span><span class="task-prompt">${prompt}</span></div>`;
     }
-
-    function updateButtonState() {
-      generateBtn.disabled = pending || !promptInput.value.trim();
-    }
+    function clearTasks() { taskList.innerHTML = ''; }
 
     async function generate() {
       if (pending) return;
@@ -115,15 +103,14 @@
       pending = true;
       updateButtonState();
       showLoading();
+      showTask(prompt);
 
       try {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 120000);
         const res = await fetch('/api/image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt }),
-          signal: controller.signal,
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt }), signal: controller.signal,
         });
         clearTimeout(timeout);
 
@@ -137,9 +124,11 @@
         history.unshift({ url: imageUrl, prompt, time: new Date().toLocaleString('zh-CN') });
         if (history.length > 20) history = history.slice(0, 20);
         saveHistory();
+        clearTasks();
       } catch (err) {
         const msg = err?.name === 'AbortError' ? '生成超时，请重试' : `生成失败：${err.message}`;
         showError(msg);
+        clearTasks();
       } finally {
         pending = false;
         updateButtonState();
@@ -149,10 +138,7 @@
     generateBtn.addEventListener('click', generate);
     promptInput.addEventListener('input', updateButtonState);
     promptInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
-        e.preventDefault();
-        generate();
-      }
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); generate(); }
     });
 
     loadHistory();
