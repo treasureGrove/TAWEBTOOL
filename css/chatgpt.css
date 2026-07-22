@@ -216,25 +216,31 @@
 }
 
 .chat-message-body pre {
-    background: #060f0d;
+    background: #1e1e1e;
     border: 1px solid var(--app-line-subtle);
     border-radius: 12px;
     padding: 12px;
     overflow: auto;
     font-size: 12px;
     line-height: 1.6;
+    color: #d4d4d4;
 }
 
 .chat-message-body code {
-    background: rgba(7, 20, 17, 0.55);
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-family: Consolas, "SFMono-Regular", Menlo, Monaco, monospace;
+    background: rgba(127, 127, 127, 0.15);
+    color: #e06c75;
+    font-size: 0.9em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Consolas, monospace;
 }
 
 .chat-message-body pre code {
     background: transparent;
+    color: inherit;
     padding: 0;
+    border-radius: 0;
+    font-size: inherit;
 }
 
 .chat-message-body img {

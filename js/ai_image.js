@@ -4,14 +4,13 @@
   function initAiImageTool(host) {
     host.innerHTML = `
       <div class="ai-image-tool">
-        <div class="ai-image-main">
+        <div class="ai-image-sidebar">
           <div class="ai-image-header">
             <h2>AI 通用生图</h2>
-            <p>输入描述文字，AI 为你生成图片 · 基于 Cogview-3-Flash</p>
+            <p>输入描述，AI 生成图片 · Cogview-3-Flash</p>
           </div>
-
           <div class="ai-image-input-area">
-            <textarea id="imagePrompt" placeholder="描述你想生成的图片，例如：一只坐在窗台上的橘猫，阳光洒在它身上，温馨治愈风格" rows="3"></textarea>
+            <textarea id="imagePrompt" placeholder="描述你想生成的图片，例如：一只坐在窗台上的橘猫，阳光洒在它身上，温馨治愈风格" rows="4"></textarea>
             <button id="generateBtn" type="button" class="generate-btn">
               <svg viewBox="0 0 20 20" aria-hidden="true" width="16" height="16">
                 <path d="M18 3l-3 14-5-4-3 3V7l11-4z" fill="currentColor"/>
@@ -19,7 +18,9 @@
               生成图片
             </button>
           </div>
-
+          <div id="imageGallery" class="ai-image-gallery"></div>
+        </div>
+        <div class="ai-image-main">
           <div id="imageResult" class="ai-image-result">
             <div class="ai-image-empty">
               <div class="ai-image-empty-icon">
@@ -32,8 +33,6 @@
               <p>生成的图片将显示在这里</p>
             </div>
           </div>
-
-          <div id="imageGallery" class="ai-image-gallery"></div>
         </div>
       </div>
     `;

@@ -7,31 +7,35 @@
   function initAiVideoTool(host) {
     host.innerHTML = `
       <div class="ai-image-tool">
-        <div class="ai-image-header">
-          <h2>AI 生视频</h2>
-          <p>输入描述文字，AI 生成短视频 · 基于 CogVideoX-Flash（约 30~90 秒）</p>
-        </div>
-        <div class="ai-image-input-area">
-          <textarea id="videoPrompt" placeholder="描述你想生成的视频，例如：一只小猫在阳光下追逐蝴蝶，慢镜头" rows="3"></textarea>
-          <button id="generateBtn" type="button" class="generate-btn">
-            <svg viewBox="0 0 20 20" aria-hidden="true" width="16" height="16">
-              <path d="M6 3l12 7-12 7V3z" fill="currentColor"/>
-            </svg>
-            生成视频
-          </button>
-        </div>
-        <div id="videoResult" class="ai-image-result">
-          <div class="ai-image-empty">
-            <div class="ai-image-empty-icon">
-              <svg viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
-                <rect x="6" y="14" width="52" height="36" rx="4"/>
-                <polygon points="24,22 24,42 42,32"/>
+        <div class="ai-image-sidebar">
+          <div class="ai-image-header">
+            <h2>AI 生视频</h2>
+            <p>输入描述，AI 生成短视频 · CogVideoX-Flash（约 30~90 秒）</p>
+          </div>
+          <div class="ai-image-input-area">
+            <textarea id="videoPrompt" placeholder="描述你想生成的视频，例如：一只小猫在阳光下追逐蝴蝶，慢镜头" rows="4"></textarea>
+            <button id="generateBtn" type="button" class="generate-btn">
+              <svg viewBox="0 0 20 20" aria-hidden="true" width="16" height="16">
+                <path d="M6 3l12 7-12 7V3z" fill="currentColor"/>
               </svg>
+              生成视频
+            </button>
+          </div>
+          <div id="videoGallery" class="ai-image-gallery"></div>
+        </div>
+        <div class="ai-image-main">
+          <div id="videoResult" class="ai-image-result">
+            <div class="ai-image-empty">
+              <div class="ai-image-empty-icon">
+                <svg viewBox="0 0 64 64" width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+                  <rect x="6" y="14" width="52" height="36" rx="4"/>
+                  <polygon points="24,22 24,42 42,32"/>
+                </svg>
+              </div>
+              <p>生成的视频将显示在这里</p>
             </div>
-            <p>生成的视频将显示在这里</p>
           </div>
         </div>
-        <div id="videoGallery" class="ai-image-gallery"></div>
       </div>
     `;
 
