@@ -91,8 +91,13 @@
             </button>
           </div>
           <div class="chat-input-toolbar">
-            <span class="chat-model-label">DeepSeek</span>
-            <span class="hint">已接入 DeepSeek / 智谱 双模型，免登录使用，避免输入敏感信息。</span>
+            <div class="chat-model-picker">
+              <select id="modelSelect" class="chat-model-select">
+                <option value="deepseek-chat">DeepSeek</option>
+                <option value="glm-4.7-flash">智谱 GLM-4.7</option>
+              </select>
+              <span class="chat-model-label">DeepSeek</span>
+            </div>
             <button id="clearChat" class="ghost-btn" type="button">清空对话</button>
           </div>
         </div>
@@ -105,12 +110,14 @@
     const clearBtn = $('clearChat');
     const emptyState = $('chatEmptyState');
     const chatTool = host.querySelector('.chat-tool');
+    const modelSelect = $('modelSelect');
     const modelLabel = host.querySelector('.chat-model-label');
     const storeKey = 'tool-chatgpt-messages';
+    const modelStoreKey = 'tool-chatgpt-model';
     const systemPrompt = '你是一个简洁、友好的中文 AI 助手。';
     const requestTimeoutMs = 60000;
     const timeoutRetryLimit = 1;
-    let currentModel = 'deepseek-chat';
+    let currentModel = localStorage.getItem(modelStoreKey) || 'deepseek-chat';
 
     const MODEL_NAMES = {
       'deepseek-chat': 'DeepSeek',
@@ -123,6 +130,11 @@
     function updateModelLabel(name) {
       currentModel = name;
       if (modelLabel) modelLabel.textContent = MODEL_NAMES[name] || name;
+    }
+
+    function updateModelSelect() {
+      if (modelSelect) modelSelect.value = currentModel;
+      updateModelLabel(currentModel);
     }
     let pending = false;
     let history = [];
@@ -243,7 +255,7 @@
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                model: 'deepseek-chat',
+                model: currentModel,
                 messages,
                 temperature: 0.7,
                 stream: false
@@ -308,7 +320,14 @@
       btn.addEventListener('click', () => sendMessage(btn.dataset.prompt));
     });
 
+    modelSelect.addEventListener('change', () => {
+      currentModel = modelSelect.value;
+      localStorage.setItem(modelStoreKey, currentModel);
+      updateModelLabel(currentModel);
+    });
+
     loadHistory();
+    updateModelSelect();
     autoResizeInput();
     updateSendState();
     scrollToBottom();
