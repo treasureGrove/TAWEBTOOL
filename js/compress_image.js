@@ -369,6 +369,13 @@ async function processImages() {
 
 async function compressImage(file, format, quality, options = {}) {
     const targetBytes = options.targetBytes || null;
+
+    const outputMime = resolveOutputMimeType(format, file);
+    if (outputMime === 'image/gif' && await getAnimatedFrameCount(file) > 1) {
+        const blob = await encodeAnimatedGifFromFile(file, quality);
+        return { blob, note: '已转为动画GIF' };
+    }
+
     const canvas = await loadFileToCanvas(file);
 
     if (!targetBytes) {
@@ -579,9 +586,84 @@ function supportsQualitySizeControl(format, originalFile) {
     return mime === 'image/jpeg' || mime === 'image/webp';
 }
 
+function isImageDecoderSupported() {
+    return typeof ImageDecoder !== 'undefined';
+}
+
+async function getAnimatedFrameCount(file) {
+    if (!isImageDecoderSupported()) return 1;
+    const lowerName = file.name.toLowerCase();
+    if (!lowerName.endsWith('.gif') && !lowerName.endsWith('.webp')) return 1;
+    try {
+        const buffer = await file.arrayBuffer();
+        const mime = file.type || (lowerName.endsWith('.webp') ? 'image/webp' : 'image/gif');
+        const decoder = new ImageDecoder({ data: buffer, type: mime });
+        await decoder.tracks.ready;
+        return decoder.tracks.selectedTrack.frameCount;
+    } catch {
+        return 1;
+    }
+}
+
+function getGifencLib() {
+    var lib = window.gifenc || window.GIFEnc;
+    if (!lib) throw new Error('GIF 编码库未加载');
+    return lib;
+}
+
+function gifQualityToColors(quality) {
+    return Math.max(2, Math.round(quality * 256));
+}
+
+function encodeStaticGif(canvas, quality) {
+    var lib = getGifencLib();
+    var ctx = canvas.getContext('2d');
+    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var maxColors = gifQualityToColors(quality);
+    var gif = lib.GIFEncoder();
+    var palette = lib.quantize(imageData.data, maxColors);
+    var index = lib.applyPalette(imageData.data, palette);
+    gif.writeFrame(index, canvas.width, canvas.height, { palette: palette });
+    gif.finish();
+    return new Blob([gif.bytes()], { type: 'image/gif' });
+}
+
+async function encodeAnimatedGifFromFile(file, quality) {
+    var lib = getGifencLib();
+    var buffer = await file.arrayBuffer();
+    var lowerName = file.name.toLowerCase();
+    var mime = file.type || (lowerName.endsWith('.webp') ? 'image/webp' : 'image/gif');
+    var decoder = new ImageDecoder({ data: buffer, type: mime });
+    await decoder.tracks.ready;
+    var track = decoder.tracks.selectedTrack;
+    var frameCount = track.frameCount;
+    var maxColors = gifQualityToColors(quality);
+    var gif = lib.GIFEncoder();
+
+    for (var i = 0; i < frameCount; i++) {
+        var result = await decoder.decode({ frameIndex: i });
+        var frame = result.image;
+        var frameCanvas = document.createElement('canvas');
+        frameCanvas.width = frame.displayWidth;
+        frameCanvas.height = frame.displayHeight;
+        var ctx = frameCanvas.getContext('2d');
+        ctx.drawImage(frame, 0, 0);
+        var imageData = ctx.getImageData(0, 0, frameCanvas.width, frameCanvas.height);
+        var palette = lib.quantize(imageData.data, maxColors);
+        var index = lib.applyPalette(imageData.data, palette);
+        var delay = Math.max(1, Math.round((frame.duration || 100000) / 10000));
+        gif.writeFrame(index, frameCanvas.width, frameCanvas.height, { palette: palette, delay: delay });
+        frame.close();
+    }
+
+    gif.finish();
+    return new Blob([gif.bytes()], { type: 'image/gif' });
+}
+
 function resolveOutputMimeType(format, originalFile) {
     if (format !== 'keep') {
         if (format === 'jpeg') return 'image/jpeg';
+        if (format === 'gif') return 'image/gif';
         return `image/${format}`;
     }
 
@@ -633,6 +715,16 @@ function encodeFromCanvas(canvas, format, quality, originalFile) {
         }
 
         const outputFormat = resolveOutputMimeType(format, originalFile);
+
+        if (outputFormat === 'image/gif') {
+            try {
+                resolve(encodeStaticGif(canvas, quality));
+            } catch (err) {
+                reject(new Error(`GIF 编码失败: ${err.message}`));
+            }
+            return;
+        }
+
         canvas.toBlob((blob) => {
             if (blob) {
                 resolve(blob);

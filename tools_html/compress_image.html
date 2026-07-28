@@ -33,6 +33,10 @@
     <script src="../third_part/bmp-encoder.js"></script>
     <script src="../third_part/tga-encoder.js"></script>
     <script src="../third_part/dds-encoder.js"></script>
+    <script type="module">
+        import { GIFEncoder, quantize, applyPalette } from 'https://cdn.jsdelivr.net/npm/gifenc@1.0.3/dist/gifenc.esm.js';
+        window.gifenc = { GIFEncoder, quantize, applyPalette };
+    </script>
     <script src="../js/compress_image.js" defer></script>
     <div id="main_bg"></div>
     <div class="left_menu"></div>
@@ -75,6 +79,7 @@
                             <option value="jpeg">JPEG</option>
                             <option value="png">PNG</option>
                             <option value="webp" selected>WebP</option>
+                            <option value="gif">GIF</option>
                             <option value="bmp">BMP</option>
                             <option value="tga">TGA</option>
                             <option value="dds">DDS</option>
