@@ -153,13 +153,15 @@ function getMenuPathPrefix() {
 
 function getSearchItems() {
     var prefix = getMenuPathPrefix();
+    var globalKeywords = 'TA工具箱 技术美术工具箱 TAWebTool TA Toolbox 宝藏小树林 技术美术工具 treasuregrove tools';
     var results = [];
     for (var i = 0; i < MENU_DATA.length; i++) {
         var category = MENU_DATA[i];
         for (var j = 0; j < category.items.length; j++) {
             var item = category.items[j];
             var keywords = [item.label, category.name, item.href.replace(/\.html$/i, '').replace(/[_-]/g, ' ')]
-                .concat(item.keywords || []);
+                .concat(item.keywords || [])
+                .concat([globalKeywords]);
             results.push({
                 label: item.label,
                 category: category.name,
