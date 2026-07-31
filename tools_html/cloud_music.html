@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/cloud_music.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
 </head>
 
 <body>
@@ -212,7 +215,10 @@
                 '.mi-info{flex:1;min-width:0}.mi-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
                 '.mi-artist{font-size:11px;color:#94a3b8;margin-top:1px}' +
                 '.list::-webkit-scrollbar{width:5px}.list::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}' +
-                '</style></head><body>' +
+                '</style>
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+</head><body>' +
                 '<div class="top"><img class="cover" id="mc" src="'+(cur.cover||'')+'"><div class="tinfo"><div class="tname" id="mn">'+(cur.name||'-')+'</div><div class="tartist" id="ma">'+(cur.artist||'-')+'</div></div></div>' +
                 '<audio id="pa" controls></audio>' +
                 '<div class="list" id="ml">'+list+'</div>' +
