@@ -9,6 +9,7 @@ var MENU_DATA = [
     ]},
     { name: '图片处理', icon: 'icon-image', items: [
         { label: '图片压缩转换', href: 'compress_image.html', keywords: ['格式转换', 'jpg', 'png', 'webp', 'dds', 'tga', 'convert', 'compress', '压缩', '转格式', 'bmp', 'heic', 'avif', '缩小', '体积', 'convertio'] },
+        { label: '图片与Base64互转', href: 'base64_image.html', keywords: ['base64', 'data uri', '图片转码', '编码', '解码', '图片转base64', 'base64转图片', 'encode', 'decode', 'dataurl'] },
         { label: 'GIF压缩器', href: 'gif_compress.html', keywords: ['动图', '压缩', 'gif', 'animated', '动画', '表情包', '帧率', '缩小gif', 'gif缩小', 'gif压缩'] },
         { label: '贴图通道合成', href: 'combine_rgba.html', keywords: ['RGBA', '通道', '合并', 'combine', 'merge', '贴图合成', '打包', 'channel', '金属度粗糙度', 'orm', '合成通道'] },
         { label: '贴图通道分离', href: 'texture_channel_splitter.html', keywords: ['通道分离', '通道拆分', 'RGBA分离', '直方图', 'split', 'extract', '分离', '拆图', 'channel pack', '解包'] },
@@ -27,6 +28,7 @@ var MENU_DATA = [
     ]},
     { name: '游戏工具', icon: 'icon-game', items: [
         { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集', 'spritesheet', 'pack', '贴图集', '合并', 'sprite sheet', '帧动画'] },
+        { label: '雪碧图拆分工具', href: 'sprite_sheet_splitter.html', keywords: ['雪碧图', '拆分', 'sprite', '切图', '序列帧拆分', '图集拆分', '切分', '帧动画切图', '自动切图', 'spritesheet拆分'] },
     ]},
     { name: 'TA工具', icon: 'icon-ta', items: [
         { label: 'Shader函数库', href: 'shader_library.html', keywords: ['着色器', 'HLSL', '函数', 'shader', 'glsl', 'cg', '节点', '材质函数', '代码片段', 'snippet', 'library', 'fx'] },

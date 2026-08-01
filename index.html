@@ -18,10 +18,13 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="TA工具箱">
     <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+    <meta property="og:image:alt" content="TA工具箱图标">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="TA工具箱 - 技术美术在线工具箱">
     <meta name="twitter:description" content="20+款免费在线TA/游戏开发工具：AI高清放大、图片压缩、Shader转换、3D预览等。">
+    <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
 
     <script type="application/ld+json">
     {
@@ -66,7 +69,58 @@
             { "@type": "ListItem", "position": 14, "name": "物理光照计算器", "url": "https://tools.treasuregrove.art/tools_html/physics_light.html" },
             { "@type": "ListItem", "position": 15, "name": "色彩空间转换器", "url": "https://tools.treasuregrove.art/tools_html/color_space_converter.html" },
             { "@type": "ListItem", "position": 16, "name": "贴图信息查看器", "url": "https://tools.treasuregrove.art/tools_html/image_metadata_inspector.html" },
-            { "@type": "ListItem", "position": 17, "name": "TA知识库", "url": "https://tools.treasuregrove.art/tools_html/TA_wiki.html" }
+            { "@type": "ListItem", "position": 17, "name": "TA知识库", "url": "https://tools.treasuregrove.art/tools_html/TA_wiki.html" },
+            { "@type": "ListItem", "position": 18, "name": "ChatGPT", "url": "https://tools.treasuregrove.art/tools_html/chatgpt.html" },
+            { "@type": "ListItem", "position": 19, "name": "AI通用生图", "url": "https://tools.treasuregrove.art/tools_html/ai_image.html" },
+            { "@type": "ListItem", "position": 20, "name": "AI生视频", "url": "https://tools.treasuregrove.art/tools_html/ai_video.html" },
+            { "@type": "ListItem", "position": 21, "name": "拼贴图工具", "url": "https://tools.treasuregrove.art/tools_html/collage_texture.html" },
+            { "@type": "ListItem", "position": 22, "name": "在线PS", "url": "https://tools.treasuregrove.art/tools_html/ps_online.html" },
+            { "@type": "ListItem", "position": 23, "name": "视频剪辑", "url": "https://tools.treasuregrove.art/tools_html/video_cut.html" },
+            { "@type": "ListItem", "position": 24, "name": "视频格式转换", "url": "https://tools.treasuregrove.art/tools_html/video_format_cover.html" },
+            { "@type": "ListItem", "position": 25, "name": "网易云音乐", "url": "https://tools.treasuregrove.art/tools_html/cloud_music.html" },
+            { "@type": "ListItem", "position": 26, "name": "关于作者", "url": "https://tools.treasuregrove.art/tools_html/about.html" },
+            { "@type": "ListItem", "position": 27, "name": "图片与Base64互转", "url": "https://tools.treasuregrove.art/tools_html/base64_image.html" },
+            { "@type": "ListItem", "position": 28, "name": "雪碧图拆分工具", "url": "https://tools.treasuregrove.art/tools_html/sprite_sheet_splitter.html" }
+        ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "TA工具箱是什么？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "TA工具箱（技术美术工具箱）是宝藏小树林出品的免费在线技术美术(TA)与游戏开发工具集合，提供AI高清放大、图片压缩转换、GLSL/HLSL着色器转换、3D模型预览、PBR贴图生成、GIF压缩、图集打包、雪碧图拆分、HDR编辑器、TA知识库等28款工具，无需安装、打开即用。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "技术美术(TA)常用工具有哪些？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "技术美术常用工具包括：GLSL/HLSL着色器转换器、PBR贴图生成器、贴图通道合成与分离、色彩空间转换器、Tiling贴图预览、3D模型预览器、图集打包工具、HDR编辑器、物理光照计算器等，TA工具箱均已免费提供。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "TA工具箱免费吗？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "完全免费。TA工具箱中的所有在线工具均可免费使用，无需安装软件，打开浏览器即可使用，适合技术美术、游戏开发者、美术师日常使用。"
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "如何把GLSL转换成HLSL？",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "打开TA工具箱中的GLSL/HLSL转换器，粘贴GLSL着色器代码，点击执行转换即可得到HLSL代码，支持双向转换，适配Unity和Unreal Engine的Shader语法。"
+                }
+            }
         ]
     }
     </script>
@@ -93,8 +147,14 @@
         <section class="home-hero">
             <div class="home-hero-blob home-hero-blob-a"></div>
             <div class="home-hero-blob home-hero-blob-b"></div>
-            <h1>宝藏小树林工具箱</h1>
-            <p class="home-hero-sub">技术美术（TA）与游戏美术创作的免费在线工具箱</p>
+            <h1>TA工具箱 - 技术美术在线工具箱</h1>
+            <p class="home-hero-sub">宝藏小树林出品的免费在线技术美术(TA)工具箱，收录 28 款游戏开发与美术创作工具</p>
+        </section>
+
+        <section class="home-about">
+            <h2>免费在线技术美术(TA)工具箱，游戏开发者的效率工具集</h2>
+            <p>TA工具箱由宝藏小树林出品，专为技术美术(TA)、游戏开发者与数字美术师打造。无论你是要处理贴图、转换着色器、生成PBR材质，还是压缩图片视频，这里都有对应的免费在线工具。所有工具无需安装、即开即用，保护隐私的同时提升开发效率。</p>
+            <p>常用功能包括：<a href="tools_html/glsl_hlsl_converter.html">GLSL/HLSL着色器转换</a>、<a href="tools_html/pbr_texture_generator.html">PBR贴图生成</a>、<a href="tools_html/ai_upscale.html">AI高清放大</a>、<a href="tools_html/compress_image.html">图片压缩转换</a>、<a href="tools_html/model_previewer.html">3D模型在线预览</a>、<a href="tools_html/hdr_editor.html">HDR编辑器</a>，以及每日更新的<a href="tools_html/TA_wiki.html">TA知识库</a>。适合Unity、Unreal引擎开发者，也适合独立游戏开发者与数字艺术创作者。</p>
         </section>
 
         <div id="home_sections">
@@ -109,9 +169,10 @@
             </div>
           </section>
           <section class="home-section cat-image">
-            <h2 class="home-section-title"><span class="home-section-icon icon-image"></span>图片处理<span class="home-section-count">9</span></h2>
+            <h2 class="home-section-title"><span class="home-section-icon icon-image"></span>图片处理<span class="home-section-count">10</span></h2>
             <div class="home-grid">
               <a class="home-card" href="tools_html/compress_image.html"><span class="home-card-icon icon-image"></span><span class="home-card-body"><span class="home-card-title">图片压缩转换</span><span class="home-card-desc">批量压缩与格式转换</span></span><span class="home-card-arrow">→</span></a>
+              <a class="home-card" href="tools_html/base64_image.html"><span class="home-card-icon icon-image"></span><span class="home-card-body"><span class="home-card-title">图片与Base64互转</span><span class="home-card-desc">图片编码与 Base64 互转</span></span><span class="home-card-arrow">→</span></a>
               <a class="home-card" href="tools_html/gif_compress.html"><span class="home-card-icon icon-image"></span><span class="home-card-body"><span class="home-card-title">GIF压缩器</span><span class="home-card-desc">GIF 动图压缩优化</span></span><span class="home-card-arrow">→</span></a>
               <a class="home-card" href="tools_html/combine_rgba.html"><span class="home-card-icon icon-image"></span><span class="home-card-body"><span class="home-card-title">贴图通道合成</span><span class="home-card-desc">RGBA 通道打包合成</span></span><span class="home-card-arrow">→</span></a>
               <a class="home-card" href="tools_html/texture_channel_splitter.html"><span class="home-card-icon icon-image"></span><span class="home-card-body"><span class="home-card-title">贴图通道分离</span><span class="home-card-desc">拆分查看贴图通道</span></span><span class="home-card-arrow">→</span></a>
@@ -136,9 +197,10 @@
             </div>
           </section>
           <section class="home-section cat-game">
-            <h2 class="home-section-title"><span class="home-section-icon icon-game"></span>游戏工具<span class="home-section-count">1</span></h2>
+            <h2 class="home-section-title"><span class="home-section-icon icon-game"></span>游戏工具<span class="home-section-count">2</span></h2>
             <div class="home-grid">
               <a class="home-card" href="tools_html/sprite_sheet_packer.html"><span class="home-card-icon icon-game"></span><span class="home-card-body"><span class="home-card-title">图集打包工具</span><span class="home-card-desc">序列帧图集打包</span></span><span class="home-card-arrow">→</span></a>
+              <a class="home-card" href="tools_html/sprite_sheet_splitter.html"><span class="home-card-icon icon-game"></span><span class="home-card-body"><span class="home-card-title">雪碧图拆分工具</span><span class="home-card-desc">序列帧自动切图导出</span></span><span class="home-card-arrow">→</span></a>
             </div>
           </section>
           <section class="home-section cat-ta">
@@ -165,6 +227,26 @@
             </div>
           </section>
         </div>
+
+        <section class="home-faq">
+            <h2>关于TA工具箱的常见问题</h2>
+            <details>
+                <summary>TA工具箱是什么？</summary>
+                <p>TA工具箱（技术美术工具箱）是宝藏小树林出品的免费在线技术美术(TA)与游戏开发工具集合，提供AI高清放大、图片压缩转换、GLSL/HLSL着色器转换、3D模型预览、PBR贴图生成、GIF压缩、图集打包、雪碧图拆分、HDR编辑器、TA知识库等28款工具，无需安装、打开即用。</p>
+            </details>
+            <details>
+                <summary>技术美术(TA)常用工具有哪些？</summary>
+                <p>技术美术常用工具包括：GLSL/HLSL着色器转换器、PBR贴图生成器、贴图通道合成与分离、色彩空间转换器、Tiling贴图预览、3D模型预览器、图集打包工具、HDR编辑器、物理光照计算器等，TA工具箱均已免费提供。</p>
+            </details>
+            <details>
+                <summary>TA工具箱免费吗？</summary>
+                <p>完全免费。TA工具箱中的所有在线工具均可免费使用，无需安装软件，打开浏览器即可使用，适合技术美术、游戏开发者、美术师日常使用。</p>
+            </details>
+            <details>
+                <summary>如何把GLSL转换成HLSL？</summary>
+                <p>打开TA工具箱中的GLSL/HLSL转换器，粘贴GLSL着色器代码，点击执行转换即可得到HLSL代码，支持双向转换，适配Unity和Unreal Engine的Shader语法。</p>
+            </details>
+        </section>
 
         <footer class="home-footer">
             <div class="home-footer-links">

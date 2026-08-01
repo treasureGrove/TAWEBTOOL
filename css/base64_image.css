@@ -1,0 +1,318 @@
+#main_bg {
+    background-image: url(../assets/images/background/miku_night.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    width: 100%;
+    z-index: -1;
+}
+
+#panel {
+    font-family: var(--app-font-serif);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.b64-head {
+    background: linear-gradient(135deg, var(--app-glass-strong), rgba(240, 255, 249, 0.72));
+    border: 1px solid var(--app-line);
+    border-radius: 14px;
+    padding: 8px 14px;
+    margin-bottom: 6px;
+    box-shadow: var(--app-shadow-card);
+    flex-shrink: 0;
+}
+
+.b64-head h1 {
+    font-size: 18px;
+    color: var(--app-text-heading);
+    margin-bottom: 2px;
+    letter-spacing: .4px;
+}
+
+.b64-head p {
+    font-size: 12px;
+    color: var(--app-muted);
+}
+
+.b64-tabs {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-bottom: 6px;
+}
+
+.b64-tab {
+    border: 1px solid var(--app-line);
+    border-radius: 10px;
+    padding: 8px 16px;
+    background: var(--app-glass);
+    color: var(--app-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--app-font-serif);
+    transition: border-color .18s var(--app-ease), background .18s var(--app-ease), color .18s var(--app-ease), box-shadow .18s var(--app-ease);
+}
+
+.b64-tab:hover {
+    border-color: var(--app-line-strong);
+    color: var(--app-text);
+}
+
+.b64-tab.is-active {
+    background: linear-gradient(135deg, var(--app-accent-strong), var(--app-accent));
+    border-color: transparent;
+    color: var(--app-text-inverse);
+    box-shadow: var(--app-accent-glow);
+}
+
+.b64-layout {
+    flex: 1;
+    min-height: 0;
+}
+
+.b64-pane {
+    display: none;
+    height: 100%;
+    min-height: 0;
+    grid-template-columns: 340px minmax(0, 1fr);
+    gap: 8px;
+}
+
+.b64-pane.is-active {
+    display: grid;
+}
+
+.b64-pane > div {
+    width: 100%;
+    min-height: 0;
+    min-width: 0;
+    background: var(--app-glass);
+    border: 1px solid var(--app-line);
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: var(--app-shadow-card);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+}
+
+.b64-dropzone {
+    position: relative;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+    max-height: 300px;
+    border: 1px dashed var(--app-line-strong);
+    border-radius: 12px;
+    background: var(--app-overlay-dark);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.b64-dropzone span {
+    font-size: 12px;
+    color: var(--app-text-inverse);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    line-height: 1.4;
+    z-index: 1;
+}
+
+.b64-dropzone.dragover {
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-glow) inset;
+}
+
+.b64-preview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: var(--app-overlay-dark);
+    border-radius: 11px;
+}
+
+.b64-preview-lg {
+    position: static;
+}
+
+.b64-dropzone input[type="file"],
+.b64-pane input[type="file"] { display: none; }
+
+.b64-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.b64-stat {
+    background: var(--app-card);
+    border: 1px solid var(--app-line-subtle);
+    border-radius: 9px;
+    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.b64-stat b {
+    font-size: 11px;
+    color: var(--app-muted);
+    font-weight: 600;
+}
+
+.b64-stat span {
+    font-size: 12px;
+    color: var(--app-text);
+    font-family: var(--app-font-mono);
+    word-break: break-all;
+}
+
+.b64-textarea {
+    flex: 1;
+    min-height: 120px;
+    resize: vertical;
+    border: 1px solid var(--app-line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: var(--app-surface-input);
+    font-size: 12px;
+    color: var(--app-text);
+    font-family: var(--app-font-mono);
+    line-height: 1.55;
+    box-sizing: border-box;
+    transition: border-color .18s var(--app-ease), box-shadow .18s var(--app-ease);
+}
+
+.b64-textarea:focus {
+    outline: none;
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-glow);
+}
+
+.b64-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.b64-btn {
+    border: none;
+    background: linear-gradient(135deg, var(--app-accent-strong), var(--app-accent));
+    color: var(--app-text-inverse);
+    cursor: pointer;
+    padding: 9px 16px;
+    font-weight: 600;
+    font-size: 12px;
+    border-radius: 9px;
+    font-family: var(--app-font-serif);
+    transition: border-color .18s var(--app-ease), box-shadow .18s var(--app-ease), transform .18s var(--app-ease), opacity .18s var(--app-ease);
+}
+
+.b64-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--app-accent-glow);
+}
+
+.b64-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.b64-btn-ghost {
+    background: var(--app-glass-strong);
+    border: 1px solid var(--app-line);
+    color: var(--app-text);
+    font-weight: 500;
+}
+
+.b64-btn-ghost:hover:not(:disabled) {
+    border-color: var(--app-line-strong);
+    box-shadow: none;
+}
+
+.b64-status {
+    font-size: 12px;
+    color: var(--app-muted);
+    flex-shrink: 0;
+    min-height: 16px;
+    line-height: 1.5;
+}
+
+.b64-status.is-error {
+    color: var(--app-error);
+}
+
+.b64-status.is-success {
+    color: var(--app-success);
+}
+
+.b64-preview-box {
+    flex: 1;
+    min-height: 0;
+    background: var(--app-glass-strong);
+    border: 1px solid var(--app-line);
+    border-radius: var(--app-radius-md);
+    padding: 8px;
+    display: block;
+    overflow: auto;
+    position: relative;
+}
+
+/* 默认按原始尺寸显示，超出容器滚动查看；小图则居中 */
+.b64-preview-box .b64-preview {
+    position: static;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    display: block;
+    margin: auto;
+    border-radius: 8px;
+}
+
+/* 若图片小于容器，回退为等比缩放充满容器，避免小图显示过小 */
+.b64-preview-box .b64-preview.fit {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.b64-preview-empty {
+    font-size: 12px;
+    color: var(--app-muted);
+}
+
+@media (max-width: 1000px) {
+    .b64-pane {
+        grid-template-columns: 1fr;
+    }
+
+    .b64-pane > div {
+        max-height: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .b64-tabs {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="图片与Base64互转工具，支持图片转Base64编码（Data URI）与Base64转回图片，一键复制与下载，纯前端本地处理。">
+    <meta name="keywords" content="base64图片,图片转base64,base64转图片,base64编码,在线base64,data uri,图片转码,图片编码,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/base64_image.html">
+
+    <meta property="og:title" content="图片与Base64互转">
+    <meta property="og:description" content="图片与Base64互转工具，支持图片转Base64编码（Data URI）与Base64转回图片，一键复制与下载，纯前端本地处理。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/base64_image.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+    <meta property="og:image:alt" content="TA工具箱图标">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="图片与Base64互转">
+    <meta name="twitter:description" content="图片与Base64互转工具，支持图片转Base64编码（Data URI）与Base64转回图片，一键复制与下载，纯前端本地处理。">
+    <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+    <title>图片与Base64互转 - TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/base64_image.css">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <div class="b64-head">
+            <h1>图片与 Base64 互转</h1>
+            <p>图片转 Base64（Data URI）或 Base64 还原图片，纯前端本地处理，不会上传任何数据。</p>
+        </div>
+
+        <div class="b64-tabs" role="tablist">
+            <button class="b64-tab is-active" type="button" role="tab" data-tab="toBase64">图片转 Base64</button>
+            <button class="b64-tab" type="button" role="tab" data-tab="toImage">Base64 转图片</button>
+        </div>
+
+        <div class="b64-layout">
+            <section class="b64-pane is-active" id="tab-toBase64" data-pane="toBase64">
+                <div class="b64-left">
+                    <label class="b64-dropzone" for="b64FileInput" id="b64Dropzone">
+                        <span>拖拽或点击上传图片</span>
+                        <img id="b64Preview" class="b64-preview" alt="预览" hidden>
+                    </label>
+                    <input type="file" id="b64FileInput" accept="image/*">
+                    <div class="b64-stats" id="b64Stats" hidden>
+                        <div class="b64-stat"><b>文件名</b><span id="b64StatName">-</span></div>
+                        <div class="b64-stat"><b>尺寸</b><span id="b64StatSize">-</span></div>
+                        <div class="b64-stat"><b>格式</b><span id="b64StatMime">-</span></div>
+                        <div class="b64-stat"><b>原始大小</b><span id="b64StatBytes">-</span></div>
+                        <div class="b64-stat"><b>Base64 长度</b><span id="b64StatLen">-</span></div>
+                    </div>
+                </div>
+
+                <div class="b64-right">
+                    <textarea id="b64Output" class="b64-textarea" rows="10" spellcheck="false" placeholder="生成的 Base64 / Data URI 会显示在这里..."></textarea>
+                    <div class="b64-actions">
+                        <button class="b64-btn" id="b64Copy" type="button">复制结果</button>
+                        <button class="b64-btn" id="b64Download" type="button" disabled>下载图片</button>
+                        <button class="b64-btn b64-btn-ghost" id="b64Clear" type="button">清空</button>
+                    </div>
+                    <div class="b64-status" id="b64Status">等待上传图片...</div>
+                </div>
+            </section>
+
+            <section class="b64-pane" id="tab-toImage" data-pane="toImage">
+                <div class="b64-left">
+                    <textarea id="b64Input" class="b64-textarea" rows="10" spellcheck="false" placeholder="粘贴 Data URI 或纯 Base64 文本，例如：data:image/png;base64,iVBORw0KGgo..."></textarea>
+                    <div class="b64-actions">
+                        <button class="b64-btn" id="b64Decode" type="button">解析预览</button>
+                        <button class="b64-btn" id="b64DlDecoded" type="button" disabled>下载图片</button>
+                        <button class="b64-btn b64-btn-ghost" id="b64ClearDecoded" type="button">清空</button>
+                    </div>
+                    <div class="b64-status" id="b64DecodeStatus">等待输入 Base64 文本...</div>
+                </div>
+
+                <div class="b64-right">
+                    <div class="b64-preview-box">
+                        <span class="b64-preview-empty">图片预览将显示在这里</span>
+                        <img id="b64DecodedPreview" class="b64-preview b64-preview-lg" alt="还原预览" hidden>
+                    </div>
+                    <div class="b64-stats" id="b64DecodeStats" hidden>
+                        <div class="b64-stat"><b>识别格式</b><span id="b64DecodeMime">-</span></div>
+                        <div class="b64-stat"><b>尺寸</b><span id="b64DecodeSize">-</span></div>
+                        <div class="b64-stat"><b>Base64 长度</b><span id="b64DecodeLen">-</span></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../js/base64_image.js" defer></script>
+
+</body>
+
+</html>
