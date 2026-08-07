@@ -35,6 +35,7 @@ var MENU_DATA = [
         { label: '色彩空间转换器', href: 'color_space_converter.html', keywords: ['Linear', 'sRGB', 'Gamma', '色彩空间', 'color space', 'aces', 'rec709', 'rec2020', '线性', '伽马', '色调映射', 'tonemap'] },
         { label: '贴图信息查看器', href: 'image_metadata_inspector.html', keywords: ['贴图信息', 'POT', '显存', 'VRAM', '直方图', 'texture info', 'memory', 'histogram', '分辨率', 'mip', 'dpi', '元数据'] },
         { label: 'TA知识库', href: 'TA_wiki.html', keywords: ['wiki', '知识', '技术美术', 'tech art', 'ta', '文档', '手册', 'guide', '教程', '学习', 'reference', '参考'] },
+        { label: 'TA资源导航', href: 'resources.html', keywords: ['导航', '资源', 'link', 'navigation', '官网', '图形学', '引擎', 'unity', 'unreal', 'blender', 'substance', 'houdini', 'github', 'shadertoy', 'megascans', 'polyhaven', 'pbr', '材质', '模型', '教程', '社区', 'forum'] },
     ]},
     { name: '和我一起听', icon: 'icon-music', items: [
         { label: '网易云音乐', href: 'cloud_music.html', keywords: ['音乐', '歌曲', '歌单', 'music', 'netease', '播放器', '听歌', 'mp3', 'player', '电台', 'fm'] },
@@ -151,6 +152,21 @@ function getMenuPathPrefix() {
     return isRoot ? 'tools_html/' : '';
 }
 
+// 异步加载 TA 资源数据（仅在未加载时按需触发，浏览器会缓存）
+// 加载完成后 window.TA_RESOURCES / window.fuzzyBestScore 将可用
+function ensureResourcesData(onReady) {
+    if (window.TA_RESOURCES && window.fuzzyBestScore) {
+        if (onReady) onReady();
+        return;
+    }
+    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
+    var script = document.createElement('script');
+    script.src = (isRoot ? '' : '../') + 'js/resources_data.js';
+    script.onload = function () { if (onReady) onReady(); };
+    script.onerror = function () { if (onReady) onReady(); }; // 容错：失败也继续
+    document.head.appendChild(script);
+}
+
 function getSearchItems() {
     var prefix = getMenuPathPrefix();
     var results = [];
@@ -158,14 +174,35 @@ function getSearchItems() {
         var category = MENU_DATA[i];
         for (var j = 0; j < category.items.length; j++) {
             var item = category.items[j];
-            var keywords = [item.label, category.name, item.href.replace(/\.html$/i, '').replace(/[_-]/g, ' ')]
+            var fields = [item.label, category.name, item.href.replace(/\.html$/i, '').replace(/[_-]/g, ' ')]
                 .concat(item.keywords || []);
             results.push({
                 label: item.label,
                 category: category.name,
                 href: prefix + item.href,
-                keywords: normalizeSearchText(keywords.join(' '))
+                keywords: normalizeSearchText(fields.join(' ')),
+                _fields: fields
             });
+        }
+    }
+
+    // 合并 TA 资源导航里的站点（仅在 resources_data.js 已加载时）
+    if (window.TA_RESOURCES && window.TA_RESOURCES.length) {
+        for (var k = 0; k < window.TA_RESOURCES.length; k++) {
+            var cat = window.TA_RESOURCES[k];
+            var sites = cat.sites || [];
+            for (var m = 0; m < sites.length; m++) {
+                var site = sites[m];
+                var siteFields = [site.name, site.desc || '', cat.name].concat(site.keywords || []);
+                results.push({
+                    label: site.name,
+                    category: '资源导航',
+                    href: prefix + 'resources.html?kw=' + encodeURIComponent(site.name),
+                    keywords: normalizeSearchText(siteFields.join(' ')),
+                    _fields: siteFields,
+                    isResource: true
+                });
+            }
         }
     }
     return results;
@@ -264,7 +301,7 @@ function initTopSearch() {
     if (!input) return;
 
     input.type = 'search';
-    input.placeholder = '搜索工具 / 分类，按 Enter 打开';
+    input.placeholder = '搜索工具 / 资源 / 分类，按 Enter 打开';
     input.setAttribute('aria-label', '搜索工具');
     input.setAttribute('autocomplete', 'off');
 
@@ -272,11 +309,39 @@ function initTopSearch() {
     var searchItems = getSearchItems();
     var currentMatches = [];
 
+    function scoreItem(item, keyword) {
+        if (typeof window.fuzzyBestScore === 'function' && item._fields) {
+            return window.fuzzyBestScore(keyword, item._fields);
+        }
+        return item.keywords.indexOf(keyword) >= 0 ? 1 : 0;
+    }
+
     function refresh() {
         var keyword = normalizeSearchText(input.value);
-        currentMatches = keyword ? searchItems.filter(function (item) {
-            return item.keywords.indexOf(keyword) >= 0;
-        }).slice(0, 8) : [];
+        if (!keyword) {
+            currentMatches = [];
+            renderSearchResults(dropdown, currentMatches, keyword);
+            updateMenuSearchState(keyword);
+            return;
+        }
+
+        // 模糊匹配 + 评分排序
+        var scored = [];
+        for (var i = 0; i < searchItems.length; i++) {
+            var item = searchItems[i];
+            var score = scoreItem(item, keyword);
+            if (score > 0) scored.push({ item: item, score: score });
+        }
+        scored.sort(function (a, b) {
+            if (b.score !== a.score) return b.score - a.score;
+            // 同分时普通工具优先于资源条目
+            var aPriority = a.item.isResource ? 1 : 0;
+            var bPriority = b.item.isResource ? 1 : 0;
+            if (aPriority !== bPriority) return aPriority - bPriority;
+            return 0;
+        });
+        currentMatches = scored.slice(0, 10).map(function (s) { return s.item; });
+
         renderSearchResults(dropdown, currentMatches, keyword);
         updateMenuSearchState(keyword);
     }
@@ -299,6 +364,12 @@ function initTopSearch() {
         if (!searchWrap.contains(event.target)) {
             dropdown.hidden = true;
         }
+    });
+
+    // 异步加载资源数据后重建搜索项，确保任意页面都能搜到资源站点
+    ensureResourcesData(function () {
+        searchItems = getSearchItems();
+        if (normalizeSearchText(input.value)) refresh();
     });
 }
 

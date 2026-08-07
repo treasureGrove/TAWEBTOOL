@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="技术美术(TA)主题的资源导航页：收录图形学官方标准、游戏引擎、DCC软件、PBR材质、3D模型、开源代码与Shader实验、图形学教程、社区论坛等精选站点。">
+    <meta name="keywords" content="TA资源导航,技术美术导航,图形学资源,游戏开发资源,Shader教程,PBR材质,3D模型,开源资源,游戏引擎,Unity,Unreal,Blender,Houdosi,Substance,Khronos,OpenGL,Vulkan,DirectX,WebGPU,TA工具箱">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/resources.html">
+
+    <meta property="og:title" content="TA资源导航 - 技术美术精选资源">
+    <meta property="og:description" content="收录图形学官方、游戏引擎、DCC软件、PBR材质、3D模型、开源代码、Shader实验、学习教程与社区论坛等技术美术相关精选资源。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/resources.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="TA资源导航 - 技术美术精选资源">
+    <meta name="twitter:description" content="收录图形学官方、游戏引擎、DCC软件、PBR材质、开源代码、Shader实验等TA主题精选资源。">
+
+    <title>TA资源导航 - 技术美术精选资源 | TA工具箱</title>
+
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/resources.css">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search">
+        <input type="text" placeholder="搜索">
+    </div>
+
+    <div id="panel">
+        <header class="res-hero">
+            <h1>TA 资源导航</h1>
+            <p>面向技术美术（TA）与游戏开发者的精选资源导航，覆盖图形学官方标准、游戏引擎、DCC 软件、PBR 材质、3D 模型、开源代码、Shader 实验、学习教程与社区论坛。点击卡片直达官网，所有外链均在浏览器新标签页打开。</p>
+        </header>
+
+        <section class="res-stats" id="resStats" aria-label="资源统计"></section>
+
+        <div class="res-toolbar">
+            <div class="res-search-wrap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input id="resSearch" type="search" placeholder="搜索名称、描述、关键词，例如：Unity、PBR、ShaderToy、Megascans…" autocomplete="off">
+                <span class="res-search-count">共 <span id="resCount">0</span> 条</span>
+            </div>
+            <nav class="res-cats" id="resCats" aria-label="资源分类"></nav>
+        </div>
+
+        <div class="res-grid" id="resGrid"></div>
+
+        <footer class="res-foot">
+            资源由 <a href="https://treasuregrove.art/" target="_blank" rel="noopener noreferrer">宝藏小树林</a> 维护整理，
+            想新增 / 调整某个站点可联系作者或在仓库提 issue。
+        </footer>
+    </div>
+
+    <script src="../js/resources_data.js"></script>
+    <script src="../js/resources.js"></script>
+</body>
+
+</html>
