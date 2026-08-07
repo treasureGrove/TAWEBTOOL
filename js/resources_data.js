@@ -145,6 +145,52 @@
     },
 
     {
+      id: 'papers',
+      name: '论文 / 期刊 / 研究院',
+      icon: 'icon-ta',
+      desc: '顶级图形学会议、期刊、研究机构与论文索引',
+      sites: [
+        // ── 顶级会议 ──
+        { name: 'ACM SIGGRAPH', url: 'https://www.siggraph.org/', desc: '图形学最顶级的国际会议与展览，每年一届', icon: '🏆', keywords: ['siggraph', 'acm', '会议', 'conference', '顶级'] },
+        { name: 'SIGGRAPH Asia', url: 'https://asia.siggraph.org/', desc: 'SIGGRAPH 亚洲分会，更靠近亚洲开发者的窗口', icon: '🌏', keywords: ['siggraph', 'asia', '亚洲', '会议'] },
+        { name: 'GDC Vault', url: 'https://www.gdcvault.com/', desc: '游戏开发者大会 GDC 的演讲视频与幻灯片归档', icon: '🎮', keywords: ['gdc', 'vault', 'game developers', '演讲', 'talk'] },
+        { name: 'CEDEC', url: 'https://cedec.cesa.or.jp/', desc: '日本最大游戏开发者技术会议（CESA 主办）', icon: '🗾', lang: '日文', keywords: ['cedec', '日本', 'japan', '会议'] },
+        { name: 'Eurographics', url: 'https://www.eg.org/', desc: '欧洲图形学协会，每年举办 EG 与多个子会议', icon: '🇪🇺', keywords: ['eurographics', 'eg', '欧洲', '会议'] },
+        { name: 'High-Performance Graphics', url: 'https://highperformancegraphics.org/', desc: 'HPG，专注高性能实时渲染与 GPU 算法的会议', icon: '🚀', keywords: ['hpg', 'high performance', 'gpu', '实时', 'real-time'] },
+        { name: 'I3D Symposium', url: 'https://www.i3dsymposium.org/', desc: 'ACM 交互式 3D 图形与游戏研讨会', icon: '🎯', keywords: ['i3d', 'interactive', '3d', 'symposium', '交互'] },
+        { name: 'Pacific Graphics', url: 'https://www.siggraph.org/', desc: '太平洋图形学会议，由 ACM SIGGRAPH 联合举办', icon: '🌊', keywords: ['pacific graphics', 'pg', '太平洋', '会议'] },
+
+        // ── 论文索引 / 论文库 ──
+        { name: "Ke-Sen Huang's Paper Page", url: 'https://kesen.realtimerendering.com/', desc: '经典！华人学者黄克森整理的图形学年度论文链接大全', icon: '📑', keywords: ['kesen', 'huang', 'paper', '论文', '索引', 'index'] },
+        { name: 'ACM Digital Library', url: 'https://dl.acm.org/', desc: 'ACM 全部期刊会议论文库，含 TOG / SIGGRAPH', icon: '📚', keywords: ['acm', 'dl', 'digital library', '论文', 'paper'] },
+        { name: 'Google Scholar', url: 'https://scholar.google.com/', desc: '谷歌学术搜索，查引用 / 找作者首选', icon: '🔍', keywords: ['scholar', 'google', '学术', '搜索'] },
+        { name: 'arXiv cs.GR', url: 'https://arxiv.org/list/cs.GR/recent', desc: 'arXiv 计算机图形学预印本，免费最新论文', icon: '📄', free: true, keywords: ['arxiv', 'cs.gr', 'preprint', '预印本', '免费'] },
+        { name: 'EG Digital Library', url: 'https://diglib.eg.org/', desc: 'Eurographics 数字图书馆，会员可下载全部论文', icon: '🇪🇺', keywords: ['eurographics', 'diglib', '论文', 'paper'] },
+        { name: 'Papers We Love', url: 'https://paperswelove.org/', desc: '计算机科学经典论文阅读社区，含图形学专题', icon: '❤️', keywords: ['paperswelove', '经典', '社区'] },
+
+        // ── 期刊 ──
+        { name: 'ACM TOG', url: 'https://dl.acm.org/journal/tog', desc: 'ACM Transactions on Graphics，图形学影响因子最高的期刊', icon: '📰', keywords: ['tog', 'transactions', 'acm', '期刊', 'journal'] },
+        { name: 'JCGT', url: 'https://jcgt.org/', desc: 'Journal of Computer Graphics Techniques，开放获取的图形学实践期刊', icon: '📖', free: true, keywords: ['jcgt', 'journal', '期刊', 'techniques', '免费'] },
+        { name: 'Computer Graphics Forum', url: 'https://onlinelibrary.wiley.com/journal/14678659', desc: 'Eurographics 官方期刊，与 SG / EG 会议关联', icon: '📑', keywords: ['cgf', 'forum', 'wiley', 'eurographics', '期刊'] },
+        { name: 'IEEE TVCG', url: 'https://www.computer.org/csdl/journal/tg/', desc: 'IEEE 可视化与计算机图形学汇刊', icon: '📊', keywords: ['tvcg', 'ieee', '可视化', 'visualization', '期刊'] },
+
+        // ── 研究院 / 工业实验室 ──
+        { name: 'NVIDIA Research', url: 'https://research.nvidia.com/', desc: 'NVIDIA 研究院论文与项目，DLSS / RTX 等前沿成果', icon: '🟩', keywords: ['nvidia', 'research', '研究', 'dlss', 'rtx', 'paper'] },
+        { name: 'Pixar Graphics Research', url: 'https://graphics.pixar.com/', desc: 'Pixar 图形研究主页，含 RenderMan 与开源项目', icon: '🦒', keywords: ['pixar', 'renderman', '研究', 'research'] },
+        { name: 'Disney Animation Studio', url: 'https://www.disneyanimation.com/technology/', desc: '迪士尼动画技术团队，公开论文与 SIGGRAPH 演讲', icon: '🏰', keywords: ['disney', 'animation', '研究', '论文'] },
+        { name: 'AMD Research', url: 'https://www.amd.com/en/technologies/rdna', desc: 'AMD GPU 架构研究，含 RDNA / FSR 技术白皮书', icon: '🟥', keywords: ['amd', 'rdna', 'fsr', 'research'] },
+        { name: 'Adobe Research', url: 'https://research.adobe.com/', desc: 'Adobe 研究院，影像与渲染相关论文汇集', icon: '🅰️', keywords: ['adobe', 'research', '研究', '影像'] },
+        { name: 'Wētā FX', url: 'https://www.wetafx.co.nz/', desc: '维塔数码（《阿凡达》团队）技术论文公开页', icon: '🎬', keywords: ['weta', '阿凡达', '电影', 'film', 'paper'] },
+        { name: 'Cornell Graphics', url: 'http://www.graphics.cornell.edu/', desc: '康奈尔大学图形组，PBR / 全局光照的发源地之一', icon: '🏛️', keywords: ['cornell', '康奈尔', 'pbr', 'gi', '全局光照'] },
+        { name: 'Stanford Graphics', url: 'https://graphics.stanford.edu/', desc: '斯坦福大学图形学实验室，软影 / 多倍采样起源地', icon: '🌲', keywords: ['stanford', '斯坦福', '研究'] },
+        { name: 'MIT CSAIL Graphics', url: 'https://graphics.csail.mit.edu/', desc: 'MIT CSAIL 图形组，渲染与视觉研究前沿', icon: '🤖', keywords: ['mit', 'csail', 'graphics', '研究'] },
+        { name: 'UC Berkeley Graphics', url: 'https://graphics.berkeley.edu/', desc: '伯克利图形与视觉研究组', icon: '🐻', keywords: ['berkeley', '伯克利', '研究'] },
+        { name: 'CMU Computer Graphics', url: 'http://graphics.cs.cmu.edu/', desc: '卡内基梅隆大学图形学组，覆盖渲染 / 几何 / 物理', icon: '🐢', keywords: ['cmu', '卡内基', '研究', '渲染'] },
+        { name: 'Saarland Computer Graphics', url: 'https://graphics.cg.uni-saarland.de/', desc: '德国萨尔兰大学图形组，实时渲染与采样研究重镇', icon: '🇩🇪', keywords: ['saarland', '萨尔', 'germany', '德国', '研究'] }
+      ]
+    },
+
+    {
       id: 'community',
       name: '社区 / 论坛',
       icon: 'icon-music',
