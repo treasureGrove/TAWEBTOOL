@@ -14,16 +14,22 @@
     <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/cloud_music.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="TA工具箱">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+    <meta property="og:image:alt" content="TA工具箱图标">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="网易云音乐在线播放器">
     <meta name="twitter:description" content="在线网易云音乐播放器，随时随地收听歌单，支持搜索和在线播放。">
+    <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
     <title>和我一起听 - TA工具箱</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/cloud_music.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
 </head>
 
 <body>
@@ -212,7 +218,10 @@
                 '.mi-info{flex:1;min-width:0}.mi-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
                 '.mi-artist{font-size:11px;color:#94a3b8;margin-top:1px}' +
                 '.list::-webkit-scrollbar{width:5px}.list::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}' +
-                '</style></head><body>' +
+                '</style>
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+</head><body>' +
                 '<div class="top"><img class="cover" id="mc" src="'+(cur.cover||'')+'"><div class="tinfo"><div class="tname" id="mn">'+(cur.name||'-')+'</div><div class="tartist" id="ma">'+(cur.artist||'-')+'</div></div></div>' +
                 '<audio id="pa" controls></audio>' +
                 '<div class="list" id="ml">'+list+'</div>' +

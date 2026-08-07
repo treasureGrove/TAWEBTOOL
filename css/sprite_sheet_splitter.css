@@ -1,0 +1,299 @@
+#main_bg {
+    background-image: url(../assets/images/background/miku_night.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: fixed;
+    min-height: 100vh;
+    width: 100%;
+    z-index: -1;
+}
+
+#panel {
+    font-family: var(--app-font-serif);
+    backdrop-filter: blur(2px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ss-head {
+    background: linear-gradient(135deg, var(--app-glass-strong), rgba(240, 255, 249, 0.72));
+    border: 1px solid var(--app-line);
+    border-radius: 14px;
+    padding: 8px 14px;
+    margin-bottom: 6px;
+    box-shadow: var(--app-shadow-card);
+    flex-shrink: 0;
+}
+
+.ss-head h1 {
+    font-size: 18px;
+    color: var(--app-text-heading);
+    margin-bottom: 2px;
+    letter-spacing: .4px;
+}
+
+.ss-head p {
+    font-size: 12px;
+    color: var(--app-muted);
+}
+
+.ss-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ss-left-pane,
+.ss-right-pane {
+    width: 100%;
+    min-height: 0;
+    min-width: 0;
+    background: var(--app-glass);
+    border: 1px solid var(--app-line);
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow: var(--app-shadow-card);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.ss-left-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+}
+
+.ss-right-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ss-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--app-text-heading);
+    margin-top: 4px;
+    padding-bottom: 2px;
+    border-bottom: 1px dashed var(--app-line);
+}
+
+.ss-control-grid3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+label {
+    font-size: 12px;
+    color: var(--app-text);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+input,
+select,
+button {
+    border: 1px solid var(--app-line);
+    border-radius: 9px;
+    padding: 8px 10px;
+    background: var(--app-surface-input);
+    font-size: 12px;
+    box-sizing: border-box;
+    transition: border-color .18s var(--app-ease), box-shadow .18s var(--app-ease), transform .18s var(--app-ease);
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 2px var(--app-accent-glow);
+}
+
+.ss-dropzone {
+    min-height: 150px;
+    border: 1px dashed var(--app-line-strong);
+    border-radius: 12px;
+    background: var(--app-overlay-dark);
+    background-size: cover;
+    background-position: center;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color .18s var(--app-ease), box-shadow .18s var(--app-ease);
+}
+
+.ss-dropzone p {
+    font-size: 13px;
+    color: var(--app-text-inverse);
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    text-align: center;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.ss-dropzone small {
+    font-size: 11px;
+    color: var(--app-text-inverse-muted);
+    pointer-events: none;
+}
+
+.ss-dropzone.has-image p,
+.ss-dropzone.has-image small {
+    opacity: 0;
+}
+
+.ss-dropzone.dragover {
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 3px var(--app-accent-glow) inset;
+}
+
+.ss-dropzone + input[type="file"] {
+    display: none;
+}
+
+.ss-cell-info {
+    display: inline-block;
+    padding: 8px 10px;
+    border: 1px solid var(--app-line);
+    border-radius: 9px;
+    background: var(--app-card);
+    color: var(--app-text);
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ss-frame-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ss-frame-row .ss-btn-ghost {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.ss-btn-ghost {
+    background: var(--app-card);
+    color: var(--app-text);
+    cursor: pointer;
+    padding: 8px 12px;
+}
+
+.ss-btn-ghost:hover {
+    background: var(--app-accent-hover);
+}
+
+.ss-frame-input {
+    flex: 1;
+    min-width: 0;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--app-text);
+    white-space: nowrap;
+}
+
+.ss-frame-input input[type="number"] {
+    width: 64px;
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.ss-tip {
+    font-size: 11px;
+    color: var(--app-muted);
+}
+
+.ss-action-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.ss-btn {
+    border: none;
+    background: linear-gradient(135deg, var(--app-accent-strong), var(--app-accent));
+    color: var(--app-text-inverse);
+    cursor: pointer;
+    padding: 9px 16px;
+    font-weight: 600;
+}
+
+.ss-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--app-accent-glow);
+}
+
+.ss-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ss-status {
+    font-size: 12px;
+    color: var(--app-muted);
+}
+
+.ss-preview {
+    flex: 1;
+    min-height: 0;
+    background: var(--app-glass-strong);
+    border: 1px solid var(--app-line);
+    border-radius: var(--app-radius-md);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+}
+
+.ss-preview b {
+    font-size: 12px;
+    color: var(--app-text);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.ss-preview-wrap {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: var(--app-overlay-dark);
+    border-radius: 9px;
+    border: 1px solid var(--app-line-subtle);
+    overflow: hidden;
+}
+
+.ss-preview-wrap canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@media (max-width: 1280px) {
+    .ss-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+    .ss-control-grid3 { grid-template-columns: 1fr; }
+}

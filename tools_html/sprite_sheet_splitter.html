@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="在线雪碧图拆分工具，按网格自动切分精灵图（Sprite Sheet），支持序列帧切图、动画帧切分与图集拆分，逐帧预览后一键打包导出。">
+    <meta name="keywords" content="雪碧图拆分,sprite sheet,序列帧切图,动画帧切分,图集拆分,精灵图拆分,切图,帧动画,网格切分,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/sprite_sheet_splitter.html">
+
+    <meta property="og:title" content="雪碧图拆分工具">
+    <meta property="og:description" content="在线雪碧图拆分工具，按网格自动切分精灵图（Sprite Sheet），支持序列帧切图、动画帧切分与图集拆分，逐帧预览后一键打包导出。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/sprite_sheet_splitter.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+    <meta property="og:image:alt" content="TA工具箱图标">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="雪碧图拆分工具">
+    <meta name="twitter:description" content="在线雪碧图拆分工具，按网格自动切分精灵图（Sprite Sheet），支持序列帧切图、动画帧切分与图集拆分，逐帧预览后一键打包导出。">
+    <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+    <title>雪碧图拆分 - TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/sprite_sheet_splitter.css">
+
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <script src="../js/waifu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel">
+        <div class="ss-head">
+            <h1>雪碧图拆分工具</h1>
+            <p>上传精灵图（Sprite Sheet），按列数 / 行数网格自动切分，逐帧预览后一键打包导出。与「图集打包工具」互补，适用于序列帧动画、动画帧切分等场景。</p>
+        </div>
+
+        <div class="ss-layout">
+            <section class="ss-left-pane">
+                <label class="ss-dropzone" id="ssDropZone">
+                    <p>拖拽或点击上传雪碧图</p>
+                    <small id="ssDropHint">支持 JPG / PNG / WEBP</small>
+                </label>
+                <input type="file" id="ssFileInput" accept="image/*">
+
+                <div class="ss-section-title">网格切分设置</div>
+                <div class="ss-control-grid3">
+                    <label>列数（横向帧数）<input type="number" id="ssCols" min="1" max="256" value="4"></label>
+                    <label>行数（纵向帧数）<input type="number" id="ssRows" min="1" max="256" value="4"></label>
+                    <label>单帧尺寸（自动）<span class="ss-cell-info" id="ssCellInfo">-</span></label>
+                    <label>间隔 / 间距 (padding)<input type="number" id="ssPadding" min="0" max="128" value="0"></label>
+                    <label>边框 (offset) 四周留白<input type="number" id="ssOffset" min="0" max="128" value="0"></label>
+                    <label>导出格式<select id="ssFormat">
+                        <option value="png" selected>PNG</option>
+                        <option value="webp">WEBP</option>
+                        <option value="jpeg">JPG</option>
+                    </select></label>
+                </div>
+
+                <div class="ss-section-title">逐帧预览</div>
+                <div class="ss-frame-row">
+                    <button type="button" class="ss-btn-ghost" id="ssPrevBtn">上一帧</button>
+                    <label class="ss-frame-input">第 <input type="number" id="ssFrameIndex" min="1" value="1"> / <span id="ssFrameTotal">-</span> 帧</label>
+                    <button type="button" class="ss-btn-ghost" id="ssNextBtn">下一帧</button>
+                </div>
+                <p class="ss-tip">提示：也可以直接点击右侧预览图中的任意一帧，即可高亮预览该帧。</p>
+
+                <div class="ss-action-row">
+                    <button type="button" class="ss-btn" id="ssExportBtn" disabled>全部导出</button>
+                    <span class="ss-status" id="ssStatus">请先上传一张雪碧图</span>
+                </div>
+            </section>
+
+            <section class="ss-right-pane">
+                <div class="ss-preview">
+                    <b>网格预览</b>
+                    <div class="ss-preview-wrap">
+                        <canvas id="ssCanvas"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="../js/sprite_sheet_splitter.js" defer></script>
+
+</body>
+
+</html>
