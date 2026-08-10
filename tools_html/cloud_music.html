@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="在线网易云音乐播放器，随时随地收听歌单，支持搜索和在线播放。">
-    <meta name="keywords" content="网易云音乐,在线音乐,听歌,音乐播放器,歌单,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
+    <meta name="description" content="在线网易云音乐播放器，支持扫码登录、每日推荐、私人FM与歌单播放，随时随地收听歌单。">
+    <meta name="keywords" content="网易云音乐,在线音乐,听歌,音乐播放器,歌单,每日推荐,私人FM,扫码登录,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/cloud_music.html">
 
     <meta property="og:title" content="网易云音乐在线播放器">
-    <meta property="og:description" content="在线网易云音乐播放器，随时随地收听歌单，支持搜索和在线播放。">
+    <meta property="og:description" content="在线网易云音乐播放器，支持扫码登录、每日推荐、私人FM与歌单播放。">
     <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/cloud_music.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="TA工具箱">
@@ -19,17 +19,14 @@
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="网易云音乐在线播放器">
-    <meta name="twitter:description" content="在线网易云音乐播放器，随时随地收听歌单，支持搜索和在线播放。">
+    <meta name="twitter:description" content="在线网易云音乐播放器，支持扫码登录、每日推荐、私人FM与歌单播放。">
     <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
     <title>和我一起听 - TA工具箱</title>
+
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/cloud_music.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
-
-    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
 </head>
 
 <body>
@@ -41,244 +38,116 @@
     <div class="top_search"><input type="text" placeholder="搜索"></div>
 
     <main id="panel">
+        <!-- 动态氛围背景（随歌曲封面变化） -->
+        <div class="cm-ambient" id="cmAmbient"></div>
+
         <div class="cm-layout">
 
-            <!-- 顶部条：正在播放 + 操作按钮 -->
+            <!-- 顶部栏 -->
             <header class="cm-header">
-                <div class="cm-header-left">
+                <div class="cm-header-brand">
                     <div class="cm-vinyl" id="vinyl">
                         <div class="cm-vinyl-inner" id="vinylCover"></div>
                     </div>
-                    <div class="cm-header-info">
-                        <div class="cm-song-name" id="songName">等待播放...</div>
-                        <div class="cm-song-artist" id="songArtist">选一首歌开始吧</div>
+                    <div class="cm-brand-text">
+                        <h1>和我一起听</h1>
+                        <p>网易云音乐 · 随时开听</p>
                     </div>
                 </div>
-                <div class="cm-header-right">
-                    <button class="cm-btn" id="popoutBtn" title="弹出小窗播放"> 小窗播放</button>
-                    <button class="cm-btn" id="copyLinkBtn" title="复制链接邀请好友"> 邀请好友</button>
-                    <a class="cm-btn cm-btn-ghost" href="https://music.163.com/#/my/m/music/playlist?id=164804185" target="_blank" rel="noopener">网易云打开</a>
+                <div class="cm-header-actions">
+                    <div class="cm-account" id="cmAccount"></div>
+                    <button class="cm-btn" id="copyLinkBtn" title="复制链接邀请好友">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                        <span>邀请好友</span>
+                    </button>
+                    <a class="cm-btn cm-btn-ghost" href="https://music.163.com/#/my/m/music/playlist?id=164804185" target="_blank" rel="noopener">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+                        <span>网易云打开</span>
+                    </a>
                 </div>
             </header>
 
-            <!-- 播放器主体 -->
-            <div class="cm-player-body" id="playerContainer">
-                <div class="cm-loading" id="loadingState">
-                    <div class="cm-spinner"></div>
-                    <span>正在加载歌单...</span>
-                </div>
-            </div>
+            <!-- 主体 -->
+            <div class="cm-body">
 
-            <!-- 底部状态栏 -->
-            <footer class="cm-footer">
-                <span id="statusText">加载中...</span>
-                <span class="cm-footer-right">发链接给好友，一起听同一个歌单</span>
-            </footer>
+                <!-- 左侧：来源切换 + 搜索 + 歌曲列表 -->
+                <section class="cm-panel cm-track-panel">
+                    <div class="cm-panel-toolbar">
+                        <div class="cm-sources" id="cmSources"></div>
+                        <div class="cm-search-wrap">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input id="cmSearch" type="search" placeholder="搜索歌曲 / 歌手..." autocomplete="off">
+                        </div>
+                        <div class="cm-playlist-select-wrap" id="cmPlaylistSelectWrap" style="display:none">
+                            <select id="cmPlaylistSelect" class="cm-select"></select>
+                        </div>
+                    </div>
+                    <div class="cm-track-list" id="cmTrackList">
+                        <div class="cm-empty">
+                            <div class="cm-empty-spinner"></div>
+                            <span>加载中...</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 右侧：大封面 + 播放控制 -->
+                <section class="cm-panel cm-player-panel">
+                    <div class="cm-cover-stage">
+                        <div class="cm-cover-disc" id="cmCoverDisc">
+                            <img id="cmCoverImg" src="" alt="专辑封面">
+                            <div class="cm-cover-hole"></div>
+                        </div>
+                    </div>
+
+                    <div class="cm-now">
+                        <div class="cm-control-name" id="cmControlName">选择一首歌</div>
+                        <div class="cm-control-artist" id="cmControlArtist">开始你的音乐之旅</div>
+                    </div>
+
+                    <div class="cm-progress-row">
+                        <span class="cm-time" id="cmTimeCur">00:00</span>
+                        <div class="cm-range-wrap">
+                            <input type="range" id="cmProgress" class="cm-range" min="0" max="100" value="0" step="0.1">
+                        </div>
+                        <span class="cm-time" id="cmTimeDur">00:00</span>
+                    </div>
+
+                    <div class="cm-control-btns">
+                        <button class="cm-ctl-btn" id="cmPrevBtn" title="上一首">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="2.5" height="14" rx="1"/><path d="M19 5v14a1 1 0 0 1-1.58.82L9 12.82V5.18l8.42-6A1 1 0 0 1 19 5z"/></svg>
+                        </button>
+                        <button class="cm-ctl-btn cm-ctl-main" id="cmPlayBtn" title="播放/暂停">
+                            <svg class="cm-ico-play" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14a1 1 0 0 0 1.52.85l11-7a1 1 0 0 0 0-1.7l-11-7A1 1 0 0 0 8 5z"/></svg>
+                            <svg class="cm-ico-pause" width="26" height="26" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="5" width="4" height="14" rx="1.5"/><rect x="14" y="5" width="4" height="14" rx="1.5"/></svg>
+                        </button>
+                        <button class="cm-ctl-btn" id="cmNextBtn" title="下一首">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect x="15.5" y="5" width="2.5" height="14" rx="1"/><path d="M5 5v14a1 1 0 0 0 1.58.82L15 12.82V5.18l-8.42-6A1 1 0 0 0 5 5z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="cm-status" id="cmStatusText">就绪</div>
+                </section>
+            </div>
 
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
-    <script>
-    (function () {
-        var PLAYLIST_ID = '164804185';
-        var API_ENDPOINTS = [
-            'https://meting.qjqq.cn/api?server=netease&type=playlist&id=' + PLAYLIST_ID,
-            'https://api.injahow.cn/meting/?server=netease&type=playlist&id=' + PLAYLIST_ID,
-            'https://meting-api.onrender.com/api?server=netease&type=playlist&id=' + PLAYLIST_ID,
-            'https://api.i-meto.com/meting/api?server=netease&type=playlist&id=' + PLAYLIST_ID
-        ];
+    <!-- 扫码登录弹窗 -->
+    <div class="cm-login-overlay" id="cmLoginOverlay">
+        <div class="cm-login-modal">
+            <button class="cm-login-close" id="cmLoginClose" aria-label="关闭">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <h3 class="cm-login-title">扫码登录</h3>
+            <p class="cm-login-sub">使用网易云音乐 App 扫描二维码</p>
+            <div class="cm-qr-box">
+                <img id="cmQRImg" src="" alt="二维码">
+            </div>
+            <p class="cm-login-hint" id="cmQRHint">正在生成二维码...</p>
+        </div>
+    </div>
 
-        var ap = null;
-        var audioList = [];
-
-        function $(id) { return document.getElementById(id); }
-
-        function setStatus(t) { var el = $('statusText'); if (el) el.textContent = t; }
-        function setSong(name, artist) {
-            var n = $('songName'), a = $('songArtist');
-            if (n) n.textContent = name || '未知';
-            if (a) a.textContent = artist || '';
-        }
-        function setCover(url) {
-            var el = $('vinylCover');
-            if (el && url) el.style.backgroundImage = 'url(' + url + ')';
-        }
-
-        function hideLoading() {
-            var el = $('loadingState');
-            if (el) el.style.display = 'none';
-        }
-
-        function showError(msg) {
-            hideLoading();
-            $('playerContainer').innerHTML =
-                '<div class="cm-error">' +
-                '<div class="cm-error-icon">😢</div>' +
-                '<p class="cm-error-title">歌单暂时加载不了</p>' +
-                '<p class="cm-error-msg">' + msg + '</p>' +
-                '<p class="cm-error-hint">可以 <a href="https://music.163.com/#/my/m/music/playlist?id=' + PLAYLIST_ID + '" target="_blank">去网易云直接听</a></p>' +
-                '<button class="cm-btn cm-btn-retry" onclick="location.reload()">重新加载</button>' +
-                '</div>';
-        }
-
-        function fetchWithTimeout(url, ms) {
-            return new Promise(function (resolve, reject) {
-                var timer = setTimeout(function () { reject(new Error('timeout')); }, ms);
-                fetch(url).then(function (r) {
-                    clearTimeout(timer);
-                    if (!r.ok) throw new Error(r.status);
-                    return r.json();
-                }).then(resolve).catch(function (e) { clearTimeout(timer); reject(e); });
-            });
-        }
-
-        function fetchPlaylist(endpoints, i) {
-            if (i >= endpoints.length) return Promise.reject(new Error('网络不给力，请稍后再试'));
-            setStatus('正在连接音乐源 (' + (i + 1) + '/' + endpoints.length + ')...');
-            return fetchWithTimeout(endpoints[i], 8000).then(function (d) {
-                if (!Array.isArray(d) || !d.length) throw new Error('empty');
-                return d;
-            }).catch(function () { return fetchPlaylist(endpoints, i + 1); });
-        }
-
-        function initPlayer(songs) {
-            hideLoading();
-            audioList = songs.map(function (s) {
-                return {
-                    name: s.title || s.name || '未知',
-                    artist: s.author || s.artist || '未知',
-                    url: s.url,
-                    cover: s.pic || s.cover || '',
-                    lrc: s.lrc || ''
-                };
-            });
-
-            ap = new APlayer({
-                container: $('playerContainer'),
-                theme: '#dc2626',
-                lrcType: 1,
-                loop: 'all',
-                order: 'list',
-                preload: 'auto',
-                listFolded: false,
-                listMaxHeight: 'calc(100vh - 300px)',
-                audio: audioList
-            });
-
-            function updateNow() {
-                var cur = ap.list.audios[ap.list.index];
-                if (cur) {
-                    setSong(cur.name, cur.artist);
-                    setCover(cur.cover);
-                }
-            }
-
-            ap.on('play', function () {
-                updateNow();
-                $('vinyl').classList.add('spinning');
-            });
-            ap.on('pause', function () {
-                $('vinyl').classList.remove('spinning');
-            });
-            ap.on('listswitch', updateNow);
-            updateNow();
-            setStatus('共 ' + audioList.length + ' 首歌 · 点击播放开始收听');
-        }
-
-        // ── 弹出小窗 ──
-        $('popoutBtn').addEventListener('click', function () {
-            if (!ap) return;
-            var cur = ap.list.audios[ap.list.index] || {};
-            var curTime = ap.audio.currentTime || 0;
-            var isPlaying = !ap.audio.paused;
-
-            var popup = window.open('', 'music-mini-player', 'width=380,height=520,left=100,top=100');
-            if (!popup) { alert('浏览器阻止了弹窗，请允许后重试'); return; }
-
-            var list = audioList.map(function (a, i) {
-                return '<div class="mi '+(i === ap.list.index ? 'active' : '')+'" data-i="'+i+'">' +
-                    '<img class="mi-cover" src="'+(a.cover || '')+'" alt="">' +
-                    '<div class="mi-info"><div class="mi-name">'+(a.name)+'</div><div class="mi-artist">'+(a.artist)+'</div></div></div>';
-            }).join('');
-
-            popup.document.open();
-            popup.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>正在播放 - ' + (cur.name || '') + '</title><style>' +
-                '*{margin:0;padding:0;box-sizing:border-box;font-family:"LXGW WenKai Screen","Kaiti SC","KaiTi",serif}' +
-                'body{background:#1a1a2e;color:#eee;display:flex;flex-direction:column;height:100vh}' +
-                '.top{padding:16px;display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#e73c3e,#b91c1c);flex-shrink:0}' +
-                '.cover{width:56px;height:56px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,255,255,.25)}' +
-                '.tinfo{flex:1;min-width:0}.tname{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
-                '.tartist{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}' +
-                'audio{width:100%;flex-shrink:0;background:#16213e}' +
-                '.list{flex:1;overflow-y:auto;padding:6px}' +
-                '.mi{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s}' +
-                '.mi:hover{background:rgba(255,255,255,.08)}.mi.active{background:rgba(220,38,38,.35)}' +
-                '.mi-cover{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0}' +
-                '.mi-info{flex:1;min-width:0}.mi-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}' +
-                '.mi-artist{font-size:11px;color:#94a3b8;margin-top:1px}' +
-                '.list::-webkit-scrollbar{width:5px}.list::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}' +
-                '</style>
-    <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
-</head><body>' +
-                '<div class="top"><img class="cover" id="mc" src="'+(cur.cover||'')+'"><div class="tinfo"><div class="tname" id="mn">'+(cur.name||'-')+'</div><div class="tartist" id="ma">'+(cur.artist||'-')+'</div></div></div>' +
-                '<audio id="pa" controls></audio>' +
-                '<div class="list" id="ml">'+list+'</div>' +
-                '<script>' +
-                'var pa=document.getElementById("pa"),idx='+ap.list.index+';' +
-                'var audios='+JSON.stringify(audioList)+';' +
-                'var startTime='+curTime+';' +
-                'function updateUI(a){' +
-                'document.getElementById("mn").textContent=a.name;' +
-                'document.getElementById("ma").textContent=a.artist;' +
-                'document.getElementById("mc").src=a.cover||"";' +
-                'document.title="\\u6b63\\u5728\\u64ad\\u653e - "+a.name;' +
-                'Array.from(document.querySelectorAll(".mi")).forEach(function(el,j){el.classList.toggle("active",j===idx)});}' +
-                'function play(i,seekTo){idx=i;var a=audios[i];if(!a)return;updateUI(a);pa.src=a.url;' +
-                'pa.onloadeddata=function(){if(typeof seekTo==="number"&&seekTo>0){pa.currentTime=seekTo;}pa.play().catch(function(){});pa.onloadeddata=null;};' +
-                '}' +
-                'document.getElementById("ml").addEventListener("click",function(e){var el=e.target.closest(".mi");if(el)play(Number(el.dataset.i));});' +
-                'pa.onended=function(){play((idx+1)%audios.length)};' +
-                'play(idx,startTime);' +
-                '<\/script></body></html>');
-            popup.document.close();
-
-            // 暂停主页面
-            ap.pause();
-            setStatus('已弹出小窗播放');
-        });
-
-        // ── 复制链接 ──
-        $('copyLinkBtn').addEventListener('click', function () {
-            var btn = this, url = window.location.href;
-            function done() {
-                btn.textContent = '✓ 已复制';
-                btn.classList.add('copied');
-                setTimeout(function () { btn.textContent = '🔗 邀请好友'; btn.classList.remove('copied'); }, 2200);
-            }
-            if (navigator.clipboard && window.isSecureContext) {
-                navigator.clipboard.writeText(url).then(done).catch(function () { fbCopy(url); done(); });
-            } else {
-                fbCopy(url); done();
-            }
-        });
-
-        function fbCopy(t) {
-            var ta = document.createElement('textarea');
-            ta.value = t; ta.style.cssText = 'position:fixed;left:-9999px';
-            document.body.appendChild(ta); ta.select();
-            try { document.execCommand('copy'); } catch (e) {}
-            document.body.removeChild(ta);
-        }
-
-        // ── 启动 ──
-        fetchPlaylist(API_ENDPOINTS, 0).then(initPlayer).catch(function (e) {
-            showError(e.message || '网络异常');
-        });
-    })();
-    </script>
-
+    <script src="../js/cloud_music.js"></script>
 </body>
 
 </html>
