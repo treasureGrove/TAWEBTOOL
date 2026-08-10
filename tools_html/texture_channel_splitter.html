@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="在线贴图通道分离工具，将RGBA贴图拆分为独立的R/G/B/A单通道图片，支持直方图预览分析。">
-    <meta name="keywords" content="通道分离,贴图拆分,RGBA分离,直方图,单通道,解包贴图,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
+    <meta name="description" content="在线贴图通道分离工具，将RGBA/TGA贴图拆分为独立的R/G/B/A单通道图片，支持直方图预览与TGA/PNG/JPG/WEBP导出。">
+    <meta name="keywords" content="通道分离,贴图拆分,RGBA分离,TGA解码,直方图,单通道,解包贴图,贴图工具,3D贴图,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/texture_channel_splitter.html">
 
     <meta property="og:title" content="贴图通道分离工具">
-    <meta property="og:description" content="在线贴图通道分离工具，将RGBA贴图拆分为独立的R/G/B/A单通道图片，支持直方图预览分析。">
+    <meta property="og:description" content="在线贴图通道分离工具，将RGBA/TGA贴图拆分为独立的R/G/B/A单通道图片，支持直方图预览与多格式导出。">
     <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/texture_channel_splitter.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="TA工具箱">
@@ -19,14 +19,13 @@
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="贴图通道分离工具">
-    <meta name="twitter:description" content="在线贴图通道分离工具，将RGBA贴图拆分为独立的R/G/B/A单通道图片，支持直方图预览分析。">
+    <meta name="twitter:description" content="在线贴图通道分离工具，支持TGA/PNG等格式的RGBA通道拆分与导出。">
     <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
     <title>贴图通道分离 - TA工具箱</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
     <link rel="stylesheet" href="../css/common.css">
     <link rel="stylesheet" href="../css/texture_channel_splitter.css">
-
     <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/icon/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
 </head>
@@ -39,98 +38,202 @@
     <div class="top_search"><input type="text" placeholder="搜索"></div>
 
     <div id="panel">
-        <div class="sp-head">
-            <h1>贴图通道分离工具</h1>
-            <p>将贴图拆分为 R / G / B / A 四个独立通道，支持灰度或着色输出，附带通道直方图与统计信息。</p>
-        </div>
+        <header class="sp-hero">
+            <div class="sp-hero-copy">
+                <div class="sp-eyebrow">
+                    <span class="sp-eyebrow-mark" aria-hidden="true"></span>
+                    TEXTURE LAB · CHANNEL EXTRACTOR
+                </div>
+                <h1>RGBA 通道分离</h1>
+                <p>拆解通道打包贴图，检查每个通道的数值分布，并以常用纹理格式独立导出。</p>
+            </div>
+            <div class="sp-privacy-pill" title="图片不会上传到服务器">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                <span><strong>本地处理</strong><small>文件不会上传</small></span>
+            </div>
+        </header>
 
-        <div class="sp-layout">
-            <!-- Left: Input -->
-            <div class="sp-left">
-                <section class="sp-section">
-                    <h2>输入贴图</h2>
-                    <label class="sp-drop-zone" id="spDropZone">
-                        <p>拖拽或点击上传图像</p>
-                        <small>支持 JPG / PNG / BMP / WEBP / TGA</small>
+        <main class="sp-workbench">
+            <aside class="sp-control-panel" aria-label="贴图输入与输出设置">
+                <section class="sp-control-section">
+                    <div class="sp-section-title">
+                        <span class="sp-step">01</span>
+                        <div><strong>源贴图</strong><small>选择要拆解的通道打包贴图</small></div>
+                    </div>
+
+                    <label class="sp-drop-zone" id="spDropZone" for="spFileInput">
+                        <span class="sp-drop-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24"><path d="M12 16V4"></path><path d="m7 9 5-5 5 5"></path><path d="M20 15v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4"></path></svg>
+                        </span>
+                        <strong>拖入贴图或点击选择</strong>
+                        <small>PNG · JPG · WEBP · BMP · TGA</small>
                     </label>
-                    <input type="file" id="spFileInput" accept="image/*" style="display:none">
-                    <div class="sp-src-preview"><canvas id="spSrcCanvas"></canvas></div>
-                    <div class="sp-info" id="spInfo">等待上传...</div>
+                    <input type="file" id="spFileInput" accept="image/png,image/jpeg,image/webp,image/bmp,.tga,.targa" hidden>
+
+                    <div class="sp-source-card" id="spSrcPreview" hidden>
+                        <div class="sp-source-stage"><canvas id="spSrcCanvas" aria-label="源贴图预览"></canvas></div>
+                        <div class="sp-source-name" id="spSourceName">—</div>
+                        <div class="sp-source-meta">
+                            <span><small>尺寸</small><strong id="spSourceDimensions">—</strong></span>
+                            <span><small>大小</small><strong id="spSourceSize">—</strong></span>
+                            <span><small>Alpha</small><strong id="spSourceAlpha">—</strong></span>
+                        </div>
+                        <button class="sp-text-button" id="spResetBtn" type="button">更换贴图</button>
+                    </div>
+
+                    <div class="sp-status is-idle" id="spStatus" role="status" aria-live="polite">
+                        <span class="sp-status-dot" aria-hidden="true"></span>
+                        <span id="spStatusText">等待选择源贴图</span>
+                    </div>
                 </section>
 
-                <section class="sp-section">
-                    <h2>输出设置</h2>
-                    <div class="sp-opt-row">
-                        <label>输出模式</label>
-                        <select id="spGrayMode">
-                            <option value="gray" selected>灰度（每通道独立灰度图）</option>
-                            <option value="color">着色（保留原始通道颜色）</option>
-                        </select>
+                <section class="sp-control-section sp-output-settings">
+                    <div class="sp-section-title">
+                        <span class="sp-step">02</span>
+                        <div><strong>输出设置</strong><small>选择预览方式与文件格式</small></div>
                     </div>
-                    <div class="sp-opt-row">
-                        <label>导出格式</label>
+
+                    <fieldset class="sp-fieldset">
+                        <legend>通道显示</legend>
+                        <div class="sp-segmented">
+                            <input type="radio" name="spGrayMode" id="spModeGray" value="gray" checked>
+                            <label for="spModeGray">灰度</label>
+                            <input type="radio" name="spGrayMode" id="spModeColor" value="color">
+                            <label for="spModeColor">通道着色</label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="sp-fieldset">
+                        <legend>Alpha 预览</legend>
+                        <div class="sp-segmented">
+                            <input type="radio" name="spAlphaMode" id="spAlphaValue" value="value" checked>
+                            <label for="spAlphaValue">数值灰度</label>
+                            <input type="radio" name="spAlphaMode" id="spAlphaOpacity" value="opacity">
+                            <label for="spAlphaOpacity">真实透明度</label>
+                        </div>
+                        <small class="sp-field-note">仅影响预览，导出始终保留 0–255 灰度数据</small>
+                    </fieldset>
+
+                    <label class="sp-select-field" for="spOutFormat">
+                        <span>导出格式</span>
                         <select id="spOutFormat">
-                            <option value="png" selected>PNG</option>
-                            <option value="jpg">JPG</option>
-                            <option value="webp">WEBP</option>
+                            <option value="png" selected>PNG · 无损</option>
+                            <option value="tga">TGA · 32 bit</option>
+                            <option value="jpg">JPG · 高质量</option>
+                            <option value="webp">WEBP · 高质量</option>
                         </select>
-                    </div>
-                    <button class="sp-btn" id="spSplitBtn" disabled>分离合并</button>
+                    </label>
+
+                    <button class="sp-primary-button" id="spSplitBtn" type="button" disabled>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"></path></svg>
+                        <span>生成四个通道</span>
+                    </button>
                 </section>
-            </div>
+            </aside>
 
-            <!-- Right: Channel outputs -->
-            <div class="sp-right">
-                <div style="display:flex;align-items:center;justify-content:space-between">
-                    <span style="font-size:14px;font-weight:600;color:var(--text-main)">通道输出</span>
-                    <button class="sp-dl-all-btn" id="spDlAllBtn" style="display:none">下载全部通道</button>
+            <section class="sp-results" aria-label="通道输出">
+                <header class="sp-results-head">
+                    <div>
+                        <span class="sp-results-kicker">OUTPUT PREVIEW</span>
+                        <h2>通道输出 <span>4 Channels</span></h2>
+                    </div>
+                    <button class="sp-download-all" id="spDlAllBtn" type="button" disabled>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                        下载全部
+                    </button>
+                </header>
+
+                <div class="sp-channel-grid" id="spChannelGrid">
+                    <article class="sp-channel-card channel-r" id="spCard_r">
+                        <div class="sp-channel-head">
+                            <span class="sp-channel-letter">R</span>
+                            <div><h3>Red Channel</h3><p>AO / ORM-R</p></div>
+                            <button class="sp-icon-button" id="spDlBtn_r" type="button" disabled aria-label="下载 R 通道">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                            </button>
+                        </div>
+                        <div class="sp-preview-stage">
+                            <canvas id="spCh_r" aria-label="R 通道预览"></canvas>
+                            <div class="sp-empty-state"><strong>R</strong><span>等待源贴图</span></div>
+                        </div>
+                        <div class="sp-stat-row">
+                            <span><small>MIN</small><strong id="spMin_r">—</strong></span>
+                            <span><small>MAX</small><strong id="spMax_r">—</strong></span>
+                            <span><small>AVG</small><strong id="spAvg_r">—</strong></span>
+                            <span><small>ACTIVE</small><strong id="spActive_r">—</strong></span>
+                        </div>
+                        <div class="sp-histogram"><canvas id="spHist_r" aria-label="R 通道直方图"></canvas></div>
+                    </article>
+
+                    <article class="sp-channel-card channel-g" id="spCard_g">
+                        <div class="sp-channel-head">
+                            <span class="sp-channel-letter">G</span>
+                            <div><h3>Green Channel</h3><p>Roughness / ORM-G</p></div>
+                            <button class="sp-icon-button" id="spDlBtn_g" type="button" disabled aria-label="下载 G 通道">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                            </button>
+                        </div>
+                        <div class="sp-preview-stage">
+                            <canvas id="spCh_g" aria-label="G 通道预览"></canvas>
+                            <div class="sp-empty-state"><strong>G</strong><span>等待源贴图</span></div>
+                        </div>
+                        <div class="sp-stat-row">
+                            <span><small>MIN</small><strong id="spMin_g">—</strong></span>
+                            <span><small>MAX</small><strong id="spMax_g">—</strong></span>
+                            <span><small>AVG</small><strong id="spAvg_g">—</strong></span>
+                            <span><small>ACTIVE</small><strong id="spActive_g">—</strong></span>
+                        </div>
+                        <div class="sp-histogram"><canvas id="spHist_g" aria-label="G 通道直方图"></canvas></div>
+                    </article>
+
+                    <article class="sp-channel-card channel-b" id="spCard_b">
+                        <div class="sp-channel-head">
+                            <span class="sp-channel-letter">B</span>
+                            <div><h3>Blue Channel</h3><p>Metallic / ORM-B</p></div>
+                            <button class="sp-icon-button" id="spDlBtn_b" type="button" disabled aria-label="下载 B 通道">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                            </button>
+                        </div>
+                        <div class="sp-preview-stage">
+                            <canvas id="spCh_b" aria-label="B 通道预览"></canvas>
+                            <div class="sp-empty-state"><strong>B</strong><span>等待源贴图</span></div>
+                        </div>
+                        <div class="sp-stat-row">
+                            <span><small>MIN</small><strong id="spMin_b">—</strong></span>
+                            <span><small>MAX</small><strong id="spMax_b">—</strong></span>
+                            <span><small>AVG</small><strong id="spAvg_b">—</strong></span>
+                            <span><small>ACTIVE</small><strong id="spActive_b">—</strong></span>
+                        </div>
+                        <div class="sp-histogram"><canvas id="spHist_b" aria-label="B 通道直方图"></canvas></div>
+                    </article>
+
+                    <article class="sp-channel-card channel-a" id="spCard_a">
+                        <div class="sp-channel-head">
+                            <span class="sp-channel-letter">A</span>
+                            <div><h3>Alpha Channel</h3><p>Opacity / Mask</p></div>
+                            <button class="sp-icon-button" id="spDlBtn_a" type="button" disabled aria-label="下载 A 通道">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+                            </button>
+                        </div>
+                        <div class="sp-preview-stage">
+                            <canvas id="spCh_a" aria-label="A 通道预览"></canvas>
+                            <div class="sp-empty-state"><strong>A</strong><span>等待源贴图</span></div>
+                        </div>
+                        <div class="sp-stat-row">
+                            <span><small>MIN</small><strong id="spMin_a">—</strong></span>
+                            <span><small>MAX</small><strong id="spMax_a">—</strong></span>
+                            <span><small>AVG</small><strong id="spAvg_a">—</strong></span>
+                            <span><small>ACTIVE</small><strong id="spActive_a">—</strong></span>
+                        </div>
+                        <div class="sp-histogram"><canvas id="spHist_a" aria-label="A 通道直方图"></canvas></div>
+                    </article>
                 </div>
-
-                <div class="sp-channel-grid">
-                    <div class="sp-channel-card">
-                        <div class="sp-channel-head">
-                            <h3><span class="dot r"></span>R 通道（AO / ORM-R）</h3>
-                            <button class="sp-dl-btn" id="spDlBtn_r">下载</button>
-                        </div>
-                        <canvas id="spCh_r"></canvas>
-                        <div class="sp-channel-info" id="spStats_r">—</div>
-                        <div class="sp-hist-wrap"><canvas id="spHist_r"></canvas><div class="sp-hist-label">直方图</div></div>
-                    </div>
-
-                    <div class="sp-channel-card">
-                        <div class="sp-channel-head">
-                            <h3><span class="dot g"></span>G 通道（Roughness / ORM-G）</h3>
-                            <button class="sp-dl-btn" id="spDlBtn_g">下载</button>
-                        </div>
-                        <canvas id="spCh_g"></canvas>
-                        <div class="sp-channel-info" id="spStats_g">—</div>
-                        <div class="sp-hist-wrap"><canvas id="spHist_g"></canvas><div class="sp-hist-label">直方图</div></div>
-                    </div>
-
-                    <div class="sp-channel-card">
-                        <div class="sp-channel-head">
-                            <h3><span class="dot b"></span>B 通道（Metallic / ORM-B）</h3>
-                            <button class="sp-dl-btn" id="spDlBtn_b">下载</button>
-                        </div>
-                        <canvas id="spCh_b"></canvas>
-                        <div class="sp-channel-info" id="spStats_b">—</div>
-                        <div class="sp-hist-wrap"><canvas id="spHist_b"></canvas><div class="sp-hist-label">直方图</div></div>
-                    </div>
-
-                    <div class="sp-channel-card">
-                        <div class="sp-channel-head">
-                            <h3><span class="dot a"></span>A 通道（Opacity / Emissive）</h3>
-                            <button class="sp-dl-btn" id="spDlBtn_a">下载</button>
-                        </div>
-                        <canvas id="spCh_a"></canvas>
-                        <div class="sp-channel-info" id="spStats_a">—</div>
-                        <div class="sp-hist-wrap"><canvas id="spHist_a"></canvas><div class="sp-hist-label">直方图</div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
 
+    <script src="../third_part/tga-decoder.js"></script>
+    <script src="../third_part/tga-encoder.js"></script>
     <script src="../js/texture_channel_splitter.js"></script>
 </body>
 

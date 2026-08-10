@@ -42,11 +42,25 @@
     <div id="panel">
         <div class="combine-head">
             <h1>ORM / RGBA 贴图通道合成</h1>
-            <p>拖拽上传即显示通道预览，节省空间。支持分辨率、Tiling、Wrap、格式与质量导出。</p>
+            <p>拖拽上传即显示通道预览，支持 PNG / JPG / WEBP / BMP / TGA 输入，以及分辨率、Tiling、Wrap 与多格式导出。</p>
         </div>
 
         <div class="combine-layout">
             <section class="left-pane">
+                <div class="workflow-bar">
+                    <div class="workflow-heading">
+                        <b>通道工作流</b>
+                        <span>切换贴图的通道语义</span>
+                    </div>
+                    <div class="workflow-switch" role="radiogroup" aria-label="通道工作流">
+                        <input type="radio" name="rgbaWorkflow" id="workflowOrm" value="orm" checked>
+                        <label for="workflowOrm">ORM</label>
+                        <input type="radio" name="rgbaWorkflow" id="workflowSam" value="sam">
+                        <label for="workflowSam">SAM</label>
+                    </div>
+                    <code id="workflowProperty">_ORMMap("ORM Map(R:AO G:Roughness B:Metallic)", 2D) = "white" {}</code>
+                </div>
+
                 <div class="control-grid3">
                     <label>分辨率预设<select id="rgbaPreset"><option value="512">512 x 512</option><option value="1024" selected>1024 x 1024</option><option value="2048">2048 x 2048</option><option value="4096">4096 x 4096</option><option value="custom">自定义</option></select></label>
                     <label>边长（正方形）<input type="number" id="outSize" min="1" max="8192" value="1024"></label>
@@ -55,9 +69,10 @@
 
                 <div class="channel-controls">
                     <article class="channel-card">
-                        <h3>R（AO）</h3>
-                        <div class="card-body"><label class="dropzone" for="rImg" id="rDrop"><span>拖拽或点击上传 R</span></label><input type="file" id="rImg" accept="image/*">
+                        <h3 id="rChannelTitle">R（AO）</h3>
+                        <div class="card-body"><label class="dropzone" for="rImg" id="rDrop"><span>拖拽或点击上传 R</span></label><input type="file" id="rImg" accept="image/*,.tga,.targa">
                         <div class="card-opts">
+                            <label class="fallback-label">空通道填充<select id="rFallback"><option value="0" selected>黑色 · 0</option><option value="255">白色 · 255</option></select></label>
                             <label class="source-ch-label">取源通道<select id="rSrcCh"><option value="lum" selected>亮度</option><option value="0">R</option><option value="1">G</option><option value="2">B</option><option value="3">A</option></select></label>
                             <div class="tile-row"><span>Tile X</span><input id="rTileX" type="range" min="-10" max="10" step="0.01" value="1"><input id="rTileXNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
                             <div class="tile-row"><span>Tile Y</span><input id="rTileY" type="range" min="-10" max="10" step="0.01" value="1"><input id="rTileYNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
@@ -65,9 +80,10 @@
                         </div></div>
                     </article>
                     <article class="channel-card">
-                        <h3>G（Roughness）</h3>
-                        <div class="card-body"><label class="dropzone" for="gImg" id="gDrop"><span>拖拽或点击上传 G</span></label><input type="file" id="gImg" accept="image/*">
+                        <h3 id="gChannelTitle">G（Roughness）</h3>
+                        <div class="card-body"><label class="dropzone" for="gImg" id="gDrop"><span>拖拽或点击上传 G</span></label><input type="file" id="gImg" accept="image/*,.tga,.targa">
                         <div class="card-opts">
+                            <label class="fallback-label">空通道填充<select id="gFallback"><option value="0" selected>黑色 · 0</option><option value="255">白色 · 255</option></select></label>
                             <label class="source-ch-label">取源通道<select id="gSrcCh"><option value="lum" selected>亮度</option><option value="0">R</option><option value="1">G</option><option value="2">B</option><option value="3">A</option></select></label>
                             <div class="tile-row"><span>Tile X</span><input id="gTileX" type="range" min="-10" max="10" step="0.01" value="1"><input id="gTileXNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
                             <div class="tile-row"><span>Tile Y</span><input id="gTileY" type="range" min="-10" max="10" step="0.01" value="1"><input id="gTileYNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
@@ -75,9 +91,10 @@
                         </div></div>
                     </article>
                     <article class="channel-card">
-                        <h3>B（Metallic）</h3>
-                        <div class="card-body"><label class="dropzone" for="bImg" id="bDrop"><span>拖拽或点击上传 B</span></label><input type="file" id="bImg" accept="image/*">
+                        <h3 id="bChannelTitle">B（Metallic）</h3>
+                        <div class="card-body"><label class="dropzone" for="bImg" id="bDrop"><span>拖拽或点击上传 B</span></label><input type="file" id="bImg" accept="image/*,.tga,.targa">
                         <div class="card-opts">
+                            <label class="fallback-label">空通道填充<select id="bFallback"><option value="0" selected>黑色 · 0</option><option value="255">白色 · 255</option></select></label>
                             <label class="source-ch-label">取源通道<select id="bSrcCh"><option value="lum" selected>亮度</option><option value="0">R</option><option value="1">G</option><option value="2">B</option><option value="3">A</option></select></label>
                             <div class="tile-row"><span>Tile X</span><input id="bTileX" type="range" min="-10" max="10" step="0.01" value="1"><input id="bTileXNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
                             <div class="tile-row"><span>Tile Y</span><input id="bTileY" type="range" min="-10" max="10" step="0.01" value="1"><input id="bTileYNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
@@ -85,9 +102,10 @@
                         </div></div>
                     </article>
                     <article class="channel-card">
-                        <h3>A（可选）</h3>
-                        <div class="card-body"><label class="dropzone" for="aImg" id="aDrop"><span>拖拽或点击上传 A</span></label><input type="file" id="aImg" accept="image/*">
+                        <h3 id="aChannelTitle">A（可选）</h3>
+                        <div class="card-body"><label class="dropzone" for="aImg" id="aDrop"><span>拖拽或点击上传 A</span></label><input type="file" id="aImg" accept="image/*,.tga,.targa">
                         <div class="card-opts">
+                            <label class="fallback-label">空通道填充<select id="aFallback"><option value="0">黑色 · 0</option><option value="255" selected>白色 · 255</option></select></label>
                             <label class="source-ch-label">取源通道<select id="aSrcCh"><option value="3" selected>A</option><option value="lum">亮度</option><option value="0">R</option><option value="1">G</option><option value="2">B</option></select></label>
                             <div class="tile-row"><span>Tile X</span><input id="aTileX" type="range" min="-10" max="10" step="0.01" value="1"><input id="aTileXNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
                             <div class="tile-row"><span>Tile Y</span><input id="aTileY" type="range" min="-10" max="10" step="0.01" value="1"><input id="aTileYNum" type="number" min="-10" max="10" step="0.01" value="1"></div>
@@ -107,7 +125,7 @@
 
             <section class="right-pane">
                 <div class="pv pv-out">
-                    <b>输出预览</b>
+                    <b id="rgbaPreviewTitle">输出预览 · ORM</b>
                     <canvas id="rgbaCanvas" width="1024" height="1024"></canvas>
                     <div class="alpha-mult-row">
                         <span>Alpha Multiplier</span>
@@ -119,6 +137,7 @@
         </div>
     </div>
 
+    <script src="../third_part/tga-decoder.js"></script>
     <script src="../third_part/tga-encoder.js"></script>
     <script src="../third_part/dds-encoder.js"></script>
     <script src="../js/combine_rgba.js" defer></script>

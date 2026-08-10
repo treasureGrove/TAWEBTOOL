@@ -2,12 +2,77 @@
   function $(id) { return document.getElementById(id); }
 
   const channelIds = ['r', 'g', 'b', 'a'];
+  const workflowConfigs = {
+    orm: {
+      label: 'ORM',
+      property: '_ORMMap("ORM Map(R:AO G:Roughness B:Metallic)", 2D) = "white" {}',
+      channels: { r: 'R（AO）', g: 'G（Roughness）', b: 'B（Metallic）', a: 'A（可选）' }
+    },
+    sam: {
+      label: 'SAM',
+      property: '_CombinedMap("Combined Map(R:smoothness G:AO B:Matallic)", 2D) = "white" {}',
+      channels: { r: 'R（Smoothness）', g: 'G（AO）', b: 'B（Metallic）', a: 'A（可选）' }
+    }
+  };
 
   function setStatus(msg) {
     $('rgbaStatus').textContent = msg;
   }
 
-  function readFileAsImage(file) {
+  function getWorkflow() {
+    const selected = document.querySelector('input[name="rgbaWorkflow"]:checked');
+    return selected && workflowConfigs[selected.value] ? selected.value : 'orm';
+  }
+
+  function applyWorkflow(workflow, silent) {
+    const key = workflowConfigs[workflow] ? workflow : 'orm';
+    const config = workflowConfigs[key];
+    channelIds.forEach((channel) => {
+      $(`${channel}ChannelTitle`).textContent = config.channels[channel];
+    });
+    $('workflowProperty').textContent = config.property;
+    $('rgbaPreviewTitle').textContent = `输出预览 · ${config.label}`;
+    if (!silent) {
+      setStatus(`已切换 ${config.label}：${config.channels.r} / ${config.channels.g} / ${config.channels.b}`);
+    }
+  }
+
+  function isTgaFile(file) {
+    return /\.(tga|targa)$/i.test(file && file.name ? file.name : '');
+  }
+
+  function isSupportedInputFile(file) {
+    return Boolean(file && (
+      (file.type && file.type.startsWith('image/')) ||
+      /\.(png|jpe?g|webp|bmp|tga|targa)$/i.test(file.name || '')
+    ));
+  }
+
+  async function readFileAsImage(file) {
+    if (isTgaFile(file)) {
+      if (typeof TGADecoder === 'undefined') throw new Error('TGA 解码器未加载');
+      const decoded = await TGADecoder.createImageDataFromFile(file);
+      if (!decoded.width || !decoded.height || !decoded.data || decoded.data.length !== decoded.width * decoded.height * 4) {
+        throw new Error('TGA 像素数据异常');
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = decoded.width;
+      canvas.height = decoded.height;
+      const context = canvas.getContext('2d');
+      const imageData = context.createImageData(decoded.width, decoded.height);
+      imageData.data.set(decoded.data);
+      context.putImageData(imageData, 0, 0);
+      canvas._rawSourceData = {
+        width: decoded.width,
+        height: decoded.height,
+        data: decoded.data instanceof Uint8ClampedArray
+          ? decoded.data
+          : new Uint8ClampedArray(decoded.data)
+      };
+      return canvas;
+    }
+
     return new Promise((resolve, reject) => {
       const img = new Image();
       const url = URL.createObjectURL(file);
@@ -25,6 +90,7 @@
 
   // keep track of object URLs for previews so we can revoke them
   const _previewURLs = {};
+  const _sourceCache = {};
 
   function setDropzonePreview(channel, imgSrc) {
     const dropzone = $(`${channel}Drop`);
@@ -52,6 +118,7 @@
   }
 
   function readSourceData(img) {
+    if (img && img._rawSourceData) return img._rawSourceData;
     const c = document.createElement('canvas');
     c.width = img.width;
     c.height = img.height;
@@ -86,6 +153,10 @@
     return src.data[idx + (comp || 0)];
   }
 
+  function getFallbackValue(channel) {
+    return $(`${channel}Fallback`).value === '255' ? 255 : 0;
+  }
+
   function getOutputSize() {
     const size = Math.max(1, Math.min(8192, parseInt($('outSize').value, 10) || 1024));
     $('outSize').value = size;
@@ -95,14 +166,13 @@
   function updatePreviewByInput(channel) {
     const input = $(`${channel}Img`);
     const file = input.files[0];
+    delete _sourceCache[channel];
     if (!file) {
       setDropzonePreview(channel, null);
       return;
     }
-    // show dropzone preview using the File (so preview URLs are tracked)
-    setDropzonePreview(channel, file);
-    // still load image for composition
-    readFileAsImage(file).then((img) => {
+    loadChannelImage(channel).then((img) => {
+      setDropzonePreview(channel, isTgaFile(file) ? img.toDataURL('image/png') : file);
       setStatus(`已加载 ${channel.toUpperCase()} 通道：${file.name}`);
       updateCanvasPreview();
     }).catch(() => {
@@ -110,6 +180,16 @@
       setStatus(`加载 ${channel.toUpperCase()} 通道失败，请检查图片格式。`);
       updateCanvasPreview();
     });
+  }
+
+  async function loadChannelImage(channel) {
+    const file = $(`${channel}Img`).files[0];
+    if (!file) return null;
+    const cached = _sourceCache[channel];
+    if (cached && cached.file === file) return cached.image;
+    const image = await readFileAsImage(file);
+    _sourceCache[channel] = { file, image };
+    return image;
   }
 
   function bindTileSlider(channel, axis) {
@@ -136,6 +216,12 @@
     bindTileSlider(channel, 'Y');
     if (wrap) wrap.addEventListener('change', updateCanvasPreview);
     if (srcCh) srcCh.addEventListener('change', updateCanvasPreview);
+    const fallback = $(`${channel}Fallback`);
+    if (fallback) fallback.addEventListener('change', () => {
+      const valueName = fallback.value === '255' ? '白色' : '黑色';
+      setStatus(`${channel.toUpperCase()} 空通道将使用${valueName}填充`);
+      updateCanvasPreview();
+    });
 
     ['dragenter', 'dragover'].forEach((evt) => {
       dropzone.addEventListener(evt, (e) => {
@@ -153,7 +239,10 @@
 
     dropzone.addEventListener('drop', (e) => {
       const file = e.dataTransfer.files[0];
-      if (!file || !file.type.startsWith('image/')) return;
+      if (!isSupportedInputFile(file)) {
+        setStatus('不支持此输入格式，请选择 PNG / JPG / WEBP / BMP / TGA。');
+        return;
+      }
       const dt = new DataTransfer();
       dt.items.add(file);
       input.files = dt.files;
@@ -163,8 +252,7 @@
 
   async function getLoadedImages() {
     const loadByChannel = async (ch) => {
-      const file = $(`${ch}Img`).files[0];
-      return file ? readFileAsImage(file) : null;
+      return loadChannelImage(ch);
     };
     return {
       r: await loadByChannel('r'),
@@ -188,7 +276,7 @@
 
     const format = $('rgbaFormat').value;
     const quality = Math.max(0.1, Math.min(1, parseFloat($('rgbaQuality').value) || 1));
-    const fileName = `combined_rgba_${w}x${h}.${format}`;
+    const fileName = `combined_${getWorkflow()}_${w}x${h}.${format}`;
 
     if (format === 'tga') {
       try {
@@ -249,6 +337,12 @@
       b: imgs.b ? { src: readSourceData(imgs.b), tx: parseFloat($('bTileX').value) || 1, ty: parseFloat($('bTileY').value) || 1, wrap: $('bWrap').value, comp: parseSrcCh($('bSrcCh').value) } : null,
       a: imgs.a ? { src: readSourceData(imgs.a), tx: parseFloat($('aTileX').value) || 1, ty: parseFloat($('aTileY').value) || 1, wrap: $('aWrap').value, comp: parseSrcCh($('aSrcCh').value) } : null
     };
+    const fallback = {
+      r: getFallbackValue('r'),
+      g: getFallbackValue('g'),
+      b: getFallbackValue('b'),
+      a: getFallbackValue('a')
+    };
 
     const out = outCtx.createImageData(w, h);
     for (let y = 0; y < h; y += 1) {
@@ -256,10 +350,10 @@
         const i = (y * w + x) * 4;
         const u = x / Math.max(1, w - 1);
         const v = y / Math.max(1, h - 1);
-        out.data[i] = channels.r ? sampleComponent(channels.r.src, u * channels.r.tx, v * channels.r.ty, channels.r.wrap, channels.r.comp) : 0;
-        out.data[i + 1] = channels.g ? sampleComponent(channels.g.src, u * channels.g.tx, v * channels.g.ty, channels.g.wrap, channels.g.comp) : 0;
-        out.data[i + 2] = channels.b ? sampleComponent(channels.b.src, u * channels.b.tx, v * channels.b.ty, channels.b.wrap, channels.b.comp) : 0;
-        const rawA = channels.a ? sampleComponent(channels.a.src, u * channels.a.tx, v * channels.a.ty, channels.a.wrap, channels.a.comp) : 255;
+        out.data[i] = channels.r ? sampleComponent(channels.r.src, u * channels.r.tx, v * channels.r.ty, channels.r.wrap, channels.r.comp) : fallback.r;
+        out.data[i + 1] = channels.g ? sampleComponent(channels.g.src, u * channels.g.tx, v * channels.g.ty, channels.g.wrap, channels.g.comp) : fallback.g;
+        out.data[i + 2] = channels.b ? sampleComponent(channels.b.src, u * channels.b.tx, v * channels.b.ty, channels.b.wrap, channels.b.comp) : fallback.b;
+        const rawA = channels.a ? sampleComponent(channels.a.src, u * channels.a.tx, v * channels.a.ty, channels.a.wrap, channels.a.comp) : fallback.a;
         out.data[i + 3] = Math.round(rawA * alphaMult);
       }
     }
@@ -268,6 +362,13 @@
   }
 
   function bindGlobalControl() {
+    document.querySelectorAll('input[name="rgbaWorkflow"]').forEach((input) => {
+      input.addEventListener('change', () => {
+        applyWorkflow(input.value, true);
+        updateCanvasPreview().then(() => applyWorkflow(input.value, false));
+      });
+    });
+
     $('rgbaPreset').addEventListener('change', (e) => {
       if (e.target.value === 'custom') return;
       const size = parseInt(e.target.value, 10);
@@ -322,6 +423,7 @@
   function init() {
     channelIds.forEach(bindDropzone);
     bindGlobalControl();
+    applyWorkflow(getWorkflow(), true);
     // initial preview
     updateCanvasPreview();
   }
