@@ -139,10 +139,11 @@
                 </button>
                 <h3 class="cm-login-title">扫码登录</h3>
                 <p class="cm-login-sub">使用网易云音乐 App 扫描二维码</p>
-                <div class="cm-qr-box">
+                <div class="cm-qr-box is-loading" id="cmQRBox">
                     <img id="cmQRImg" src="" alt="二维码">
                 </div>
                 <p class="cm-login-hint" id="cmQRHint">正在生成二维码...</p>
+                <button class="cm-qr-refresh" id="cmQRRefresh" type="button" hidden>重新获取二维码</button>
             </div>
         </div>
     </main>

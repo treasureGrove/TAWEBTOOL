@@ -43,19 +43,58 @@
   }
 
   /* ── API helpers ── */
-  async function apiGet(path, params) {
+  function readSessionCookie() {
+    try {
+      return localStorage.getItem(LS_COOKIE_KEY) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function saveSessionCookie(cookie) {
+    if (!cookie) return;
+    try {
+      localStorage.setItem(LS_COOKIE_KEY, cookie);
+    } catch (e) {}
+  }
+
+  function clearSessionCookie() {
+    try {
+      localStorage.removeItem(LS_COOKIE_KEY);
+    } catch (e) {}
+  }
+
+  async function apiGet(path, params, options) {
+    options = options || {};
     var url = API_BASE + path;
+    var qs = new URLSearchParams();
     if (params && Object.keys(params).length) {
-      var qs = new URLSearchParams();
       Object.keys(params).forEach(function (k) {
         if (params[k] !== undefined && params[k] !== null && params[k] !== '') qs.set(k, params[k]);
       });
-      url += '?' + qs.toString();
     }
-    var res = await fetch(url, { credentials: 'include' });
+
+    var fetchOptions = { credentials: 'include' };
+    var sessionCookie = options.noSession ? '' : readSessionCookie();
+    if (sessionCookie) {
+      // Cookie 放在 POST body 中，避免网易云登录凭据出现在 URL 与访问日志里。
+      fetchOptions.method = 'POST';
+      fetchOptions.headers = { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' };
+      fetchOptions.body = new URLSearchParams({ cookie: sessionCookie }).toString();
+      // 远端 API 会缓存响应；时间戳可隔离不同用户的登录态请求。
+      if (!qs.has('timestamp')) qs.set('timestamp', Date.now());
+    }
+    if (qs.toString()) url += '?' + qs.toString();
+
+    var res = await fetch(url, fetchOptions);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     var json = await res.json();
-    if (json.code !== 200) throw new Error(json.message || json.msg || '接口错误 ' + json.code);
+    var code = json.code;
+    if (code == null && json.data && json.data.code != null) code = json.data.code;
+    var acceptedCodes = options.acceptCodes || [200];
+    if (acceptedCodes.indexOf(code) === -1) {
+      throw new Error(json.message || json.msg || '接口错误 ' + (code == null ? '未知' : code));
+    }
     return json;
   }
 
@@ -428,26 +467,47 @@
   }
 
   function closeLoginModal() {
+    stopQRPolling();
     var overlay = $('cmLoginOverlay');
     if (overlay) overlay.style.display = 'none';
   }
 
   var qrTimer = null;
   var qrKey = '';
+  var qrRunId = 0;
+
+  function stopQRPolling() {
+    if (qrTimer) clearTimeout(qrTimer);
+    qrTimer = null;
+    qrKey = '';
+    qrRunId++;
+  }
+
+  function setQRState(message, stateName, canRefresh) {
+    var box = $('cmQRBox');
+    var hint = $('cmQRHint');
+    var refresh = $('cmQRRefresh');
+    if (hint) hint.textContent = message;
+    if (box) box.className = 'cm-qr-box' + (stateName ? ' is-' + stateName : '');
+    if (refresh) refresh.hidden = !canRefresh;
+  }
 
   async function startQRLogin() {
+    stopQRPolling();
+    var runId = qrRunId;
     var img = $('cmQRImg');
-    var hint = $('cmQRHint');
     if (img) img.src = '';
-    if (hint) hint.textContent = '正在生成二维码...';
+    setQRState('正在生成二维码...', 'loading', false);
 
     try {
-      var keyData = await apiGet('/login/qr/key', { timestamp: Date.now() });
+      var keyData = await apiGet('/login/qr/key', { timestamp: Date.now() }, { noSession: true });
+      if (runId !== qrRunId) return;
       qrKey = keyData.data && keyData.data.unikey;
       if (!qrKey) throw new Error('未获取到二维码 key');
 
       // 生成二维码图片（用 API 的 qr create 返回 base64，或本地生成）
-      var createData = await apiGet('/login/qr/create', { key: qrKey, qrimg: true });
+      var createData = await apiGet('/login/qr/create', { key: qrKey, qrimg: true, timestamp: Date.now() }, { noSession: true });
+      if (runId !== qrRunId) return;
       var qrImgData = createData.data && createData.data.qrimg;
       if (qrImgData && img) {
         img.src = qrImgData;
@@ -456,10 +516,11 @@
         var qrUrl = createData.data && createData.data.qrurl;
         if (img) img.src = buildQrCode(qrUrl);
       }
-      if (hint) hint.textContent = '请使用网易云音乐 App 扫码登录';
-      pollQR();
+      setQRState('请使用网易云音乐 App 扫码登录', 'ready', false);
+      pollQR(runId, 1200);
     } catch (e) {
-      if (hint) hint.textContent = '生成二维码失败：' + e.message;
+      if (runId !== qrRunId) return;
+      setQRState('生成二维码失败：' + e.message, 'error', true);
     }
   }
 
@@ -470,36 +531,45 @@
     return text || '';
   }
 
-  function pollQR() {
-    if (qrTimer) clearInterval(qrTimer);
-    qrTimer = setInterval(async function () {
-      if (!$('cmLoginOverlay') || $('cmLoginOverlay').style.display === 'none') {
-        clearInterval(qrTimer);
-        return;
-      }
+  function pollQR(runId, delay) {
+    if (qrTimer) clearTimeout(qrTimer);
+    qrTimer = setTimeout(async function () {
+      if (runId !== qrRunId || !$('cmLoginOverlay') || $('cmLoginOverlay').style.display === 'none') return;
       try {
-        var data = await apiGet('/login/qr/check', { key: qrKey, timestamp: Date.now() });
+        var data = await apiGet(
+          '/login/qr/check',
+          { key: qrKey, timestamp: Date.now() },
+          { noSession: true, acceptCodes: [800, 801, 802, 803] }
+        );
+        if (runId !== qrRunId) return;
         var code = data.code;
-        var hint = $('cmQRHint');
         if (code === 800) {
-          if (hint) hint.textContent = '二维码已过期，请刷新重试';
-          clearInterval(qrTimer);
+          setQRState('二维码已过期，请重新获取', 'expired', true);
         } else if (code === 801) {
-          if (hint) hint.textContent = '等待扫码...';
+          setQRState('等待扫码...', 'ready', false);
+          pollQR(runId, 1800);
         } else if (code === 802) {
-          if (hint) hint.textContent = '已扫码，请确认登录';
+          setQRState('已扫码，请在 App 中确认登录', 'scanned', false);
+          pollQR(runId, 1000);
         } else if (code === 803) {
-          if (hint) hint.textContent = '登录成功！';
-          clearInterval(qrTimer);
-          // 保存 cookie（API 已通过 Set-Cookie 下发，浏览器自动保存）
-          await checkLogin();
+          setQRState('登录成功，正在同步账号...', 'success', false);
+          saveSessionCookie(data.cookie);
+          var profile = await checkLogin();
+          if (runId !== qrRunId) return;
+          if (!profile) {
+            setQRState('登录凭据未生效，请重新获取二维码', 'error', true);
+            return;
+          }
           closeLoginModal();
+          renderHeader();
           loadPlaylists();
         }
       } catch (e) {
-        // 轮询出错忽略，继续
+        if (runId !== qrRunId) return;
+        setQRState('网络波动，正在重试...', 'loading', false);
+        pollQR(runId, 2500);
       }
-    }, 2000);
+    }, delay);
   }
 
   async function checkLogin() {
@@ -514,7 +584,13 @@
     }
   }
 
-  function logoutAccount() {
+  async function logoutAccount() {
+    try {
+      await apiGet('/logout', { timestamp: Date.now() });
+    } catch (e) {
+      // 即使远端退出失败，也要清理本机登录态。
+    }
+    clearSessionCookie();
     state.profile = null;
     state.playlists = [];
     state.tracks = [];
@@ -553,6 +629,8 @@
     // 关闭登录弹窗
     var close = $('cmLoginClose');
     if (close) close.addEventListener('click', closeLoginModal);
+    var refresh = $('cmQRRefresh');
+    if (refresh) refresh.addEventListener('click', startQRLogin);
     var overlay = $('cmLoginOverlay');
     if (overlay) overlay.addEventListener('click', function (e) {
       if (e.target === overlay) closeLoginModal();
