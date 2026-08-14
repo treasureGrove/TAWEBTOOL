@@ -403,9 +403,19 @@ function initTopSearch() {
     });
 })();
 
+function loadFeedbackWidget() {
+    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
+    var script = document.createElement('script');
+    script.src = (isRoot ? '' : '../') + 'js/feedback.js';
+    script.async = true;
+    script.onerror = function () { /* 反馈入口加载失败不影响主功能 */ };
+    document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     injectMenu();
     markCurrentMenuItem();
     initLeftMenu();
     initTopSearch();
+    loadFeedbackWidget();
 });

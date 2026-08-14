@@ -1,10 +1,45 @@
 import { createServer } from 'node:http';
 import { request as httpsRequest } from 'node:https';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const PORT = process.env.CHAT_PROXY_PORT || 8799;
 const HOST = '127.0.0.1';
+
+const FEEDBACK_DIR = join(import.meta.dirname, '..', 'data', 'feedback');
+const FEEDBACK_ENTRIES = join(FEEDBACK_DIR, 'entries.json');
+const FEEDBACK_IMAGES = join(FEEDBACK_DIR, 'images');
+
+function ensureFeedbackDirs() {
+  try { mkdirSync(FEEDBACK_IMAGES, { recursive: true }); } catch {}
+}
+
+function saveFeedbackImage(dataUrl) {
+  try {
+    if (typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) return '';
+    const match = /^data:image\/(png|jpe?g|gif|webp);base64,([\s\S]+)$/i.exec(dataUrl);
+    if (!match) return '';
+    const ext = match[1].toLowerCase().replace('jpeg', 'jpg');
+    const buf = Buffer.from(match[2], 'base64');
+    if (!buf.length || buf.length > 5 * 1024 * 1024) return '';
+    const name = 'img-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    writeFileSync(join(FEEDBACK_IMAGES, name), buf);
+    return 'data/feedback/images/' + name;
+  } catch (err) {
+    console.error('[feedback] save image failed:', err.message);
+    return '';
+  }
+}
+
+function appendFeedbackEntry(entry) {
+  let list = [];
+  try {
+    list = JSON.parse(readFileSync(FEEDBACK_ENTRIES, 'utf8'));
+  } catch {}
+  if (!Array.isArray(list)) list = [];
+  list.push(entry);
+  writeFileSync(FEEDBACK_ENTRIES, JSON.stringify(list, null, 2) + '\n');
+}
 
 function loadKeys() {
   const keys = {};
@@ -389,6 +424,76 @@ const server = createServer(async (req, res) => {
       res.writeHead(502, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: { message: err.message } }));
     }
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/api/feedback') {
+    const chunks = [];
+    let total = 0;
+    let aborted = false;
+    req.on('data', (c) => {
+      total += c.length;
+      if (total > 30 * 1024 * 1024) {
+        aborted = true;
+        req.destroy();
+        return;
+      }
+      chunks.push(c);
+    });
+    req.on('end', () => {
+      if (aborted) return;
+      try {
+        const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+
+        const email = String(payload.email || '').trim().slice(0, 200);
+        if (!email || !email.includes('@') || email.indexOf('@') === email.length - 1) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: '请填写有效的邮箱地址' } }));
+          return;
+        }
+
+        const message = String(payload.message || '').trim().slice(0, 5000);
+        if (!message) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: '请填写反馈内容' } }));
+          return;
+        }
+
+        ensureFeedbackDirs();
+
+        const images = [];
+        const rawImages = Array.isArray(payload.images) ? payload.images.slice(0, 3) : [];
+        for (const img of rawImages) {
+          const saved = saveFeedbackImage(img);
+          if (saved) images.push(saved);
+        }
+
+        const forwarded = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
+        const entry = {
+          id: 'fb-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+          email,
+          qq: String(payload.qq || '').trim().slice(0, 50),
+          wechat: String(payload.wechat || '').trim().slice(0, 50),
+          type: String(payload.type || 'other').trim().slice(0, 30),
+          message,
+          images,
+          page: String(payload.page || '').trim().slice(0, 300),
+          ip: forwarded.split(',')[0].trim(),
+          userAgent: String(req.headers['user-agent'] || '').slice(0, 300),
+          createdAt: new Date().toISOString(),
+          emailed: false
+        };
+
+        appendFeedbackEntry(entry);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ ok: true, id: entry.id }));
+      } catch (err) {
+        console.error('[feedback] error:', err.message);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: { message: '请求格式错误' } }));
+      }
+    });
     return;
   }
 
