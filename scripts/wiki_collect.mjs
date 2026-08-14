@@ -12,6 +12,8 @@ loadDotEnv(path.join(ROOT, '.env'));
 const SOURCES_FILE = path.join(ROOT, 'data/wiki_sources.json');
 const ENTRIES_FILE = path.join(ROOT, 'data/ta_wiki_entries.json');
 const MEMORY_FILE = path.join(ROOT, 'data/wiki_memory.json');
+const IMAGES_DIR = path.join(ROOT, 'data', 'wiki_images');
+const IMAGE_MAX_BYTES = 2 * 1024 * 1024;
 const MAX_PER_SOURCE = Number(process.env.WIKI_MAX_PER_SOURCE || 5);
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
@@ -334,17 +336,24 @@ async function readJson(file, fallback) {
   }
 }
 
-async function fetchText(url, headers = {}) {
-  const response = await fetch(url, {
-    headers: {
-      'User-Agent': 'TAWEBTOOL-WikiCollector/1.0',
-      ...headers
+async function fetchText(url, headers = {}, timeoutMs = 20000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'TAWEBTOOL-WikiCollector/1.0',
+        ...headers
+      },
+      signal: controller.signal
+    });
+    if (!response.ok) {
+      throw new Error(`${url} HTTP ${response.status}`);
     }
-  });
-  if (!response.ok) {
-    throw new Error(`${url} HTTP ${response.status}`);
+    return await response.text();
+  } finally {
+    clearTimeout(timer);
   }
-  return response.text();
 }
 
 async function fetchJson(url, headers = {}) {
@@ -359,6 +368,100 @@ async function fetchJson(url, headers = {}) {
     throw new Error(`${url} HTTP ${response.status}`);
   }
   return response.json();
+}
+
+function resolveUrl(url, base) {
+  if (!url) return '';
+  try {
+    return new URL(url, base || undefined).href;
+  } catch (err) {
+    return url;
+  }
+}
+
+const imageNoisePatterns = [
+  /logo/i,
+  /icon/i,
+  /avatar/i,
+  /sprite/i,
+  /spacer/i,
+  /pixel/i,
+  /tracking/i,
+  /banner-ad/i,
+  /ads\./i,
+  /gravatar/i,
+  /favicon/i,
+  /cookie/i
+];
+
+function extractImage(html, baseUrl) {
+  if (!html) return '';
+  const candidates = [];
+
+  const og = /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i.exec(html) ||
+    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i.exec(html);
+  if (og) candidates.push(og[1]);
+
+  const tw = /<meta[^>]+(?:name|property)=["']twitter:image["'][^>]+content=["']([^"']+)["']/i.exec(html) ||
+    /<meta[^>]+content=["']([^"']+)["'][^>]+(?:name|property)=["']twitter:image["']/i.exec(html);
+  if (tw) candidates.push(tw[1]);
+
+  const media = /<media:content[^>]+url=["']([^"']+)["']/i.exec(html) ||
+    /<media:thumbnail[^>]+url=["']([^"']+)["']/i.exec(html);
+  if (media) candidates.push(media[1]);
+
+  const enclosure = /<enclosure[^>]+url=["']([^"']+)["']/i.exec(html);
+  if (enclosure) candidates.push(enclosure[1]);
+
+  const imgs = [...html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)].map((m) => m[1]);
+  candidates.push(...imgs);
+
+  return candidates
+    .map((url) => resolveUrl(url, baseUrl))
+    .filter((url) => /^https?:\/\//i.test(url))
+    .filter((url) => !imageNoisePatterns.some((pattern) => pattern.test(url)))
+    .filter((url) => !/\.(svg|ico)(\?|$)/i.test(url))[0] || '';
+}
+
+function imageExtension(url, contentType) {
+  const ct = String(contentType || '').toLowerCase();
+  if (ct.includes('webp')) return '.webp';
+  if (ct.includes('png')) return '.png';
+  if (ct.includes('gif')) return '.gif';
+  if (ct.includes('avif')) return '.avif';
+  if (ct.includes('jpeg') || ct.includes('jpg')) return '.jpg';
+  const match = /\.(jpe?g|png|webp|gif|avif)(\?|$)/i.exec(url);
+  if (match) return '.' + match[1].toLowerCase().replace('jpeg', 'jpg');
+  return '.jpg';
+}
+
+function imageFileName(entry) {
+  const hash = crypto.createHash('sha1')
+    .update(String(entry.sourceUrl || entry.id || entry.title || ''))
+    .digest('hex')
+    .slice(0, 16);
+  return 'img-' + hash;
+}
+
+async function downloadImage(url, entry) {
+  if (!/^https?:\/\//i.test(url)) return '';
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'TAWEBTOOL-WikiCollector/1.0' },
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if (!response.ok) return '';
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (!buffer.length || buffer.length > IMAGE_MAX_BYTES) return '';
+    const name = imageFileName(entry) + imageExtension(url, response.headers.get('content-type'));
+    await fs.writeFile(path.join(IMAGES_DIR, name), buffer);
+    return name;
+  } catch (err) {
+    return '';
+  }
 }
 
 function memoryPrompt(memory) {
@@ -567,7 +670,10 @@ function parseRssItems(xml) {
     const content = firstMatch(block, /<content:encoded[^>]*>([\s\S]*?)<\/content:encoded>/i) || firstMatch(block, /<content[^>]*>([\s\S]*?)<\/content>/i);
     const summary = firstMatch(block, /<description[^>]*>([\s\S]*?)<\/description>/i) || firstMatch(block, /<summary[^>]*>([\s\S]*?)<\/summary>/i) || content;
     const publishedAt = firstMatch(block, /<pubDate[^>]*>([\s\S]*?)<\/pubDate>/i) || firstMatch(block, /<updated[^>]*>([\s\S]*?)<\/updated>/i) || firstMatch(block, /<published[^>]*>([\s\S]*?)<\/published>/i);
-    return { title, link, summary, content, publishedAt };
+    const image = firstMatch(block, /<media:content[^>]*url=["']([^"']+)["']/i) ||
+      firstMatch(block, /<media:thumbnail[^>]*url=["']([^"']+)["']/i) ||
+      firstMatch(block, /<enclosure[^>]*url=["']([^"']+)["']/i);
+    return { title, link, summary, content, publishedAt, image };
   }).filter((item) => item.title && item.link);
 }
 
@@ -593,6 +699,7 @@ async function collectRss(source) {
         category: verdict.category || source.category || '自动采集',
         tags,
         summary: textSlice(item.summary || item.title),
+        image: item.image || extractImage(item.content || item.summary || '', item.link),
         content: buildContent({
           title: item.title,
           summary: textSlice(item.summary || item.title, 420),
@@ -647,6 +754,7 @@ async function collectPage(source) {
     category: verdict.category || source.category || '自动采集',
     tags,
     summary: textSlice(summary),
+    image: extractImage(html, source.url),
     content: buildContent({
       title,
       summary: textSlice(summary, 420),
@@ -696,6 +804,7 @@ async function collectGithubRepo(source) {
     category: verdict.category || source.category || 'GitHub',
     tags,
     summary,
+    image: 'https://opengraph.githubassets.com/1/' + repo.full_name,
     content: buildContent({
       title,
       summary: textSlice(fullText, 520),
@@ -779,12 +888,14 @@ async function collectSearch(source) {
 
       let pageText = item.content || item.summary || item.title;
       let pageTitle = item.title;
+      let pageImage = extractImage(item.content || item.summary || '', item.link);
       try {
         const html = await fetchText(item.link);
         pageTitle = firstMatch(html, /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i) ||
           firstMatch(html, /<title[^>]*>([\s\S]*?)<\/title>/i) ||
           item.title;
         pageText = extractReadableText(html) || pageText;
+        pageImage = extractImage(html, item.link) || pageImage;
       } catch (err) {
         pageText = item.content || item.summary || item.title;
       }
@@ -806,6 +917,7 @@ async function collectSearch(source) {
         category: verdict.category || source.category || '技术分享',
         tags,
         summary,
+        image: pageImage,
         content: buildContent({
           title: pageTitle,
           summary,
@@ -861,6 +973,40 @@ function mergeEntries(existing, incoming, sources) {
   return Array.from(map.values()).sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
 }
 
+async function ensureEntryImages(entries) {
+  await fs.mkdir(IMAGES_DIR, { recursive: true });
+  let downloaded = 0;
+  for (const entry of entries) {
+    if (entry.image && entry.image.startsWith('data/wiki_images/')) {
+      if (fsSync.existsSync(path.join(ROOT, entry.image))) continue;
+      entry.image = '';
+    }
+
+    let url = '';
+    if (entry.image && /^https?:\/\//i.test(entry.image)) {
+      url = entry.image;
+    } else if (entry.sourceUrl) {
+      try {
+        const html = await fetchText(entry.sourceUrl, {}, 15000);
+        url = extractImage(html, entry.sourceUrl);
+      } catch (err) {
+        url = '';
+      }
+    }
+
+    if (!url) continue;
+    const name = await downloadImage(url, entry);
+    if (name) {
+      entry.image = 'data/wiki_images/' + name;
+      downloaded += 1;
+    } else {
+      entry.image = entry.image || '';
+    }
+  }
+  if (downloaded) console.log(`[wiki] downloaded ${downloaded} preview images`);
+  return entries;
+}
+
 async function main() {
   const config = await readJson(SOURCES_FILE, { sources: [] });
   const existing = await readJson(ENTRIES_FILE, []);
@@ -883,6 +1029,7 @@ async function main() {
 
   const enriched = await enrichEntriesWithAi(collected, memory);
   const merged = mergeEntries(existing, enriched, sources);
+  await ensureEntryImages(merged);
   await fs.writeFile(ENTRIES_FILE, JSON.stringify(merged, null, 2) + '\n', 'utf8');
   console.log(`[wiki] wrote ${merged.length} entries to ${path.relative(ROOT, ENTRIES_FILE)}`);
 }

@@ -26,6 +26,9 @@ status=0
 
 if command -v chown >/dev/null 2>&1 && [ -f data/ta_wiki_entries.json ]; then
   chown www:www data/ta_wiki_entries.json 2>/dev/null || true
+  if [ -d data/wiki_images ]; then
+    chown -R www:www data/wiki_images 2>/dev/null || true
+  fi
 fi
 
 if [ -n "${WIKI_NOTIFY_EMAIL:-}" ] && command -v mail >/dev/null 2>&1; then

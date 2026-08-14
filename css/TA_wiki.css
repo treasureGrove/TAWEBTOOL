@@ -51,7 +51,7 @@
     z-index: -1;
 }
 
-/* ¨T¨T??Panel Layout ¨T¨T??*/
+/* ï¿½Tï¿½T??Panel Layout ï¿½Tï¿½T??*/
 .wiki-panel {
     display: grid;
     grid-template-rows: auto auto auto minmax(0, 1fr);
@@ -65,7 +65,7 @@
     color: var(--wiki-text);
 }
 
-/* ¨T¨T??Header ¨T¨T??*/
+/* ï¿½Tï¿½T??Header ï¿½Tï¿½T??*/
 .wiki-header {
     display: flex;
     justify-content: space-between;
@@ -139,7 +139,7 @@
     box-shadow: 0 6px 18px rgba(22, 143, 114, 0.32);
 }
 
-/* ¨T¨T??Stats ¨T¨T??*/
+/* ï¿½Tï¿½T??Stats ï¿½Tï¿½T??*/
 .wiki-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -179,7 +179,7 @@
     font-weight: 500;
 }
 
-/* ¨T¨T??Topics ¨T¨T??*/
+/* ï¿½Tï¿½T??Topics ï¿½Tï¿½T??*/
 .wiki-topics {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -246,7 +246,7 @@
     font-size: 11px;
 }
 
-/* ¨T¨T??Toolbar ¨T¨T??*/
+/* ï¿½Tï¿½T??Toolbar ï¿½Tï¿½T??*/
 .wiki-toolbar {
     display: grid;
     grid-template-columns: minmax(280px, 1fr) 160px 150px 56px;
@@ -299,7 +299,7 @@
     font-weight: 500;
 }
 
-/* ¨T¨T??Mode Buttons ¨T¨T??*/
+/* ï¿½Tï¿½T??Mode Buttons ï¿½Tï¿½T??*/
 .wiki-modes {
     display: flex;
     gap: 6px;
@@ -332,7 +332,7 @@
     box-shadow: 0 4px 12px rgba(22, 143, 114, 0.22);
 }
 
-/* ¨T¨T??Main Layout: List + Content ¨T¨T??*/
+/* ï¿½Tï¿½T??Main Layout: List + Content ï¿½Tï¿½T??*/
 .wiki-layout {
     min-height: 0;
     display: grid;
@@ -374,12 +374,13 @@
     background: rgba(22,143,114,0.42);
 }
 
-/* ¨T¨T??Wiki Item Cards ¨T¨T??*/
+/* ï¿½Tï¿½T??Wiki Item Cards ï¿½Tï¿½T??*/
 .wiki-item {
     width: 100%;
-    display: grid;
-    gap: 4px;
-    padding: 11px 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 9px 10px;
     border: 1px solid transparent;
     border-radius: 9px;
     background: transparent;
@@ -390,6 +391,36 @@
     opacity: 0;
     animation: wikiItemStagger .3s var(--wiki-ease-bounce) forwards;
     flex-shrink: 0;
+}
+
+.wiki-item-thumb {
+    flex: 0 0 auto;
+    width: 58px;
+    height: 58px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #e8f3ef, #f3f8f6);
+    border: 1px solid var(--wiki-line);
+}
+
+.wiki-item-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .3s var(--wiki-ease-bounce);
+}
+
+.wiki-item:hover .wiki-item-thumb img,
+.wiki-item.active .wiki-item-thumb img {
+    transform: scale(1.06);
+}
+
+.wiki-item-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 4px;
 }
 
 .wiki-list .wiki-item:nth-child(1) { animation-delay: .02s; }
@@ -494,7 +525,7 @@
     transform: translateY(-1px);
 }
 
-/* ¨T¨T??Content Area ¨T¨T??*/
+/* ï¿½Tï¿½T??Content Area ï¿½Tï¿½T??*/
 .wiki-content {
     overflow-y: auto;
     overflow-x: hidden;
@@ -537,7 +568,7 @@
     animation: wikiFadeSlideIn .35s var(--wiki-ease-bounce) .08s both;
 }
 
-/* ¨T¨T??Article Head ¨T¨T??*/
+/* ï¿½Tï¿½T??Article Head ï¿½Tï¿½T??*/
 .wiki-article-head {
     padding-bottom: 14px;
     border-bottom: 1px solid var(--wiki-line);
@@ -558,6 +589,22 @@
     color: var(--wiki-muted);
     font-size: 14px;
     line-height: 1.7;
+}
+
+.wiki-article-cover {
+    margin: 14px 0 6px;
+}
+
+.wiki-article-cover img {
+    display: block;
+    max-width: 100%;
+    max-height: 340px;
+    width: auto;
+    border-radius: 10px;
+    border: 1px solid var(--wiki-line);
+    background: #f3f8f6;
+    object-fit: contain;
+    box-shadow: 0 6px 18px rgba(20, 48, 42, 0.08);
 }
 
 .wiki-article-meta {
@@ -615,7 +662,7 @@
     margin: 8px 0 12px;
 }
 
-/* ¨T¨T??Markdown Content ¨T¨T??*/
+/* ï¿½Tï¿½T??Markdown Content ï¿½Tï¿½T??*/
 .wiki-markdown {
     max-width: 900px;
 }
@@ -700,7 +747,7 @@
     font-size: 13px;
 }
 
-/* ¨T¨T??Doc Sidebar ¨T¨T??*/
+/* ï¿½Tï¿½T??Doc Sidebar ï¿½Tï¿½T??*/
 .wiki-side-section {
     margin-bottom: 20px;
 }
@@ -789,7 +836,7 @@
     font-size: 13px;
 }
 
-/* ¨T¨T??Responsive ¨T¨T??*/
+/* ï¿½Tï¿½T??Responsive ï¿½Tï¿½T??*/
 @media (max-width: 1200px) {
     .wiki-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));

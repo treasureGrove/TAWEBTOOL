@@ -58,6 +58,7 @@
       tags: Array.isArray(item.tags) ? item.tags.map(String).filter(Boolean) : [],
       summary: String(item.summary || ''),
       content: String(item.content || ''),
+      image: String(item.image || ''),
       source,
       sourceTitle: item.sourceTitle || item.provider || '',
       sourceUrl,
@@ -247,13 +248,19 @@
 
     listEl.innerHTML = entries.map((item) => {
       const tags = item.tags.slice(0, 4).map((tag) => '<span>' + escapeHtml(tag) + '</span>').join('');
+      const thumb = item.image
+        ? '<div class="wiki-item-thumb"><img src="' + escapeHtml(assetPrefix() + item.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.wiki-item-thumb\').style.display=\'none\'"></div>'
+        : '';
       return [
         '<button type="button" class="wiki-item ' + (item.id === state.currentId ? 'active' : '') + '" data-id="' + escapeHtml(item.id) + '">',
+        thumb,
+        '<div class="wiki-item-body">',
         '<em>' + escapeHtml(typeLabel(item.entryType)) + '</em>',
         '<strong>' + escapeHtml(item.title) + '</strong>',
         '<small>' + escapeHtml(item.category) + ' / ' + escapeHtml(sourceLabel(item.source)) + ' / ' + escapeHtml(qualityLabel(item)) + '</small>',
         '<p>' + escapeHtml(item.summary || '暂无摘要') + '</p>',
         '<div class="wiki-tags">' + tags + '</div>',
+        '</div>',
         '</button>'
       ].join('');
     }).join('');
@@ -417,6 +424,9 @@
     const sourceLink = item.sourceUrl
       ? '<a href="' + escapeHtml(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">查看来源</a>'
       : '';
+    const cover = item.image
+      ? '<figure class="wiki-article-cover"><img src="' + escapeHtml(assetPrefix() + item.image) + '" alt="' + escapeHtml(item.title) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></figure>'
+      : '';
 
     contentEl.classList.add('transitioning');
 
@@ -425,6 +435,7 @@
       '<main class="wiki-doc-main">',
       '<div class="wiki-article-head">',
       '<h1>' + escapeHtml(item.title) + '</h1>',
+      cover,
       '<p>' + escapeHtml(item.summary || '') + '</p>',
       '<div class="wiki-article-meta">',
       '<span>' + escapeHtml(typeLabel(item.entryType)) + '</span>',

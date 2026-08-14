@@ -50,6 +50,7 @@ sync_git_after_update() {
     data/ta_wiki_entries.json \
     data/wiki_sources.json \
     data/wiki_memory.json \
+    data/wiki_images \
     js/ta_wiki.js \
     scripts/wiki_collect.mjs \
     scripts/wiki_email_digest.mjs \
