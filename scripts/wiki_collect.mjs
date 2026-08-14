@@ -389,7 +389,20 @@ const imageNoisePatterns = [
   /ads\./i,
   /gravatar/i,
   /favicon/i,
-  /cookie/i
+  /cookie/i,
+  /github/i,
+  /linkedin/i,
+  /twitter/i,
+  /facebook/i,
+  /youtube/i,
+  /discord/i,
+  /weibo/i,
+  /qrcode/i,
+  /share/i,
+  /menu/i,
+  /donate/i,
+  /button/i,
+  /arrow/i
 ];
 
 function extractImage(html, baseUrl) {
@@ -953,21 +966,21 @@ async function ensureEntryImages(entries) {
   for (const entry of entries) {
     if (!entry.sourceUrl) continue;
 
-    let needFetch = !entry.image || !/^https?:\/\//i.test(entry.image);
-    if (!needFetch && !(await probeImageStatus(entry.image))) {
-      needFetch = true;
-    }
-    if (!needFetch) continue;
+    const hasHttpImage = Boolean(entry.image && /^https?:\/\//i.test(entry.image));
+    const isNoisy = hasHttpImage && imageNoisePatterns.some((pattern) => pattern.test(entry.image));
+    if (hasHttpImage && !isNoisy && (await probeImageStatus(entry.image))) continue;
 
     try {
       const html = await fetchText(entry.sourceUrl, {}, 15000);
       const img = extractImage(html, entry.sourceUrl);
-      if (img) {
+      if (img && img !== entry.image && (await probeImageStatus(img))) {
         entry.image = img;
         fixed += 1;
+      } else {
+        entry.image = '';
       }
     } catch (err) {
-      // 保留原 image，下次采集再尝试
+      if (!hasHttpImage) entry.image = '';
     }
   }
   if (fixed) console.log(`[wiki] updated ${fixed} entry preview images`);

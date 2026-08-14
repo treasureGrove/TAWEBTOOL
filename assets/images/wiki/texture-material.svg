@@ -18,5 +18,5 @@
   <rect x="46" y="24" width="6" height="6" rx="1.5" fill="rgba(255,255,255,0.32)"/>
   <rect x="58" y="24" width="6" height="6" rx="1.5" fill="rgba(255,255,255,0.32)"/>
   <text x="36" y="200" font-family="system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif" font-size="58" font-weight="700" fill="#ffffff">贴图与材质</text>
-  <text x="38" y="252" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="500" fill="rgba(255,255,255,0.85)" letter-spacing="2">Texture & Material</text>
+  <text x="38" y="252" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="500" fill="rgba(255,255,255,0.85)" letter-spacing="2">Texture &amp; Material</text>
 </svg>
