@@ -12,8 +12,6 @@ loadDotEnv(path.join(ROOT, '.env'));
 const SOURCES_FILE = path.join(ROOT, 'data/wiki_sources.json');
 const ENTRIES_FILE = path.join(ROOT, 'data/ta_wiki_entries.json');
 const MEMORY_FILE = path.join(ROOT, 'data/wiki_memory.json');
-const IMAGES_DIR = path.join(ROOT, 'data', 'wiki_images');
-const IMAGE_MAX_BYTES = 2 * 1024 * 1024;
 const MAX_PER_SOURCE = Number(process.env.WIKI_MAX_PER_SOURCE || 5);
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
@@ -421,47 +419,6 @@ function extractImage(html, baseUrl) {
     .filter((url) => /^https?:\/\//i.test(url))
     .filter((url) => !imageNoisePatterns.some((pattern) => pattern.test(url)))
     .filter((url) => !/\.(svg|ico)(\?|$)/i.test(url))[0] || '';
-}
-
-function imageExtension(url, contentType) {
-  const ct = String(contentType || '').toLowerCase();
-  if (ct.includes('webp')) return '.webp';
-  if (ct.includes('png')) return '.png';
-  if (ct.includes('gif')) return '.gif';
-  if (ct.includes('avif')) return '.avif';
-  if (ct.includes('jpeg') || ct.includes('jpg')) return '.jpg';
-  const match = /\.(jpe?g|png|webp|gif|avif)(\?|$)/i.exec(url);
-  if (match) return '.' + match[1].toLowerCase().replace('jpeg', 'jpg');
-  return '.jpg';
-}
-
-function imageFileName(entry) {
-  const hash = crypto.createHash('sha1')
-    .update(String(entry.sourceUrl || entry.id || entry.title || ''))
-    .digest('hex')
-    .slice(0, 16);
-  return 'img-' + hash;
-}
-
-async function downloadImage(url, entry) {
-  if (!/^https?:\/\//i.test(url)) return '';
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 15000);
-    const response = await fetch(url, {
-      headers: { 'User-Agent': 'TAWEBTOOL-WikiCollector/1.0' },
-      signal: controller.signal
-    });
-    clearTimeout(timer);
-    if (!response.ok) return '';
-    const buffer = Buffer.from(await response.arrayBuffer());
-    if (!buffer.length || buffer.length > IMAGE_MAX_BYTES) return '';
-    const name = imageFileName(entry) + imageExtension(url, response.headers.get('content-type'));
-    await fs.writeFile(path.join(IMAGES_DIR, name), buffer);
-    return name;
-  } catch (err) {
-    return '';
-  }
 }
 
 function memoryPrompt(memory) {
@@ -973,37 +930,47 @@ function mergeEntries(existing, incoming, sources) {
   return Array.from(map.values()).sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
 }
 
+async function probeImageStatus(url) {
+  if (!/^https?:\/\//i.test(url)) return true;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10000);
+    const response = await fetch(url, {
+      method: 'HEAD',
+      headers: { 'User-Agent': 'TAWEBTOOL-WikiCollector/1.0' },
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if (response.status === 404 || response.status === 410) return false;
+    return true;
+  } catch (err) {
+    return true;
+  }
+}
+
 async function ensureEntryImages(entries) {
-  await fs.mkdir(IMAGES_DIR, { recursive: true });
-  let downloaded = 0;
+  let fixed = 0;
   for (const entry of entries) {
-    if (entry.image && entry.image.startsWith('data/wiki_images/')) {
-      if (fsSync.existsSync(path.join(ROOT, entry.image))) continue;
-      entry.image = '';
-    }
+    if (!entry.sourceUrl) continue;
 
-    let url = '';
-    if (entry.image && /^https?:\/\//i.test(entry.image)) {
-      url = entry.image;
-    } else if (entry.sourceUrl) {
-      try {
-        const html = await fetchText(entry.sourceUrl, {}, 15000);
-        url = extractImage(html, entry.sourceUrl);
-      } catch (err) {
-        url = '';
+    let needFetch = !entry.image || !/^https?:\/\//i.test(entry.image);
+    if (!needFetch && !(await probeImageStatus(entry.image))) {
+      needFetch = true;
+    }
+    if (!needFetch) continue;
+
+    try {
+      const html = await fetchText(entry.sourceUrl, {}, 15000);
+      const img = extractImage(html, entry.sourceUrl);
+      if (img) {
+        entry.image = img;
+        fixed += 1;
       }
-    }
-
-    if (!url) continue;
-    const name = await downloadImage(url, entry);
-    if (name) {
-      entry.image = 'data/wiki_images/' + name;
-      downloaded += 1;
-    } else {
-      entry.image = entry.image || '';
+    } catch (err) {
+      // 保留原 image，下次采集再尝试
     }
   }
-  if (downloaded) console.log(`[wiki] downloaded ${downloaded} preview images`);
+  if (fixed) console.log(`[wiki] updated ${fixed} entry preview images`);
   return entries;
 }
 

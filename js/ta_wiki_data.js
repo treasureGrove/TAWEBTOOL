@@ -734,5 +734,23 @@ HDA 参数要稳定，输出命名要可预测，版本更新要能重建旧资�
     }
   );
 
+  const categoryImages = {
+    '渲染基础': 'assets/images/wiki/rendering-basics.svg',
+    '贴图与材质': 'assets/images/wiki/texture-material.svg',
+    'Shader模板': 'assets/images/wiki/shader.svg',
+    '光照与阴影': 'assets/images/wiki/lighting.svg',
+    '后处理': 'assets/images/wiki/postprocess.svg',
+    '性能优化': 'assets/images/wiki/performance.svg',
+    '资产管线': 'assets/images/wiki/asset-pipeline.svg',
+    '图形 API': 'assets/images/wiki/graphics-api.svg',
+    '流程规范': 'assets/images/wiki/workflow.svg'
+  };
+
+  builtinEntries.forEach(function (entry) {
+    if (!entry.image) {
+      entry.image = categoryImages[entry.category] || '';
+    }
+  });
+
   window.TAWikiBuiltinEntries = builtinEntries;
 })();

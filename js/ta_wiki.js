@@ -31,6 +31,12 @@
     return window.location.pathname.replace(/\\/g, '/').includes('/tools_html/') ? '../' : '';
   }
 
+  function imageSrc(image) {
+    if (!image) return '';
+    if (/^https?:\/\//i.test(image)) return image;
+    return assetPrefix() + image;
+  }
+
   async function loadCollectedEntries() {
     try {
       const response = await fetch(assetPrefix() + 'data/ta_wiki_entries.json', { cache: 'no-store' });
@@ -249,7 +255,7 @@
     listEl.innerHTML = entries.map((item) => {
       const tags = item.tags.slice(0, 4).map((tag) => '<span>' + escapeHtml(tag) + '</span>').join('');
       const thumb = item.image
-        ? '<div class="wiki-item-thumb"><img src="' + escapeHtml(assetPrefix() + item.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.closest(\'.wiki-item-thumb\').style.display=\'none\'"></div>'
+        ? '<div class="wiki-item-thumb"><img src="' + escapeHtml(imageSrc(item.image)) + '" alt="" loading="lazy" onerror="this.closest(\'.wiki-item-thumb\').style.display=\'none\'"></div>'
         : '';
       return [
         '<button type="button" class="wiki-item ' + (item.id === state.currentId ? 'active' : '') + '" data-id="' + escapeHtml(item.id) + '">',
@@ -425,7 +431,7 @@
       ? '<a href="' + escapeHtml(item.sourceUrl) + '" target="_blank" rel="noopener noreferrer">查看来源</a>'
       : '';
     const cover = item.image
-      ? '<figure class="wiki-article-cover"><img src="' + escapeHtml(assetPrefix() + item.image) + '" alt="' + escapeHtml(item.title) + '" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></figure>'
+      ? '<figure class="wiki-article-cover"><img src="' + escapeHtml(imageSrc(item.image)) + '" alt="' + escapeHtml(item.title) + '" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></figure>'
       : '';
 
     contentEl.classList.add('transitioning');
