@@ -6,6 +6,9 @@ const TOOLS = 'tools_html';
 const PRIORITIES = {
     'ai_upscale.html':         { freq: 'weekly',  pri: 0.9 },
     'ai_draw.html':            { freq: 'weekly',  pri: 0.9 },
+    'ai_image.html':           { freq: 'weekly',  pri: 0.9 },
+    'ai_video.html':           { freq: 'weekly',  pri: 0.9 },
+    'resources.html':          { freq: 'monthly', pri: 0.5 },
     'chatgpt.html':            { freq: 'weekly',  pri: 0.8 },
     'compress_image.html':     { freq: 'weekly',  pri: 0.9 },
     'base64_image.html':       { freq: 'weekly',  pri: 0.8 },
