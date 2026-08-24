@@ -15,7 +15,7 @@ const MEMORY_FILE = path.join(ROOT, 'data/wiki_memory.json');
 const MAX_PER_SOURCE = Number(process.env.WIKI_MAX_PER_SOURCE || 5);
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
-const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-v4-flash';
+const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-v4-pro';
 const AI_ENABLED = process.env.WIKI_AI !== '0' && Boolean(AI_API_KEY);
 const AI_MAX_ENTRIES = Number(process.env.WIKI_AI_MAX_ENTRIES || 20);
 const AI_FILTER_ENABLED = AI_ENABLED && process.env.WIKI_AI_FILTER !== '0';
@@ -455,30 +455,74 @@ function parseJsonObject(value) {
   }
 }
 
-async function callAiJson(messages) {
-  const response = await fetch(`${AI_BASE_URL}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${AI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: AI_MODEL,
-      messages,
-      response_format: { type: 'json_object' },
-      thinking: { type: 'disabled' },
-      max_tokens: 1200,
-      stream: false
-    })
-  });
+// Prefix-cache accounting (DeepSeek bills cache hits much cheaper than misses).
+let aiCacheHitTokens = 0;
+let aiCacheMissTokens = 0;
 
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`AI HTTP ${response.status}: ${text.slice(0, 300)}`);
-  }
+function estimateTokens(text) {
+  const value = String(text || '');
+  const cjk = (value.match(/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/g) || []).length;
+  return Math.ceil(cjk + (value.length - cjk) / 4);
+}
 
-  const payload = await response.json();
-  return parseJsonObject(payload?.choices?.[0]?.message?.content || '{}');
+// A persistent chat session: turns are appended to one conversation so the
+// DeepSeek API reuses the cached prefix and the model keeps context across a
+// batch, instead of firing many isolated single-shot requests.
+function createAiSession(systemPrompt, maxTokens = 1200) {
+  const MAX_SESSION_TOKENS = 40000;
+  let messages = [{ role: 'system', content: systemPrompt }];
+  let tokenCount = estimateTokens(systemPrompt);
+
+  return {
+    async chat(userContent) {
+      if (tokenCount + estimateTokens(userContent) > MAX_SESSION_TOKENS) {
+        // Reset to a fresh conversation; the system prompt itself stays cached.
+        messages = [{ role: 'system', content: systemPrompt }];
+        tokenCount = estimateTokens(systemPrompt);
+      }
+
+      messages.push({ role: 'user', content: userContent });
+      tokenCount += estimateTokens(userContent);
+
+      const response = await fetch(`${AI_BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${AI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: AI_MODEL,
+          messages,
+          response_format: { type: 'json_object' },
+          thinking: { type: 'disabled' },
+          max_tokens: maxTokens,
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`AI HTTP ${response.status}: ${text.slice(0, 300)}`);
+      }
+
+      const payload = await response.json();
+      const raw = payload?.choices?.[0]?.message?.content || '{}';
+      const usage = payload?.usage || {};
+      aiCacheHitTokens += Number(usage.prompt_cache_hit_tokens || 0);
+      aiCacheMissTokens += Number(usage.prompt_cache_miss_tokens || 0);
+
+      let assistantContent = '{}';
+      try {
+        assistantContent = JSON.stringify(JSON.parse(raw));
+      } catch {
+        assistantContent = '{}';
+      }
+      messages.push({ role: 'assistant', content: assistantContent });
+      tokenCount += estimateTokens(assistantContent);
+
+      return parseJsonObject(raw);
+    }
+  };
 }
 
 function replaceMarkdownSection(markdown, heading, replacementLines) {
@@ -487,6 +531,8 @@ function replaceMarkdownSection(markdown, heading, replacementLines) {
   if (pattern.test(markdown)) return markdown.replace(pattern, replacement);
   return `${markdown.trim()}\n\n${replacement}`;
 }
+
+let enrichSession = null;
 
 async function enrichEntryWithAi(entry, memory) {
   const sourceText = [
@@ -498,25 +544,20 @@ async function enrichEntryWithAi(entry, memory) {
     entry.content
   ].join('\n');
 
-  const result = await callAiJson([
-    {
-      role: 'system',
-      content: [
-        '你是技术美术（TA）知识库编辑。',
-        memoryPrompt(memory),
-        '请基于输入内容生成中文 JSON，不要输出 markdown 代码块。',
-        'JSON 字段：summary:string, article:string, ta:string[]。',
-        'summary 必须是简体中文，控制在 120 字内，具体说明这条知识讲了什么，不要保留英文原始摘要。',
-        'article 必须是简体中文，用 2 到 4 段解释文章讲了什么、为什么重要、适用边界；ta 给 3 到 5 条可落地检查建议。',
-        '如果原文是英文，需要翻译归纳成中文，不要直接照抄英文句子作为摘要。',
-        '不要编造原文没有的信息；如果信息不足，明确说需要打开原文确认。'
-      ].join('\n')
-    },
-    {
-      role: 'user',
-      content: sourceText.slice(0, 12000)
-    }
-  ]);
+  if (!enrichSession) {
+    enrichSession = createAiSession([
+      '你是技术美术（TA）知识库编辑。',
+      memoryPrompt(memory),
+      '请基于输入内容生成中文 JSON，不要输出 markdown 代码块。',
+      'JSON 字段：summary:string, article:string, ta:string[]。',
+      'summary 必须是简体中文，控制在 120 字内，具体说明这条知识讲了什么，不要保留英文原始摘要。',
+      'article 必须是简体中文，用 2 到 4 段解释文章讲了什么、为什么重要、适用边界；ta 给 3 到 5 条可落地检查建议。',
+      '如果原文是英文，需要翻译归纳成中文，不要直接照抄英文句子作为摘要。',
+      '不要编造原文没有的信息；如果信息不足，明确说需要打开原文确认。'
+    ].join('\n'), 2000);
+  }
+
+  const result = await enrichSession.chat(sourceText.slice(0, 12000));
 
   const summary = String(result.summary || entry.summary || '').trim();
   const article = String(result.article || '').trim();
@@ -563,6 +604,8 @@ async function enrichEntriesWithAi(entries, memory) {
   return out;
 }
 
+let filterSession = null;
+
 async function classifyCandidateWithAi({ title, summary, text, source, memory }) {
   if (!AI_FILTER_ENABLED) {
     const localScore = relevanceScore([title, summary, text].join(' '));
@@ -589,33 +632,28 @@ async function classifyCandidateWithAi({ title, summary, text, source, memory })
     };
   }
 
-  const result = await callAiJson([
-    {
-      role: 'system',
-      content: [
-        '你是技术美术（TA）知识库的文章筛选器。',
-        memoryPrompt(memory),
-        '请严格判断候选内容是否值得收录到 TA 知识库。',
-        '只收录和实时渲染、图形学、Shader、材质、贴图、GPU 性能、引擎渲染管线、资产管线、DCC 到引擎流程、TA 工具链有关的内容。',
-        '必须满足：有可复用知识点，能沉淀成规范/排查方法/实现经验/性能结论；只提到产品发布、版本新闻、营销介绍、招聘、普通编程文章都不要收录。',
-        '如果只是仓库说明、新闻摘要、下载页、首页导航、会议预告，include 必须为 false。',
-        '输出 JSON：include:boolean, score:number, confidence:number, category:string, tags:string[], contentType:string, reason:string。',
-        'score 0-10，低于 7 不应收录；confidence 0-1，低于 0.65 不应收录。',
-        'contentType 可选：教程、技术文章、规范、论文笔记、工具文档、性能分析、其它。',
-        'category 用中文短分类；tags 最多 8 个。'
-      ].join('\n')
-    },
-    {
-      role: 'user',
-      content: [
-        `来源：${source.title || source.id || ''}`,
-        `标题：${title}`,
-        `摘要：${summary}`,
-        '',
-        compactText(text).slice(0, 6000)
-      ].join('\n')
-    }
-  ]);
+  if (!filterSession) {
+    filterSession = createAiSession([
+      '你是技术美术（TA）知识库的文章筛选器。',
+      memoryPrompt(memory),
+      '请严格判断候选内容是否值得收录到 TA 知识库。',
+      '只收录和实时渲染、图形学、Shader、材质、贴图、GPU 性能、引擎渲染管线、资产管线、DCC 到引擎流程、TA 工具链有关的内容。',
+      '必须满足：有可复用知识点，能沉淀成规范/排查方法/实现经验/性能结论；只提到产品发布、版本新闻、营销介绍、招聘、普通编程文章都不要收录。',
+      '如果只是仓库说明、新闻摘要、下载页、首页导航、会议预告，include 必须为 false。',
+      '输出 JSON：include:boolean, score:number, confidence:number, category:string, tags:string[], contentType:string, reason:string。',
+      'score 0-10，低于 7 不应收录；confidence 0-1，低于 0.65 不应收录。',
+      'contentType 可选：教程、技术文章、规范、论文笔记、工具文档、性能分析、其它。',
+      'category 用中文短分类；tags 最多 8 个。'
+    ].join('\n'));
+  }
+
+  const result = await filterSession.chat([
+    `来源：${source.title || source.id || ''}`,
+    `标题：${title}`,
+    `摘要：${summary}`,
+    '',
+    compactText(text).slice(0, 6000)
+  ].join('\n'));
 
   const score = Number(result.score || 0);
   const confidence = Number(result.confidence || 0);
@@ -801,31 +839,28 @@ function bingRssUrl(query) {
   return `https://www.bing.com/search?q=${encodeURIComponent(query)}&format=rss`;
 }
 
+let searchSession = null;
+
 async function buildSearchQueries(source) {
   const fallback = Array.isArray(source.queries) ? source.queries : [];
   if (!AI_ENABLED) return fallback;
 
   try {
-    const result = await callAiJson([
-      {
-        role: 'system',
-        content: [
-          '你是技术美术（TA）知识库的信息检索助手。',
-          '请生成适合搜索引擎的英文查询词，用来找高质量图形学/TA 技术文章。',
-          '重点：GDC、Unreal Engine 技术分享、Unity Graphics、SIGGRAPH、RenderDoc、渲染管线、材质、Shader、性能分析。',
-          '不要生成营销、招聘、新闻泛词。',
-          '输出 JSON：queries:string[]，最多 6 条。'
-        ].join('\n')
-      },
-      {
-        role: 'user',
-        content: [
-          `搜索主题：${source.title || source.id}`,
-          `固定范围：${(source.scope || []).join(', ')}`,
-          `备用查询：${fallback.join(' | ')}`
-        ].join('\n')
-      }
-    ]);
+    if (!searchSession) {
+      searchSession = createAiSession([
+        '你是技术美术（TA）知识库的信息检索助手。',
+        '请生成适合搜索引擎的英文查询词，用来找高质量图形学/TA 技术文章。',
+        '重点：GDC、Unreal Engine 技术分享、Unity Graphics、SIGGRAPH、RenderDoc、渲染管线、材质、Shader、性能分析。',
+        '不要生成营销、招聘、新闻泛词。',
+        '输出 JSON：queries:string[]，最多 6 条。'
+      ].join('\n'));
+    }
+
+    const result = await searchSession.chat([
+      `搜索主题：${source.title || source.id}`,
+      `固定范围：${(source.scope || []).join(', ')}`,
+      `备用查询：${fallback.join(' | ')}`
+    ].join('\n'));
     const queries = Array.isArray(result.queries)
       ? result.queries.map((item) => String(item).trim()).filter(Boolean)
       : [];
@@ -1011,6 +1046,7 @@ async function main() {
   const merged = mergeEntries(existing, enriched, sources);
   await ensureEntryImages(merged);
   await fs.writeFile(ENTRIES_FILE, JSON.stringify(merged, null, 2) + '\n', 'utf8');
+  console.log(`[wiki] AI prefix cache: hit=${aiCacheHitTokens} miss=${aiCacheMissTokens} tokens`);
   console.log(`[wiki] wrote ${merged.length} entries to ${path.relative(ROOT, ENTRIES_FILE)}`);
 }
 

@@ -13,6 +13,7 @@ EMAIL_DIGEST="$LOG_DIR/wiki_email_digest.last.md"
 REPORT="$LOG_DIR/wiki_maintainer_report.last.md"
 mkdir -p "$LOG_DIR"
 cd "$SITE"
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 
 if [ -f /etc/profile ]; then set +u; source /etc/profile >/dev/null 2>&1 || true; set -u; fi
 if [ -f /root/.bashrc ]; then set +u; source /root/.bashrc >/dev/null 2>&1 || true; set -u; fi
@@ -22,7 +23,7 @@ if [ -z "${DEEPSEEK_API_KEY:-}" ] && [ -z "${WIKI_AI_API_KEY:-}" ] && [ -f /root
   export DEEPSEEK_API_KEY
 fi
 
-export WIKI_AI_MODEL="${WIKI_AI_MODEL:-deepseek-v4-flash}"
+export WIKI_AI_MODEL="${WIKI_AI_MODEL:-deepseek-v4-pro}"
 export WIKI_AI_FILTER="${WIKI_AI_FILTER:-1}"
 export WIKI_MIN_RELEVANCE_SCORE="${WIKI_MIN_RELEVANCE_SCORE:-5}"
 export WIKI_AI_MAX_ENTRIES="${WIKI_AI_MAX_ENTRIES:-20}"
@@ -113,9 +114,9 @@ opencode_status=0
 if command -v opencode >/dev/null 2>&1; then
   prompt="You are maintaining the TA Wiki in this project. Read data/ta_wiki_entries.json, data/wiki_sources.json, data/wiki_memory.json if present, and the latest collector log at logs/wiki_collect.last.log. Do not edit files in this scheduled run. Output only a concise maintenance note in Simplified Chinese Markdown covering: 1) newly collected useful graphics knowledge, 2) rejected or weak content patterns if visible, 3) whether the wiki page needs UI/framework improvements later, 4) next actions. Keep it practical for a technical artist."
   if command -v script >/dev/null 2>&1; then
-    timeout 180s script -q -e -c "opencode run \"$prompt\" --auto -m deepseek/deepseek-v4-flash --dir \"$SITE\"" "$OPEN_CODE_LOG" >/dev/null 2>&1 || opencode_status=$?
+    timeout 180s script -q -e -c "opencode run \"$prompt\" --auto -m deepseek/deepseek-v4-pro --dir \"$SITE\"" "$OPEN_CODE_LOG" >/dev/null 2>&1 || opencode_status=$?
   else
-    timeout 180s opencode run "$prompt" --auto -m "deepseek/deepseek-v4-flash" --dir "$SITE" > "$OPEN_CODE_LOG" 2>&1 || opencode_status=$?
+    timeout 180s opencode run "$prompt" --auto -m "deepseek/deepseek-v4-pro" --dir "$SITE" > "$OPEN_CODE_LOG" 2>&1 || opencode_status=$?
   fi
   perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g' "$OPEN_CODE_LOG" | grep -v '^Script started' | grep -v '^Script done' > "$OPEN_CODE_CLEAN" || true
   {
@@ -139,7 +140,7 @@ fi
 } >> "$REPORT"
 
 git_status=0
-if [ "$status" -eq 0 ] && [ "$digest_status" -eq 0 ] && [ "$opencode_status" -eq 0 ]; then
+if [ "$status" -eq 0 ]; then
   {
     echo
     echo "## Git Sync"
@@ -150,7 +151,7 @@ else
   {
     echo
     echo "## Git Sync"
-    echo "- Git sync: skipped because update did not fully succeed"
+    echo "- Git sync: skipped because collection failed"
   } >> "$REPORT"
 fi
 

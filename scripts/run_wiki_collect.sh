@@ -16,7 +16,7 @@ if [ -z "${DEEPSEEK_API_KEY:-}" ] && [ -z "${WIKI_AI_API_KEY:-}" ] && [ -f /root
   export DEEPSEEK_API_KEY
 fi
 
-export WIKI_AI_MODEL="${WIKI_AI_MODEL:-deepseek-v4-flash}"
+export WIKI_AI_MODEL="${WIKI_AI_MODEL:-deepseek-v4-pro}"
 export WIKI_AI_FILTER="${WIKI_AI_FILTER:-1}"
 export WIKI_MIN_RELEVANCE_SCORE="${WIKI_MIN_RELEVANCE_SCORE:-5}"
 export WIKI_AI_MAX_ENTRIES="${WIKI_AI_MAX_ENTRIES:-20}"

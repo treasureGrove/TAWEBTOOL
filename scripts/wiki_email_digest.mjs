@@ -15,7 +15,7 @@ loadDotEnv(path.join(ROOT, '.env'));
 
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
-const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-v4-flash';
+const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-v4-pro';
 
 function loadDotEnv(file) {
   try {
@@ -203,7 +203,8 @@ async function askDeepSeek(rows, collectLog) {
         ].join('\n')
       }
     ],
-    temperature: 0.2
+    temperature: 0.2,
+    thinking: { type: 'disabled' }
   };
 
   const response = await fetch(`${AI_BASE_URL}/chat/completions`, {
