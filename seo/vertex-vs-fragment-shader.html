@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>顶点着色器与片元着色器：区别与作用 - TA工具箱</title>
+<meta name="description" content="顶点着色器和片元着色器是渲染管线中的关键可编程阶段，分别处理顶点变换和像素着色。本文介绍两者的功能、区别及协同工作方式。">
+<meta name="keywords" content="顶点着色器,片元着色器,Shader,渲染管线,GPU,GLSL,HLSL,光栅化,纹理采样,光照计算">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"顶点着色器与片元着色器：区别与作用"}]},{"@type":"Article","name":"顶点着色器与片元着色器：区别与作用","headline":"顶点着色器与片元着色器：区别与作用","description":"顶点着色器和片元着色器是渲染管线中的关键可编程阶段，分别处理顶点变换和像素着色。本文介绍两者的功能、区别及协同工作方式。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"为什么需要两个着色器？","acceptedAnswer":{"@type":"Answer","text":"GPU并行架构需要分离顶点处理和片元处理，以优化吞吐量。顶点着色器处理几何，片元着色器处理像素。"}},{"@type":"Question","name":"可以在顶点着色器中进行纹理采样吗？","acceptedAnswer":{"@type":"Answer","text":"可以，但通常需要片元级插值，顶点级采样会导致质量问题，现代 GPU 支持但性能较差。"}},{"@type":"Question","name":"片元着色器执行次数一定多于顶点着色器吗？","acceptedAnswer":{"@type":"Answer","text":"通常是的，因为一个三角形覆盖多个像素，但有早期深度剔除等优化。"}},{"@type":"Question","name":"如何优化片元着色器性能？","acceptedAnswer":{"@type":"Answer","text":"减少纹理采样、避免复杂计算、使用LOD、减少分支等。"}},{"@type":"Question","name":"几何着色器与它们有什么关系？","acceptedAnswer":{"@type":"Answer","text":"几何着色器位于顶点和片元之间，可以处理整个图元并生成新顶点，但现代渲染中较少使用。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>顶点着色器与片元着色器：区别与作用</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>渲染管线中的可编程阶段</h2>
+<p>在现代 GPU 渲染管线中，顶点着色器和片元着色器是两个主要的可编程阶段。顶点着色器处理每个顶点的数据（如位置、法线、UV），执行变换和光照计算；片元着色器处理每个片元（像素候选），计算最终颜色。两者通过光栅化阶段连接，光栅化将顶点数据插值为片元数据。</p>
+<h2>顶点着色器</h2>
+<p>顶点着色器是渲染管线的第一个可编程阶段，对每个顶点执行一次。其输入包括顶点属性（位置、法线、颜色、UV 等），输出变换后的顶点位置和传递给片元着色器的插值数据。</p>
+<p>典型功能：</p>
+<ul>
+<li>**坐标变换**：将顶点从模型空间变换到世界空间、观察空间、裁剪空间。</li>
+<li>**法线变换**：处理非均匀缩放时的法线矩阵。</li>
+<li>**纹理坐标传递**：传递 UV 或计算特殊效果（如动画 UV）。</li>
+<li>**逐顶点光照**：简单光照计算（如 Gouraud 着色）。</li>
+</ul>
+<p>顶点着色器无法创建或删除顶点，只能处理现有顶点。</p>
+<h2>片元着色器</h2>
+<p>片元着色器（也称像素着色器）对光栅化后的每个片元执行一次（实际可能因深度测试被丢弃）。其输入是从顶点着色器插值得到的数据（如 UV、颜色、世界位置、法线等），输出是片元颜色（可能包括深度）。</p>
+<p>典型功能：</p>
+<ul>
+<li>**纹理采样**：从纹理贴图获取颜色。</li>
+<li>**逐片元光照**：计算更精确的光照（如 Phong 着色）。</li>
+<li>**颜色混合**：应用 Alpha 混合、雾效等。</li>
+<li>**后处理效果**：在全屏四边形上实现后处理算法。</li>
+</ul>
+<p>片元着色器是性能关键，因为其执行次数远多于顶点着色器。</p>
+<h2>两者区别</h2>
+<p>| 特性 | 顶点着色器 | 片元着色器 |</p>
+<p>|------|-----------|-----------|</p>
+<p>| 执行单元 | 每个顶点 | 每个片元（像素） |</p>
+<p>| 执行次数 | 较少 | 较多 |</p>
+<p>| 输入 | 顶点属性 | 插值后的片元数据 |</p>
+<p>| 输出 | 裁剪空间坐标、插值数据 | 片元颜色 |</p>
+<p>| 常用功能 | 坐标变换、骨骼动画 | 纹理采样、光照计算 |</p>
+<p>| 性能影响 | 通常较小 | 通常较大 |</p>
+<h2>协同工作示例</h2>
+<p>一个简单的着色器程序：</p>
+<p>顶点着色器：</p>
+<p>```glsl</p>
+<p>#version 330 core</p>
+<p>layout (location = 0) in vec3 aPos;</p>
+<p>layout (location = 1) in vec2 aUV;</p>
+<p>out vec2 vUV;</p>
+<p>uniform mat4 uMVP;</p>
+<p>void main() {</p>
+<p>    vUV = aUV;</p>
+<p>    gl_Position = uMVP * vec4(aPos, 1.0);</p>
+<p>}</p>
+<p>```</p>
+<p>片元着色器：</p>
+<p>```glsl</p>
+<p>#version 330 core</p>
+<p>in vec2 vUV;</p>
+<p>out vec4 FragColor;</p>
+<p>uniform sampler2D uTexture;</p>
+<p>void main() {</p>
+<p>    FragColor = texture(uTexture, vUV);</p>
+<p>}</p>
+<p>```</p>
+<p>顶点着色器变换顶点并传递 UV，片元着色器采样纹理输出颜色。</p>
+<h2>常见问题</h2>
+<h3>为什么需要两个着色器？</h3>
+<p>因为 GPU 并行架构需要分离顶点处理和片元处理，以优化吞吐量。顶点着色器处理几何，片元着色器处理像素，各司其职。</p>
+<h3>可以在顶点着色器中进行纹理采样吗？</h3>
+<p>可以，但纹理采样通常需要片元级插值，顶点级采样会导致质量问题（如纹理走样），现代 GPU 支持顶点纹理采样但性能较差。</p>
+<h3>片元着色器执行次数一定多于顶点着色器吗？</h3>
+<p>通常是的，因为一个三角形覆盖多个像素，但有早期深度剔除等优化。</p>
+<h3>如何优化片元着色器性能？</h3>
+<p>减少纹理采样、避免复杂计算、使用 LOD、减少分支等。</p>
+<h3>几何着色器与它们有什么关系？</h3>
+<p>几何着色器位于顶点和片元之间，可以处理整个图元并生成新顶点，但现代渲染中较少使用。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>为什么需要两个着色器？</h3><p>GPU并行架构需要分离顶点处理和片元处理，以优化吞吐量。顶点着色器处理几何，片元着色器处理像素。</p></div>
+<div class="faq-item"><h3>可以在顶点着色器中进行纹理采样吗？</h3><p>可以，但通常需要片元级插值，顶点级采样会导致质量问题，现代 GPU 支持但性能较差。</p></div>
+<div class="faq-item"><h3>片元着色器执行次数一定多于顶点着色器吗？</h3><p>通常是的，因为一个三角形覆盖多个像素，但有早期深度剔除等优化。</p></div>
+<div class="faq-item"><h3>如何优化片元着色器性能？</h3><p>减少纹理采样、避免复杂计算、使用LOD、减少分支等。</p></div>
+<div class="faq-item"><h3>几何着色器与它们有什么关系？</h3><p>几何着色器位于顶点和片元之间，可以处理整个图元并生成新顶点，但现代渲染中较少使用。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

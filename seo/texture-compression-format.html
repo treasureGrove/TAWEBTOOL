@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贴图压缩格式：DXT、ETC、ASTC 对比与选择 - TA工具箱</title>
+<meta name="description" content="贴图压缩格式用于减少纹理内存占用和带宽，不同平台支持不同的格式，如 DXT/BC、ETC、ASTC。本文介绍常见压缩格式的原理、特点及选择策略。">
+<meta name="keywords" content="贴图压缩,DXT,BC,ETC,ASTC,纹理格式,GPU,内存优化,游戏开发,移动端,法线贴图">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/texture-compression-format.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/texture-compression-format.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"贴图压缩格式：DXT、ETC、ASTC 对比与选择"}]},{"@type":"Article","name":"贴图压缩格式：DXT、ETC、ASTC 对比与选择","headline":"贴图压缩格式：DXT、ETC、ASTC 对比与选择","description":"贴图压缩格式用于减少纹理内存占用和带宽，不同平台支持不同的格式，如 DXT/BC、ETC、ASTC。本文介绍常见压缩格式的原理、特点及选择策略。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/texture-compression-format.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/texture-compression-format.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"DXT 和 BC 有什么关系？","acceptedAnswer":{"@type":"Answer","text":"BC 是 DirectX 10 及以后的标准名称，DXT 是旧称。BC1 相当于 DXT1，BC3 相当于 DXT5。"}},{"@type":"Question","name":"ASTC 比 ETC 更好吗？","acceptedAnswer":{"@type":"Answer","text":"通常是的。ASTC 提供更好的质量和灵活性，但需要硬件支持。对于支持 ASTC 的设备，推荐使用。"}},{"@type":"Question","name":"法线贴图为什么使用双通道压缩？","acceptedAnswer":{"@type":"Answer","text":"法线贴图的 Z 分量可以从 X、Y 计算得出，因此可以丢弃 Z，使用双通道格式存储 X、Y，在着色器中重建 Z。"}},{"@type":"Question","name":"移动端如何选择压缩格式？","acceptedAnswer":{"@type":"Answer","text":"如果目标设备支持 ASTC，使用 ASTC；否则使用 ETC2。对于 iOS，可以使用 PVRTC 或 ASTC（较新设备）。"}},{"@type":"Question","name":"压缩会导致纹理质量下降吗？","acceptedAnswer":{"@type":"Answer","text":"有损压缩会产生块状伪影，尤其在高对比度边缘。可通过选择合适的格式和块大小平衡质量和大小。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>贴图压缩格式：DXT、ETC、ASTC 对比与选择</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>为什么需要贴图压缩</h2>
+<p>纹理是游戏和实时渲染中内存占用的大头，高分辨率纹理可能消耗大量显存和带宽。贴图压缩格式通过减少纹理数据的存储大小，同时保持可接受的视觉质量，来优化性能和内存。GPU 硬件支持直接采样压缩纹理，无需解压，从而节省带宽。</p>
+<h2>常见贴图压缩格式</h2>
+<h3>DXT/BC 系列（桌面平台）</h3>
+<ul>
+<li>**DXT1/BC1**：每个 4x4 块 64 位，支持 RGB 和 1 位 Alpha。压缩比 8:1（相对于 24 位 RGB）。</li>
+<li>**DXT3/BC2**：每个块 128 位，支持 4 位 Alpha，适合有锐利 Alpha 的纹理。</li>
+<li>**DXT5/BC3**：每个块 128 位，支持插值 Alpha，适合渐变 Alpha。</li>
+<li>**BC4/BC5**：单通道和双通道格式，常用于法线贴图（BC5 存储 X、Y 分量）。</li>
+<li>**BC6H/BC7**：高质量格式，BC6H 用于 HDR，BC7 用于高质量 LDR。</li>
+</ul>
+<p>这些格式广泛应用于 Windows、Mac、Linux 等桌面平台。</p>
+<h3>ETC 系列（移动平台）</h3>
+<ul>
+<li>**ETC1**：每个 4x4 块 64 位，支持 RGB，不支持 Alpha，OpenGL ES 2.0 通用。</li>
+<li>**ETC2**：兼容 ETC1，支持 RGBA，OpenGL ES 3.0 及以上。</li>
+<li>**EAC**：单通道和双通道格式，用于法线贴图等。</li>
+</ul>
+<p>ETC 是 Android 设备的基线格式。</p>
+<h3>ASTC（自适应可伸缩纹理压缩）</h3>
+<p>ASTC 是较新的格式，支持多种块大小（从 4x4 到 12x12），提供灵活的压缩比和质量权衡。支持 RGBA、HDR 等，被大多数现代移动 GPU（如 Adreno 5xx+、Mali T6xx+）和部分桌面 GPU 支持。ASTC 是移动端的推荐选择。</p>
+<h3>其他格式</h3>
+<ul>
+<li>**PVRTC**：PowerVR GPU 使用的格式，iOS 早期设备支持，质量一般。</li>
+<li>**ATITC**：旧 Adreno GPU 格式，已逐渐淘汰。</li>
+</ul>
+<h2>格式选择策略</h2>
+<ul>
+<li>**桌面平台**：优先使用 BC7（高质量）或 BC1/BC3（兼容性）。</li>
+<li>**移动平台**：优先使用 ASTC（现代设备），否则使用 ETC2。</li>
+<li>**法线贴图**：使用双通道格式（BC5 或 EAC），节省内存。</li>
+<li>**HDR 纹理**：使用 BC6H 或 ASTC HDR。</li>
+<li>**UI 纹理**：如果要求高质量，可以使用不压缩或无损格式（如 PNG），但需注意内存。</li>
+</ul>
+<p>在 Unity 和 Unreal 中，可以在纹理导入设置中选择压缩格式，并针对不同平台覆盖设置。</p>
+<h2>压缩格式与纹理类型</h2>
+<ul>
+<li>**颜色纹理**：使用有损压缩（BC1/BC3/ETC2/ASTC）。</li>
+<li>**法线贴图**：使用特殊格式（BC5）或重新排列通道后压缩。</li>
+<li>**数据纹理**（如金属度、粗糙度）：可使用单通道或压缩格式，但需注意精度。</li>
+<li>**UI 元素**：通常使用不压缩或 ASTC，以避免压缩伪影。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>DXT 和 BC 有什么关系？</h3>
+<p>BC（Block Compression）是 DirectX 10 及以后的标准名称，DXT 是旧称。BC1 相当于 DXT1，BC3 相当于 DXT5。</p>
+<h3>ASTC 比 ETC 更好吗？</h3>
+<p>通常是的。ASTC 提供更好的质量和灵活性，但需要硬件支持。对于支持 ASTC 的设备，推荐使用。</p>
+<h3>法线贴图为什么使用双通道压缩？</h3>
+<p>法线贴图的 Z 分量可以从 X、Y 计算得出（单位向量），因此可以丢弃 Z，使用双通道格式存储 X、Y，在着色器中重建 Z，节省内存。</p>
+<h3>移动端如何选择压缩格式？</h3>
+<p>如果目标设备支持 ASTC，使用 ASTC；否则使用 ETC2。对于 iOS，可以使用 PVRTC 或 ASTC（较新设备）。</p>
+<h3>压缩会导致纹理质量下降吗？</h3>
+<p>有损压缩会产生块状伪影，尤其在高对比度边缘。可以通过选择合适的格式和块大小来平衡质量和大小。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>DXT 和 BC 有什么关系？</h3><p>BC 是 DirectX 10 及以后的标准名称，DXT 是旧称。BC1 相当于 DXT1，BC3 相当于 DXT5。</p></div>
+<div class="faq-item"><h3>ASTC 比 ETC 更好吗？</h3><p>通常是的。ASTC 提供更好的质量和灵活性，但需要硬件支持。对于支持 ASTC 的设备，推荐使用。</p></div>
+<div class="faq-item"><h3>法线贴图为什么使用双通道压缩？</h3><p>法线贴图的 Z 分量可以从 X、Y 计算得出，因此可以丢弃 Z，使用双通道格式存储 X、Y，在着色器中重建 Z。</p></div>
+<div class="faq-item"><h3>移动端如何选择压缩格式？</h3><p>如果目标设备支持 ASTC，使用 ASTC；否则使用 ETC2。对于 iOS，可以使用 PVRTC 或 ASTC（较新设备）。</p></div>
+<div class="faq-item"><h3>压缩会导致纹理质量下降吗？</h3><p>有损压缩会产生块状伪影，尤其在高对比度边缘。可通过选择合适的格式和块大小平衡质量和大小。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

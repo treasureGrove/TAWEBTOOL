@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpha 混合与透明排序：渲染透明的关键机制 - TA工具箱</title>
+<meta name="description" content="Alpha 混合用于实现半透明效果，但透明物体的渲染顺序对结果有重要影响。本文介绍 Alpha 混合的原理、混合因子、透明排序问题及解决方案。">
+<meta name="keywords" content="Alpha混合,透明排序,渲染队列,混合因子,深度缓冲,顺序无关透明,Unity,Unreal,游戏开发,半透明">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/alpha-blending.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/alpha-blending.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/alpha-blending.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"Alpha 混合与透明排序：渲染透明的关键机制"}]},{"@type":"Article","name":"Alpha 混合与透明排序：渲染透明的关键机制","headline":"Alpha 混合与透明排序：渲染透明的关键机制","description":"Alpha 混合用于实现半透明效果，但透明物体的渲染顺序对结果有重要影响。本文介绍 Alpha 混合的原理、混合因子、透明排序问题及解决方案。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/alpha-blending.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/alpha-blending.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"为什么透明物体不写入深度缓冲？","acceptedAnswer":{"@type":"Answer","text":"如果写入深度，会遮挡后面的透明物体，导致渲染错误。因此通常禁用深度写入。"}},{"@type":"Question","name":"如何解决透明物体排序错误？","acceptedAnswer":{"@type":"Answer","text":"可以改进排序算法、使用 OIT、或拆分物体为凸块。在引擎中调整渲染队列顺序也可以缓解。"}},{"@type":"Question","name":"Alpha 混合会影响性能吗？","acceptedAnswer":{"@type":"Answer","text":"是的，透明物体增加混合操作和排序负担，且可能导致过度绘制，应尽量减少使用。"}},{"@type":"Question","name":"移动端如何处理 Alpha 混合？","acceptedAnswer":{"@type":"Answer","text":"移动端带宽有限，需谨慎使用，避免大量重叠。使用 Alpha 测试代替混合可以提升性能。"}},{"@type":"Question","name":"粒子系统为什么常用加法混合？","acceptedAnswer":{"@type":"Answer","text":"加法混合可以产生发光效果，且不需要排序，适合粒子。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>Alpha 混合与透明排序：渲染透明的关键机制</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 Alpha 混合</h2>
+<p>Alpha 混合（Alpha Blending）是一种将当前片元颜色与目标帧缓冲颜色按比例混合的技术，用于实现半透明效果，如玻璃、烟雾、粒子等。混合使用片元的 Alpha 值作为权重，通常采用以下公式：</p>
+<p>`最终颜色 = 源颜色 * 源因子 + 目标颜色 * 目标因子`</p>
+<p>常见的混合模式有：</p>
+<ul>
+<li>**标准 Alpha 混合**：`SrcAlpha, OneMinusSrcAlpha`，即 `C_out = C_src * A_src + C_dst * (1 - A_src)`。</li>
+<li>**加法混合**：`One, One`，用于发光效果。</li>
+<li>**乘法混合**：`Zero, SrcColor`，用于阴影或染色。</li>
+</ul>
+<p>在渲染管线中，Alpha 混合通常在深度测试之后执行。但透明物体不写入深度缓冲，以避免遮挡后续物体，这会导致排序问题。</p>
+<h2>透明排序问题</h2>
+<p>由于透明物体不写入深度，渲染顺序变得重要。如果从后往前渲染（画家算法），结果正确；但如果顺序错误，混合结果会出错。常见的排序方法是按物体与摄像机的距离排序。然而，对于互相穿插或非凸物体，逐物体排序可能失败。</p>
+<p>解决方案包括：</p>
+<ul>
+<li>**逐物体排序**：简单但可能出错。</li>
+<li>**逐片元排序**：如 A-Buffer 或每像素链表，精确但开销大。</li>
+<li>**分离透明与不透明**：先渲染不透明物体（写入深度），再渲染透明物体（深度测试但不写入深度）。</li>
+<li>**使用顺序无关透明（OIT）**：如加权平均 OIT 或深度剥离，用于高质量效果。</li>
+</ul>
+<h2>在引擎中的处理</h2>
+<ul>
+<li>**Unity**：透明材质使用 Transparent 渲染队列，引擎自动按距离排序。可以调整渲染队列顺序（如 Transparent-100 到 +100）来手动控制。</li>
+<li>**Unreal**：透明材质使用 Translucent 混合模式，支持逐物体排序和 OIT 选项。</li>
+</ul>
+<h2>Alpha 测试与混合的区别</h2>
+<p>Alpha 测试（Alpha Test）是硬切换，通过阈值丢弃片元，不进行混合。它适合完全透明或不透明的物体（如树叶），没有排序问题，但边缘可能有锯齿。Alpha 混合更适合半透明效果。</p>
+<h2>常见问题</h2>
+<h3>为什么透明物体不写入深度缓冲？</h3>
+<p>如果透明物体写入深度，会遮挡在其后面的透明物体，导致这些物体无法渲染，混合结果错误。因此通常禁用深度写入。</p>
+<h3>如何解决透明物体排序错误？</h3>
+<p>可以改进排序算法、使用 OIT、或拆分物体为凸块。在引擎中调整渲染队列顺序也可以缓解。</p>
+<h3>Alpha 混合会影响性能吗？</h3>
+<p>是的，透明物体增加混合操作和排序负担，且可能导致过度绘制。应尽量减少透明物体的数量和屏幕覆盖面积。</p>
+<h3>移动端如何处理 Alpha 混合？</h3>
+<p>移动端带宽有限，需谨慎使用透明混合，避免大量重叠。使用 Alpha 测试代替混合可以提升性能。</p>
+<h3>粒子系统为什么常用加法混合？</h3>
+<p>加法混合（Additive）可以产生发光效果，且不需要排序（因为颜色叠加顺序不影响结果），适合粒子。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>为什么透明物体不写入深度缓冲？</h3><p>如果写入深度，会遮挡后面的透明物体，导致渲染错误。因此通常禁用深度写入。</p></div>
+<div class="faq-item"><h3>如何解决透明物体排序错误？</h3><p>可以改进排序算法、使用 OIT、或拆分物体为凸块。在引擎中调整渲染队列顺序也可以缓解。</p></div>
+<div class="faq-item"><h3>Alpha 混合会影响性能吗？</h3><p>是的，透明物体增加混合操作和排序负担，且可能导致过度绘制，应尽量减少使用。</p></div>
+<div class="faq-item"><h3>移动端如何处理 Alpha 混合？</h3><p>移动端带宽有限，需谨慎使用，避免大量重叠。使用 Alpha 测试代替混合可以提升性能。</p></div>
+<div class="faq-item"><h3>粒子系统为什么常用加法混合？</h3><p>加法混合可以产生发光效果，且不需要排序，适合粒子。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/bloom.html">Bloom 泛光</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sRGB 与线性色彩空间：理解伽马校正与渲染管线 - TA工具箱</title>
+<meta name="description" content="sRGB 和线性色彩空间是计算机图形学中的色彩编码标准，sRGB 用于显示，线性空间用于物理光照计算。本文解释两者的区别、伽马校正的必要性及在渲染管线中的应用。">
+<meta name="keywords" content="sRGB,线性色彩空间,伽马校正,gamma correction,渲染管线,色彩管理,Unity,Unreal,PBR,纹理标记">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"sRGB 与线性色彩空间：理解伽马校正与渲染管线"}]},{"@type":"Article","name":"sRGB 与线性色彩空间：理解伽马校正与渲染管线","headline":"sRGB 与线性色彩空间：理解伽马校正与渲染管线","description":"sRGB 和线性色彩空间是计算机图形学中的色彩编码标准，sRGB 用于显示，线性空间用于物理光照计算。本文解释两者的区别、伽马校正的必要性及在渲染管线中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/srgb-vs-linear.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/srgb-vs-linear.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"sRGB 和线性色彩空间有什么区别？","acceptedAnswer":{"@type":"Answer","text":"sRGB 是非线性编码，用于显示和图像存储；线性色彩空间直接表示物理光强度，用于光照计算。"}},{"@type":"Question","name":"为什么渲染要使用线性色彩空间？","acceptedAnswer":{"@type":"Answer","text":"因为光照是线性的，在线性空间计算可以保证物理正确性，避免颜色变暗或偏移。"}},{"@type":"Question","name":"伽马校正是什么？","acceptedAnswer":{"@type":"Answer","text":"伽马校正是在线性与 sRGB 之间转换的过程，通过幂函数调整亮度编码，以适应人眼感知和显示设备。"}},{"@type":"Question","name":"如何知道纹理是否需要 sRGB 解码？","acceptedAnswer":{"@type":"Answer","text":"颜色纹理（反照率、漫反射）需要 sRGB 解码；数据纹理（法线、金属度、粗糙度）不需要，应标记为 Linear。"}},{"@type":"Question","name":"Unity 中如何切换到线性空间？","acceptedAnswer":{"@type":"Answer","text":"在 Player Settings > Other Settings > Color Space 中选择 Linear，并确保所有纹理的 sRGB 标记正确。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>sRGB 与线性色彩空间：理解伽马校正与渲染管线</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>色彩空间概述</h2>
+<p>在计算机图形学中，色彩空间定义了颜色的表示方式。sRGB 和线性是两种常见的色彩空间。sRGB 是一种非线性的色彩空间，广泛应用于显示器和图像文件；线性色彩空间则直接存储物理光强度值，用于光照计算。正确处理两者之间的转换对于实现真实感渲染至关重要。</p>
+<h2>为什么需要线性色彩空间</h2>
+<p>物理光照是线性的，即两倍的光强度产生两倍的辐射。然而，人眼对亮度的感知是非线性的，对暗部变化更敏感。因此，显示设备（如 CRT、LCD）使用伽马编码来优化感知，输出与输入电压呈非线性关系。sRGB 标准定义了这种非线性编码，通常近似为伽马 2.2 曲线。</p>
+<p>如果直接在 sRGB 空间进行光照计算，由于非线性，叠加和混合会产生错误的结果，导致暗部失真、颜色偏移等。因此，渲染管线通常在内部使用线性空间进行计算，最后将结果转换为 sRGB 用于显示。</p>
+<h2>伽马校正与 sRGB 转换</h2>
+<p>伽马校正是指在线性与 sRGB 之间转换的过程。典型公式：</p>
+<ul>
+<li>线性到 sRGB：`C_srgb = C_linear^(1/2.2)`（近似）</li>
+<li>sRGB 到线性：`C_linear = C_srgb^2.2`（近似）</li>
+</ul>
+<p>精确的 sRGB 转换使用分段函数，但近似通常足够。在渲染管线中：</p>
+<ol>
+<li>纹理采样：如果纹理以 sRGB 格式存储（如普通颜色贴图），需要先转换到线性空间再用于光照计算。引擎可以自动处理（如 Unity 中标记 sRGB 纹理）。</li>
+<li>光照计算：在线性空间进行。</li>
+<li>最终输出：将结果从线性转换到 sRGB，写入帧缓冲或显示。</li>
+</ul>
+<h2>在游戏引擎中的实现</h2>
+<p>**Unity**：</p>
+<ul>
+<li>在 Player Settings 中选择 Color Space 为 Linear 或 Gamma。Linear 模式下，引擎自动处理 sRGB 纹理的解码和输出编码。</li>
+<li>纹理资源可标记为 sRGB（默认颜色纹理）或 Linear（法线贴图、金属度贴图等数据纹理）。</li>
+</ul>
+<p>**Unreal Engine**：</p>
+<ul>
+<li>默认使用线性工作流，纹理导入时设置 sRGB 选项。</li>
+<li>项目设置中可调整 Gamma。</li>
+</ul>
+<p>正确设置色彩空间对于 PBR 渲染尤为重要，因为 PBR 依赖物理正确的光照计算。</p>
+<h2>常见问题与注意事项</h2>
+<ul>
+<li>**纹理标记错误**：如果法线贴图被标记为 sRGB，采样时会错误解码，导致法线方向错误。因此，数据纹理（如法线、金属度、粗糙度）应标记为 Linear。</li>
+<li>**混合操作**：在线性空间混合颜色更准确，在 sRGB 空间混合可能导致边缘伪影。</li>
+<li>**UI 元素**：UI 通常直接使用 sRGB 颜色，不需要线性转换。</li>
+<li>**移动平台**：部分移动 GPU 不支持线性渲染，需要权衡。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>sRGB 和线性色彩空间有什么区别？</h3>
+<p>sRGB 是非线性编码，用于显示和图像存储；线性色彩空间直接表示物理光强度，用于光照计算。渲染时需在线性空间计算，输出时转换为 sRGB。</p>
+<h3>为什么渲染要使用线性色彩空间？</h3>
+<p>因为光照是线性的，在线性空间计算可以保证物理正确性，避免颜色变暗或偏移。sRGB 空间计算会导致错误的光照结果。</p>
+<h3>伽马校正是什么？</h3>
+<p>伽马校正是在线性与 sRGB 之间转换的过程，通过幂函数调整亮度编码，以适应人眼感知和显示设备。</p>
+<h3>如何知道纹理是否需要 sRGB 解码？</h3>
+<p>颜色纹理（反照率、漫反射）需要 sRGB 解码；数据纹理（法线、金属度、粗糙度）不需要，应标记为 Linear。</p>
+<h3>Unity 中如何切换到线性空间？</h3>
+<p>在 Player Settings &gt; Other Settings &gt; Color Space 中选择 Linear，并确保所有纹理的 sRGB 标记正确。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>sRGB 和线性色彩空间有什么区别？</h3><p>sRGB 是非线性编码，用于显示和图像存储；线性色彩空间直接表示物理光强度，用于光照计算。</p></div>
+<div class="faq-item"><h3>为什么渲染要使用线性色彩空间？</h3><p>因为光照是线性的，在线性空间计算可以保证物理正确性，避免颜色变暗或偏移。</p></div>
+<div class="faq-item"><h3>伽马校正是什么？</h3><p>伽马校正是在线性与 sRGB 之间转换的过程，通过幂函数调整亮度编码，以适应人眼感知和显示设备。</p></div>
+<div class="faq-item"><h3>如何知道纹理是否需要 sRGB 解码？</h3><p>颜色纹理（反照率、漫反射）需要 sRGB 解码；数据纹理（法线、金属度、粗糙度）不需要，应标记为 Linear。</p></div>
+<div class="faq-item"><h3>Unity 中如何切换到线性空间？</h3><p>在 Player Settings &gt; Other Settings &gt; Color Space 中选择 Linear，并确保所有纹理的 sRGB 标记正确。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">色彩空间转换</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

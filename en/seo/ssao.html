@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSAO Screen Space Ambient Occlusion: Principles and Implementation - TA Toolbox</title>
+<meta name="description" content="SSAO (Screen Space Ambient Occlusion) is a real-time rendering technique that approximates ambient occlusion using depth and normal information in screen space, enhancing scene depth and realism. This article covers the principles, algorithms, and optimizations of SSAO.">
+<meta name="keywords" content="SSAO,screen space ambient occlusion,ambient occlusion,post-processing,rendering technique,real-time rendering,depth buffer,normal,Unity,Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/ssao.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/ssao.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/ssao.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"SSAO Screen Space Ambient Occlusion: Principles and Implementation"}]},{"@type":"Article","name":"SSAO Screen Space Ambient Occlusion: Principles and Implementation","headline":"SSAO Screen Space Ambient Occlusion: Principles and Implementation","description":"SSAO (Screen Space Ambient Occlusion) is a real-time rendering technique that approximates ambient occlusion using depth and normal information in screen space, enhancing scene depth and realism. This article covers the principles, algorithms, and optimizations of SSAO.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/ssao.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/ssao.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between SSAO and AO?","acceptedAnswer":{"@type":"Answer","text":"AO is a general term for ambient occlusion techniques; SSAO is a screen-space real-time approximation."}},{"@type":"Question","name":"Does SSAO significantly impact performance?","acceptedAnswer":{"@type":"Answer","text":"SSAO requires multiple depth samples and post-processing, impacting performance, but can be controlled with optimization."}},{"@type":"Question","name":"Can SSAO be used on mobile?","acceptedAnswer":{"@type":"Answer","text":"Mobile GPUs have limited performance; SSAO may be too expensive. Simplified versions or prebaked AO can be used."}},{"@type":"Question","name":"How to reduce SSAO noise?","acceptedAnswer":{"@type":"Answer","text":"Use random rotation noise, increase sample count, or apply blur filters (e.g., bilateral filtering)."}},{"@type":"Question","name":"Does SSAO require normal information?","acceptedAnswer":{"@type":"Answer","text":"Yes, normals are needed to determine the sampling hemisphere orientation, usually obtained from G-Buffer. If not available, normals can be reconstructed from depth."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>SSAO Screen Space Ambient Occlusion: Principles and Implementation</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is SSAO</h2>
+<p>SSAO (Screen Space Ambient Occlusion) is a post-processing effect that approximates ambient occlusion (AO). In the real world, corners and crevices receive less ambient light due to occlusion by surrounding geometry, making them darker. SSAO estimates the occlusion of each pixel by analyzing depth and normal information in screen space, outputs a grayscale mask, and applies it to ambient lighting, enhancing depth and realism.</p>
+<h2>Principles of SSAO</h2>
+<p>The core idea of SSAO: For each pixel on screen, sample the surrounding depth buffer within a hemisphere oriented along the normal. Compare the sampled depth with the pixel's own depth to determine if the sample point lies in front of the surface (i.e., occluded). If many samples are occluded, the pixel's occlusion factor is low and the color becomes darker.</p>
+<p>Specific steps:</p>
+<ol>
+<li>Obtain depth and normal information in screen space (usually from G-Buffer).</li>
+<li>For each pixel, generate random sample points within its hemisphere (with rotating noise).</li>
+<li>Project sample points to screen space and sample the depth buffer.</li>
+<li>Compare sampled depth with surface depth; if sample depth is greater, that direction is occluded.</li>
+<li>Combine results from all samples to compute the occlusion factor.</li>
+<li>Output an occlusion texture used to modulate ambient lighting.</li>
+</ul>
+<h2>Implementation and Optimization of SSAO</h2>
+<p>There are several SSAO variants, such as Crytek's original SSAO, HBAO (Horizon-Based Ambient Occlusion), and GTAO (Ground Truth Ambient Occlusion). In Unity and Unreal, post-processing stacks provide SSAO options.</p>
+<p>Optimization techniques:</p>
+<ul>
+<li>**Downsampling**: Compute SSAO at lower resolution, then upsample and blur.</li>
+<li>**Reduce sample count**: Typically 8-16 samples with random rotation and blur.</li>
+<li>**Hemisphere sampling**: Restrict samples to the hemisphere around the normal to reduce invalid samples.</li>
+<li>**Depth range limiting**: Only consider occluders within a certain distance to avoid distant irrelevant occlusion.</li>
+</ul>
+<h2>Pros and Cons of SSAO</h2>
+<p>**Pros**:</p>
+<ul>
+<li>Good real-time performance, no precomputation.</li>
+<li>Works with dynamic scenes and arbitrary geometry.</li>
+<li>Enhances visual realism, especially for small-scale details.</li>
+</ul>
+<p>**Cons**:</p>
+<ul>
+<li>Screen-space limitations: only uses visible pixel information, cannot handle off-screen occluders.</li>
+<li>May produce flickering and noise, requiring blur.</li>
+<li>Can generate artifacts at depth discontinuities (e.g., foreground object incorrectly occluding background).</li>
+</ul>
+<h2>Comparison with Other AO Techniques</h2>
+<ul>
+<li>**Baked AO**: Offline precomputation baking AO into textures or vertex colors, suitable for static scenes, zero runtime cost.</li>
+<li>**Ray-traced AO**: Uses hardware ray tracing for precise results but expensive and requires modern GPUs.</li>
+<li>**SSAO**: Real-time approximation, moderate cost, the most common dynamic AO technique.</li>
+</ul>
+<h2>FAQ</h2>
+<h3>What is the difference between SSAO and AO?</h3>
+<p>AO is a general term for ambient occlusion techniques; SSAO is a screen-space real-time approximation. Other methods include baked AO and ray-traced AO.</p>
+<h3>Does SSAO significantly impact performance?</h3>
+<p>SSAO requires multiple depth samples and post-processing, impacting performance, but can be controlled with optimization.</p>
+<h3>Can SSAO be used on mobile?</h3>
+<p>Mobile GPUs have limited performance; SSAO may be too expensive. Simplified versions or prebaked AO can be used.</p>
+<h3>How to reduce SSAO noise?</h3>
+<p>Use random rotation noise, increase sample count, or apply blur filters (e.g., bilateral filtering).</p>
+<h3>Does SSAO require normal information?</h3>
+<p>Yes, normals are needed to determine the sampling hemisphere orientation, usually obtained from G-Buffer. If not available, normals can be reconstructed from depth.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between SSAO and AO?</h3><p>AO is a general term for ambient occlusion techniques; SSAO is a screen-space real-time approximation.</p></div>
+<div class="faq-item"><h3>Does SSAO significantly impact performance?</h3><p>SSAO requires multiple depth samples and post-processing, impacting performance, but can be controlled with optimization.</p></div>
+<div class="faq-item"><h3>Can SSAO be used on mobile?</h3><p>Mobile GPUs have limited performance; SSAO may be too expensive. Simplified versions or prebaked AO can be used.</p></div>
+<div class="faq-item"><h3>How to reduce SSAO noise?</h3><p>Use random rotation noise, increase sample count, or apply blur filters (e.g., bilateral filtering).</p></div>
+<div class="faq-item"><h3>Does SSAO require normal information?</h3><p>Yes, normals are needed to determine the sampling hemisphere orientation, usually obtained from G-Buffer. If not available, normals can be reconstructed from depth.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

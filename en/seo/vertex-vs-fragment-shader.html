@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertex Shader and Fragment Shader: Differences and Roles - TA Toolbox</title>
+<meta name="description" content="Vertex shaders and fragment shaders are key programmable stages in the rendering pipeline, handling vertex transformation and pixel shading respectively. This article introduces their functions, differences, and how they work together.">
+<meta name="keywords" content="Vertex Shader, Fragment Shader, Shader, Rendering Pipeline, GPU, GLSL, HLSL, Rasterization, Texture Sampling, Lighting Calculation">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Vertex Shader and Fragment Shader: Differences and Roles"}]},{"@type":"Article","name":"Vertex Shader and Fragment Shader: Differences and Roles","headline":"Vertex Shader and Fragment Shader: Differences and Roles","description":"Vertex shaders and fragment shaders are key programmable stages in the rendering pipeline, handling vertex transformation and pixel shading respectively. This article introduces their functions, differences, and how they work together.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do we need two shaders?","acceptedAnswer":{"@type":"Answer","text":"Because GPU parallel architecture requires separating vertex processing and fragment processing to optimize throughput. The vertex shader handles geometry, and the fragment shader handles pixels."}},{"@type":"Question","name":"Can we do texture sampling in the vertex shader?","acceptedAnswer":{"@type":"Answer","text":"Yes, but texture sampling usually requires fragment-level interpolation; vertex-level sampling can cause quality issues. Modern GPUs support it but performance is poor."}},{"@type":"Question","name":"Does the fragment shader always execute more times than the vertex shader?","acceptedAnswer":{"@type":"Answer","text":"Usually yes, because one triangle covers multiple pixels, but there are optimizations like early depth culling."}},{"@type":"Question","name":"How to optimize fragment shader performance?","acceptedAnswer":{"@type":"Answer","text":"Reduce texture sampling, avoid complex calculations, use LOD, reduce branches, etc."}},{"@type":"Question","name":"How does the geometry shader relate to them?","acceptedAnswer":{"@type":"Answer","text":"The geometry shader sits between vertex and fragment shaders, can process whole primitives and generate new vertices, but is less used in modern rendering."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Vertex Shader and Fragment Shader: Differences and Roles</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Programmable Stages in the Rendering Pipeline</h2>
+<p>In modern GPU rendering pipelines, vertex shaders and fragment shaders are two main programmable stages. The vertex shader processes data for each vertex (such as position, normal, UV), performing transformations and lighting calculations; the fragment shader processes each fragment (pixel candidate), computing the final color. They are connected by the rasterization stage, which interpolates vertex data into fragment data.</p>
+<h2>Vertex Shader</h2>
+<p>The vertex shader is the first programmable stage in the rendering pipeline, executed once per vertex. Its inputs include vertex attributes (position, normal, color, UV, etc.), and outputs include the transformed vertex position and interpolated data passed to the fragment shader.</p>
+<p>Typical functions:</p>
+<ul>
+<li>**Coordinate Transformation**: Transform vertices from model space to world space, view space, and clip space.</li>
+<li>**Normal Transformation**: Handle normal matrices for non-uniform scaling.</li>
+<li>**Texture Coordinate Passing**: Pass UVs or compute special effects (such as animated UVs).</li>
+<li>**Per-Vertex Lighting**: Simple lighting calculations (e.g., Gouraud shading).</li>
+</ul>
+<p>The vertex shader cannot create or delete vertices, only process existing ones.</p>
+<h2>Fragment Shader</h2>
+<p>The fragment shader (also called pixel shader) is executed once per fragment after rasterization (though some may be discarded by depth testing). Its input is interpolated data from the vertex shader (such as UV, color, world position, normal, etc.), and output is the fragment color (possibly including depth).</p>
+<p>Typical functions:</p>
+<ul>
+<li>**Texture Sampling**: Get color from textures.</li>
+<li>**Per-Fragment Lighting**: Compute more accurate lighting (e.g., Phong shading).</li>
+<li>**Color Blending**: Apply alpha blending, fog effects, etc.</li>
+<li>**Post-Processing Effects**: Implement post-processing algorithms on full-screen quads.</li>
+</ul>
+<p>The fragment shader is performance-critical because it executes far more times than the vertex shader.</p>
+<h2>Differences</h2>
+<p>| Feature | Vertex Shader | Fragment Shader |</p>
+<p>|---------|---------------|-----------------|</p>
+<p>| Execution Unit | Per vertex | Per fragment (pixel) |</p>
+<p>| Execution Count | Fewer | More |</p>
+<p>| Input | Vertex attributes | Interpolated fragment data |</p>
+<p>| Output | Clip space coordinates, interpolated data | Fragment color |</p>
+<p>| Common Functions | Coordinate transformation, skeletal animation | Texture sampling, lighting calculation |</p>
+<p>| Performance Impact | Usually smaller | Usually larger |</p>
+<h2>Collaboration Example</h2>
+<p>A simple shader program:</p>
+<p>Vertex shader:</p>
+<p>```glsl</p>
+<p>#version 330 core</p>
+<p>layout (location = 0) in vec3 aPos;</p>
+<p>layout (location = 1) in vec2 aUV;</p>
+<p>out vec2 vUV;</p>
+<p>uniform mat4 uMVP;</p>
+<p>void main() {</p>
+<p>    vUV = aUV;</p>
+<p>    gl_Position = uMVP * vec4(aPos, 1.0);</p>
+<p>}</p>
+<p>```</p>
+<p>Fragment shader:</p>
+<p>```glsl</p>
+<p>#version 330 core</p>
+<p>in vec2 vUV;</p>
+<p>out vec4 FragColor;</p>
+<p>uniform sampler2D uTexture;</p>
+<p>void main() {</p>
+<p>    FragColor = texture(uTexture, vUV);</p>
+<p>}</p>
+<p>```</p>
+<p>The vertex shader transforms vertices and passes UVs, and the fragment shader samples the texture to output color.</p>
+<h2>Frequently Asked Questions</h2>
+<h3>Why do we need two shaders?</h3>
+<p>Because GPU parallel architecture requires separating vertex processing and fragment processing to optimize throughput. The vertex shader handles geometry, and the fragment shader handles pixels, each with its own role.</p>
+<h3>Can we do texture sampling in the vertex shader?</h3>
+<p>Yes, but texture sampling usually requires fragment-level interpolation; vertex-level sampling can cause quality issues (like texture aliasing). Modern GPUs support vertex texture sampling but performance is poor.</p>
+<h3>Does the fragment shader always execute more times than the vertex shader?</h3>
+<p>Usually yes, because one triangle covers multiple pixels, but there are optimizations like early depth culling.</p>
+<h3>How to optimize fragment shader performance?</h3>
+<p>Reduce texture sampling, avoid complex calculations, use LOD, reduce branches, etc.</p>
+<h3>How does the geometry shader relate to them?</h3>
+<p>The geometry shader sits between vertex and fragment shaders, can process whole primitives and generate new vertices, but is less used in modern rendering.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Why do we need two shaders?</h3><p>Because GPU parallel architecture requires separating vertex processing and fragment processing to optimize throughput. The vertex shader handles geometry, and the fragment shader handles pixels.</p></div>
+<div class="faq-item"><h3>Can we do texture sampling in the vertex shader?</h3><p>Yes, but texture sampling usually requires fragment-level interpolation; vertex-level sampling can cause quality issues. Modern GPUs support it but performance is poor.</p></div>
+<div class="faq-item"><h3>Does the fragment shader always execute more times than the vertex shader?</h3><p>Usually yes, because one triangle covers multiple pixels, but there are optimizations like early depth culling.</p></div>
+<div class="faq-item"><h3>How to optimize fragment shader performance?</h3><p>Reduce texture sampling, avoid complex calculations, use LOD, reduce branches, etc.</p></div>
+<div class="faq-item"><h3>How does the geometry shader relate to them?</h3><p>The geometry shader sits between vertex and fragment shaders, can process whole primitives and generate new vertices, but is less used in modern rendering.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光照贴图烘焙：原理、流程与优化 - TA工具箱</title>
+<meta name="description" content="光照贴图烘焙是将静态光照信息预先计算并存储到纹理中，以提升运行时性能。本文介绍光照贴图的原理、烘焙流程及使用注意事项。">
+<meta name="keywords" content="光照贴图,烘焙,全局光照,静态光照,游戏开发,移动端优化,Unity,Unreal,光照探针,UV展开">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/lightmap-baking.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/lightmap-baking.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"光照贴图烘焙：原理、流程与优化"}]},{"@type":"Article","name":"光照贴图烘焙：原理、流程与优化","headline":"光照贴图烘焙：原理、流程与优化","description":"光照贴图烘焙是将静态光照信息预先计算并存储到纹理中，以提升运行时性能。本文介绍光照贴图的原理、烘焙流程及使用注意事项。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/lightmap-baking.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/lightmap-baking.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"光照贴图和实时全局光照有什么区别？","acceptedAnswer":{"@type":"Answer","text":"光照贴图是离线预计算，运行时采样；实时全局光照在运行时计算，支持动态变化但性能开销大。"}},{"@type":"Question","name":"动态物体如何获得光照贴图的好处？","acceptedAnswer":{"@type":"Answer","text":"可以使用光照探针，动态物体采样附近探针，获得间接光照的近似。"}},{"@type":"Question","name":"为什么需要第二套UV？","acceptedAnswer":{"@type":"Answer","text":"第一套UV可能重叠或拉伸，第二套UV专用于光照贴图，需要唯一且不重叠。"}},{"@type":"Question","name":"烘焙光照需要多久？","acceptedAnswer":{"@type":"Answer","text":"取决于场景复杂度、参数和硬件，可能从几分钟到几小时。"}},{"@type":"Question","name":"移动端必须使用光照贴图吗？","acceptedAnswer":{"@type":"Answer","text":"不必须，但强烈推荐，因为移动端性能有限，光照贴图可以显著提升帧率。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>光照贴图烘焙：原理、流程与优化</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是光照贴图烘焙</h2>
+<p>光照贴图（Lightmap）是一张存储静态场景光照信息的纹理。烘焙（Baking）是指离线计算场景中的全局光照（包括直接光、间接光、阴影、颜色反弹等），并将结果保存到光照贴图中。运行时，模型通过 UV 映射采样光照贴图，获得预计算的光照效果，无需实时计算复杂光照，从而大幅提升性能。光照贴图广泛用于移动端和低端设备的游戏开发。</p>
+<h2>光照贴图的原理</h2>
+<p>烘焙过程通常使用光线追踪或辐射度算法，模拟光子在场景中的传播，计算每个表面点的入射光照。结果可以存储为：</p>
+<ul>
+<li>**光照贴图**：2D 纹理，记录漫反射光照颜色。</li>
+<li>**光照探针**：用于动态物体的间接光照。</li>
+<li>**反射探针**：记录环境反射信息。</li>
+</ul>
+<p>烘焙结果与静态物体绑定，因此要求场景中的静态物体在运行时不能移动。</p>
+<h2>烘焙流程</h2>
+<p>在 Unity 和 Unreal 中，光照贴图烘焙通常包括以下步骤：</p>
+<ol>
+<li>**标记静态物体**：将不移动的物体标记为 Static（Unity）或 Mobility 设为 Static（Unreal）。</li>
+<li>**设置 UV**：确保模型有合适的第二套 UV（用于光照贴图），UV 需唯一且不重叠。</li>
+<li>**配置光源**：将光源设置混合模式为 Baked 或 Mixed。</li>
+<li>**调整烘焙参数**：如分辨率、间接光照强度、环境光等。</li>
+<li>**开始烘焙**：引擎离线计算光照，生成光照贴图。</li>
+<li>**应用**：运行时自动采样光照贴图。</li>
+</ul>
+<h2>光照贴图的优缺点</h2>
+<p>**优点**：</p>
+<ul>
+<li>运行时性能高，无需实时全局光照计算。</li>
+<li>光照效果逼真，支持软阴影、颜色反弹等。</li>
+<li>适合移动端和低端硬件。</li>
+</ul>
+<p>**缺点**：</p>
+<ul>
+<li>只能用于静态场景，动态物体无法使用。</li>
+<li>烘焙耗时，修改场景需重新烘焙。</li>
+<li>光照贴图占用内存和存储空间。</li>
+<li>无法响应实时变化的光照。</li>
+</ul>
+<h2>优化与注意事项</h2>
+<ul>
+<li>**降低光照贴图分辨率**：远处或次要物体可以使用低分辨率。</li>
+<li>**使用光照探针**：为动态物体提供近似间接光照。</li>
+<li>**压缩光照贴图**：使用 ASTC、ETC2 等压缩格式减少内存。</li>
+<li>**合并 UV 岛**：优化 UV 布局，减少纹理空间浪费。</li>
+<li>**避免接缝**：确保相邻 UV 岛之间有足够填充，防止渗色。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>光照贴图和实时全局光照有什么区别？</h3>
+<p>光照贴图是离线预计算，运行时采样；实时全局光照在运行时计算，支持动态变化但性能开销大。</p>
+<h3>动态物体如何获得光照贴图的好处？</h3>
+<p>可以使用光照探针，动态物体采样附近探针，获得间接光照的近似。</p>
+<h3>为什么需要第二套 UV？</h3>
+<p>第一套 UV 可能重叠或拉伸，第二套 UV 专用于光照贴图，需要唯一且不重叠。</p>
+<h3>烘焙光照需要多久？</h3>
+<p>取决于场景复杂度、参数和硬件，可能从几分钟到几小时。</p>
+<h3>移动端必须使用光照贴图吗？</h3>
+<p>不必须，但强烈推荐，因为移动端性能有限，光照贴图可以显著提升帧率。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>光照贴图和实时全局光照有什么区别？</h3><p>光照贴图是离线预计算，运行时采样；实时全局光照在运行时计算，支持动态变化但性能开销大。</p></div>
+<div class="faq-item"><h3>动态物体如何获得光照贴图的好处？</h3><p>可以使用光照探针，动态物体采样附近探针，获得间接光照的近似。</p></div>
+<div class="faq-item"><h3>为什么需要第二套UV？</h3><p>第一套UV可能重叠或拉伸，第二套UV专用于光照贴图，需要唯一且不重叠。</p></div>
+<div class="faq-item"><h3>烘焙光照需要多久？</h3><p>取决于场景复杂度、参数和硬件，可能从几分钟到几小时。</p></div>
+<div class="faq-item"><h3>移动端必须使用光照贴图吗？</h3><p>不必须，但强烈推荐，因为移动端性能有限，光照贴图可以显著提升帧率。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

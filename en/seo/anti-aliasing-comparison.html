@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anti-Aliasing MSAA, FXAA, TAA Comparison: Principles and Selection Guide - TA Toolbox</title>
+<meta name="description" content="Anti-aliasing techniques eliminate jagged edges in rendered images; common methods include MSAA, FXAA, and TAA. This article compares their principles, effects, and performance to help developers choose the right AA solution.">
+<meta name="keywords" content="anti-aliasing,MSAA,FXAA,TAA,SMAA,DLSS,FSR,rendering technique,image quality,performance optimization,game development">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Anti-Aliasing MSAA, FXAA, TAA Comparison: Principles and Selection Guide"}]},{"@type":"Article","name":"Anti-Aliasing MSAA, FXAA, TAA Comparison: Principles and Selection Guide","headline":"Anti-Aliasing MSAA, FXAA, TAA Comparison: Principles and Selection Guide","description":"Anti-aliasing techniques eliminate jagged edges in rendered images; common methods include MSAA, FXAA, and TAA. This article compares their principles, effects, and performance to help developers choose the right AA solution.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between MSAA and FXAA?","acceptedAnswer":{"@type":"Answer","text":"MSAA is hardware AA based on geometric sampling, crisp results but high cost; FXAA is post-processing AA, fast but can blur the image."}},{"@type":"Question","name":"Why does TAA cause ghosting?","acceptedAnswer":{"@type":"Answer","text":"TAA blends historical frames; inaccurate motion vectors or fast-moving objects cause afterimages."}},{"@type":"Question","name":"Which AA is suitable for mobile?","acceptedAnswer":{"@type":"Answer","text":"Mobile typically uses FXAA or MSAA (2x/4x), balancing performance and power consumption."}},{"@type":"Question","name":"Why doesn't deferred rendering support MSAA?","acceptedAnswer":{"@type":"Answer","text":"Deferred rendering's G-Buffer has multiple render targets; MSAA drastically increases memory and bandwidth, so post-process AA like TAA is used instead."}},{"@type":"Question","name":"Can multiple AA techniques be used together?","acceptedAnswer":{"@type":"Answer","text":"Yes, but it adds complexity and performance overhead. Usually one suitable AA technique is chosen."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Anti-Aliasing MSAA, FXAA, TAA Comparison: Principles and Selection Guide</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is Anti-Aliasing</h2>
+<p>In rasterized rendering, because pixels are discrete, diagonal and curved edges exhibit stair-step artifacts (aliasing). Anti-aliasing (AA) techniques smooth these edges through sampling or post-processing, improving image quality. Common real-time AA methods include MSAA, FXAA, and TAA.</p>
+<h2>MSAA (Multi-Sample Anti-Aliasing)</h2>
+<p>MSAA is a hardware-supported anti-aliasing technique. It performs depth and coverage tests at multiple subsample points within a pixel, but executes the fragment shader only once, then blends the subsample colors. MSAA handles geometric edges well but is ineffective against texture aliasing and shader aliasing (like specular flicker). Performance cost scales with sample count (2x, 4x, 8x). In deferred rendering, it is expensive due to increased G-Buffer bandwidth.</p>
+<h2>FXAA (Fast Approximate Anti-Aliasing)</h2>
+<p>FXAA is a post-processing anti-aliasing technique that smooths edges by analyzing image luminance. It does not rely on geometry, executes very quickly, and suits low-end hardware. However, FXAA may blur the image and lose detail, especially on text and thin lines.</p>
+<h2>TAA (Temporal Anti-Aliasing)</h2>
+<p>TAA uses temporal information, combining samples from multiple frames. It typically uses motion vectors to blend the current frame with historical frames, significantly reducing geometric and shader aliasing and enabling supersampling-like effects. TAA works well in static scenes but can cause ghosting and blur, and must handle motion jitter. Modern games widely use TAA, especially in deferred rendering.</p>
+<h2>Other Anti-Aliasing Techniques</h2>
+<ul>
+<li>**SMAA**: Combines post-processing with edge detection, better than FXAA with slightly higher cost.</li>
+<li>**DLSS/FSR**: Deep learning-based supersampling, anti-aliases and boosts performance but needs specific hardware.</li>
+<li>**SSAA**: Supersampling anti-aliasing, renders at higher resolution then downsamples, best quality but worst performance.</li>
+</ul>
+<h2>Selection Recommendations</h2>
+<ul>
+<li>Low-end or mobile: Use FXAA or disable AA.</li>
+<li>Mid-range PC: Use SMAA or TAA.</li>
+<li>High-end PC: Use TAA or DLSS/FSR.</li>
+<li>Deferred pipelines: TAA is mainstream; can combine with MSAA but complex.</li>
+<li>Forward rendering: MSAA works well but watch performance.</li>
+</ul>
+<h2>FAQ</h2>
+<h3>What is the difference between MSAA and FXAA?</h3>
+<p>MSAA is hardware AA based on geometric sampling, crisp results but high cost; FXAA is post-processing AA, fast but can blur the image.</p>
+<h3>Why does TAA cause ghosting?</h3>
+<p>TAA blends historical frames; inaccurate motion vectors or fast-moving objects cause afterimages (ghosting).</p>
+<h3>Which AA is suitable for mobile?</h3>
+<p>Mobile typically uses FXAA or MSAA (2x/4x), balancing performance and power consumption.</p>
+<h3>Why doesn't deferred rendering support MSAA?</h3>
+<p>Deferred rendering's G-Buffer has multiple render targets; MSAA drastically increases memory and bandwidth, so post-process AA like TAA is used instead.</p>
+<h3>Can multiple AA techniques be used together?</h3>
+<p>Yes, but it adds complexity and performance overhead. Usually one suitable AA technique is chosen.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between MSAA and FXAA?</h3><p>MSAA is hardware AA based on geometric sampling, crisp results but high cost; FXAA is post-processing AA, fast but can blur the image.</p></div>
+<div class="faq-item"><h3>Why does TAA cause ghosting?</h3><p>TAA blends historical frames; inaccurate motion vectors or fast-moving objects cause afterimages.</p></div>
+<div class="faq-item"><h3>Which AA is suitable for mobile?</h3><p>Mobile typically uses FXAA or MSAA (2x/4x), balancing performance and power consumption.</p></div>
+<div class="faq-item"><h3>Why doesn't deferred rendering support MSAA?</h3><p>Deferred rendering's G-Buffer has multiple render targets; MSAA drastically increases memory and bandwidth, so post-process AA like TAA is used instead.</p></div>
+<div class="faq-item"><h3>Can multiple AA techniques be used together?</h3><p>Yes, but it adds complexity and performance overhead. Usually one suitable AA technique is chosen.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/ssao.html">SSAO 环境光遮蔽</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

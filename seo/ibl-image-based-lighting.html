@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBL 基于图像的光照：原理与实现 - TA工具箱</title>
+<meta name="description" content="IBL（基于图像的光照）使用环境贴图（HDRI）为场景提供全局光照，是PBR中实现真实反射和环境光的关键技术。本文介绍IBL的原理、预计算过程和实时应用。">
+<meta name="keywords" content="IBL,基于图像的光照,环境贴图,HDRI,PBR,辐照度贴图,预滤波环境贴图,BRDF LUT,全局光照,反射">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"IBL 基于图像的光照：原理与实现"}]},{"@type":"Article","name":"IBL 基于图像的光照：原理与实现","headline":"IBL 基于图像的光照：原理与实现","description":"IBL（基于图像的光照）使用环境贴图（HDRI）为场景提供全局光照，是PBR中实现真实反射和环境光的关键技术。本文介绍IBL的原理、预计算过程和实时应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"IBL 和直接光照有什么区别？","acceptedAnswer":{"@type":"Answer","text":"直接光照来自离散光源，IBL 使用环境贴图模拟来自所有方向的间接光照。"}},{"@type":"Question","name":"为什么需要预计算？","acceptedAnswer":{"@type":"Answer","text":"实时计算环境光照积分非常昂贵，预计算将复杂积分转化为纹理查找，大幅提升性能。"}},{"@type":"Question","name":"IBL 支持动态环境吗？","acceptedAnswer":{"@type":"Answer","text":"支持，但预计算需在环境变化时重新进行，动态环境可用实时反射探针或简化方法。"}},{"@type":"Question","name":"移动端可以使用 IBL 吗？","acceptedAnswer":{"@type":"Answer","text":"可以，移动端通常使用较低分辨率预计算贴图，并简化 BRDF LUT 以节省性能。"}},{"@type":"Question","name":"HDRI 和 IBL 有什么关系？","acceptedAnswer":{"@type":"Answer","text":"HDRI 是 IBL 的数据源，通常作为环境贴图。IBL 利用 HDRI 提供的光照信息进行渲染。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>IBL 基于图像的光照：原理与实现</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 IBL</h2>
+<p>IBL（Image-Based Lighting，基于图像的光照）是一种使用环境贴图（通常是 HDRI）来照亮物体的技术。它将周围环境的光照信息编码到纹理中，通过采样该纹理为物体提供漫反射和镜面反射光照，使物体与场景环境自然融合。IBL 是 PBR 工作流中实现全局光照和反射的重要组成部分。</p>
+<h2>IBL 的原理</h2>
+<p>环境贴图记录了从各个方向入射的光照。对于表面上的一个点，其反射光包括：</p>
+<ul>
+<li>**漫反射部分**：来自所有方向的入射光经表面漫反射后的积分，通常较均匀。</li>
+<li>**镜面反射部分**：来自反射方向附近的光，取决于表面粗糙度。粗糙度越低，反射越锐利；粗糙度越高，反射越模糊。</li>
+</ul>
+<p>直接采样环境贴图进行实时积分计算成本高昂，因此通常使用预计算技术。</p>
+<h2>预计算过程</h2>
+<p>IBL 的预计算通常包括以下步骤：</p>
+<ol>
+<li>**生成辐照度贴图（Irradiance Map）**：用于漫反射光照。对原始环境贴图进行卷积，计算每个方向的半球积分（即 Lambertian 漫反射）。结果是一个低频、模糊的贴图，可以直接采样用于漫反射。</li>
+</ul>
+<ol>
+<li>**生成预滤波环境贴图（Prefiltered Environment Map）**：用于镜面反射。对原始环境贴图进行不同粗糙度级别的高斯滤波，生成一系列 Mipmap 级别，每个级别对应一个粗糙度。粗糙度越高，滤波越强。在着色器中，根据表面粗糙度选择合适的 Mipmap 级别。</li>
+</ul>
+<ol>
+<li>**生成 BRDF 积分查找表（BRDF LUT）**：用于加速镜面反射计算。该 LUT 存储了菲涅尔项和几何项的积分，通常以 2D 纹理表示，横轴为 NdotV（法线与视线点积），纵轴为粗糙度。在着色器中，采样 LUT 并结合预滤波环境贴图得到镜面反射。</li>
+</ul>
+<p>这些预计算可以在引擎启动时或离线完成。Unity 和 Unreal 在导入 HDRI 时自动进行预计算。</p>
+<h2>在着色器中的实现</h2>
+<p>在片段着色器中，使用 IBL 的典型流程：</p>
+<ol>
+<li>计算漫反射光照：`irradiance = textureCube(irradianceMap, N).rgb * albedo`</li>
+<li>计算镜面反射：</li>
+</ul>
+<p>   - 采样预滤波环境贴图：`prefilteredColor = textureCubeLod(prefilteredMap, R, roughness * maxMipLevel).rgb`</p>
+<p>   - 采样 BRDF LUT：`brdf = texture2D(brdfLUT, vec2(NdotV, roughness)).rg`</p>
+<p>   - 镜面反射 = `prefilteredColor * (F * brdf.x + brdf.y)`</p>
+<ol>
+<li>将漫反射和镜面反射相加，得到环境光照。</li>
+</ul>
+<h2>IBL 与直接光照的结合</h2>
+<p>IBL 通常与直接光照（点光源、方向光等）结合使用。IBL 提供环境光照和反射，直接光照提供主要的阴影和高光。在 PBR 中，两者都使用相同的 BRDF，确保一致性。</p>
+<h2>常见问题</h2>
+<h3>IBL 和直接光照有什么区别？</h3>
+<p>直接光照来自离散光源（如点光源、方向光），IBL 使用环境贴图模拟来自所有方向的间接光照。</p>
+<h3>为什么需要预计算？</h3>
+<p>实时计算环境光照的积分非常昂贵，预计算将复杂积分转化为纹理查找，大幅提升性能。</p>
+<h3>IBL 支持动态环境吗？</h3>
+<p>支持，但预计算需要在环境变化时重新进行，对于动态环境可以使用实时反射探针或简化方法。</p>
+<h3>移动端可以使用 IBL 吗？</h3>
+<p>可以，移动端通常使用较低分辨率的预计算贴图，并简化 BRDF LUT，以节省性能。</p>
+<h3>HDRI 和 IBL 有什么关系？</h3>
+<p>HDRI 是 IBL 的数据源，通常作为环境贴图。IBL 利用 HDRI 提供的光照信息进行渲染。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>IBL 和直接光照有什么区别？</h3><p>直接光照来自离散光源，IBL 使用环境贴图模拟来自所有方向的间接光照。</p></div>
+<div class="faq-item"><h3>为什么需要预计算？</h3><p>实时计算环境光照积分非常昂贵，预计算将复杂积分转化为纹理查找，大幅提升性能。</p></div>
+<div class="faq-item"><h3>IBL 支持动态环境吗？</h3><p>支持，但预计算需在环境变化时重新进行，动态环境可用实时反射探针或简化方法。</p></div>
+<div class="faq-item"><h3>移动端可以使用 IBL 吗？</h3><p>可以，移动端通常使用较低分辨率预计算贴图，并简化 BRDF LUT 以节省性能。</p></div>
+<div class="faq-item"><h3>HDRI 和 IBL 有什么关系？</h3><p>HDRI 是 IBL 的数据源，通常作为环境贴图。IBL 利用 HDRI 提供的光照信息进行渲染。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

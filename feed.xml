@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+  <title>TA工具箱 - 技术美术工具与知识库</title>
+  <link>https://tools.treasuregrove.art</link>
+  <description>技术美术(TA)工具、术语百科与知识库的更新订阅</description>
+  <language>zh-cn</language>
+  <lastBuildDate>Mon, 24 Aug 2026 04:23:30 GMT</lastBuildDate>
+  <item>
+    <title>What is Shading: Light-Matter interaction</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>本教程从渲染基础出发，解释着色（Shading）是计算3D场景中物体颜色的过程，并介绍光照强度、物体表面属性等参数如何影响外观，为理解材质和光照交互打下基础。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>LearnOpenGL - Theory</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>本教程系统讲解PBR理论基础，包括微表面模型、能量守恒、Cook-Torrance BRDF等，帮助美术和TA理解物理材质参数在不同光照下保持一致性的原理。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Now available: 12 recipes for popular visual effects using the Universal Render Pipeline</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Unity推出URP视觉效果食谱，提供12个常用特效配方，覆盖模板、GPU实例化、贴花、体积材质等，可与URP入门指南配合使用，帮助开发者快速实现特效。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Technical Artist Summit: Finding Harmony in Anime Style and Physically Based Rendering</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>GDC技术美术峰会分享如何在动画风格与PBR之间取得平衡，介绍延迟渲染管线下的卡通着色、光照、阴影和后处理等实现，为风格化渲染提供实践思路。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WebGPU Fundamentals</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>WebGPU Fundamentals提供一系列基础教程，涵盖初始化、着色器数据、缓冲区、纹理等核心概念，适合初学者系统学习WebGPU和WGSL。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Rendering</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>GDC分享《刺客信条：影》的渲染技术，介绍大型开放世界中的GPU驱动管线、光照改进和天气季节系统等，提供开放世界渲染挑战的解决方案和性能优化思路。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Technical Artist Summit: Approaching Technical Art Techniques Unconventionally Using Unreal Engine</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>GDC技术美术峰会探讨使用Unreal Engine Niagara非传统方法实现技术美术技巧，展示如何编写工具和运行时优化流程以支持高保真VFX，并利用GPU Compute能力。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Designing Visuals, Rendering, and Graphics with Unreal Engine | Unreal Engine 5.8 Documentation | Epic Developer Community</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Unreal Engine官方渲染与图形文档入口，涵盖光照阴影、材质纹理、视觉效果、后处理及性能调试，提供GPUDump Viewer等工具，帮助TA掌握引擎渲染全流程。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Streamlining Resource Binding with End-to-End Support for Vulkan Descriptor Heaps</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA介绍Vulkan描述符堆的端到端支持，简化Shader资源绑定流程，减少CPU/GPU同步和描述符管理开销，提升渲染管线性能和可维护性。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Ray tracing massive amounts of animated geometry using tetrahedral cages</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>本文介绍使用紧凑四面体笼动画结合静态mini-BLAS复用，实现实时光线追踪数亿三角形，大幅降低每帧更新和内存成本，适用于密集植被、草地和人群等大量动画几何场景。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>New AMD Radeon Developer Tool Suite update brings shader source code, Extended PIX Markers, and command-line capture</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>AMD Radeon开发者工具套件更新，RGP 2.7新增着色器源码查看、指令级分支发散指标和扩展PIX标记支持，改进了硬件兼容性并更新了RGD、RRA、RMV、RGA和RDP等工具，帮助TA更深入分析和调试GPU性能。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Speed Up Unreal Engine NNE Inference with NVIDIA TensorRT for RTX Runtime</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>介绍在Unreal Engine中使用NVIDIA TensorRT加速NNE神经网络推理，通过RTX GPU实现高性能，适用于超分辨率、降噪等实时图形任务，帮助TA将AI集成到管线并优化性能。</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Alpha 混合与透明排序：渲染透明的关键机制 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/alpha-blending.html</link>
+    <description>Alpha 混合与透明排序：渲染透明的关键机制 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>各向异性高光：原理、实现与材质表现 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/anisotropy.html</link>
+    <description>各向异性高光：原理、实现与材质表现 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>抗锯齿 MSAA、FXAA、TAA 对比：原理与选择指南 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html</link>
+    <description>抗锯齿 MSAA、FXAA、TAA 对比：原理与选择指南 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Bloom 泛光效果解析：原理、实现与应用 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/bloom.html</link>
+    <description>Bloom 泛光效果解析：原理、实现与应用 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>BRDF：双向反射分布函数详解 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/brdf.html</link>
+    <description>BRDF：双向反射分布函数详解 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Draw Call 优化：原理、合批与性能提升指南 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/draw-call-optimization.html</link>
+    <description>Draw Call 优化：原理、合批与性能提升指南 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>前向渲染与延迟渲染：原理、区别与选择 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html</link>
+    <description>前向渲染与延迟渲染：原理、区别与选择 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>菲涅尔效应详解：原理、公式与实时渲染应用 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/fresnel-effect.html</link>
+    <description>菲涅尔效应详解：原理、公式与实时渲染应用 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>伽马校正：原理、作用与渲染管线应用 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/gamma-correction.html</link>
+    <description>伽马校正：原理、作用与渲染管线应用 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>GPU Instancing：原理、使用与性能优化 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/gpu-instancing.html</link>
+    <description>GPU Instancing：原理、使用与性能优化 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>HDR 与 HDRI：高动态范围图像与环境贴图详解 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/hdr-hdri.html</link>
+    <description>HDR 与 HDRI：高动态范围图像与环境贴图详解 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>图片压缩与格式转换：WebP 及常用格式指南 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-compress-image.html</link>
+    <description>图片压缩与格式转换：WebP 及常用格式指南 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>色彩空间转换：Linear、sRGB 与 Gamma 校正教程 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-convert-color-space.html</link>
+    <description>色彩空间转换：Linear、sRGB 与 Gamma 校正教程 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>视频格式转换：MP4、WebM 等格式互转教程 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-convert-video-format.html</link>
+    <description>视频格式转换：MP4、WebM 等格式互转教程 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>HDR/HDRI 环境贴图编辑：从基础到高级技巧 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-edit-hdr.html</link>
+    <description>HDR/HDRI 环境贴图编辑：从基础到高级技巧 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>如何生成 PBR 贴图：法线、粗糙度、金属度完整指南 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html</link>
+    <description>如何生成 PBR 贴图：法线、粗糙度、金属度完整指南 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>图集打包 Sprite Sheet 完全指南 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-pack-sprite-sheet.html</link>
+    <description>图集打包 Sprite Sheet 完全指南 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>3D 模型在线预览：支持 GLB、FBX、OBJ 的工具教程 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-preview-3d-model.html</link>
+    <description>3D 模型在线预览：支持 GLB、FBX、OBJ 的工具教程 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>贴图通道拆分与合成：RGBA 通道操作教程 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html</link>
+    <description>贴图通道拆分与合成：RGBA 通道操作教程 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>AI 图片无损放大：超分辨率工具使用教程 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-upscale-image-ai.html</link>
+    <description>AI 图片无损放大：超分辨率工具使用教程 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>如何使用 GLSL 转 HLSL 着色器转换器 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/how-to-use-glsl-hlsl-converter.html</link>
+    <description>如何使用 GLSL 转 HLSL 着色器转换器 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>IBL 基于图像的光照：原理与实现 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html</link>
+    <description>IBL 基于图像的光照：原理与实现 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>光照贴图烘焙：原理、流程与优化 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/lightmap-baking.html</link>
+    <description>光照贴图烘焙：原理、流程与优化 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Mipmap 多级渐远纹理：原理、作用与优化 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/mipmap.html</link>
+    <description>Mipmap 多级渐远纹理：原理、作用与优化 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>法线贴图：原理、切线空间与应用详解 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/normal-map.html</link>
+    <description>法线贴图：原理、切线空间与应用详解 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>遮挡剔除：原理、实现与性能优化 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/occlusion-culling.html</link>
+    <description>遮挡剔除：原理、实现与性能优化 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>金属度粗糙度工作流：PBR材质创建指南 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html</link>
+    <description>金属度粗糙度工作流：PBR材质创建指南 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>阴影贴图：原理、算法与优化 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/shadow-map.html</link>
+    <description>阴影贴图：原理、算法与优化 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>sRGB 与线性色彩空间：理解伽马校正与渲染管线 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/srgb-vs-linear.html</link>
+    <description>sRGB 与线性色彩空间：理解伽马校正与渲染管线 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>SSAO 屏幕空间环境光遮蔽：原理与实现 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/ssao.html</link>
+    <description>SSAO 屏幕空间环境光遮蔽：原理与实现 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>次表面散射 SSS：皮肤渲染核心技术与实现 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/subsurface-scattering.html</link>
+    <description>次表面散射 SSS：皮肤渲染核心技术与实现 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>贴图压缩格式：DXT、ETC、ASTC 对比与选择 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/texture-compression-format.html</link>
+    <description>贴图压缩格式：DXT、ETC、ASTC 对比与选择 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>色调映射：HDR到LDR的转换与ACES应用 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/tone-mapping.html</link>
+    <description>色调映射：HDR到LDR的转换与ACES应用 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>UV 映射与展开：3D模型纹理贴图基础 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/uv-mapping.html</link>
+    <description>UV 映射与展开：3D模型纹理贴图基础 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>顶点着色器与片元着色器：区别与作用 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html</link>
+    <description>顶点着色器与片元着色器：区别与作用 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>PBR 物理渲染：基于物理的渲染技术详解 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/what-is-pbr.html</link>
+    <description>PBR 物理渲染：基于物理的渲染技术详解 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Z-Fighting 深度冲突：原因与解决方案 - TA工具箱</title>
+    <link>https://tools.treasuregrove.art/seo/z-fighting.html</link>
+    <description>Z-Fighting 深度冲突：原因与解决方案 - TA工具箱</description>
+    <pubDate>Mon, 24 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>MiniDXNN v0.4.0: Interactive neural texture compression on DirectX 12</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>MiniDXNN v0.4.0 在 DirectX 12 上引入 D3D12 线性代数（SM 6.10）支持，实现交互式神经纹理压缩和实时 GUI 训练可视化。值得 TA 关注其 GPU MLP 加速、输入编码方式及在资产管线中的落地潜力。</description>
+    <pubDate>Fri, 14 Aug 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Build On-Device AI Companions with the NVIDIA ACE Game Agent SDK and Unreal Engine 5 Plugins</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA RTX technologies are deeply integrated into Unreal Engine 5 through the NVIDIA RTX Branch of Unreal Engine and the NVIDIA DLSS Unreal Engine plugin. This...</description>
+    <pubDate>Thu, 25 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>AMD FSR Upscaling 4.1 RDNA 3 Support Now Available in FSR SDK 2.3 Update</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>AMD FSR &quot;Redstone&quot; SDK 2.3 brings ML-powered FSR Upscaling 4.1.1 to AMD Radeon RX 7000 Series GPUs, along with Frame Generation 4.0.1 and Ray Regeneration 1.2 improvements for RDNA 4 GPUs.</description>
+    <pubDate>Wed, 24 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>What’s New for Game Developers in NVIDIA RTX: DLSS 4.5 for UE5 and Multilingual AI Characters</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA RTX provides game developers with direct paths to AI-driven characters, frame generation, and ray-traced rendering. This post walks through a meaningful...</description>
+    <pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Build AI-Powered Games with NVIDIA DLSS 4.5, RTX, and Unreal Engine 5</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Today, game developers can begin integrating NVIDIA DLSS 4.5 with Dynamic Multi Frame Generation, Multi Frame Generation 6X, and the second-generation...</description>
+    <pubDate>Thu, 11 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WMMA guide for AMD RDNA 4 architecture GPUs - part 3</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Learn how to implement fast in-register matrix transpose on AMD RDNA™ 4 architecture GPUs with a WMMA-based identity trick, delivering a lightweight, memory-free alternative proven in Llama.cpp.</description>
+    <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WMMA guide for AMD RDNA 4 architecture GPUs - part 2</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Achieve peak AMD RDNA™ 4 architecture memory bandwidth for low-precision GEMM by fusing WMMA to double the K dimension, enabling 128-bit loads for FP8/INT8, and matching hipBLAS results bit-for-bit.</description>
+    <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WMMA guide for AMD RDNA 4 architecture GPUs - part 1</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Practical guide to fusing GEMMs on AMD RDNA™ 4 architecture, covering WMMA layout, a transpose-by-swapping A/B technique, HIP sample code, and hipBLAS-verified results used in Llama.cpp.</description>
+    <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Introducing MiniDXNN: MLP library for DirectX 12</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>MiniDXNN is a native HLSL and DirectX 12 library for lightning-fast MLP inference leveraging AMD Radeon™ RX 9000 series matrix cores via cooperative vector APIs, delivering optimized kernels, samples, full source and...</description>
+    <pubDate>Thu, 09 Apr 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>NVIDIA RTX Innovations Are Powering the Next Era of Game Development</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA RTX ray tracing and AI-powered neural rendering technologies are redefining how games are made, enabling a new standard for visuals and performance. At...</description>
+    <pubDate>Thu, 12 Mar 2026 00:00:00 GMT</pubDate>
+  </item>
+</channel>
+</rss>

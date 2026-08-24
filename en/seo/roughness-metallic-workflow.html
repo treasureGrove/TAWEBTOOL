@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metallic Roughness Workflow: A Guide to Creating PBR Materials - TA Toolbox</title>
+<meta name="description" content="The metallic roughness workflow is the most common method for defining PBR materials, using metallic, roughness, albedo, and other maps to precisely control appearance. This article covers the core maps, usage steps, and common questions.">
+<meta name="keywords" content="metallic roughness workflow,metallic roughness,PBR material,albedo map,metallic map,roughness map,game development,material creation,Substance Painter,Unity,Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Metallic Roughness Workflow: A Guide to Creating PBR Materials"}]},{"@type":"Article","name":"Metallic Roughness Workflow: A Guide to Creating PBR Materials","headline":"Metallic Roughness Workflow: A Guide to Creating PBR Materials","description":"The metallic roughness workflow is the most common method for defining PBR materials, using metallic, roughness, albedo, and other maps to precisely control appearance. This article covers the core maps, usage steps, and common questions.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should the metallic map be grayscale or color?","acceptedAnswer":{"@type":"Answer","text":"The metallic map must be grayscale because metallic is a scalar value. Color channels would be ignored or cause errors."}},{"@type":"Question","name":"Can roughness map be replaced by glossiness map?","acceptedAnswer":{"@type":"Answer","text":"Yes, roughness = 1 - glossiness. They can be converted to each other."}},{"@type":"Question","name":"Why shouldn't the metallic map have intermediate values?","acceptedAnswer":{"@type":"Answer","text":"Physically, materials are usually either metal or non-metal; intermediate values only appear in transition areas, so it's recommended to keep it binary or with minimal transitions."}},{"@type":"Question","name":"How to avoid white edges on metallic boundaries?","acceptedAnswer":{"@type":"Answer","text":"Ensure the albedo map has correct colors at boundaries, or use higher resolution textures to reduce aliasing."}},{"@type":"Question","name":"Is the metallic roughness workflow suitable for all materials?","acceptedAnswer":{"@type":"Answer","text":"It suits most materials, but special materials (skin, car paint) may need additional maps to enhance realism."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Metallic Roughness Workflow: A Guide to Creating PBR Materials</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Overview of the Metallic Roughness Workflow</h2>
+<p>The metallic roughness workflow is an implementation of PBR (Physically Based Rendering) that defines material properties through a set of texture maps, ensuring consistent appearance under various lighting conditions. It uses a Metallic map to distinguish metals from non-metals, a Roughness map to control surface smoothness, and an Albedo map to define base color. It is the standard workflow in modern game engines (like Unity, Unreal) and DCC tools (like Substance Painter).</p>
+<h2>Core Maps Explained</h2>
+<h3>Albedo Map</h3>
+<p>The albedo map defines the base color of the material without any lighting information (shadows, highlights). For metals, albedo represents the metal's color; for non-metals, it's the surface color. The albedo map should not contain any baked lighting or shadows; otherwise, it breaks the physical correctness of PBR.</p>
+<h3>Metallic Map</h3>
+<p>The metallic map uses grayscale values to specify areas as metal or non-metal. White (value 1) indicates pure metal, black (value 0) indicates non-metal (wood, plastic). Metallic is usually binary but can have transition values for mixed materials (e.g., rusty metal). Metals have black diffuse and specular color from albedo; non-metals have diffuse from albedo and white specular.</p>
+<h3>Roughness Map</h3>
+<p>The roughness map controls the microscopic roughness of the surface. White (value 1) means completely rough, with strong diffuse and scattered specular; black (value 0) means completely smooth, with sharp specular. Roughness can be seen as the inverse of glossiness (roughness = 1 - glossiness).</p>
+<h3>Other Common Maps</h3>
+<ul>
+<li>**Normal Map**: Provides surface bump details for more realism.</li>
+<li>**Ambient Occlusion (AO) Map**: Adds contact shadows and local darkening.</li>
+<li>**Height Map**: Used for effects like parallax mapping to add depth.</li>
+</ul>
+<h2>Steps to Use the Metallic Roughness Workflow</h2>
+<ol>
+<li>**Create or obtain PBR textures**: Use tools like Substance Painter, Quixel Mixer, or download from libraries.</li>
+<li>**Import into game engine**: Import the textures into Unity or Unreal and create a material.</li>
+<li>**Connect the maps**: Assign the albedo, metallic, roughness, normal, etc., to the corresponding material inputs.</li>
+<li>**Adjust parameters**: Modify tiling, offset, or material properties (e.g., metallic/roughness sliders) as needed.</li>
+<li>**Test under different lighting**: Check material appearance in multiple lighting conditions to ensure consistency.</li>
+</ul>
+<h2>Comparison with Specular/Glossiness Workflow</h2>
+<p>| Feature | Metallic Roughness | Specular Glossiness |</p>
+<p>|---------------------|--------------------|---------------------|</p>
+<p>| Number of maps | Fewer (metallic + roughness) | More (specular color + glossiness) |</p>
+<p>| Intuitiveness | Intuitive, easier | Slightly complex |</p>
+<p>| Edge artifacts | Possible white edges | Less common |</p>
+<p>| Control flexibility | Lower | Higher |</p>
+<p>| Modern engine support | Widely supported | Partially supported |</p>
+<p>In most cases, the metallic roughness workflow is recommended because it is simpler, uses fewer textures, and is less prone to physical errors.</p>
+<h2>FAQ</h2>
+<h3>Should the metallic map be grayscale or color?</h3>
+<p>The metallic map must be grayscale because metallic is a scalar value. Color channels would be ignored or cause errors.</p>
+<h3>Can roughness map be replaced by glossiness map?</h3>
+<p>Yes, roughness = 1 - glossiness. Some tools or engines use glossiness, and you can invert it to get roughness.</p>
+<h3>Why shouldn't the metallic map have intermediate values?</h3>
+<p>Physically, most materials are either metal or non-metal; intermediate values usually only appear in transition areas (e.g., corrosion, coatings). Therefore, it's recommended to keep the metallic map binary or with minimal transitions.</p>
+<h3>How to avoid white edges on metallic boundaries?</h3>
+<p>White edges are often due to incorrect albedo colors at the metal/non-metal boundary (e.g., non-metal areas using white). Ensure the albedo map is correct, or use higher resolution textures to reduce aliasing.</p>
+<h3>Is the metallic roughness workflow suitable for all materials?</h3>
+<p>It works for most hard-surface and character materials, but special materials (cloth, skin, car paint) may need additional maps (subsurface scattering, clear coat) to enhance realism.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Should the metallic map be grayscale or color?</h3><p>The metallic map must be grayscale because metallic is a scalar value. Color channels would be ignored or cause errors.</p></div>
+<div class="faq-item"><h3>Can roughness map be replaced by glossiness map?</h3><p>Yes, roughness = 1 - glossiness. They can be converted to each other.</p></div>
+<div class="faq-item"><h3>Why shouldn't the metallic map have intermediate values?</h3><p>Physically, materials are usually either metal or non-metal; intermediate values only appear in transition areas, so it's recommended to keep it binary or with minimal transitions.</p></div>
+<div class="faq-item"><h3>How to avoid white edges on metallic boundaries?</h3><p>Ensure the albedo map has correct colors at boundaries, or use higher resolution textures to reduce aliasing.</p></div>
+<div class="faq-item"><h3>Is the metallic roughness workflow suitable for all materials?</h3><p>It suits most materials, but special materials (skin, car paint) may need additional maps to enhance realism.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/fresnel-effect.html">菲涅尔效应</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

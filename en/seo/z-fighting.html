@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Z-Fighting Depth Conflicts: Causes and Solutions - TA Toolbox</title>
+<meta name="description" content="Z-Fighting is a common issue in 3D rendering where two surfaces are too close, causing flickering due to insufficient depth buffer precision. This article explains the principles and provides various solutions.">
+<meta name="keywords" content="Z-Fighting, Depth Conflict, Depth Buffer, Depth Bias, Rendering Issues, Unity, Unreal, 3D Rendering, Flickering, Solutions">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/z-fighting.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/z-fighting.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/z-fighting.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Z-Fighting Depth Conflicts: Causes and Solutions"}]},{"@type":"Article","name":"Z-Fighting Depth Conflicts: Causes and Solutions","headline":"Z-Fighting Depth Conflicts: Causes and Solutions","description":"Z-Fighting is a common issue in 3D rendering where two surfaces are too close, causing flickering due to insufficient depth buffer precision. This article explains the principles and provides various solutions.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/z-fighting.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/z-fighting.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the relationship between Z-Fighting and shadow acne?","acceptedAnswer":{"@type":"Answer","text":"Shadow acne is a similar issue in shadow mapping, caused by insufficient depth comparison precision leading to self-shadowing, usually solved with depth bias."}},{"@type":"Question","name":"Why is Z-Fighting more likely to occur at far distances?","acceptedAnswer":{"@type":"Answer","text":"Because depth buffer precision is non-linear, and far distances have lower precision, two surfaces may be indistinguishable even with a relatively large distance."}},{"@type":"Question","name":"How to avoid Z-Fighting between decals and floors?","acceptedAnswer":{"@type":"Answer","text":"Use depth bias or adjust render queues so that decals are slightly closer to the camera."}},{"@type":"Question","name":"How to deal with Z-Fighting on mobile devices?","acceptedAnswer":{"@type":"Answer","text":"Mobile depth buffers are usually 16-bit or 24-bit, with lower precision, so more attention to geometry distances and depth ranges is needed."}},{"@type":"Question","name":"What are the benefits of Reverse-Z?","acceptedAnswer":{"@type":"Answer","text":"Reverse-Z inverts the floating-point depth mapping, concentrating precision at far distances, suitable for large scenes and reducing far depth conflicts."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Z-Fighting Depth Conflicts: Causes and Solutions</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is Z-Fighting</h2>
+<p>Z-Fighting (depth conflict) refers to the phenomenon where two or more planes in space are very close to each other, and due to the limited precision of the depth buffer (Z-Buffer), their relative distances cannot be accurately distinguished, causing flickering or texture shimmering when rendering alternately displays different surfaces. It commonly occurs with coplanar geometry (such as decals, overlapping planes).</p>
+<h2>Cause Analysis</h2>
+<p>Depth buffers typically store depth values using a non-linear mapping, with higher precision near the near plane and lower precision far away. When the distance between two surfaces is smaller than the minimum distinguishable interval of the depth buffer, the GPU may incorrectly judge which surface is in front, causing the depth test to randomly pass and produce flickering. Additionally, the bit depth of the depth buffer (usually 24-bit or 32-bit) and the ratio of near to far planes also affect precision.</p>
+<h2>Solutions</h2>
+<h3>Adjusting Geometry</h3>
+<ul>
+<li>**Increase Distance**: Separate overlapping surfaces, or slightly offset positions (e.g., offset along normals).</li>
+<li>**Avoid Coplanarity**: Ensure objects do not share the same plane, or use different heights.</li>
+</ul>
+<h3>Adjusting Depth Buffer Settings</h3>
+<ul>
+<li>**Reduce Far/Near Plane Ratio**: Set the far plane closer, or set the near plane farther, to improve overall depth precision.</li>
+<li>**Use Higher Precision Depth Buffer**: Such as 32-bit floating-point depth or Reverse-Z technique. Reverse-Z inverts the depth mapping, giving higher precision at far distances, and is commonly used in modern rendering.</li>
+</ul>
+<h3>Using Rendering Techniques</h3>
+<ul>
+<li>**Depth Bias**: Apply a depth offset to polygons during rendering to make them slightly closer to the camera, typically used for decals, shadows, etc. Set via `Offset` in shaders or API.</li>
+<li>**Polygon Offset**: Similar to depth bias, but adjusted based on slope.</li>
+<li>**Separate Render Queues**: Adjust rendering order to ensure far surfaces are rendered first.</li>
+</ul>
+<h3>Engine-Specific Methods</h3>
+<ul>
+<li>**Unity**: Set Render Queue in the material or use Offset parameters in shaders.</li>
+<li>**Unreal**: Set Depth Bias in the material or use World Position Offset.</li>
+</ul>
+<h2>Frequently Asked Questions</h2>
+<h3>What is the relationship between Z-Fighting and shadow acne?</h3>
+<p>Shadow acne is a similar issue in shadow mapping, caused by insufficient depth comparison precision leading to self-shadowing, usually solved with depth bias.</p>
+<h3>Why is Z-Fighting more likely to occur at far distances?</h3>
+<p>Because depth buffer precision is non-linear, and far distances have lower precision, two surfaces may be indistinguishable even with a relatively large distance.</p>
+<h3>How to avoid Z-Fighting between decals and floors?</h3>
+<p>Use depth bias or adjust render queues so that decals are slightly closer to the camera.</p>
+<h3>How to deal with Z-Fighting on mobile devices?</h3>
+<p>Mobile depth buffers are usually 16-bit or 24-bit, with lower precision, so more attention to geometry distances and depth ranges is needed.</p>
+<h3>What are the benefits of Reverse-Z?</h3>
+<p>Reverse-Z inverts the floating-point depth mapping, concentrating precision at far distances, suitable for large scenes and reducing far depth conflicts.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the relationship between Z-Fighting and shadow acne?</h3><p>Shadow acne is a similar issue in shadow mapping, caused by insufficient depth comparison precision leading to self-shadowing, usually solved with depth bias.</p></div>
+<div class="faq-item"><h3>Why is Z-Fighting more likely to occur at far distances?</h3><p>Because depth buffer precision is non-linear, and far distances have lower precision, two surfaces may be indistinguishable even with a relatively large distance.</p></div>
+<div class="faq-item"><h3>How to avoid Z-Fighting between decals and floors?</h3><p>Use depth bias or adjust render queues so that decals are slightly closer to the camera.</p></div>
+<div class="faq-item"><h3>How to deal with Z-Fighting on mobile devices?</h3><p>Mobile depth buffers are usually 16-bit or 24-bit, with lower precision, so more attention to geometry distances and depth ranges is needed.</p></div>
+<div class="faq-item"><h3>What are the benefits of Reverse-Z?</h3><p>Reverse-Z inverts the floating-point depth mapping, concentrating precision at far distances, suitable for large scenes and reducing far depth conflicts.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/alpha-blending.html">Alpha 混合与透明排序</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>金属度粗糙度工作流：PBR材质创建指南 - TA工具箱</title>
+<meta name="description" content="金属度粗糙度工作流是PBR中最常用的材质定义方法，通过金属度、粗糙度、反照率等贴图精确控制材质外观。本文介绍该工作流的核心贴图、使用方法和常见问题。">
+<meta name="keywords" content="金属度粗糙度工作流,metallic roughness,PBR材质,反照率贴图,金属度贴图,粗糙度贴图,游戏开发,材质创建,Substance Painter,Unity,Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"金属度粗糙度工作流：PBR材质创建指南"}]},{"@type":"Article","name":"金属度粗糙度工作流：PBR材质创建指南","headline":"金属度粗糙度工作流：PBR材质创建指南","description":"金属度粗糙度工作流是PBR中最常用的材质定义方法，通过金属度、粗糙度、反照率等贴图精确控制材质外观。本文介绍该工作流的核心贴图、使用方法和常见问题。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"金属度贴图应该使用灰度还是彩色？","acceptedAnswer":{"@type":"Answer","text":"金属度贴图必须使用灰度图，因为金属度是标量值。彩色通道会被忽略或导致错误。"}},{"@type":"Question","name":"粗糙度贴图可以用光泽度贴图代替吗？","acceptedAnswer":{"@type":"Answer","text":"可以，粗糙度 = 1 - 光泽度。两者可以互相转换。"}},{"@type":"Question","name":"为什么金属度贴图不能有中间值？","acceptedAnswer":{"@type":"Answer","text":"物理上材质通常要么是金属要么是非金属，中间值仅出现在过渡区域，因此建议保持二值或少量过渡。"}},{"@type":"Question","name":"如何避免金属边缘的白边？","acceptedAnswer":{"@type":"Answer","text":"确保反照率贴图在边界处颜色正确，或使用更高分辨率贴图来减少锯齿。"}},{"@type":"Question","name":"金属度粗糙度工作流适合所有材质吗？","acceptedAnswer":{"@type":"Answer","text":"适合大多数材质，但特殊材质（如皮肤、车漆）可能需要额外贴图来增强效果。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>金属度粗糙度工作流：PBR材质创建指南</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>金属度粗糙度工作流概述</h2>
+<p>金属度粗糙度工作流是PBR（基于物理的渲染）的一种实现方式，通过一组贴图定义材质属性，使材质在不同光照环境下表现一致。该工作流使用金属度（Metallic）贴图区分金属与非金属，使用粗糙度（Roughness）贴图控制表面光滑程度，结合反照率（Albedo）贴图定义基础颜色。它是现代游戏引擎（如Unity、Unreal）和DCC工具（如Substance Painter）的标准工作流。</p>
+<h2>核心贴图介绍</h2>
+<h3>反照率贴图（Albedo）</h3>
+<p>反照率贴图定义材质的基础颜色，但不包含光照信息（如阴影、高光）。对于金属，反照率表示金属的颜色；对于非金属，表示表面颜色。反照率贴图不应包含任何光照或阴影细节，否则会破坏PBR的物理正确性。</p>
+<h3>金属度贴图（Metallic）</h3>
+<p>金属度贴图使用灰度值指定哪些区域是金属或非金属。白色（值1）表示纯金属，黑色（值0）表示非金属（如木材、塑料）。金属度通常是二值的，但可以有过渡值表示混合材质（如生锈的金属）。金属的漫反射为黑色，高光颜色来自反照率；非金属的漫反射为反照率颜色，高光为白色。</p>
+<h3>粗糙度贴图（Roughness）</h3>
+<p>粗糙度贴图控制表面的微观粗糙程度。白色（值1）表示完全粗糙，漫反射强，高光分散；黑色（值0）表示完全光滑，高光锐利。粗糙度可以类比为光泽度的反值（粗糙度 = 1 - 光泽度）。</p>
+<h3>其他常用贴图</h3>
+<ul>
+<li>**法线贴图（Normal Map）**：提供表面凹凸细节，增强真实感。</li>
+<li>**环境光遮蔽贴图（AO Map）**：提供接触阴影，增强局部暗部细节。</li>
+<li>**高度贴图（Height Map）**：用于视差映射等效果，增加几何感。</li>
+</ul>
+<h2>使用金属度粗糙度工作流的步骤</h2>
+<ol>
+<li>**创建或获取PBR贴图**：使用Substance Painter、Quixel Mixer等工具制作，或从素材库下载。</li>
+<li>**导入游戏引擎**：将贴图导入Unity或Unreal，创建材质。</li>
+<li>**连接贴图**：将反照率、金属度、粗糙度、法线等贴图分别连接到材质的对应输入。</li>
+<li>**调整参数**：根据需要调整贴图的平铺、偏移，或修改材质属性（如金属度、粗糙度的滑块）。</li>
+<li>**测试不同光照**：在多种光照环境下检查材质表现，确保一致性。</li>
+</ul>
+<h2>金属度粗糙度工作流与高光/光泽度工作流的对比</h2>
+<p>| 特性 | 金属度粗糙度工作流 | 高光/光泽度工作流 |</p>
+<p>|------|-------------------|-------------------|</p>
+<p>| 贴图数量 | 较少（金属度+粗糙度） | 较多（高光颜色+光泽度） |</p>
+<p>| 直观性 | 直观，易于理解 | 稍复杂 |</p>
+<p>| 边缘伪影 | 可能产生白边 | 较少 |</p>
+<p>| 控制灵活性 | 较低 | 较高 |</p>
+<p>| 现代引擎支持 | 广泛支持 | 部分支持 |</p>
+<p>多数情况下推荐金属度粗糙度工作流，因为它更简单、贴图更少，且不容易出现物理错误。</p>
+<h2>常见问题</h2>
+<h3>金属度贴图应该使用灰度还是彩色？</h3>
+<p>金属度贴图必须使用灰度图，因为金属度是一个标量值。彩色通道会被忽略或产生错误。</p>
+<h3>粗糙度贴图可以用光泽度贴图代替吗？</h3>
+<p>可以，粗糙度 = 1 - 光泽度。有些工具或引擎使用光泽度，可以反转得到粗糙度。</p>
+<h3>为什么金属度贴图不能有中间值？</h3>
+<p>在物理上，大多数材质要么是金属要么是非金属，中间值通常只出现在过渡区域（如腐蚀、涂层）。因此，金属度贴图通常是非黑即白，但允许少量过渡值。</p>
+<h3>如何避免金属边缘的白边？</h3>
+<p>白边通常是由于反照率贴图在金属/非金属边界处颜色不正确（如非金属区域使用了白色）。确保反照率贴图正确，或使用更高分辨率的贴图减少锯齿。</p>
+<h3>金属度粗糙度工作流适合所有材质吗？</h3>
+<p>适合大多数硬表面和角色材质，但对于特殊材质（如布料、皮肤、车漆）可能需要额外的贴图（如次表面散射、清漆层）来增强效果。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>金属度贴图应该使用灰度还是彩色？</h3><p>金属度贴图必须使用灰度图，因为金属度是标量值。彩色通道会被忽略或导致错误。</p></div>
+<div class="faq-item"><h3>粗糙度贴图可以用光泽度贴图代替吗？</h3><p>可以，粗糙度 = 1 - 光泽度。两者可以互相转换。</p></div>
+<div class="faq-item"><h3>为什么金属度贴图不能有中间值？</h3><p>物理上材质通常要么是金属要么是非金属，中间值仅出现在过渡区域，因此建议保持二值或少量过渡。</p></div>
+<div class="faq-item"><h3>如何避免金属边缘的白边？</h3><p>确保反照率贴图在边界处颜色正确，或使用更高分辨率贴图来减少锯齿。</p></div>
+<div class="faq-item"><h3>金属度粗糙度工作流适合所有材质吗？</h3><p>适合大多数材质，但特殊材质（如皮肤、车漆）可能需要额外贴图来增强效果。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/fresnel-effect.html">菲涅尔效应</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

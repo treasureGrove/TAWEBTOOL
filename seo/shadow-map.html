@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阴影贴图：原理、算法与优化 - TA工具箱</title>
+<meta name="description" content="阴影贴图是一种实时阴影渲染技术，通过从光源视角渲染深度图来判断遮挡。本文介绍阴影贴图的原理、常见问题（如阴影痤疮、锯齿）及优化方法。">
+<meta name="keywords" content="阴影贴图,shadow map,深度比较,阴影痤疮,级联阴影贴图,CSM,PCF,实时阴影,Unity,Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/shadow-map.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/shadow-map.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/shadow-map.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"阴影贴图：原理、算法与优化"}]},{"@type":"Article","name":"阴影贴图：原理、算法与优化","headline":"阴影贴图：原理、算法与优化","description":"阴影贴图是一种实时阴影渲染技术，通过从光源视角渲染深度图来判断遮挡。本文介绍阴影贴图的原理、常见问题（如阴影痤疮、锯齿）及优化方法。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/shadow-map.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/shadow-map.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"阴影贴图和光线追踪阴影有什么区别？","acceptedAnswer":{"@type":"Answer","text":"阴影贴图是基于深度比较的近似方法，存在精度问题；光线追踪阴影精确但性能开销大。"}},{"@type":"Question","name":"为什么阴影贴图需要深度偏移？","acceptedAnswer":{"@type":"Answer","text":"深度偏移可以避免表面自阴影（阴影痤疮），因为深度缓冲精度有限。"}},{"@type":"Question","name":"点光源如何生成阴影贴图？","acceptedAnswer":{"@type":"Answer","text":"点光源通常使用立方体阴影贴图，从六个方向渲染深度，或使用单通道双抛物面映射。"}},{"@type":"Question","name":"移动端如何优化阴影？","acceptedAnswer":{"@type":"Answer","text":"可以使用低分辨率阴影贴图、限制阴影距离、使用简单的硬阴影或关闭阴影。"}},{"@type":"Question","name":"CSM 是什么？","acceptedAnswer":{"@type":"Answer","text":"级联阴影贴图，将视锥体分为多个区域，每个区域使用不同分辨率阴影贴图，平衡阴影质量。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>阴影贴图：原理、算法与优化</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是阴影贴图</h2>
+<p>阴影贴图（Shadow Mapping）是一种实时阴影生成技术，广泛应用于游戏和实时渲染。其基本思想是从光源视角渲染场景的深度信息到一张纹理（阴影贴图），然后在主渲染中，将每个像素转换到光源空间，比较其深度与阴影贴图中的深度，如果像素深度大于阴影贴图深度，则该像素处于阴影中。</p>
+<h2>阴影贴图的原理</h2>
+<p>阴影贴图通常分为两个 Pass：</p>
+<ol>
+<li>**阴影 Pass**：从光源位置渲染场景，只写入深度，得到阴影贴图。对于方向光，使用正交投影；对于点光源，使用透视投影或立方体贴图（六面）。</li>
+<li>**主渲染 Pass**：正常渲染场景，在片段着色器中，将世界坐标转换到光源空间，采样阴影贴图，比较深度。如果当前片元深度大于阴影贴图中对应深度（加上偏移），则片元在阴影中，光照减弱。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>阴影痤疮（Shadow Acne）</h3>
+<p>由于深度缓冲精度有限，表面被自身误判断为阴影，产生条纹或斑点。解决方法：使用深度偏移（Depth Bias）和法线偏移（Normal Offset），在比较深度时添加一个小偏移。</p>
+<h3>彼得潘现象（Peter Panning）</h3>
+<p>偏移过大导致阴影与物体分离，阴影漂浮。需要调整偏移量。</p>
+<h3>阴影锯齿（Aliasing）</h3>
+<p>阴影贴图分辨率有限，边缘出现锯齿。解决方法：使用百分比渐近滤波（PCF）进行软阴影，或提高阴影贴图分辨率。</p>
+<h3>阴影贴图精度</h3>
+<p>阴影贴图使用深度纹理，精度有限，远处可能产生 Z-fighting。可以使用级联阴影贴图（CSM）提高方向光在大场景中的精度。</p>
+<h2>优化方法</h2>
+<ul>
+<li>**级联阴影贴图（Cascaded Shadow Maps, CSM）**：将视锥体划分为多个区域，每个区域使用不同分辨率的阴影贴图，提高近处阴影质量。</li>
+<li>**紧配合光源视锥**：调整光源投影范围以紧密包围场景，提高阴影贴图利用率。</li>
+<li>**使用低分辨率阴影贴图**：对于远处或小物体，可以降低阴影贴图分辨率。</li>
+<li>**阴影距离限制**：超出一定距离不渲染阴影。</li>
+<li>**缓存静态阴影**：烘焙静态物体的阴影到光照贴图。</li>
+</ul>
+<h2>在引擎中的应用</h2>
+<ul>
+<li>**Unity**：使用 Shadow Map 技术，支持 CSM、软阴影、阴影距离等设置。</li>
+<li>**Unreal**：使用 Shadow Map 和 Ray Traced Shadows，支持多种优化。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>阴影贴图和光线追踪阴影有什么区别？</h3>
+<p>阴影贴图是基于深度比较的近似方法，存在精度问题；光线追踪阴影通过投射光线精确计算，效果更好但性能开销大。</p>
+<h3>为什么阴影贴图需要深度偏移？</h3>
+<p>因为深度缓冲精度有限，深度偏移可以避免表面自阴影（阴影痤疮）。</p>
+<h3>点光源如何生成阴影贴图？</h3>
+<p>点光源通常使用立方体阴影贴图，从六个方向渲染深度，或使用单通道双抛物面映射。</p>
+<h3>移动端如何优化阴影？</h3>
+<p>移动端可以使用低分辨率阴影贴图、限制阴影距离、使用简单的硬阴影或关闭阴影。</p>
+<h3>CSM 是什么？</h3>
+<p>级联阴影贴图，将视锥体分为多个区域，每个区域使用不同分辨率阴影贴图，平衡近处和远处的阴影质量。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>阴影贴图和光线追踪阴影有什么区别？</h3><p>阴影贴图是基于深度比较的近似方法，存在精度问题；光线追踪阴影精确但性能开销大。</p></div>
+<div class="faq-item"><h3>为什么阴影贴图需要深度偏移？</h3><p>深度偏移可以避免表面自阴影（阴影痤疮），因为深度缓冲精度有限。</p></div>
+<div class="faq-item"><h3>点光源如何生成阴影贴图？</h3><p>点光源通常使用立方体阴影贴图，从六个方向渲染深度，或使用单通道双抛物面映射。</p></div>
+<div class="faq-item"><h3>移动端如何优化阴影？</h3><p>可以使用低分辨率阴影贴图、限制阴影距离、使用简单的硬阴影或关闭阴影。</p></div>
+<div class="faq-item"><h3>CSM 是什么？</h3><p>级联阴影贴图，将视锥体分为多个区域，每个区域使用不同分辨率阴影贴图，平衡阴影质量。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

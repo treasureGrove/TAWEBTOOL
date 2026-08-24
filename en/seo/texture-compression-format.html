@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Texture Compression Formats: DXT, ETC, ASTC Comparison and Selection - TA Toolbox</title>
+<meta name="description" content="Texture compression formats reduce memory usage and bandwidth; different platforms support different formats like DXT/BC, ETC, and ASTC. This article covers common formats, their principles, features, and selection strategies.">
+<meta name="keywords" content="texture compression,DXT,BC,ETC,ASTC,texture format,GPU,memory optimization,game development,mobile,normal map">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/texture-compression-format.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/texture-compression-format.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Texture Compression Formats: DXT, ETC, ASTC Comparison and Selection"}]},{"@type":"Article","name":"Texture Compression Formats: DXT, ETC, ASTC Comparison and Selection","headline":"Texture Compression Formats: DXT, ETC, ASTC Comparison and Selection","description":"Texture compression formats reduce memory usage and bandwidth; different platforms support different formats like DXT/BC, ETC, and ASTC. This article covers common formats, their principles, features, and selection strategies.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/texture-compression-format.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/texture-compression-format.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the relationship between DXT and BC?","acceptedAnswer":{"@type":"Answer","text":"BC is the standard name from DirectX 10 onward, DXT is the legacy name. BC1 equals DXT1, BC3 equals DXT5."}},{"@type":"Question","name":"Is ASTC better than ETC?","acceptedAnswer":{"@type":"Answer","text":"Usually yes. ASTC offers better quality and flexibility but requires hardware support. Recommended for devices that support it."}},{"@type":"Question","name":"Why do normal maps use dual-channel compression?","acceptedAnswer":{"@type":"Answer","text":"The Z component of a normal map can be derived from X and Y, so Z can be discarded; dual-channel formats store X and Y, reconstructing Z in the shader."}},{"@type":"Question","name":"How to choose compression format on mobile?","acceptedAnswer":{"@type":"Answer","text":"If the target device supports ASTC, use ASTC; otherwise use ETC2. For iOS, PVRTC or ASTC (newer devices)."}},{"@type":"Question","name":"Does compression degrade texture quality?","acceptedAnswer":{"@type":"Answer","text":"Lossy compression causes block artifacts, especially on high-contrast edges. Balance quality and size by choosing appropriate format and block size."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Texture Compression Formats: DXT, ETC, ASTC Comparison and Selection</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Why Texture Compression Is Needed</h2>
+<p>Textures are a major memory consumer in games and real-time rendering; high-resolution textures can consume significant VRAM and bandwidth. Texture compression formats optimize performance and memory by reducing storage size while maintaining acceptable visual quality. GPUs support sampling compressed textures directly, saving bandwidth without decompression.</p>
+<h2>Common Texture Compression Formats</h2>
+<h3>DXT/BC Family (Desktop Platforms)</h3>
+<ul>
+<li>**DXT1/BC1**: 64 bits per 4x4 block, supports RGB and 1-bit alpha. Compression ratio 8:1 (relative to 24-bit RGB).</li>
+<li>**DXT3/BC2**: 128 bits per block, 4-bit alpha, suitable for textures with sharp alpha.</li>
+<li>**DXT5/BC3**: 128 bits per block, interpolated alpha, suitable for gradual alpha.</li>
+<li>**BC4/BC5**: Single and dual-channel formats, often used for normal maps (BC5 stores X and Y).</li>
+<li>**BC6H/BC7**: High-quality formats; BC6H for HDR, BC7 for high-quality LDR.</li>
+</ul>
+<p>These formats are widely used on Windows, Mac, and Linux.</p>
+<h3>ETC Family (Mobile Platforms)</h3>
+<ul>
+<li>**ETC1**: 64 bits per 4x4 block, supports RGB, no alpha, universal in OpenGL ES 2.0.</li>
+<li>**ETC2**: Backward compatible with ETC1, supports RGBA, OpenGL ES 3.0+.</li>
+<li>**EAC**: Single/dual-channel formats for normal maps, etc.</li>
+</ul>
+<p>ETC is the baseline for Android devices.</p>
+<h3>ASTC (Adaptive Scalable Texture Compression)</h3>
+<p>ASTC is a newer format supporting various block sizes (4x4 to 12x12), offering flexible compression ratio and quality trade-offs. Supports RGBA, HDR, and is supported by most modern mobile GPUs (Adreno 5xx+, Mali T6xx+) and some desktop GPUs. ASTC is recommended for mobile.</p>
+<h3>Other Formats</h3>
+<ul>
+<li>**PVRTC**: Used by PowerVR GPUs, supported by early iOS devices, average quality.</li>
+<li>**ATITC**: Older Adreno GPU format, being phased out.</li>
+</ul>
+<h2>Format Selection Strategy</h2>
+<ul>
+<li>**Desktop**: Prefer BC7 (high quality) or BC1/BC3 (compatibility).</li>
+<li>**Mobile**: Prefer ASTC (modern devices), otherwise use ETC2.</li>
+<li>**Normal Maps**: Use dual-channel formats (BC5 or EAC) to save memory.</li>
+<li>**HDR Textures**: Use BC6H or ASTC HDR.</li>
+<li>**UI Textures**: If high quality is needed, use uncompressed or lossless formats (e.g., PNG), but watch memory.</li>
+</ul>
+<p>In Unity and Unreal, compression formats can be set in texture import settings with per-platform overrides.</p>
+<h2>Compression Formats and Texture Types</h2>
+<ul>
+<li>**Color Textures**: Use lossy compression (BC1/BC3/ETC2/ASTC).</li>
+<li>**Normal Maps**: Use special formats (BC5) or compress after channel rearrangement.</li>
+<li>**Data Textures** (metallic, roughness): Single-channel or compressed, but mind precision.</li>
+<li>**UI Elements**: Often uncompressed or ASTC to avoid artifacts.</li>
+</ul>
+<h2>FAQ</h2>
+<h3>What is the relationship between DXT and BC?</h3>
+<p>BC (Block Compression) is the standard name from DirectX 10 onward, DXT is the legacy name. BC1 equals DXT1, BC3 equals DXT5.</p>
+<h3>Is ASTC better than ETC?</h3>
+<p>Usually yes. ASTC offers better quality and flexibility but requires hardware support. Recommended for devices that support it.</p>
+<h3>Why do normal maps use dual-channel compression?</h3>
+<p>The Z component of a normal map can be derived from X and Y (unit vector), so Z can be discarded and dual-channel formats store X, Y, reconstructing Z in the shader to save memory.</p>
+<h3>How to choose compression format on mobile?</h3>
+<p>If the target device supports ASTC, use ASTC; otherwise use ETC2. For iOS, PVRTC or ASTC (newer devices).</p>
+<h3>Does compression degrade texture quality?</h3>
+<p>Lossy compression causes block artifacts, especially on high-contrast edges. Balance quality and size by choosing appropriate format and block size.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the relationship between DXT and BC?</h3><p>BC is the standard name from DirectX 10 onward, DXT is the legacy name. BC1 equals DXT1, BC3 equals DXT5.</p></div>
+<div class="faq-item"><h3>Is ASTC better than ETC?</h3><p>Usually yes. ASTC offers better quality and flexibility but requires hardware support. Recommended for devices that support it.</p></div>
+<div class="faq-item"><h3>Why do normal maps use dual-channel compression?</h3><p>The Z component of a normal map can be derived from X and Y, so Z can be discarded; dual-channel formats store X and Y, reconstructing Z in the shader.</p></div>
+<div class="faq-item"><h3>How to choose compression format on mobile?</h3><p>If the target device supports ASTC, use ASTC; otherwise use ETC2. For iOS, PVRTC or ASTC (newer devices).</p></div>
+<div class="faq-item"><h3>Does compression degrade texture quality?</h3><p>Lossy compression causes block artifacts, especially on high-contrast edges. Balance quality and size by choosing appropriate format and block size.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

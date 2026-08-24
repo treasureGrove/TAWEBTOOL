@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遮挡剔除：原理、实现与性能优化 - TA工具箱</title>
+<meta name="description" content="遮挡剔除是一种渲染优化技术，通过剔除被其他物体遮挡的对象，减少不必要的绘制调用。本文介绍遮挡剔除的原理、常用算法及在引擎中的应用。">
+<meta name="keywords" content="遮挡剔除,occlusion culling,渲染优化,视锥剔除,Unity,Unreal,性能优化,Draw Call,可见性,游戏开发">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/occlusion-culling.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/occlusion-culling.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"遮挡剔除：原理、实现与性能优化"}]},{"@type":"Article","name":"遮挡剔除：原理、实现与性能优化","headline":"遮挡剔除：原理、实现与性能优化","description":"遮挡剔除是一种渲染优化技术，通过剔除被其他物体遮挡的对象，减少不必要的绘制调用。本文介绍遮挡剔除的原理、常用算法及在引擎中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/occlusion-culling.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/occlusion-culling.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"遮挡剔除与视锥剔除有什么区别？","acceptedAnswer":{"@type":"Answer","text":"视锥剔除剔除视野外物体，遮挡剔除剔除被其他物体遮挡的物体。"}},{"@type":"Question","name":"Unity中如何使用遮挡剔除？","acceptedAnswer":{"@type":"Answer","text":"将物体标记为Occluder Static或Occludee Static，然后在Occlusion Culling窗口中烘焙。"}},{"@type":"Question","name":"遮挡剔除对移动端性能有帮助吗？","acceptedAnswer":{"@type":"Answer","text":"有帮助，但移动端可能使用简化方法，如预计算可见性（PVS）。"}},{"@type":"Question","name":"动态物体能被遮挡剔除吗？","acceptedAnswer":{"@type":"Answer","text":"可以，但通常使用硬件查询，性能开销可能较大。有些引擎对动态物体使用保守剔除。"}},{"@type":"Question","name":"遮挡剔除会不会产生错误剔除？","acceptedAnswer":{"@type":"Answer","text":"如果算法过于激进，可能错误剔除可见物体。因此通常使用保守测试，如包围盒代替精确网格。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>遮挡剔除：原理、实现与性能优化</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是遮挡剔除</h2>
+<p>遮挡剔除（Occlusion Culling）是一种渲染优化技术，在渲染前判断物体是否被其他不透明物体完全遮挡，如果不可见则跳过渲染，从而减少 Draw Call 和 GPU 负载。与视锥剔除（Frustum Culling）不同，视锥剔除仅剔除视野外的物体，而遮挡剔除处理被遮挡的物体。</p>
+<h2>遮挡剔除的原理</h2>
+<p>遮挡剔除通常基于深度缓冲或空间数据结构。常见方法包括：</p>
+<ul>
+<li>**硬件遮挡查询**：使用 GPU 查询（如 D3D 的 ID3D11Query）测试物体的包围盒是否通过深度测试，如果未通过则说明被遮挡。</li>
+<li>**软件光栅化**：CPU 光栅化遮挡体到低分辨率深度缓冲，然后测试物体包围盒。</li>
+<li>**层次 Z 缓冲**：维护一个金字塔形深度缓冲，快速测试包围盒可见性。</li>
+<li>**门户剔除**：适用于室内场景，通过门洞传播可见性。</li>
+</ul>
+<p>在游戏引擎中，通常使用保守的包围盒（如 AABB）进行测试，以减少计算量。</p>
+<h2>在引擎中的应用</h2>
+<ul>
+<li>**Unity**：使用 Umbra 中间件提供遮挡剔除。需要在 Window &gt; Rendering &gt; Occlusion Culling 中烘焙遮挡数据（设置遮挡区域、静态物体等）。运行时自动执行。</li>
+<li>**Unreal Engine**：默认启用遮挡剔除，使用硬件查询和软件光栅化结合。可以通过 `r.EnableOcclusionCulling` 控制。</li>
+</ul>
+<h2>遮挡剔除的注意事项</h2>
+<ul>
+<li>**动态物体**：遮挡剔除对动态物体效果有限，通常仅对静态物体高效。</li>
+<li>**烘焙**：Unity 的遮挡剔除需要烘焙场景，修改场景后需重新烘焙。</li>
+<li>**粒度**：通常以物体或组件为单位，过大或过小都会影响效果。</li>
+<li>**移动端**：移动端 GPU 查询可能开销大，可使用简化的 PVS（潜在可见集）预计算。</li>
+</ul>
+<h2>与其他剔除技术的比较</h2>
+<ul>
+<li>**视锥剔除**：剔除视野外物体，是最基本的剔除。</li>
+<li>**背面剔除**：剔除背向摄像机的三角形，硬件自动完成。</li>
+<li>**遮挡剔除**：剔除被遮挡物体，进一步减少渲染负载。</li>
+</ul>
+<p>实际渲染中，三种剔除技术通常结合使用。</p>
+<h2>常见问题</h2>
+<h3>遮挡剔除与视锥剔除有什么区别？</h3>
+<p>视锥剔除剔除视野外的物体，遮挡剔除剔除被其他物体遮挡的物体。</p>
+<h3>Unity 中如何使用遮挡剔除？</h3>
+<p>需要将物体标记为 Occluder Static 或 Occludee Static，然后在 Occlusion Culling 窗口中烘焙。</p>
+<h3>遮挡剔除对移动端性能有帮助吗？</h3>
+<p>有帮助，但移动端可能使用简化方法，如预计算可见性（PVS）。</p>
+<h3>动态物体能被遮挡剔除吗？</h3>
+<p>可以，但通常使用硬件查询，性能开销可能较大。有些引擎对动态物体使用保守剔除。</p>
+<h3>遮挡剔除会不会产生错误剔除？</h3>
+<p>如果算法过于激进，可能错误剔除可见物体。因此通常使用保守测试，如使用包围盒代替精确网格。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>遮挡剔除与视锥剔除有什么区别？</h3><p>视锥剔除剔除视野外物体，遮挡剔除剔除被其他物体遮挡的物体。</p></div>
+<div class="faq-item"><h3>Unity中如何使用遮挡剔除？</h3><p>将物体标记为Occluder Static或Occludee Static，然后在Occlusion Culling窗口中烘焙。</p></div>
+<div class="faq-item"><h3>遮挡剔除对移动端性能有帮助吗？</h3><p>有帮助，但移动端可能使用简化方法，如预计算可见性（PVS）。</p></div>
+<div class="faq-item"><h3>动态物体能被遮挡剔除吗？</h3><p>可以，但通常使用硬件查询，性能开销可能较大。有些引擎对动态物体使用保守剔除。</p></div>
+<div class="faq-item"><h3>遮挡剔除会不会产生错误剔除？</h3><p>如果算法过于激进，可能错误剔除可见物体。因此通常使用保守测试，如包围盒代替精确网格。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

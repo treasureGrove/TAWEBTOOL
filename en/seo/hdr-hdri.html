@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HDR and HDRI: High Dynamic Range Images and Environment Maps Explained - TA Toolbox</title>
+<meta name="description" content="HDR (High Dynamic Range) and HDRI (High Dynamic Range Images) are used to store and render a wider luminance range; HDRI often serves as environment maps for image-based lighting. This article covers HDR concepts, HDRI generation and use, and their importance in modern rendering.">
+<meta name="keywords" content="HDR,HDRI,high dynamic range,environment map,IBL,PBR,lighting,rendering,tone mapping,panorama">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/hdr-hdri.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/hdr-hdri.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"HDR and HDRI: High Dynamic Range Images and Environment Maps Explained"}]},{"@type":"Article","name":"HDR and HDRI: High Dynamic Range Images and Environment Maps Explained","headline":"HDR and HDRI: High Dynamic Range Images and Environment Maps Explained","description":"HDR (High Dynamic Range) and HDRI (High Dynamic Range Images) are used to store and render a wider luminance range; HDRI often serves as environment maps for image-based lighting. This article covers HDR concepts, HDRI generation and use, and their importance in modern rendering.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/hdr-hdri.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/hdr-hdri.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What's the difference between HDR and HDRI?","acceptedAnswer":{"@type":"Answer","text":"HDR is a technical concept indicating high dynamic range; HDRI is a specific high dynamic range image file, often used for environment maps."}},{"@type":"Question","name":"Why does rendering need HDR?","acceptedAnswer":{"@type":"Answer","text":"HDR allows lighting values above 1 for physically correct calculations, and post-processing doesn't lose details."}},{"@type":"Question","name":"How to view HDRI files?","acceptedAnswer":{"@type":"Answer","text":"Use HDR-capable viewers like Photoshop, HDRView, or online preview tools. Normal monitors cannot display full dynamic range, so tone mapping is needed."}},{"@type":"Question","name":"Does mobile support HDR rendering?","acceptedAnswer":{"@type":"Answer","text":"Modern mobile GPUs support floating-point textures for HDR rendering, but bandwidth and performance should be considered; compressed formats like R11G11B10 are often used."}},{"@type":"Question","name":"Can HDRI be used in non-PBR rendering?","acceptedAnswer":{"@type":"Answer","text":"Yes, HDRI as an environment map provides lighting; any shader can sample it for reflections and diffuse."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>HDR and HDRI: High Dynamic Range Images and Environment Maps Explained</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What are HDR and HDRI</h2>
+<p>HDR (High Dynamic Range) refers to technology that can represent a wider luminance range than standard images. Traditional LDR images typically have 8 bits per channel with maximum brightness of 1 (or 255). HDR images use floating-point or higher bit depths, capturing details from darkest shadows to brightest highlights. HDRI (High Dynamic Range Image) is a high dynamic range image file, commonly used for environment maps and light probes.</p>
+<h2>Advantages of HDR</h2>
+<ul>
+<li>**Detail preservation**: Retains details in both bright and dark areas, avoiding overexposure and underexposure.</li>
+<li>**Physically correct lighting**: In rendering, HDR lighting values can exceed 1, simulating real light source intensities.</li>
+<li>**Post-processing flexibility**: Tone mapping and exposure adjustments can operate on HDR buffers without color loss.</li>
+</ul>
+<h2>HDRI Environment Maps</h2>
+<p>The most common application of HDRI is as an environment map for image-based lighting (IBL). An environment map is a 360-degree panoramic image recording surrounding lighting information. In PBR rendering, HDRI provides ambient light and reflections, seamlessly integrating objects into the environment.</p>
+<h3>Generating HDRI</h3>
+<ul>
+<li>**Photography**: Capture the same scene with a camera at different exposures, then composite into an HDR panorama using software.</li>
+<li>**Procedural generation**: Use software like Blender or Terragen to render sky and lighting.</li>
+<li>**Download**: Obtain free HDRIs from websites like Poly Haven, HDRI Haven.</li>
+</ul>
+<h3>Using HDRI</h3>
+<p>In Unity, import HDRI as a Cubemap or 2D texture and set it in the skybox material. In Unreal, load HDRI via a Sky Light. Engines automatically handle IBL, providing diffuse and specular lighting to the scene.</p>
+<h2>HDR in the Rendering Pipeline</h2>
+<p>Real-time rendering typically uses HDR framebuffers. Pipeline:</p>
+<ol>
+<li>Render scene to HDR buffer (floating-point texture).</li>
+<li>Apply post-processing (tone mapping, bloom) in HDR space.</li>
+<li>Tone map to convert HDR to LDR.</li>
+<li>Gamma correct and output to screen.</li>
+</ul>
+<p>HDR-capable displays (HDR TVs, phone screens) can directly show HDR content with proper color management and metadata.</p>
+<h2>FAQ</h2>
+<h3>What's the difference between HDR and HDRI?</h3>
+<p>HDR is a technical concept indicating high dynamic range; HDRI is a specific high dynamic range image file, often used for environment maps.</p>
+<h3>Why does rendering need HDR?</h3>
+<p>HDR allows lighting values above 1 for physically correct calculations, and post-processing doesn't lose details.</p>
+<h3>How to view HDRI files?</h3>
+<p>Use HDR-capable viewers like Photoshop, HDRView, or online preview tools. Normal monitors cannot display full dynamic range, so tone mapping is needed.</p>
+<h3>Does mobile support HDR rendering?</h3>
+<p>Modern mobile GPUs support floating-point textures for HDR rendering, but bandwidth and performance should be considered; compressed formats like R11G11B10 are often used.</p>
+<h3>Can HDRI be used in non-PBR rendering?</h3>
+<p>Yes, HDRI as an environment map provides lighting; any shader can sample it for reflections and diffuse.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What's the difference between HDR and HDRI?</h3><p>HDR is a technical concept indicating high dynamic range; HDRI is a specific high dynamic range image file, often used for environment maps.</p></div>
+<div class="faq-item"><h3>Why does rendering need HDR?</h3><p>HDR allows lighting values above 1 for physically correct calculations, and post-processing doesn't lose details.</p></div>
+<div class="faq-item"><h3>How to view HDRI files?</h3><p>Use HDR-capable viewers like Photoshop, HDRView, or online preview tools. Normal monitors cannot display full dynamic range, so tone mapping is needed.</p></div>
+<div class="faq-item"><h3>Does mobile support HDR rendering?</h3><p>Modern mobile GPUs support floating-point textures for HDR rendering, but bandwidth and performance should be considered; compressed formats like R11G11B10 are often used.</p></div>
+<div class="faq-item"><h3>Can HDRI be used in non-PBR rendering?</h3><p>Yes, HDRI as an environment map provides lighting; any shader can sample it for reflections and diffuse.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

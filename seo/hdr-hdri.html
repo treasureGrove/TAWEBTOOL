@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HDR 与 HDRI：高动态范围图像与环境贴图详解 - TA工具箱</title>
+<meta name="description" content="HDR（高动态范围）和 HDRI（高动态范围图像）用于存储和渲染更广泛的亮度范围，HDRI 常作为环境贴图用于基于图像的照明。本文介绍 HDR 的概念、HDRI 的生成与使用，以及它们在现代渲染中的重要性。">
+<meta name="keywords" content="HDR,HDRI,高动态范围,环境贴图,IBL,PBR,光照,渲染,色调映射,全景图">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/hdr-hdri.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/hdr-hdri.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"HDR 与 HDRI：高动态范围图像与环境贴图详解"}]},{"@type":"Article","name":"HDR 与 HDRI：高动态范围图像与环境贴图详解","headline":"HDR 与 HDRI：高动态范围图像与环境贴图详解","description":"HDR（高动态范围）和 HDRI（高动态范围图像）用于存储和渲染更广泛的亮度范围，HDRI 常作为环境贴图用于基于图像的照明。本文介绍 HDR 的概念、HDRI 的生成与使用，以及它们在现代渲染中的重要性。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/hdr-hdri.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/hdr-hdri.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"HDR 和 HDRI 有什么区别？","acceptedAnswer":{"@type":"Answer","text":"HDR 是技术概念，表示高动态范围；HDRI 是具体的高动态范围图像文件，常用于环境贴图。"}},{"@type":"Question","name":"为什么渲染需要 HDR？","acceptedAnswer":{"@type":"Answer","text":"HDR 允许光照值超过 1，使光照计算物理正确，且后处理不会丢失细节。"}},{"@type":"Question","name":"如何查看 HDRI 文件？","acceptedAnswer":{"@type":"Answer","text":"使用 Photoshop、HDRView 等支持 HDR 的查看器，需色调映射适应普通显示器。"}},{"@type":"Question","name":"移动端支持 HDR 渲染吗？","acceptedAnswer":{"@type":"Answer","text":"现代移动 GPU 支持浮点纹理，可以渲染 HDR，但需考虑带宽和性能，常用 R11G11B10 压缩格式。"}},{"@type":"Question","name":"HDRI 可以用在非 PBR 渲染中吗？","acceptedAnswer":{"@type":"Answer","text":"可以，HDRI 作为环境贴图提供光照，任何着色器都可以采样获得反射和漫反射。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>HDR 与 HDRI：高动态范围图像与环境贴图详解</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 HDR 和 HDRI</h2>
+<p>HDR（High Dynamic Range，高动态范围）指能够表示比标准图像更广泛亮度范围的技术。传统 LDR（低动态范围）图像每个通道通常为 8 位，最大亮度为 1（或 255）。HDR 图像使用浮点或更高位深存储，可以记录从最暗阴影到最亮高光的细节。HDRI（High Dynamic Range Image）即高动态范围图像，常用于环境贴图、光照探针等。</p>
+<h2>HDR 的优势</h2>
+<ul>
+<li>**保留细节**：同时保留亮部和暗部细节，避免过曝和欠曝。</li>
+<li>**物理正确光照**：在渲染中，HDR 光照值可以超过 1，模拟真实光源强度。</li>
+<li>**后处理灵活性**：色调映射、曝光调整等可以在 HDR 缓冲上操作，避免颜色损失。</li>
+</ul>
+<h2>HDRI 环境贴图</h2>
+<p>HDRI 最常见的应用是作为环境贴图（Environment Map），用于基于图像的照明（IBL）。环境贴图是一张 360 度全景图像，记录场景周围的光照信息。在 PBR 渲染中，HDRI 为物体提供环境光照和反射，使其自然融入环境。</p>
+<h3>生成 HDRI</h3>
+<ul>
+<li>**拍摄**：使用相机在不同曝光下拍摄同一场景，通过软件合成 HDR 全景图。</li>
+<li>**程序生成**：使用软件（如 Blender、Terragen）渲染天空和光照。</li>
+<li>**下载**：从 Poly Haven、HDRI Haven 等网站获取免费 HDRI。</li>
+</ul>
+<h3>使用 HDRI</h3>
+<p>在 Unity 中，将 HDRI 导入为 Cubemap 或 2D 纹理，设置天空盒材质。在 Unreal 中，使用 Sky Light 加载 HDRI。引擎会自动处理 IBL，为场景提供漫反射和镜面反射光照。</p>
+<h2>渲染管线中的 HDR</h2>
+<p>实时渲染通常使用 HDR 帧缓冲，流程包括：</p>
+<ol>
+<li>渲染场景到 HDR 缓冲（浮点纹理）。</li>
+<li>应用后处理（如色调映射、泛光）在 HDR 空间。</li>
+<li>色调映射将 HDR 转换为 LDR。</li>
+<li>伽马校正后输出到屏幕。</li>
+</ul>
+<p>支持 HDR 的显示设备（如 HDR 电视、手机屏幕）可以直接显示 HDR 内容，但需要相应的色彩管理和元数据。</p>
+<h2>常见问题</h2>
+<h3>HDR 和 HDRI 有什么区别？</h3>
+<p>HDR 是技术概念，表示高动态范围；HDRI 是具体的高动态范围图像文件，常用于环境贴图。</p>
+<h3>为什么渲染需要 HDR？</h3>
+<p>HDR 允许光照值超过 1，使光照计算物理正确，且后处理（如色调映射）不会丢失细节。</p>
+<h3>如何查看 HDRI 文件？</h3>
+<p>使用支持 HDR 的查看器，如 Photoshop、HDRView、或在线预览工具。注意普通显示器无法显示全部动态范围，需要色调映射。</p>
+<h3>移动端支持 HDR 渲染吗？</h3>
+<p>现代移动 GPU 支持浮点纹理，可以渲染 HDR，但需考虑带宽和性能，通常使用 R11G11B10 等压缩格式。</p>
+<h3>HDRI 可以用在非 PBR 渲染中吗？</h3>
+<p>可以，HDRI 作为环境贴图提供光照，即使非 PBR 着色器也可以采样环境贴图获得反射和漫反射。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>HDR 和 HDRI 有什么区别？</h3><p>HDR 是技术概念，表示高动态范围；HDRI 是具体的高动态范围图像文件，常用于环境贴图。</p></div>
+<div class="faq-item"><h3>为什么渲染需要 HDR？</h3><p>HDR 允许光照值超过 1，使光照计算物理正确，且后处理不会丢失细节。</p></div>
+<div class="faq-item"><h3>如何查看 HDRI 文件？</h3><p>使用 Photoshop、HDRView 等支持 HDR 的查看器，需色调映射适应普通显示器。</p></div>
+<div class="faq-item"><h3>移动端支持 HDR 渲染吗？</h3><p>现代移动 GPU 支持浮点纹理，可以渲染 HDR，但需考虑带宽和性能，常用 R11G11B10 压缩格式。</p></div>
+<div class="faq-item"><h3>HDRI 可以用在非 PBR 渲染中吗？</h3><p>可以，HDRI 作为环境贴图提供光照，任何着色器都可以采样获得反射和漫反射。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Space Conversion: Linear, sRGB, and Gamma Correction Tutorial - TA Toolbox</title>
+<meta name="description" content="This tutorial explains the basics of color space conversion, focusing on converting between sRGB and linear space, covering methods using Photoshop, image processing libraries, and shaders to help developers handle colors correctly.">
+<meta name="keywords" content="color space conversion, sRGB, linear space, gamma correction, Photoshop, Python, GLSL, image processing">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"Tool Tutorial","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Color Space Conversion: Linear, sRGB, and Gamma Correction Tutorial"}]},{"@type":"HowTo","name":"Color Space Conversion: Linear, sRGB, and Gamma Correction Tutorial","headline":"Color Space Conversion: Linear, sRGB, and Gamma Correction Tutorial","description":"This tutorial explains the basics of color space conversion, focusing on converting between sRGB and linear space, covering methods using Photoshop, image processing libraries, and shaders to help developers handle colors correctly.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between sRGB and linear space?","acceptedAnswer":{"@type":"Answer","text":"sRGB is gamma-encoded, matching human perception and storage efficiency; linear space values are proportional to light intensity, suitable for physical calculations."}},{"@type":"Question","name":"How to determine if my image is sRGB or linear?","acceptedAnswer":{"@type":"Answer","text":"Color maps are usually sRGB, data maps (normal, roughness) are linear. Check image metadata or source software settings."}},{"@type":"Question","name":"How to set texture color space in Unity?","acceptedAnswer":{"@type":"Answer","text":"In texture import settings, check sRGB for color maps, uncheck for data maps. Global color space can be configured in project settings."}},{"@type":"Question","name":"Why do colors look too dark or bright in the engine?","acceptedAnswer":{"@type":"Answer","text":"Possible color space mismatch. Check the sRGB flag on textures and gamma settings of render output."}},{"@type":"Question","name":"Do I need to consider color space conversion in web development?","acceptedAnswer":{"@type":"Answer","text":"Yes, Canvas and WebGL default to sRGB. If doing physical rendering, manually convert to linear space."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">Tool Tutorial</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">Tool Tutorial</a></p>
+    <h1>Color Space Conversion: Linear, sRGB, and Gamma Correction Tutorial</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Introduction</h2>
+<p>Color space conversion is crucial in computer graphics. sRGB is the standard display color space with a non-linear gamma curve, while physical calculations are usually done in linear space. Correct conversion can avoid color shifts and lighting errors. This tutorial will guide you through conversion.</p>
+<h2>Understanding Basic Concepts</h2>
+<ul>
+<li>**sRGB**: Standard Red Green Blue color space, widely used for displays and image files. Its values are gamma-encoded, approximately a power function of 2.2.</li>
+<li>**Linear Space**: Light intensity is proportional to the numeric value, used for physical rendering and lighting calculations.</li>
+<li>**Gamma Correction**: Converting linear values to sRGB for display, or vice versa.</li>
+</ul>
+<h2>Converting with Photoshop</h2>
+<h3>Viewing and Assigning Color Spaces</h3>
+<ol>
+<li>Open the image, go to &quot;Edit&quot; &gt; &quot;Color Settings&quot;.</li>
+<li>In &quot;Working Spaces&quot;, set RGB to sRGB or a custom linear profile.</li>
+<li>To convert the image, use &quot;Edit&quot; &gt; &quot;Convert to Profile&quot; and choose the target color space.</li>
+</ul>
+<h3>Manual Gamma Adjustment</h3>
+<ul>
+<li>Use &quot;Image&quot; &gt; &quot;Adjustments&quot; &gt; &quot;Levels&quot; or &quot;Curves&quot;, adjust mid-tones to gamma 2.2 (brighten) or 1/2.2 (darken).</li>
+</ul>
+<h2>Converting with Python</h2>
+<h3>Using Pillow and NumPy</h3>
+<p>Install libraries:</p>
+<p>```bash</p>
+<p>pip install Pillow numpy</p>
+<p>```</p>
+<p>Example conversion functions:</p>
+<p>```python</p>
+<p>import numpy as np</p>
+<p>from PIL import Image</p>
+<p>def srgb_to_linear(img):</p>
+<p>    arr = np.array(img, dtype=np.float32) / 255.0</p>
+<p>    mask = arr &lt;= 0.04045</p>
+<p>    arr[mask] = arr[mask] / 12.92</p>
+<p>    arr[~mask] = ((arr[~mask] + 0.055) / 1.055) ** 2.4</p>
+<p>    return arr</p>
+<p>def linear_to_srgb(arr):</p>
+<p>    mask = arr &lt;= 0.0031308</p>
+<p>    arr[mask] = arr[mask] * 12.92</p>
+<p>    arr[~mask] = 1.055 * (arr[~mask] ** (1/2.4)) - 0.055</p>
+<p>    return (arr * 255).astype(np.uint8)</p>
+<p>```</p>
+<h2>Converting with Shaders</h2>
+<p>In GLSL or HLSL, GPUs can automatically handle sRGB texture sampling, but manual conversion is also common.</p>
+<h3>GLSL Functions</h3>
+<p>```glsl</p>
+<p>vec3 srgb_to_linear(vec3 c) {</p>
+<p>    return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));</p>
+<p>}</p>
+<p>vec3 linear_to_srgb(vec3 c) {</p>
+<p>    return mix(c * 12.92, 1.055 * pow(c, vec3(1.0/2.4)) - 0.055, step(0.0031308, c));</p>
+<p>}</p>
+<p>```</p>
+<h2>Using OpenCV</h2>
+<p>OpenCV typically assumes images are in BGR order and does not perform gamma correction by default. Use `cvtColor` with lookup tables.</p>
+<h2>Practical Applications</h2>
+<ul>
+<li>**Texture Import**: In Unity or Unreal, mark textures as sRGB (color maps) or Linear (normal, roughness, etc.).</li>
+<li>**Rendering Pipeline**: Ensure lighting calculations in linear space, convert to sRGB before output.</li>
+</ul>
+<h2>Notes</h2>
+<ul>
+<li>**Precision**: Use floating-point buffers for linear data to avoid 8-bit precision loss.</li>
+<li>**Consistency**: Manage color space uniformly across the project to avoid mixing.</li>
+<li>**Browsers**: Canvas and WebGL need correct color space handling.</li>
+</ul>
+<h2>Summary</h2>
+<p>Mastering color space conversion is fundamental for graphics development. By setting image processing software correctly, using code conversion, or handling in shaders, you can ensure accurate colors.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between sRGB and linear space?</h3><p>sRGB is gamma-encoded, matching human perception and storage efficiency; linear space values are proportional to light intensity, suitable for physical calculations.</p></div>
+<div class="faq-item"><h3>How to determine if my image is sRGB or linear?</h3><p>Color maps are usually sRGB, data maps (normal, roughness) are linear. Check image metadata or source software settings.</p></div>
+<div class="faq-item"><h3>How to set texture color space in Unity?</h3><p>In texture import settings, check sRGB for color maps, uncheck for data maps. Global color space can be configured in project settings.</p></div>
+<div class="faq-item"><h3>Why do colors look too dark or bright in the engine?</h3><p>Possible color space mismatch. Check the sRGB flag on textures and gamma settings of render output.</p></div>
+<div class="faq-item"><h3>Do I need to consider color space conversion in web development?</h3><p>Yes, Canvas and WebGL default to sRGB. If doing physical rendering, manually convert to linear space.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">色彩空间转换</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

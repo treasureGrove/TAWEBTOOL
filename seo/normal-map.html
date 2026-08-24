@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>法线贴图：原理、切线空间与应用详解 - TA工具箱</title>
+<meta name="description" content="法线贴图是一种用于增强3D模型表面细节的纹理技术，通过存储每个像素的法线方向来模拟凹凸效果，无需增加几何复杂度。本文介绍法线贴图的原理、切线空间、生成方法及常见问题。">
+<meta name="keywords" content="法线贴图,normal map,切线空间,凹凸贴图,3D渲染,游戏开发,纹理贴图,烘焙法线贴图,高度图,着色器">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/normal-map.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/normal-map.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/normal-map.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"法线贴图：原理、切线空间与应用详解"}]},{"@type":"Article","name":"法线贴图：原理、切线空间与应用详解","headline":"法线贴图：原理、切线空间与应用详解","description":"法线贴图是一种用于增强3D模型表面细节的纹理技术，通过存储每个像素的法线方向来模拟凹凸效果，无需增加几何复杂度。本文介绍法线贴图的原理、切线空间、生成方法及常见问题。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/normal-map.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/normal-map.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"法线贴图和凹凸贴图有什么区别？","acceptedAnswer":{"@type":"Answer","text":"凹凸贴图存储高度信息，在着色时计算法线扰动；法线贴图直接存储法线方向，效果更精确且计算效率更高。"}},{"@type":"Question","name":"为什么法线贴图是蓝色的？","acceptedAnswer":{"@type":"Answer","text":"默认法线(0,0,1)编码为RGB(128,128,255)，呈现浅蓝色。大多数表面法线接近默认方向，因此整体偏蓝。"}},{"@type":"Question","name":"切线空间法线贴图有什么优势？","acceptedAnswer":{"@type":"Answer","text":"切线空间法线贴图可应用于不同朝向表面，支持变形和动画，并允许纹理重用。"}},{"@type":"Question","name":"如何从高模烘焙法线贴图？","acceptedAnswer":{"@type":"Answer","text":"在3D软件中对齐高模和低模，设置烘焙参数，软件会计算高模细节在低模UV空间中的法线扰动并生成贴图。"}},{"@type":"Question","name":"法线贴图在移动端如何优化？","acceptedAnswer":{"@type":"Answer","text":"使用ASTC、ETC2等压缩格式，降低分辨率，并仅在重要表面使用法线贴图。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>法线贴图：原理、切线空间与应用详解</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是法线贴图</h2>
+<p>法线贴图（Normal Map）是一种纹理贴图，用于在低多边形模型上模拟高细节表面的光照效果。它通过存储每个像素的法线方向信息，在着色过程中扰动表面法线，从而改变光照计算，使模型表面看起来有丰富的凹凸细节，如皱纹、划痕、砖缝等。法线贴图广泛应用于游戏、影视和实时渲染中，以低成本实现高视觉复杂度。</p>
+<h2>法线贴图的原理</h2>
+<p>在3D渲染中，光照计算依赖于表面法线（垂直于表面的向量）。传统上，增加模型细节需要增加多边形数量，但法线贴图提供了一种更高效的方法。</p>
+<p>法线贴图将每个像素的法线方向编码为颜色值。通常，RGB通道分别对应法线向量的X、Y、Z分量。默认情况下，法线(0,0,1)（指向表面外）被编码为颜色(128,128,255)（浅蓝色）。当法线偏移时，颜色相应变化。在着色器中，采样法线贴图得到扰动后的法线，并用于光照计算，从而产生表面凹凸的视觉效果。</p>
+<h2>切线空间</h2>
+<p>法线贴图通常在切线空间（Tangent Space）中存储。切线空间是一个局部坐标系，由三个正交向量定义：切线（Tangent）、副切线（Bitangent）和法线（Normal）。其中，法线是表面原始法线，切线通常沿纹理坐标U方向，副切线沿V方向。</p>
+<p>使用切线空间的好处是法线贴图可以应用于不同朝向的表面，甚至变形网格（如角色动画）。法线贴图中的法线方向是相对于表面局部坐标的，因此当模型旋转或变形时，法线贴图仍然有效。在着色器中，需要将光照向量和视线向量从世界空间转换到切线空间，或者将切线空间法线转换到世界空间，以进行光照计算。</p>
+<h2>法线贴图的生成与使用</h2>
+<p>法线贴图可以从高模烘焙到低模，也可以从灰度高度图转换，或使用工具直接绘制。</p>
+<ul>
+<li>**烘焙法线贴图**：使用3D软件（如Blender、Substance Painter、xNormal）将高分辨率模型的细节投影到低分辨率模型的UV空间，生成法线贴图。这是游戏开发中最常用的方法。</li>
+<li>**从高度图生成**：高度图是一张灰度图，白色表示凸起，黑色表示凹陷。通过计算相邻像素的高度差，可以得到法线扰动，生成法线贴图。</li>
+<li>**直接绘制**：在支持法线贴图绘制的软件中（如Substance Painter、Photoshop插件），艺术家可以手动绘制法线细节。</li>
+</ul>
+<p>在游戏引擎（如Unity、Unreal）中，将法线贴图导入后，指定为材质的Normal Map属性即可。着色器会自动处理切线空间转换和光照计算。</p>
+<h2>常见问题与注意事项</h2>
+<ul>
+<li>**法线贴图的颜色**：法线贴图通常呈现蓝紫色调，因为大部分法线接近(0,0,1)，编码为(128,128,255)。如果法线贴图颜色异常（如全红或全绿），可能表示贴图错误或坐标系统不匹配。</li>
+<li>**切线空间与对象空间**：法线贴图分为切线空间和对象空间两种。切线空间更灵活，支持变形和重用；对象空间法线贴图存储世界空间法线，不支持变形，但细节更精确。现代引擎多使用切线空间。</li>
+<li>**UV布局**：法线贴图依赖于UV坐标，因此UV展开时需要避免重叠和过度拉伸，否则法线贴图会出现伪影。</li>
+<li>**压缩格式**：法线贴图在纹理压缩中需要特殊处理，如使用DXT5nm格式，仅保留X和Y分量，Z分量在着色器中重建，以减少存储和带宽。</li>
+<li>**性能影响**：法线贴图增加了纹理采样和计算量，但相比增加几何复杂度，性能开销较小。在移动平台上，需要权衡法线贴图的使用。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>法线贴图和凹凸贴图有什么区别？</h3>
+<p>凹凸贴图（Bump Map）通常指高度图，存储表面高度信息，在着色时通过计算梯度扰动法线。法线贴图直接存储法线方向，效果更精确，且计算效率更高。</p>
+<h3>为什么法线贴图是蓝色的？</h3>
+<p>因为默认法线(0,0,1)被编码为RGB(128,128,255)，呈现浅蓝色。大部分表面法线接近默认方向，因此整体偏蓝。</p>
+<h3>切线空间法线贴图有什么优势？</h3>
+<p>切线空间法线贴图可以应用于不同朝向的表面，支持模型变形和动画，并且可以重用纹理。</p>
+<h3>如何从高模烘焙法线贴图？</h3>
+<p>在3D软件中，将高模和低模对齐，设置烘焙参数，软件会计算高模表面细节在低模UV空间中的法线扰动，生成法线贴图。</p>
+<h3>法线贴图在移动端如何优化？</h3>
+<p>可以使用压缩纹理格式（如ASTC、ETC2）存储法线贴图，并考虑降低分辨率。此外，仅在重要表面使用法线贴图，以平衡画质和性能。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>法线贴图和凹凸贴图有什么区别？</h3><p>凹凸贴图存储高度信息，在着色时计算法线扰动；法线贴图直接存储法线方向，效果更精确且计算效率更高。</p></div>
+<div class="faq-item"><h3>为什么法线贴图是蓝色的？</h3><p>默认法线(0,0,1)编码为RGB(128,128,255)，呈现浅蓝色。大多数表面法线接近默认方向，因此整体偏蓝。</p></div>
+<div class="faq-item"><h3>切线空间法线贴图有什么优势？</h3><p>切线空间法线贴图可应用于不同朝向表面，支持变形和动画，并允许纹理重用。</p></div>
+<div class="faq-item"><h3>如何从高模烘焙法线贴图？</h3><p>在3D软件中对齐高模和低模，设置烘焙参数，软件会计算高模细节在低模UV空间中的法线扰动并生成贴图。</p></div>
+<div class="faq-item"><h3>法线贴图在移动端如何优化？</h3><p>使用ASTC、ETC2等压缩格式，降低分辨率，并仅在重要表面使用法线贴图。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

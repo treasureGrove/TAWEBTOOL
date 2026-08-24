@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何生成 PBR 贴图：法线、粗糙度、金属度完整指南 - TA工具箱</title>
+<meta name="description" content="本教程详细讲解如何生成 PBR 材质所需的法线贴图、粗糙度贴图和金属度贴图，涵盖从照片生成、软件烘焙到程序化生成的多种方法，并提供工具推荐与参数设置建议。">
+<meta name="keywords" content="PBR贴图,法线贴图,粗糙度贴图,金属度贴图,贴图生成,PBR材质,Substance Designer,Blender烘焙,照片生成贴图">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"工具教程","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"如何生成 PBR 贴图：法线、粗糙度、金属度完整指南"}]},{"@type":"HowTo","name":"如何生成 PBR 贴图：法线、粗糙度、金属度完整指南","headline":"如何生成 PBR 贴图：法线、粗糙度、金属度完整指南","description":"本教程详细讲解如何生成 PBR 材质所需的法线贴图、粗糙度贴图和金属度贴图，涵盖从照片生成、软件烘焙到程序化生成的多种方法，并提供工具推荐与参数设置建议。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"我只有一张漫反射颜色贴图，可以生成完整 PBR 贴图吗？","acceptedAnswer":{"@type":"Answer","text":"可以，但质量有限。使用 Materialize、ShaderMap 等工具可以从漫反射贴图推测法线、粗糙度等，但结果可能不准确，需要手动调整。"}},{"@type":"Question","name":"法线贴图看起来偏蓝是正常的吗？","acceptedAnswer":{"@type":"Answer","text":"是的。法线贴图默认以切线空间存储，其中 Z 轴（蓝色通道）通常朝外，所以整体呈蓝色。"}},{"@type":"Question","name":"粗糙度和光泽度有什么区别？","acceptedAnswer":{"@type":"Answer","text":"粗糙度是光泽度的反相。粗糙度贴图中白色表示粗糙，黑色表示光滑；光泽度贴图则相反。许多引擎使用粗糙度。"}},{"@type":"Question","name":"金属度贴图必须是纯黑纯白吗？","acceptedAnswer":{"@type":"Answer","text":"不一定。对于大多数材质，金属和非金属区域边界清晰，但过渡区域（如锈蚀金属）可以使用灰度值。"}},{"@type":"Question","name":"如何确保烘焙的法线贴图细节正确？","acceptedAnswer":{"@type":"Answer","text":"确保高低模匹配良好，UV 展开合理，烘焙时使用足够的采样和 cage 设置。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">工具教程</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">工具教程</a></p>
+    <h1>如何生成 PBR 贴图：法线、粗糙度、金属度完整指南</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>引言</h2>
+<p>基于物理的渲染（PBR）需要一组特定的贴图来准确模拟真实材质。其中，法线贴图（Normal Map）、粗糙度贴图（Roughness Map）和金属度贴图（Metallic Map）是最核心的组成部分。本教程将指导你如何生成这些贴图。</p>
+<h2>法线贴图生成</h2>
+<p>法线贴图存储表面法线方向，用于增加几何细节的视觉复杂度。生成方法包括：</p>
+<h3>从高模烘焙</h3>
+<p>使用建模软件（如 Blender、Maya、ZBrush）将高精度模型的细节烘焙到低模上。</p>
+<ol>
+<li>创建低模和高模。</li>
+<li>在 Blender 中，选择低模，进入 Shading 工作区，添加图像纹理节点，新建一张法线贴图。</li>
+<li>使用 Cycles 渲染器的 &quot;Bake&quot; 功能，设置 Bake Type 为 &quot;Normal&quot;，选择高模作为目标。</li>
+<li>烘焙得到法线贴图。</li>
+</ul>
+<h3>从照片生成</h3>
+<p>使用法线贴图生成工具（如 CrazyBump、ShaderMap、AwesomeBump）从漫反射贴图或高度图生成法线贴图。</p>
+<ol>
+<li>导入彩色纹理或灰度高度图。</li>
+<li>调整强度、模糊等参数。</li>
+<li>导出法线贴图。</li>
+</ul>
+<h3>程序化生成</h3>
+<p>在 Substance Designer 等节点式工具中，通过噪声、形状等节点组合生成法线贴图。</p>
+<h2>粗糙度贴图生成</h2>
+<p>粗糙度贴图控制表面微观粗糙程度，影响反射的模糊度。白色表示粗糙（漫反射强），黑色表示光滑（镜面反射强）。</p>
+<h3>从照片提取</h3>
+<ol>
+<li>使用图像编辑软件（如 Photoshop）打开表面照片。</li>
+<li>转换为灰度，调整对比度，使粗糙区域更亮，光滑区域更暗。</li>
+<li>可以使用高通滤波或反相来提取粗糙度信息。</li>
+</ul>
+<h3>程序化生成</h3>
+<p>在 Substance Designer 中，通过 Grunge Maps、Noise 等节点生成粗糙度变化，结合混合节点控制。</p>
+<h3>手动绘制</h3>
+<p>对于特定材质，可直接在纹理绘制软件（如 Substance Painter、Mari）中手动绘制粗糙度。</p>
+<h2>金属度贴图生成</h2>
+<p>金属度贴图指定哪些区域是金属（白色）或非金属（黑色），通常只有0或1两种值，但过渡区域可保留灰度。</p>
+<h3>从照片或纹理创建蒙版</h3>
+<ol>
+<li>根据材质属性，使用选择工具或颜色范围选择金属区域。</li>
+<li>填充白色，非金属区域填充黑色。</li>
+<li>对于过渡区域，使用羽化或渐变。</li>
+</ul>
+<h3>程序化生成</h3>
+<p>在 Substance Designer 中，使用 ID 贴图或材质混合来定义金属区域。</p>
+<h3>手动绘制</h3>
+<p>在 Substance Painter 中，使用填充图层和遮罩来精确控制金属度。</p>
+<h2>工具推荐</h2>
+<ul>
+<li>**Blender**：免费开源，支持从高模烘焙法线。</li>
+<li>**Substance Suite**：行业标准，提供 Designer 和 Painter，强大的程序化和手绘能力。</li>
+<li>**CrazyBump / ShaderMap**：专为从照片生成法线、粗糙度等贴图设计。</li>
+<li>**Materialize**：免费工具，可从单张照片生成多种 PBR 贴图。</li>
+<li>**AwesomeBump**：开源替代。</li>
+</ul>
+<h2>注意事项</h2>
+<ul>
+<li>**颜色空间**：法线贴图应使用线性颜色空间，粗糙度和金属度贴图通常使用线性或灰度，避免 sRGB 校正。</li>
+<li>**贴图尺寸**：根据目标平台和模型复杂度决定，通常为 1024x1024 或 2048x2048。</li>
+<li>**无缝平铺**：如果材质需要平铺，确保生成的贴图无缝。</li>
+<li>**一致性**：确保所有贴图对齐，纹理坐标一致。</li>
+</ul>
+<h2>总结</h2>
+<p>生成 PBR 贴图有多种方法，可根据项目需求和资源选择。从高模烘焙质量最高，但耗时；从照片生成快速但精度有限；程序化生成灵活但需要专业知识。建议结合使用多种方法。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>我只有一张漫反射颜色贴图，可以生成完整 PBR 贴图吗？</h3><p>可以，但质量有限。使用 Materialize、ShaderMap 等工具可以从漫反射贴图推测法线、粗糙度等，但结果可能不准确，需要手动调整。</p></div>
+<div class="faq-item"><h3>法线贴图看起来偏蓝是正常的吗？</h3><p>是的。法线贴图默认以切线空间存储，其中 Z 轴（蓝色通道）通常朝外，所以整体呈蓝色。</p></div>
+<div class="faq-item"><h3>粗糙度和光泽度有什么区别？</h3><p>粗糙度是光泽度的反相。粗糙度贴图中白色表示粗糙，黑色表示光滑；光泽度贴图则相反。许多引擎使用粗糙度。</p></div>
+<div class="faq-item"><h3>金属度贴图必须是纯黑纯白吗？</h3><p>不一定。对于大多数材质，金属和非金属区域边界清晰，但过渡区域（如锈蚀金属）可以使用灰度值。</p></div>
+<div class="faq-item"><h3>如何确保烘焙的法线贴图细节正确？</h3><p>确保高低模匹配良好，UV 展开合理，烘焙时使用足够的采样和 cage 设置。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

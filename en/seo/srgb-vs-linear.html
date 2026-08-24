@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sRGB and Linear Color Space: Understanding Gamma Correction and Rendering Pipeline - TA Toolbox</title>
+<meta name="description" content="sRGB and linear color spaces are color encoding standards in computer graphics; sRGB is used for display, while linear space is used for physical lighting calculations. This article explains the differences, the necessity of gamma correction, and their application in the rendering pipeline.">
+<meta name="keywords" content="sRGB,linear color space,gamma correction,rendering pipeline,color management,Unity,Unreal,PBR,texture flag">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"sRGB and Linear Color Space: Understanding Gamma Correction and Rendering Pipeline"}]},{"@type":"Article","name":"sRGB and Linear Color Space: Understanding Gamma Correction and Rendering Pipeline","headline":"sRGB and Linear Color Space: Understanding Gamma Correction and Rendering Pipeline","description":"sRGB and linear color spaces are color encoding standards in computer graphics; sRGB is used for display, while linear space is used for physical lighting calculations. This article explains the differences, the necessity of gamma correction, and their application in the rendering pipeline.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between sRGB and linear color spaces?","acceptedAnswer":{"@type":"Answer","text":"sRGB is a nonlinear encoding for display and image storage; linear color space directly represents physical light intensity for lighting calculations."}},{"@type":"Question","name":"Why should rendering use linear color space?","acceptedAnswer":{"@type":"Answer","text":"Because lighting is linear, computing in linear space ensures physical correctness and avoids darkening or color shifts."}},{"@type":"Question","name":"What is gamma correction?","acceptedAnswer":{"@type":"Answer","text":"Gamma correction is the process of converting between linear and sRGB using power functions to adjust luminance encoding for human perception and display devices."}},{"@type":"Question","name":"How do I know if a texture needs sRGB decoding?","acceptedAnswer":{"@type":"Answer","text":"Color textures (albedo, diffuse) need sRGB decoding; data textures (normal, metallic, roughness) do not and should be marked Linear."}},{"@type":"Question","name":"How to switch to linear space in Unity?","acceptedAnswer":{"@type":"Answer","text":"In Player Settings > Other Settings > Color Space, select Linear, and ensure all texture sRGB flags are correct."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>sRGB and Linear Color Space: Understanding Gamma Correction and Rendering Pipeline</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Color Space Overview</h2>
+<p>In computer graphics, color spaces define how colors are represented. sRGB and linear are two common color spaces. sRGB is a nonlinear color space widely used in displays and image files; linear color space directly stores physical light intensity values for lighting calculations. Correctly handling the conversion between the two is crucial for realistic rendering.</p>
+<h2>Why Linear Color Space Is Needed</h2>
+<p>Physical lighting is linear: twice the light intensity produces twice the radiance. However, human perception of brightness is nonlinear, more sensitive to dark variations. Display devices (CRT, LCD) use gamma encoding to optimize perception, with output related nonlinearly to input voltage. The sRGB standard defines this nonlinear encoding, typically approximated as a gamma 2.2 curve.</p>
+<p>If lighting calculations are performed directly in sRGB space, nonlinearity causes incorrect results in compositing and blending, leading to dark-area distortion and color shifts. Therefore, rendering pipelines typically use linear space for internal calculations and convert the final result to sRGB for display.</p>
+<h2>Gamma Correction and sRGB Conversion</h2>
+<p>Gamma correction refers to the process of converting between linear and sRGB. Typical formulas:</p>
+<ul>
+<li>Linear to sRGB: `C_srgb = C_linear^(1/2.2)` (approximate)</li>
+<li>sRGB to linear: `C_linear = C_srgb^2.2` (approximate)</li>
+</ul>
+<p>The exact sRGB conversion uses a piecewise function, but approximation usually suffices. In the rendering pipeline:</p>
+<ol>
+<li>Texture sampling: If a texture is stored in sRGB format (like a normal color map), it must be converted to linear space before lighting calculations. Engines can handle this automatically (e.g., marking textures as sRGB in Unity).</li>
+<li>Lighting calculations: Performed in linear space.</li>
+<li>Final output: Convert the result from linear to sRGB for framebuffer or display.</li>
+</ul>
+<h2>Implementation in Game Engines</h2>
+<p>**Unity**:</p>
+<ul>
+<li>In Player Settings, choose Color Space as Linear or Gamma. In Linear mode, the engine automatically handles sRGB texture decoding and output encoding.</li>
+<li>Texture assets can be marked as sRGB (default for color textures) or Linear (for data textures like normal maps, metallic maps).</li>
+</ul>
+<p>**Unreal Engine**:</p>
+<ul>
+<li>Uses linear workflow by default; set sRGB option on texture import.</li>
+<li>Gamma can be adjusted in project settings.</li>
+</ul>
+<p>Correct color space settings are particularly important for PBR rendering because PBR relies on physically correct lighting calculations.</p>
+<h2>Common Issues and Considerations</h2>
+<ul>
+<li>**Incorrect texture marking**: If a normal map is marked as sRGB, it will be decoded incorrectly during sampling, causing wrong normal directions. Therefore, data textures (normal, metallic, roughness) should be marked as Linear.</li>
+<li>**Blending operations**: Blending colors in linear space is more accurate; blending in sRGB may cause edge artifacts.</li>
+<li>**UI elements**: UI typically uses sRGB colors directly and does not need linear conversion.</li>
+<li>**Mobile platforms**: Some mobile GPUs may not support linear rendering, requiring trade-offs.</li>
+</ul>
+<h2>FAQ</h2>
+<h3>What is the difference between sRGB and linear color spaces?</h3>
+<p>sRGB is a nonlinear encoding for display and image storage; linear color space directly represents physical light intensity for lighting calculations. Rendering should compute in linear space and convert to sRGB for output.</p>
+<h3>Why should rendering use linear color space?</h3>
+<p>Because lighting is linear, computing in linear space ensures physical correctness and avoids darkening or color shifts. sRGB space calculations lead to incorrect lighting results.</p>
+<h3>What is gamma correction?</h3>
+<p>Gamma correction is the process of converting between linear and sRGB using power functions to adjust luminance encoding for human perception and display devices.</p>
+<h3>How do I know if a texture needs sRGB decoding?</h3>
+<p>Color textures (albedo, diffuse) need sRGB decoding; data textures (normal, metallic, roughness) do not and should be marked Linear.</p>
+<h3>How to switch to linear space in Unity?</h3>
+<p>In Player Settings &gt; Other Settings &gt; Color Space, select Linear, and ensure all texture sRGB flags are correct.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between sRGB and linear color spaces?</h3><p>sRGB is a nonlinear encoding for display and image storage; linear color space directly represents physical light intensity for lighting calculations.</p></div>
+<div class="faq-item"><h3>Why should rendering use linear color space?</h3><p>Because lighting is linear, computing in linear space ensures physical correctness and avoids darkening or color shifts.</p></div>
+<div class="faq-item"><h3>What is gamma correction?</h3><p>Gamma correction is the process of converting between linear and sRGB using power functions to adjust luminance encoding for human perception and display devices.</p></div>
+<div class="faq-item"><h3>How do I know if a texture needs sRGB decoding?</h3><p>Color textures (albedo, diffuse) need sRGB decoding; data textures (normal, metallic, roughness) do not and should be marked Linear.</p></div>
+<div class="faq-item"><h3>How to switch to linear space in Unity?</h3><p>In Player Settings &gt; Other Settings &gt; Color Space, select Linear, and ensure all texture sRGB flags are correct.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">色彩空间转换</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

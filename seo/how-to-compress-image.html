@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图片压缩与格式转换：WebP 及常用格式指南 - TA工具箱</title>
+<meta name="description" content="本教程介绍如何压缩图片并转换为 WebP 等现代格式，涵盖在线工具、图像编辑软件和命令行方法，帮助用户减小文件大小同时保持良好画质。">
+<meta name="keywords" content="图片压缩,格式转换,WebP,ImageMagick,Squoosh,TinyPNG,cwebp,图像优化">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"工具教程","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"图片压缩与格式转换：WebP 及常用格式指南"}]},{"@type":"HowTo","name":"图片压缩与格式转换：WebP 及常用格式指南","headline":"图片压缩与格式转换：WebP 及常用格式指南","description":"本教程介绍如何压缩图片并转换为 WebP 等现代格式，涵盖在线工具、图像编辑软件和命令行方法，帮助用户减小文件大小同时保持良好画质。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/how-to-compress-image.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/how-to-compress-image.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"WebP 和 JPEG 哪个更好？","acceptedAnswer":{"@type":"Answer","text":"在相同质量下，WebP 通常比 JPEG 小 25-35%，支持透明度和动画，是现代网页的首选。"}},{"@type":"Question","name":"如何批量转换图片为 WebP？","acceptedAnswer":{"@type":"Answer","text":"可以使用命令行工具如 cwebp 配合循环脚本，或使用 Squoosh 的批量功能、ImageMagick 的 mogrify 命令。"}},{"@type":"Question","name":"压缩后图片质量下降明显怎么办？","acceptedAnswer":{"@type":"Answer","text":"提高质量参数，如将 WebP 质量从 70 提高到 85，或使用无损压缩。"}},{"@type":"Question","name":"如何将 WebP 转换回 PNG 或 JPG？","acceptedAnswer":{"@type":"Answer","text":"使用图像编辑软件（如 GIMP、Photoshop）打开后另存为所需格式，或使用 ImageMagick 命令：`magick input.webp output.png`。"}},{"@type":"Question","name":"是否有必要使用 AVIF 格式？","acceptedAnswer":{"@type":"Answer","text":"AVIF 压缩率更高，但编码速度较慢且工具支持较少。如果目标环境支持，可考虑使用。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">工具教程</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">工具教程</a></p>
+    <h1>图片压缩与格式转换：WebP 及常用格式指南</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>引言</h2>
+<p>图片压缩和格式转换是优化网页加载速度和节省存储空间的关键。WebP 格式由 Google 开发，提供有损和无损压缩，通常比 JPEG 和 PNG 更高效。本教程将指导你使用不同工具进行图片压缩和格式转换。</p>
+<h2>使用在线工具</h2>
+<h3>TinyPNG / TinyJPG</h3>
+<ol>
+<li>访问 TinyPNG 网站。</li>
+<li>拖放或上传图片（支持 PNG、JPG）。</li>
+<li>自动压缩并显示下载按钮，可批量下载。</li>
+</ul>
+<h3>Squoosh</h3>
+<ol>
+<li>访问 squoosh.app。</li>
+<li>点击“选择图片”导入。</li>
+<li>选择输出格式（如 WebP、AVIF）。</li>
+<li>调整质量滑块，实时预览压缩效果。</li>
+<li>点击下载。</li>
+</ul>
+<h2>使用图像编辑软件</h2>
+<h3>Adobe Photoshop</h3>
+<ol>
+<li>打开图片，选择“文件” &gt; “导出” &gt; “存储为 Web 所用格式（旧版）”。</li>
+<li>选择格式（如 WebP），调整质量、尺寸等参数。</li>
+<li>点击“存储”。</li>
+</ul>
+<h3>GIMP</h3>
+<ol>
+<li>打开图片，选择“文件” &gt; “导出为”。</li>
+<li>选择文件类型为 WebP，点击“导出”。</li>
+<li>调整质量参数。</li>
+</ul>
+<h2>使用命令行工具</h2>
+<h3>ImageMagick</h3>
+<p>转换格式并压缩：</p>
+<p>```bash</p>
+<p>magick input.jpg -quality 80 output.webp</p>
+<p>```</p>
+<h3>cwebp（WebP 编码器）</h3>
+<p>安装 libwebp 后使用：</p>
+<p>```bash</p>
+<p>cwebp -q 80 input.png -o output.webp</p>
+<p>```</p>
+<h3>Python Pillow</h3>
+<p>```python</p>
+<p>from PIL import Image</p>
+<p>img = Image.open('input.jpg')</p>
+<p>img.save('output.webp', 'webp', quality=80)</p>
+<p>```</p>
+<h2>压缩参数建议</h2>
+<ul>
+<li>**网页图片**：有损 WebP 质量 75-85 通常视觉无损。</li>
+<li>**透明图片**：使用 WebP 无损模式或 PNG 压缩。</li>
+<li>**照片**：JPEG 质量 80 与 WebP 质量 80 相比，WebP 文件更小。</li>
+</ul>
+<h2>注意事项</h2>
+<ul>
+<li>**浏览器兼容性**：WebP 已获主流浏览器支持，但旧版浏览器可能不兼容。可提供 fallback。</li>
+<li>**元数据保留**：某些工具会删除 EXIF 信息，根据需要选择保留。</li>
+<li>**批处理**：命令行工具适合批量处理。</li>
+</ul>
+<h2>总结</h2>
+<p>选择合适的工具和方法可以大幅减少图片大小，加快网页加载速度。WebP 是当前推荐的格式，但根据需求也可考虑 AVIF 等更现代格式。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>WebP 和 JPEG 哪个更好？</h3><p>在相同质量下，WebP 通常比 JPEG 小 25-35%，支持透明度和动画，是现代网页的首选。</p></div>
+<div class="faq-item"><h3>如何批量转换图片为 WebP？</h3><p>可以使用命令行工具如 cwebp 配合循环脚本，或使用 Squoosh 的批量功能、ImageMagick 的 mogrify 命令。</p></div>
+<div class="faq-item"><h3>压缩后图片质量下降明显怎么办？</h3><p>提高质量参数，如将 WebP 质量从 70 提高到 85，或使用无损压缩。</p></div>
+<div class="faq-item"><h3>如何将 WebP 转换回 PNG 或 JPG？</h3><p>使用图像编辑软件（如 GIMP、Photoshop）打开后另存为所需格式，或使用 ImageMagick 命令：`magick input.webp output.png`。</p></div>
+<div class="faq-item"><h3>是否有必要使用 AVIF 格式？</h3><p>AVIF 压缩率更高，但编码速度较慢且工具支持较少。如果目标环境支持，可考虑使用。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">色彩空间转换</a> · <a href="https://tools.treasuregrove.art/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-pack-sprite-sheet.html">图集打包 Sprite Sheet</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

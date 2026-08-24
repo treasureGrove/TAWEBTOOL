@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>伽马校正：原理、作用与渲染管线应用 - TA工具箱</title>
+<meta name="description" content="伽马校正是一种非线性操作，用于调整图像的亮度编码，以匹配人眼感知和显示设备特性。本文介绍伽马校正的概念、必要性及其在线性渲染工作流中的应用。">
+<meta name="keywords" content="伽马校正,gamma correction,sRGB,线性色彩空间,渲染管线,色彩管理,亮度编码,Unity,Unreal,计算机图形学">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/gamma-correction.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/gamma-correction.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"伽马校正：原理、作用与渲染管线应用"}]},{"@type":"Article","name":"伽马校正：原理、作用与渲染管线应用","headline":"伽马校正：原理、作用与渲染管线应用","description":"伽马校正是一种非线性操作，用于调整图像的亮度编码，以匹配人眼感知和显示设备特性。本文介绍伽马校正的概念、必要性及其在线性渲染工作流中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/gamma-correction.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/gamma-correction.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"伽马校正和 sRGB 有什么关系？","acceptedAnswer":{"@type":"Answer","text":"sRGB 标准定义了特定的伽马编码曲线，伽马校正是实现 sRGB 与线性空间转换的过程。"}},{"@type":"Question","name":"为什么渲染要在线性空间进行？","acceptedAnswer":{"@type":"Answer","text":"因为光照计算是线性的，在线性空间计算可确保物理正确性，避免颜色错误。"}},{"@type":"Question","name":"如何知道纹理是否需要伽马校正？","acceptedAnswer":{"@type":"Answer","text":"颜色纹理需要伽马校正（标记为 sRGB），数据纹理不需要（标记为 Linear）。"}},{"@type":"Question","name":"不进行伽马校正会有什么后果？","acceptedAnswer":{"@type":"Answer","text":"会导致图像偏暗或偏亮，颜色混合错误，影响视觉效果和物理正确性。"}},{"@type":"Question","name":"移动端如何处理伽马校正？","acceptedAnswer":{"@type":"Answer","text":"移动端 GPU 可能不支持线性渲染，可以在着色器中手动处理，或接受 Gamma 空间渲染以节省性能。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>伽马校正：原理、作用与渲染管线应用</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是伽马校正</h2>
+<p>伽马校正（Gamma Correction）是一种对图像亮度进行非线性调整的技术，通过幂函数变换图像的像素值。其核心目的是补偿显示设备的非线性响应，确保图像在屏幕上呈现正确的亮度。伽马校正广泛应用于摄影、电视和计算机图形学。</p>
+<h2>为什么需要伽马校正</h2>
+<p>人眼对亮度的感知是非线性的：对暗部变化更敏感，对亮部变化较钝。早期 CRT 显示器的电光转换函数恰好具有类似的反向非线性，因此输入电压与输出亮度呈幂律关系（伽马值约 2.2）。为了在显示器上正确重现线性编码的图像，需要在传输前进行反向补偿，即伽马校正。现代 LCD 显示器虽然原理不同，但通过电路模拟了相同的伽马响应，以兼容现有标准。</p>
+<p>如果图像不经伽马校正直接显示，会显得过暗或过亮，色彩失真。因此，图像文件通常以伽马编码存储（如 sRGB 标准），显示时由硬件或软件解码。</p>
+<h2>伽马校正的数学表达</h2>
+<p>典型的伽马校正公式：</p>
+<ul>
+<li>**编码（线性到伽马）**：`V_out = V_in^(1/γ)`，其中 γ 通常为 2.2。</li>
+<li>**解码（伽马到线性）**：`V_in = V_out^γ`。</li>
+</ul>
+<p>例如，线性值 0.5 编码后约为 0.73（0.5^(1/2.2)），解码时恢复为 0.5。sRGB 标准使用更精确的分段函数，但近似为伽马 2.2 已足够常见。</p>
+<h2>伽马校正与渲染管线</h2>
+<p>在实时渲染中，光照计算必须在线性空间进行，以保证物理正确性。渲染管线通常包括以下步骤：</p>
+<ol>
+<li>**纹理采样**：颜色纹理以 sRGB 格式存储，采样后需解码到线性空间。引擎可自动处理（如 Unity 中标记 sRGB）。</li>
+<li>**光照计算**：在线性空间进行，结果也是线性的。</li>
+<li>**最终输出**：将线性结果编码回 sRGB，以适应显示设备。</li>
+</ul>
+<p>如果不进行伽马校正，直接在线性空间输出，图像会偏暗；如果错误地在 sRGB 空间计算光照，则混合和叠加会出错（如颜色变暗、饱和度异常）。</p>
+<h2>在引擎中的设置与注意事项</h2>
+<ul>
+<li>**Unity**：在 Player Settings 中选择 Color Space 为 Linear，引擎自动处理纹理解码和输出编码。需确保纹理标记正确：颜色纹理标记 sRGB，数据纹理（法线、金属度等）标记 Linear。</li>
+<li>**Unreal Engine**：默认使用线性工作流，纹理导入时设置 sRGB 选项。</li>
+<li>**注意事项**：</li>
+</ul>
+<p>  - 数据纹理不应进行伽马校正，否则数值失真。</p>
+<p>  - UI 元素通常在 sRGB 空间直接处理，无需线性转换。</p>
+<p>  - 移动平台可能不支持线性渲染，需评估性能与质量。</p>
+<h2>常见问题</h2>
+<h3>伽马校正和 sRGB 有什么关系？</h3>
+<p>sRGB 是一种标准色彩空间，定义了特定的伽马编码曲线（近似伽马 2.2）。伽马校正是实现 sRGB 编码与线性空间转换的过程。</p>
+<h3>为什么渲染要在线性空间进行？</h3>
+<p>因为光照计算是线性的，在线性空间计算可确保物理正确性，避免颜色错误。伽马校正仅用于输入输出阶段。</p>
+<h3>如何知道纹理是否需要伽马校正？</h3>
+<p>颜色纹理需要伽马校正（即标记为 sRGB），数据纹理不需要（标记为 Linear）。</p>
+<h3>不进行伽马校正会有什么后果？</h3>
+<p>会导致图像偏暗或偏亮，颜色混合错误，影响视觉效果和物理正确性。</p>
+<h3>移动端如何处理伽马校正？</h3>
+<p>移动端 GPU 可能不支持线性渲染，可以选择在着色器中手动处理，或接受 Gamma 空间渲染以节省性能。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>伽马校正和 sRGB 有什么关系？</h3><p>sRGB 标准定义了特定的伽马编码曲线，伽马校正是实现 sRGB 与线性空间转换的过程。</p></div>
+<div class="faq-item"><h3>为什么渲染要在线性空间进行？</h3><p>因为光照计算是线性的，在线性空间计算可确保物理正确性，避免颜色错误。</p></div>
+<div class="faq-item"><h3>如何知道纹理是否需要伽马校正？</h3><p>颜色纹理需要伽马校正（标记为 sRGB），数据纹理不需要（标记为 Linear）。</p></div>
+<div class="faq-item"><h3>不进行伽马校正会有什么后果？</h3><p>会导致图像偏暗或偏亮，颜色混合错误，影响视觉效果和物理正确性。</p></div>
+<div class="faq-item"><h3>移动端如何处理伽马校正？</h3><p>移动端 GPU 可能不支持线性渲染，可以在着色器中手动处理，或接受 Gamma 空间渲染以节省性能。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">色彩空间转换</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

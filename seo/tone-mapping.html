@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>色调映射：HDR到LDR的转换与ACES应用 - TA工具箱</title>
+<meta name="description" content="色调映射是将高动态范围（HDR）图像转换为低动态范围（LDR）显示的技术，通过压缩亮度范围保留细节。本文介绍色调映射的原理、常用算法（如ACES）及在渲染管线中的作用。">
+<meta name="keywords" content="色调映射,tone mapping,ACES,HDR,LDR,渲染管线,后处理,亮度压缩,电影级,Unity,Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/tone-mapping.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/tone-mapping.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"色调映射：HDR到LDR的转换与ACES应用"}]},{"@type":"Article","name":"色调映射：HDR到LDR的转换与ACES应用","headline":"色调映射：HDR到LDR的转换与ACES应用","description":"色调映射是将高动态范围（HDR）图像转换为低动态范围（LDR）显示的技术，通过压缩亮度范围保留细节。本文介绍色调映射的原理、常用算法（如ACES）及在渲染管线中的作用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/tone-mapping.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/tone-mapping.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"色调映射和伽马校正有什么区别？","acceptedAnswer":{"@type":"Answer","text":"色调映射将 HDR 压缩到 LDR 范围，是亮度的非线性映射；伽马校正则是线性与 sRGB 之间的编码转换。"}},{"@type":"Question","name":"为什么推荐使用 ACES 色调映射？","acceptedAnswer":{"@type":"Answer","text":"ACES 提供电影级效果，高光过渡自然，色彩保持良好，已成为行业标准。"}},{"@type":"Question","name":"不进行色调映射会怎样？","acceptedAnswer":{"@type":"Answer","text":"HDR 值会截断，导致亮部过曝、暗部丢失细节，画面失真。"}},{"@type":"Question","name":"移动端可以使用色调映射吗？","acceptedAnswer":{"@type":"Answer","text":"可以，但增加后处理开销，需评估性能。可以使用简化的 Reinhard 或近似曲线。"}},{"@type":"Question","name":"如何调整色调映射的效果？","acceptedAnswer":{"@type":"Answer","text":"可以调整曝光、白点、曲线参数，或选择不同算法。在 Unity 中，Post Processing 提供多个参数。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>色调映射：HDR到LDR的转换与ACES应用</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是色调映射</h2>
+<p>色调映射（Tone Mapping）是将高动态范围（HDR）图像转换为低动态范围（LDR）显示设备可显示的过程。HDR 场景包含远超显示器能力的亮度范围（如太阳 vs 阴影），色调映射算法通过压缩亮度，同时保留细节和色彩，模拟人眼对高对比度场景的适应。它广泛应用于摄影、电影和实时渲染。</p>
+<h2>为什么需要色调映射</h2>
+<p>渲染管线通常在线性空间计算 HDR 光照，亮度值可能从 0 到数百甚至更高，而普通显示器只能显示 0 到 1（或 0-255）。直接将 HDR 值截断会导致亮部过曝、暗部死黑。色调映射将广泛的亮度范围压缩到显示器可显示的范围，同时保持视觉真实感，避免细节丢失。</p>
+<h2>常用色调映射算法</h2>
+<h3>Reinhard 色调映射</h3>
+<p>经典算法：`L_display = L / (1 + L)`。它将无限亮度映射到 [0,1]，简单高效，但可能导致对比度降低和颜色饱和度变化。</p>
+<h3>Filmic 色调映射</h3>
+<p>模拟电影胶片的响应曲线，提供更好的高光过渡和色彩保持。常见变体如 ACES Filmic、Uncharted 2 等。</p>
+<h3>ACES 色调映射</h3>
+<p>ACES（Academy Color Encoding System）是电影行业标准，其色调映射曲线被广泛采用。它通过复杂的拟合曲线实现电影级效果，保留高光细节和色彩准确性。在 Unity 和 Unreal 中，ACES 是默认选项之一。</p>
+<h3>其他算法</h3>
+<ul>
+<li>**电影级色调映射**：自定义曲线，提供艺术控制。</li>
+<li>**局部色调映射**：根据局部区域调整对比度，较复杂，较少用于实时。</li>
+</ul>
+<h2>在渲染管线中的应用</h2>
+<p>实时渲染中，色调映射通常作为后处理步骤，在 HDR 渲染之后、伽马校正之前执行。流程：</p>
+<ol>
+<li>场景渲染到 HDR 缓冲。</li>
+<li>应用色调映射将 HDR 转换为 LDR。</li>
+<li>进行伽马校正（线性到 sRGB），输出到屏幕。</li>
+</ul>
+<p>在 Unity 中，使用 Post Processing 包可以启用色调映射，选择 ACES 或 Neutral 等模式。Unreal 中，在后期处理体积中设置 Tone Mapper。</p>
+<h2>色调映射与曝光</h2>
+<p>色调映射通常与曝光控制结合。曝光模拟相机光圈或人眼适应，在色调映射前调整 HDR 图像的亮度。例如，自动曝光根据场景平均亮度调整，避免过暗或过亮。</p>
+<h2>常见问题</h2>
+<h3>色调映射和伽马校正有什么区别？</h3>
+<p>色调映射将 HDR 压缩到 LDR 范围，是亮度的非线性映射；伽马校正则是线性与 sRGB 之间的编码转换，两者在管线中按顺序执行。</p>
+<h3>为什么推荐使用 ACES 色调映射？</h3>
+<p>ACES 提供电影级效果，高光过渡自然，色彩保持良好，已成为行业标准。</p>
+<h3>不进行色调映射会怎样？</h3>
+<p>HDR 值会截断，导致亮部过曝、暗部丢失细节，画面失真。</p>
+<h3>移动端可以使用色调映射吗？</h3>
+<p>可以，但色调映射增加后处理开销，需根据性能评估。移动端可以使用简化的 Reinhard 或近似曲线。</p>
+<h3>如何调整色调映射的效果？</h3>
+<p>可以调整曝光、白点、曲线参数等，或选择不同算法。在 Unity 中，Post Processing 提供多个参数。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>色调映射和伽马校正有什么区别？</h3><p>色调映射将 HDR 压缩到 LDR 范围，是亮度的非线性映射；伽马校正则是线性与 sRGB 之间的编码转换。</p></div>
+<div class="faq-item"><h3>为什么推荐使用 ACES 色调映射？</h3><p>ACES 提供电影级效果，高光过渡自然，色彩保持良好，已成为行业标准。</p></div>
+<div class="faq-item"><h3>不进行色调映射会怎样？</h3><p>HDR 值会截断，导致亮部过曝、暗部丢失细节，画面失真。</p></div>
+<div class="faq-item"><h3>移动端可以使用色调映射吗？</h3><p>可以，但增加后处理开销，需评估性能。可以使用简化的 Reinhard 或近似曲线。</p></div>
+<div class="faq-item"><h3>如何调整色调映射的效果？</h3><p>可以调整曝光、白点、曲线参数，或选择不同算法。在 Unity 中，Post Processing 提供多个参数。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/bloom.html">Bloom 泛光</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normal Mapping: Principles, Tangent Space, and Applications Explained - TA Toolbox</title>
+<meta name="description" content="Normal mapping is a texture technique that enhances surface detail on 3D models by storing per-pixel normal directions to simulate bumps without adding geometry. This article covers the principles, tangent space, generation methods, and common issues of normal maps.">
+<meta name="keywords" content="normal map,tangent space,bump map,3D rendering,game development,texture map,baking normal map,height map,shader">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/normal-map.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/normal-map.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/normal-map.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Normal Mapping: Principles, Tangent Space, and Applications Explained"}]},{"@type":"Article","name":"Normal Mapping: Principles, Tangent Space, and Applications Explained","headline":"Normal Mapping: Principles, Tangent Space, and Applications Explained","description":"Normal mapping is a texture technique that enhances surface detail on 3D models by storing per-pixel normal directions to simulate bumps without adding geometry. This article covers the principles, tangent space, generation methods, and common issues of normal maps.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/normal-map.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/normal-map.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between normal maps and bump maps?","acceptedAnswer":{"@type":"Answer","text":"Bump maps store height information and compute normal perturbations during shading; normal maps directly store normal directions, producing more precise results and higher efficiency."}},{"@type":"Question","name":"Why are normal maps blue?","acceptedAnswer":{"@type":"Answer","text":"The default normal (0,0,1) is encoded as RGB(128,128,255), appearing light blue. Most surface normals are close to the default, so the map overall is blue."}},{"@type":"Question","name":"What are the advantages of tangent-space normal maps?","acceptedAnswer":{"@type":"Answer","text":"Tangent-space normal maps can be applied to surfaces of different orientations, support deformation and animation, and allow texture reuse."}},{"@type":"Question","name":"How to bake normal maps from a high-poly model?","acceptedAnswer":{"@type":"Answer","text":"Align the high-poly and low-poly models in 3D software, set baking parameters, and the software computes normal perturbations of high-poly details in the low-poly UV space to generate the map."}},{"@type":"Question","name":"How to optimize normal maps on mobile?","acceptedAnswer":{"@type":"Answer","text":"Use compressed formats like ASTC or ETC2, reduce resolution, and apply normal maps only on important surfaces."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Normal Mapping: Principles, Tangent Space, and Applications Explained</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is a Normal Map</h2>
+<p>A normal map is a texture map used to simulate high-detail surface lighting on low-polygon models. It stores normal direction information per pixel, perturbing the surface normal during shading to alter lighting calculations, making surfaces appear to have rich bump details like wrinkles, scratches, brick gaps, etc. Normal maps are widely used in games, film, and real-time rendering to achieve high visual complexity at low cost.</p>
+<h2>Principles of Normal Mapping</h2>
+<p>In 3D rendering, lighting calculations rely on surface normals (vectors perpendicular to the surface). Traditionally, adding detail requires increasing polygon count, but normal maps offer a more efficient method.</p>
+<p>Normal maps encode the normal direction of each pixel as a color value. Typically, RGB channels correspond to the X, Y, Z components of the normal vector. By default, the normal (0,0,1) (pointing outward) is encoded as color (128,128,255) (light blue). When the normal deviates, the color changes accordingly. In shaders, the sampled normal map provides the perturbed normal used for lighting, creating the visual effect of surface bumps.</p>
+<h2>Tangent Space</h2>
+<p>Normal maps are usually stored in tangent space. Tangent space is a local coordinate system defined by three orthogonal vectors: Tangent, Bitangent, and Normal. The Normal is the original surface normal, the Tangent typically follows the texture U direction, and the Bitangent follows the V direction.</p>
+<p>The benefit of tangent space is that normal maps can be applied to surfaces with different orientations and even deforming meshes (like character animations). The normal directions in the map are relative to the surface local coordinates, so the map remains valid when the model rotates or deforms. In shaders, light and view vectors must be transformed from world space to tangent space, or tangent-space normals transformed to world space, for lighting calculations.</p>
+<h2>Generating and Using Normal Maps</h2>
+<p>Normal maps can be baked from high-poly to low-poly models, converted from grayscale height maps, or painted directly with tools.</p>
+<ul>
+<li>**Baking Normal Maps**: Use 3D software (like Blender, Substance Painter, xNormal) to project high-resolution model details onto the low-resolution model's UV space, generating a normal map. This is the most common method in game development.</li>
+<li>**Generating from Height Maps**: A height map is a grayscale image where white indicates raised and black indicates recessed areas. By computing height differences between neighboring pixels, normal perturbations are derived to create a normal map.</li>
+<li>**Direct Painting**: In software supporting normal map painting (e.g., Substance Painter, Photoshop plugins), artists can manually paint normal details.</li>
+</ul>
+<p>In game engines (like Unity, Unreal), after importing the normal map, assign it as the material's Normal Map property. The shader automatically handles tangent space transformation and lighting.</p>
+<h2>Common Issues and Considerations</h2>
+<ul>
+<li>**Normal Map Colors**: Normal maps typically appear blue-purple because most normals are close to (0,0,1), encoded as (128,128,255). If colors are abnormal (e.g., all red or green), it may indicate a map error or coordinate system mismatch.</li>
+<li>**Tangent Space vs. Object Space**: Normal maps come in tangent space and object space. Tangent space is more flexible, supporting deformation and reuse; object space normal maps store world-space normals and do not support deformation but may have more precise details. Modern engines mostly use tangent space.</li>
+<li>**UV Layout**: Normal maps depend on UV coordinates, so UV unwrapping must avoid overlaps and excessive stretching to prevent artifacts.</li>
+<li>**Compression Formats**: Normal maps require special handling in texture compression, such as using DXT5nm format, keeping only X and Y components, and reconstructing Z in the shader to reduce storage and bandwidth.</li>
+<li>**Performance Impact**: Normal maps increase texture sampling and computation, but compared to adding geometry, the performance cost is relatively low. On mobile platforms, the use of normal maps should be balanced.</li>
+</ul>
+<h2>FAQ</h2>
+<h3>What is the difference between normal maps and bump maps?</h3>
+<p>Bump maps typically refer to height maps that store surface height information, and the shader computes normal perturbations by gradients. Normal maps directly store normal directions, offering more precise results and higher computational efficiency.</p>
+<h3>Why are normal maps blue?</h3>
+<p>Because the default normal (0,0,1) is encoded as RGB(128,128,255), which is light blue. Most surface normals are close to the default, so the overall map appears blue.</p>
+<h3>What are the advantages of tangent-space normal maps?</h3>
+<p>Tangent-space normal maps can be applied to surfaces with different orientations, support deformation and animation, and allow texture reuse.</p>
+<h3>How to bake normal maps from a high-poly model?</h3>
+<p>In 3D software, align the high-poly and low-poly models, set baking parameters, and the software computes the normal perturbations of high-poly details in the low-poly UV space to generate the map.</p>
+<h3>How to optimize normal maps on mobile?</h3>
+<p>Use compressed texture formats like ASTC or ETC2, consider reducing resolution, and use normal maps only on important surfaces to balance quality and performance.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between normal maps and bump maps?</h3><p>Bump maps store height information and compute normal perturbations during shading; normal maps directly store normal directions, producing more precise results and higher efficiency.</p></div>
+<div class="faq-item"><h3>Why are normal maps blue?</h3><p>The default normal (0,0,1) is encoded as RGB(128,128,255), appearing light blue. Most surface normals are close to the default, so the map overall is blue.</p></div>
+<div class="faq-item"><h3>What are the advantages of tangent-space normal maps?</h3><p>Tangent-space normal maps can be applied to surfaces of different orientations, support deformation and animation, and allow texture reuse.</p></div>
+<div class="faq-item"><h3>How to bake normal maps from a high-poly model?</h3><p>Align the high-poly and low-poly models in 3D software, set baking parameters, and the software computes normal perturbations of high-poly details in the low-poly UV space to generate the map.</p></div>
+<div class="faq-item"><h3>How to optimize normal maps on mobile?</h3><p>Use compressed formats like ASTC or ETC2, reduce resolution, and apply normal maps only on important surfaces.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UV 映射与展开：3D模型纹理贴图基础 - TA工具箱</title>
+<meta name="description" content="UV 映射是将 3D 模型表面展开到 2D 平面，以便应用纹理贴图。本文介绍 UV 映射的原理、UV 展开方法及常见问题。">
+<meta name="keywords" content="UV映射,UV展开,纹理坐标,3D模型,贴图,UV布局,接缝,拉伸,光照贴图,游戏开发">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/uv-mapping.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/uv-mapping.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/uv-mapping.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"UV 映射与展开：3D模型纹理贴图基础"}]},{"@type":"Article","name":"UV 映射与展开：3D模型纹理贴图基础","headline":"UV 映射与展开：3D模型纹理贴图基础","description":"UV 映射是将 3D 模型表面展开到 2D 平面，以便应用纹理贴图。本文介绍 UV 映射的原理、UV 展开方法及常见问题。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/uv-mapping.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/uv-mapping.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"UV坐标范围是多少？","acceptedAnswer":{"@type":"Answer","text":"UV坐标通常在[0,1]之间，对应纹理左下角到右上角。超出范围会导致重复或钳制。"}},{"@type":"Question","name":"为什么光照贴图需要第二套UV？","acceptedAnswer":{"@type":"Answer","text":"第一套UV可能有重叠和拉伸，第二套UV需要唯一且非重叠，以确保光照贴图正确。"}},{"@type":"Question","name":"UV展开中的岛是什么意思？","acceptedAnswer":{"@type":"Answer","text":"岛是UV展开中一组连续的面片，它们共享UV空间，岛之间有空隙避免纹理渗色。"}},{"@type":"Question","name":"如何检测UV拉伸？","acceptedAnswer":{"@type":"Answer","text":"在3D软件中显示UV棋盘格或使用拉伸可视化工具，引擎中也有类似视图。"}},{"@type":"Question","name":"UV贴图和纹理坐标有什么关系？","acceptedAnswer":{"@type":"Answer","text":"UV贴图是顶点属性，存储顶点UV坐标，光栅化时插值得到片元UV用于纹理采样。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>UV 映射与展开：3D模型纹理贴图基础</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 UV 映射</h2>
+<p>UV 映射（UV Mapping）是将 3D 模型表面的顶点映射到 2D 纹理坐标系的过程。UV 坐标（通常称为 U 和 V，对应纹理的水平和垂直方向）指定了纹理图像上的位置，使纹理能正确包裹在 3D 模型上。UV 映射是纹理贴图的基础，对于材质表现至关重要。</p>
+<h2>UV 展开</h2>
+<p>UV 展开（UV Unwrapping）是将 3D 网格的三角形面片展开到 2D 平面，生成 UV 布局的过程。理想的 UV 展开应尽量减少拉伸、重叠和接缝，保证纹理在模型上均匀分布。</p>
+<h3>展开方法</h3>
+<ul>
+<li>**自动展开**：软件根据算法自动生成 UV，如 Blender 的 Smart UV Project、Unfold3D 等。</li>
+<li>**手动展开**：艺术家手动切割接缝，使用松弛、展开工具调整 UV，获得最佳布局。</li>
+<li>**投影展开**：从特定视角投影模型到平面，如平面、圆柱、球面投影。</li>
+</ul>
+<p>在游戏资产中，通常需要手动优化 UV 布局，以提高纹理密度和减少接缝。</p>
+<h2>UV 映射的注意事项</h2>
+<ul>
+<li>**接缝**：UV 边界处纹理可能不连续，需将接缝放置在隐蔽处（如模型内侧、背面）。</li>
+<li>**拉伸**：UV 面片与 3D 面片比例不一致导致纹理拉伸，需要均匀展开。</li>
+<li>**重叠**：多个面片使用相同 UV 区域（如对称模型），可以节省纹理空间，但需注意法线贴图等。</li>
+<li>**纹理密度**：保持模型各部分像素密度一致，避免某些区域模糊。</li>
+<li>**UV 通道**：模型可以有多个 UV 通道，用于不同贴图（如光照贴图使用第二套 UV）。</li>
+</ul>
+<h2>在游戏引擎中的使用</h2>
+<p>在 Unity 和 Unreal 中，导入模型时自动读取 UV 坐标。光照贴图需要第二套 UV（UV1），要求 UV 不重叠且在 0-1 范围内。引擎提供 UV 检查工具（如 Unreal 的 UV 密度视图）。</p>
+<h2>常见问题</h2>
+<h3>UV 坐标范围是多少？</h3>
+<p>UV 坐标通常范围在 [0,1] 之间，对应纹理左下角到右上角。超出范围会导致纹理重复（取决于 Wrap 模式）或钳制。</p>
+<h3>为什么光照贴图需要第二套 UV？</h3>
+<p>因为第一套 UV 可能有重叠和拉伸，不适合烘焙光照。第二套 UV 需要唯一且非重叠，以确保光照贴图正确。</p>
+<h3>UV 展开中的岛是什么意思？</h3>
+<p>岛是 UV 展开中一组连续的面片，它们共享 UV 空间。每个岛之间有空隙，以避免纹理渗色。</p>
+<h3>如何检测 UV 拉伸？</h3>
+<p>在 3D 软件中，可以显示 UV 棋盘格或使用拉伸可视化工具。引擎中也有类似视图。</p>
+<h3>UV 贴图和纹理坐标有什么关系？</h3>
+<p>UV 贴图是顶点属性，存储每个顶点的 UV 坐标，光栅化时插值得到片元 UV，用于纹理采样。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>UV坐标范围是多少？</h3><p>UV坐标通常在[0,1]之间，对应纹理左下角到右上角。超出范围会导致重复或钳制。</p></div>
+<div class="faq-item"><h3>为什么光照贴图需要第二套UV？</h3><p>第一套UV可能有重叠和拉伸，第二套UV需要唯一且非重叠，以确保光照贴图正确。</p></div>
+<div class="faq-item"><h3>UV展开中的岛是什么意思？</h3><p>岛是UV展开中一组连续的面片，它们共享UV空间，岛之间有空隙避免纹理渗色。</p></div>
+<div class="faq-item"><h3>如何检测UV拉伸？</h3><p>在3D软件中显示UV棋盘格或使用拉伸可视化工具，引擎中也有类似视图。</p></div>
+<div class="faq-item"><h3>UV贴图和纹理坐标有什么关系？</h3><p>UV贴图是顶点属性，存储顶点UV坐标，光栅化时插值得到片元UV用于纹理采样。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

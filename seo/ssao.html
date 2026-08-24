@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSAO 屏幕空间环境光遮蔽：原理与实现 - TA工具箱</title>
+<meta name="description" content="SSAO（屏幕空间环境光遮蔽）是一种实时渲染技术，通过屏幕空间中的深度和法线信息近似计算环境光遮蔽，增强场景的立体感和真实感。本文介绍SSAO的原理、算法和优化。">
+<meta name="keywords" content="SSAO,屏幕空间环境光遮蔽,环境光遮蔽,后处理,渲染技术,实时渲染,深度缓冲,法线,Unity,Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/ssao.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/ssao.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/ssao.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"SSAO 屏幕空间环境光遮蔽：原理与实现"}]},{"@type":"Article","name":"SSAO 屏幕空间环境光遮蔽：原理与实现","headline":"SSAO 屏幕空间环境光遮蔽：原理与实现","description":"SSAO（屏幕空间环境光遮蔽）是一种实时渲染技术，通过屏幕空间中的深度和法线信息近似计算环境光遮蔽，增强场景的立体感和真实感。本文介绍SSAO的原理、算法和优化。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/ssao.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/ssao.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"SSAO 和 AO 有什么区别？","acceptedAnswer":{"@type":"Answer","text":"AO 是环境光遮蔽技术的总称，SSAO 是其中一种基于屏幕空间的实时近似方法。"}},{"@type":"Question","name":"SSAO 对性能影响大吗？","acceptedAnswer":{"@type":"Answer","text":"SSAO 需要多次深度采样和后期处理，对性能有一定影响，但通过优化可以控制。"}},{"@type":"Question","name":"移动端可以使用 SSAO 吗？","acceptedAnswer":{"@type":"Answer","text":"移动端性能有限，SSAO 可能过于昂贵，可使用简化版本或预烘焙 AO。"}},{"@type":"Question","name":"如何减少 SSAO 噪声？","acceptedAnswer":{"@type":"Answer","text":"使用随机旋转噪声、增加采样数、应用模糊过滤（如双边滤波）可降低噪声。"}},{"@type":"Question","name":"SSAO 需要法线信息吗？","acceptedAnswer":{"@type":"Answer","text":"需要，法线用于确定采样半球方向，通常从 G-Buffer 获取，也可从深度重建。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>SSAO 屏幕空间环境光遮蔽：原理与实现</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 SSAO</h2>
+<p>SSAO（Screen Space Ambient Occlusion，屏幕空间环境光遮蔽）是一种后处理效果，用于近似模拟环境光遮蔽（Ambient Occlusion，AO）。在现实世界中，角落、缝隙等区域由于被周围几何体遮挡，接收到的环境光较少，因此更暗。SSAO 通过分析屏幕空间中的深度和法线信息，估算每个像素的遮蔽程度，输出灰度遮罩，将其应用于环境光照，增强场景的深度感和真实感。</p>
+<h2>SSAO 的原理</h2>
+<p>SSAO 的核心思想是：对于屏幕上的每个像素，在其法线方向的半球内采样周围的深度缓冲，比较采样点的深度与对应像素的深度，判断采样点是否位于表面前方（即被遮挡）。如果许多采样点被遮挡，则该像素的遮蔽因子较低，颜色变暗。</p>
+<p>具体步骤：</p>
+<ol>
+<li>获取屏幕空间中的深度和法线信息（通常来自 G-Buffer）。</li>
+<li>对于每个像素，在其半球内生成随机采样点（叠加随机旋转噪声）。</li>
+<li>将采样点投影到屏幕空间，采样深度缓冲。</li>
+<li>比较采样深度与表面深度，若采样点深度大于表面深度，则该方向被遮挡。</li>
+<li>综合所有采样点的结果，计算遮蔽因子。</li>
+<li>输出遮蔽纹理，用于调制环境光照。</li>
+</ul>
+<h2>SSAO 的实现与优化</h2>
+<p>SSAO 有多种变体，如 Crytek 的原始 SSAO、HBAO（Horizon-Based Ambient Occlusion）、GTAO（Ground Truth Ambient Occlusion）等。在 Unity 和 Unreal 中，后处理栈提供了 SSAO 选项。</p>
+<p>优化技巧：</p>
+<ul>
+<li>**降采样**：在较低分辨率下计算 SSAO，再上采样模糊。</li>
+<li>**减少采样数**：通常使用 8-16 个采样点，配合随机旋转和模糊。</li>
+<li>**使用半球法线**：限制采样在表面法线半球内，减少无效采样。</li>
+<li>**深度范围限制**：仅考虑一定距离内的遮挡，避免远距离不相关遮挡。</li>
+</ul>
+<h2>SSAO 的优缺点</h2>
+<p>**优点**：</p>
+<ul>
+<li>实时性能好，无需预计算。</li>
+<li>适用于动态场景和任意几何体。</li>
+<li>增强视觉真实感，尤其在小尺度细节。</li>
+</ul>
+<p>**缺点**：</p>
+<ul>
+<li>屏幕空间限制：只能利用可见像素的信息，无法处理屏幕外的遮挡。</li>
+<li>可能产生闪烁和噪声，需要模糊处理。</li>
+<li>可能产生深度不连续处的伪影（如前景物体错误遮挡背景）。</li>
+</ul>
+<h2>与其他 AO 技术的比较</h2>
+<ul>
+<li>**烘焙 AO**：离线预计算，将 AO 信息烘焙到纹理或顶点色，适合静态场景，无运行时开销。</li>
+<li>**光线追踪 AO**：使用硬件光线追踪精确计算，但性能昂贵，需现代 GPU。</li>
+<li>**SSAO**：实时近似，性能适中，是最常用的动态 AO 技术。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>SSAO 和 AO 有什么区别？</h3>
+<p>AO（环境光遮蔽）是一类技术的总称，SSAO 是其中一种基于屏幕空间的实时近似方法。其他 AO 方法包括烘焙 AO、光线追踪 AO 等。</p>
+<h3>SSAO 对性能影响大吗？</h3>
+<p>SSAO 需要多次深度采样和后期处理，对性能有一定影响，但通过降采样和优化可以控制。</p>
+<h3>移动端可以使用 SSAO 吗？</h3>
+<p>移动端 GPU 性能有限，SSAO 可能过于昂贵，可以使用简化版本或预烘焙 AO。</p>
+<h3>如何减少 SSAO 噪声？</h3>
+<p>使用随机旋转噪声、增加采样数、应用模糊过滤（如双边滤波）可以降低噪声。</p>
+<h3>SSAO 需要法线信息吗？</h3>
+<p>需要，法线用于确定采样半球方向，通常从 G-Buffer 获取。若无显式法线，可以从深度重建。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>SSAO 和 AO 有什么区别？</h3><p>AO 是环境光遮蔽技术的总称，SSAO 是其中一种基于屏幕空间的实时近似方法。</p></div>
+<div class="faq-item"><h3>SSAO 对性能影响大吗？</h3><p>SSAO 需要多次深度采样和后期处理，对性能有一定影响，但通过优化可以控制。</p></div>
+<div class="faq-item"><h3>移动端可以使用 SSAO 吗？</h3><p>移动端性能有限，SSAO 可能过于昂贵，可使用简化版本或预烘焙 AO。</p></div>
+<div class="faq-item"><h3>如何减少 SSAO 噪声？</h3><p>使用随机旋转噪声、增加采样数、应用模糊过滤（如双边滤波）可降低噪声。</p></div>
+<div class="faq-item"><h3>SSAO 需要法线信息吗？</h3><p>需要，法线用于确定采样半球方向，通常从 G-Buffer 获取，也可从深度重建。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

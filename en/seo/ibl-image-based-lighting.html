@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBL Image-Based Lighting: Principles and Implementation - TA Toolbox</title>
+<meta name="description" content="IBL (Image-Based Lighting) uses environment maps (HDRI) to provide global illumination, a key technique for realistic reflections and ambient light in PBR. This article covers the principles, precomputation, and real-time application of IBL.">
+<meta name="keywords" content="IBL,image-based lighting,environment map,HDRI,PBR,irradiance map,prefiltered environment map,BRDF LUT,global illumination,reflection">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"IBL Image-Based Lighting: Principles and Implementation"}]},{"@type":"Article","name":"IBL Image-Based Lighting: Principles and Implementation","headline":"IBL Image-Based Lighting: Principles and Implementation","description":"IBL (Image-Based Lighting) uses environment maps (HDRI) to provide global illumination, a key technique for realistic reflections and ambient light in PBR. This article covers the principles, precomputation, and real-time application of IBL.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between IBL and direct lighting?","acceptedAnswer":{"@type":"Answer","text":"Direct lighting comes from discrete light sources; IBL uses an environment map to simulate indirect lighting from all directions."}},{"@type":"Question","name":"Why is precomputation necessary?","acceptedAnswer":{"@type":"Answer","text":"Real-time integration of environmental lighting is expensive; precomputation converts complex integrals into texture lookups, greatly improving performance."}},{"@type":"Question","name":"Does IBL support dynamic environments?","acceptedAnswer":{"@type":"Answer","text":"Yes, but precomputation must be redone when the environment changes. For dynamic environments, real-time reflection probes or simplified methods can be used."}},{"@type":"Question","name":"Can IBL be used on mobile?","acceptedAnswer":{"@type":"Answer","text":"Yes, mobile typically uses lower-resolution precomputed maps and simplified BRDF LUTs to save performance."}},{"@type":"Question","name":"What is the relationship between HDRI and IBL?","acceptedAnswer":{"@type":"Answer","text":"HDRI is the data source for IBL, usually as an environment map. IBL uses the lighting information from HDRI for rendering."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>IBL Image-Based Lighting: Principles and Implementation</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is IBL</h2>
+<p>IBL (Image-Based Lighting) is a technique that uses an environment map (usually HDRI) to illuminate objects. It encodes surrounding lighting information into a texture, sampled to provide diffuse and specular lighting, seamlessly integrating objects into the scene. IBL is an essential part of global illumination and reflections in PBR workflows.</p>
+<h2>Principles of IBL</h2>
+<p>An environment map records incoming light from all directions. For a point on a surface, its reflected light comprises:</p>
+<ul>
+<li>**Diffuse component**: The integral of incoming light from all directions after diffuse reflection, generally uniform.</li>
+<li>**Specular component**: Light near the reflection direction, dependent on surface roughness. Lower roughness yields sharper reflections; higher roughness yields blurrier reflections.</li>
+</ul>
+<p>Directly sampling the environment map for real-time integration is expensive, so precomputation techniques are typically used.</p>
+<h2>Precomputation Process</h2>
+<p>IBL precomputation typically involves:</p>
+<ol>
+<li>**Generate Irradiance Map**: For diffuse lighting. Convolve the original environment map to compute the hemispherical integral (Lambertian diffuse) for each direction. The result is a low-frequency, blurry map that can be sampled directly for diffuse.</li>
+</ul>
+<ol>
+<li>**Generate Prefiltered Environment Map**: For specular reflection. Filter the environment map with Gaussian blurs at different roughness levels, generating a mipmap chain where each level corresponds to a roughness. Higher roughness means stronger filtering. In the shader, select the appropriate mipmap level based on surface roughness.</li>
+</ul>
+<ol>
+<li>**Generate BRDF Integration Look-Up Table (BRDF LUT)**: To accelerate specular computation. The LUT stores the integral of the Fresnel and geometry terms, typically as a 2D texture with NdotV on the X axis and roughness on the Y axis. In the shader, sample the LUT and combine with the prefiltered environment map to obtain specular.</li>
+</ul>
+<p>These precomputations can be done offline or at engine startup. Unity and Unreal automatically precompute when importing HDRI.</p>
+<h2>Shader Implementation</h2>
+<p>In a fragment shader, typical IBL usage:</p>
+<ol>
+<li>Compute diffuse: `irradiance = textureCube(irradianceMap, N).rgb * albedo`</li>
+<li>Compute specular:</li>
+</ul>
+<p>   - Sample prefiltered environment map: `prefilteredColor = textureCubeLod(prefilteredMap, R, roughness * maxMipLevel).rgb`</p>
+<p>   - Sample BRDF LUT: `brdf = texture2D(brdfLUT, vec2(NdotV, roughness)).rg`</p>
+<p>   - Specular = `prefilteredColor * (F * brdf.x + brdf.y)`</p>
+<ol>
+<li>Sum diffuse and specular for ambient lighting.</li>
+</ul>
+<h2>Combining IBL with Direct Lighting</h2>
+<p>IBL is usually combined with direct lighting (point lights, directional lights). IBL provides ambient and reflections, while direct lighting provides primary shading. Both use the same BRDF in PBR for consistency.</p>
+<h2>FAQ</h2>
+<h3>What is the difference between IBL and direct lighting?</h3>
+<p>Direct lighting comes from discrete light sources; IBL uses an environment map to simulate indirect lighting from all directions.</p>
+<h3>Why is precomputation necessary?</h3>
+<p>Real-time integration of environmental lighting is expensive; precomputation converts complex integrals into texture lookups, greatly improving performance.</p>
+<h3>Does IBL support dynamic environments?</h3>
+<p>Yes, but precomputation must be redone when the environment changes. For dynamic environments, real-time reflection probes or simplified methods can be used.</p>
+<h3>Can IBL be used on mobile?</h3>
+<p>Yes, mobile typically uses lower-resolution precomputed maps and simplified BRDF LUTs to save performance.</p>
+<h3>What is the relationship between HDRI and IBL?</h3>
+<p>HDRI is the data source for IBL, usually as an environment map. IBL uses the lighting information from HDRI for rendering.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between IBL and direct lighting?</h3><p>Direct lighting comes from discrete light sources; IBL uses an environment map to simulate indirect lighting from all directions.</p></div>
+<div class="faq-item"><h3>Why is precomputation necessary?</h3><p>Real-time integration of environmental lighting is expensive; precomputation converts complex integrals into texture lookups, greatly improving performance.</p></div>
+<div class="faq-item"><h3>Does IBL support dynamic environments?</h3><p>Yes, but precomputation must be redone when the environment changes. For dynamic environments, real-time reflection probes or simplified methods can be used.</p></div>
+<div class="faq-item"><h3>Can IBL be used on mobile?</h3><p>Yes, mobile typically uses lower-resolution precomputed maps and simplified BRDF LUTs to save performance.</p></div>
+<div class="faq-item"><h3>What is the relationship between HDRI and IBL?</h3><p>HDRI is the data source for IBL, usually as an environment map. IBL uses the lighting information from HDRI for rendering.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

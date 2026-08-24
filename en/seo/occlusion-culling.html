@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Occlusion Culling: Principles, Implementation, and Performance Optimization - TA Toolbox</title>
+<meta name="description" content="Occlusion culling is a rendering optimization technique that culls objects hidden behind others to reduce unnecessary draw calls. This article introduces the principles of occlusion culling, common algorithms, and its application in engines.">
+<meta name="keywords" content="Occlusion Culling, Rendering Optimization, Frustum Culling, Unity, Unreal, Performance Optimization, Draw Call, Visibility, Game Development">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/occlusion-culling.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/occlusion-culling.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Occlusion Culling: Principles, Implementation, and Performance Optimization"}]},{"@type":"Article","name":"Occlusion Culling: Principles, Implementation, and Performance Optimization","headline":"Occlusion Culling: Principles, Implementation, and Performance Optimization","description":"Occlusion culling is a rendering optimization technique that culls objects hidden behind others to reduce unnecessary draw calls. This article introduces the principles of occlusion culling, common algorithms, and its application in engines.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/occlusion-culling.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/occlusion-culling.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between occlusion culling and frustum culling?","acceptedAnswer":{"@type":"Answer","text":"Frustum culling removes objects outside the view; occlusion culling removes objects hidden by other objects."}},{"@type":"Question","name":"How to use occlusion culling in Unity?","acceptedAnswer":{"@type":"Answer","text":"Mark objects as Occluder Static or Occludee Static, then bake in the Occlusion Culling window."}},{"@type":"Question","name":"Does occlusion culling help mobile performance?","acceptedAnswer":{"@type":"Answer","text":"Yes, but mobile may use simplified methods like precomputed visibility (PVS)."}},{"@type":"Question","name":"Can dynamic objects be occlusion culled?","acceptedAnswer":{"@type":"Answer","text":"Yes, but typically using hardware queries, which may be costly. Some engines use conservative culling for dynamic objects."}},{"@type":"Question","name":"Can occlusion culling cause false culling?","acceptedAnswer":{"@type":"Answer","text":"If the algorithm is too aggressive, it may incorrectly cull visible objects. Therefore conservative tests, like using bounding boxes instead of precise meshes, are common."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Occlusion Culling: Principles, Implementation, and Performance Optimization</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is Occlusion Culling</h2>
+<p>Occlusion culling is a rendering optimization technique that determines whether an object is completely blocked by other opaque objects before rendering. If invisible, the object is skipped, reducing draw calls and GPU load. Unlike frustum culling, which only removes objects outside the view, occlusion culling handles objects hidden by others.</p>
+<h2>Principles of Occlusion Culling</h2>
+<p>Occlusion culling often relies on depth buffers or spatial data structures. Common methods include:</p>
+<ul>
+<li>**Hardware Occlusion Queries**: Use GPU queries (e.g., D3D's ID3D11Query) to test whether an object's bounding box passes the depth test; if not, it is occluded.</li>
+<li>**Software Rasterization**: CPU rasterizes occluders into a low-resolution depth buffer, then tests object bounding boxes.</li>
+<li>**Hierarchical Z-Buffer**: Maintain a pyramid depth buffer for fast bounding box visibility tests.</li>
+<li>**Portal Culling**: Suitable for indoor scenes, propagating visibility through doorways.</li>
+</ul>
+<p>Game engines often use conservative bounding boxes (e.g., AABB) to reduce computation.</p>
+<h2>Application in Engines</h2>
+<ul>
+<li>**Unity**: Uses Umbra middleware for occlusion culling. Requires baking occlusion data in Window &gt; Rendering &gt; Occlusion Culling (setting occlusion areas, static objects, etc.). Runs automatically at runtime.</li>
+<li>**Unreal Engine**: Enables occlusion culling by default, combining hardware queries and software rasterization. Can be controlled via `r.EnableOcclusionCulling`.</li>
+</ul>
+<h2>Considerations for Occlusion Culling</h2>
+<ul>
+<li>**Dynamic Objects**: Occlusion culling has limited effect on dynamic objects; it is typically efficient only for static objects.</li>
+<li>**Baking**: Unity's occlusion culling requires baking the scene; modifications require re-baking.</li>
+<li>**Granularity**: Usually works on objects or components; too large or too small affects effectiveness.</li>
+<li>**Mobile**: GPU queries may be expensive; simplified methods like precomputed PVS (Potentially Visible Sets) can be used.</li>
+</ul>
+<h2>Comparison with Other Culling Techniques</h2>
+<ul>
+<li>**Frustum Culling**: Culls objects outside the view; the most basic culling.</li>
+<li>**Backface Culling**: Culls triangles facing away from the camera, done automatically by hardware.</li>
+<li>**Occlusion Culling**: Culls objects hidden behind others, further reducing rendering load.</li>
+</ul>
+<p>In practice, all three culling techniques are often combined.</p>
+<h2>Frequently Asked Questions</h2>
+<h3>What is the difference between occlusion culling and frustum culling?</h3>
+<p>Frustum culling removes objects outside the view; occlusion culling removes objects hidden by other objects.</p>
+<h3>How to use occlusion culling in Unity?</h3>
+<p>Mark objects as Occluder Static or Occludee Static, then bake in the Occlusion Culling window.</p>
+<h3>Does occlusion culling help mobile performance?</h3>
+<p>Yes, but mobile may use simplified methods like precomputed visibility (PVS).</p>
+<h3>Can dynamic objects be occlusion culled?</h3>
+<p>Yes, but typically using hardware queries, which may be costly. Some engines use conservative culling for dynamic objects.</p>
+<h3>Can occlusion culling cause false culling?</h3>
+<p>If the algorithm is too aggressive, it may incorrectly cull visible objects. Therefore conservative tests, like using bounding boxes instead of precise meshes, are common.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between occlusion culling and frustum culling?</h3><p>Frustum culling removes objects outside the view; occlusion culling removes objects hidden by other objects.</p></div>
+<div class="faq-item"><h3>How to use occlusion culling in Unity?</h3><p>Mark objects as Occluder Static or Occludee Static, then bake in the Occlusion Culling window.</p></div>
+<div class="faq-item"><h3>Does occlusion culling help mobile performance?</h3><p>Yes, but mobile may use simplified methods like precomputed visibility (PVS).</p></div>
+<div class="faq-item"><h3>Can dynamic objects be occlusion culled?</h3><p>Yes, but typically using hardware queries, which may be costly. Some engines use conservative culling for dynamic objects.</p></div>
+<div class="faq-item"><h3>Can occlusion culling cause false culling?</h3><p>If the algorithm is too aggressive, it may incorrectly cull visible objects. Therefore conservative tests, like using bounding boxes instead of precise meshes, are common.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

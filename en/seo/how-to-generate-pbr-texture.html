@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Generate PBR Maps: Complete Guide to Normal, Roughness, Metallic - TA Toolbox</title>
+<meta name="description" content="This tutorial explains in detail how to generate normal maps, roughness maps, and metallic maps required for PBR materials, covering various methods from photo generation, software baking to procedural generation, and provides tool recommendations and parameter setting suggestions.">
+<meta name="keywords" content="PBR maps, normal map, roughness map, metallic map, map generation, PBR materials, Substance Designer, Blender baking, photo to map">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"Tool Tutorial","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"How to Generate PBR Maps: Complete Guide to Normal, Roughness, Metallic"}]},{"@type":"HowTo","name":"How to Generate PBR Maps: Complete Guide to Normal, Roughness, Metallic","headline":"How to Generate PBR Maps: Complete Guide to Normal, Roughness, Metallic","description":"This tutorial explains in detail how to generate normal maps, roughness maps, and metallic maps required for PBR materials, covering various methods from photo generation, software baking to procedural generation, and provides tool recommendations and parameter setting suggestions.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"I only have a diffuse color map, can I generate complete PBR maps?","acceptedAnswer":{"@type":"Answer","text":"Yes, but with limited quality. Tools like Materialize, ShaderMap can infer normal, roughness, etc. from diffuse maps, but results may be inaccurate and require manual adjustment."}},{"@type":"Question","name":"Is it normal for a normal map to appear bluish?","acceptedAnswer":{"@type":"Answer","text":"Yes. Normal maps are stored in tangent space by default, where the Z axis (blue channel) typically points outward, so the overall appearance is blue."}},{"@type":"Question","name":"What is the difference between roughness and glossiness?","acceptedAnswer":{"@type":"Answer","text":"Roughness is the inverse of glossiness. In roughness maps, white indicates rough and black indicates smooth; in glossiness maps, it is the opposite. Many engines use roughness."}},{"@type":"Question","name":"Does the metallic map have to be pure black and white?","acceptedAnswer":{"@type":"Answer","text":"Not necessarily. For most materials, the boundary between metal and non-metal is clear, but transition areas (e.g., rusted metal) can use grayscale values."}},{"@type":"Question","name":"How to ensure baked normal map details are correct?","acceptedAnswer":{"@type":"Answer","text":"Ensure the high-poly and low-poly models match well, UVs are properly unwrapped, and use sufficient sampling and cage settings during baking."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">Tool Tutorial</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">Tool Tutorial</a></p>
+    <h1>How to Generate PBR Maps: Complete Guide to Normal, Roughness, Metallic</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Introduction</h2>
+<p>Physically Based Rendering (PBR) requires a specific set of maps to accurately simulate real-world materials. Among them, Normal, Roughness, and Metallic maps are the most essential components. This tutorial will guide you on how to generate these maps.</p>
+<h2>Normal Map Generation</h2>
+<p>Normal maps store surface normal direction, used to add visual complexity of geometric details. Generation methods include:</p>
+<h3>Baking from High-Poly Model</h3>
+<p>Use modeling software (such as Blender, Maya, ZBrush) to bake high-poly model details onto a low-poly model.</p>
+<ol>
+<li>Create low-poly and high-poly models.</li>
+<li>In Blender, select the low-poly model, enter the Shading workspace, add an Image Texture node, and create a new normal map.</li>
+<li>Use the &quot;Bake&quot; function of the Cycles renderer, set Bake Type to &quot;Normal&quot;, and select the high-poly model as the target.</li>
+<li>Bake to obtain the normal map.</li>
+</ul>
+<h3>Generating from Photos</h3>
+<p>Use normal map generation tools (such as CrazyBump, ShaderMap, AwesomeBump) to generate normal maps from diffuse maps or height maps.</p>
+<ol>
+<li>Import a color texture or grayscale height map.</li>
+<li>Adjust parameters such as strength and blur.</li>
+<li>Export the normal map.</li>
+</ul>
+<h3>Procedural Generation</h3>
+<p>In node-based tools like Substance Designer, combine noise, shapes and other nodes to generate normal maps.</p>
+<h2>Roughness Map Generation</h2>
+<p>Roughness maps control the micro-roughness of the surface, affecting the blurriness of reflections. White indicates rough (strong diffuse reflection), black indicates smooth (strong specular reflection).</p>
+<h3>Extracting from Photos</h3>
+<ol>
+<li>Open a surface photo in an image editing software (such as Photoshop).</li>
+<li>Convert to grayscale, adjust contrast so rough areas are brighter and smooth areas are darker.</li>
+<li>Use high-pass filtering or inversion to extract roughness information.</li>
+</ul>
+<h3>Procedural Generation</h3>
+<p>In Substance Designer, use Grunge Maps, Noise and other nodes to generate roughness variation, combined with blend nodes for control.</p>
+<h3>Manual Painting</h3>
+<p>For specific materials, manually paint roughness in texture painting software (such as Substance Painter, Mari).</p>
+<h2>Metallic Map Generation</h2>
+<p>Metallic maps specify which areas are metal (white) or non-metal (black), usually only 0 or 1, but gray values can be kept for transition areas.</p>
+<h3>Creating Masks from Photos or Textures</h3>
+<ol>
+<li>Based on material properties, use selection tools or color range to select metal areas.</li>
+<li>Fill with white, and fill non-metal areas with black.</li>
+<li>Use feathering or gradients for transition areas.</li>
+</ul>
+<h3>Procedural Generation</h3>
+<p>In Substance Designer, use ID maps or material blending to define metal areas.</p>
+<h3>Manual Painting</h3>
+<p>In Substance Painter, use fill layers and masks to precisely control metalness.</p>
+<h2>Tool Recommendations</h2>
+<ul>
+<li>**Blender**: Free and open-source, supports baking normals from high-poly.</li>
+<li>**Substance Suite**: Industry standard, offers Designer and Painter with powerful procedural and hand-painting capabilities.</li>
+<li>**CrazyBump / ShaderMap**: Designed for generating normal, roughness and other maps from photos.</li>
+<li>**Materialize**: Free tool that can generate multiple PBR maps from a single photo.</li>
+<li>**AwesomeBump**: Open-source alternative.</li>
+</ul>
+<h2>Notes</h2>
+<ul>
+<li>**Color Space**: Normal maps should use linear color space; roughness and metallic maps usually use linear or grayscale, avoiding sRGB correction.</li>
+<li>**Map Resolution**: Decide based on target platform and model complexity, typically 1024x1024 or 2048x2048.</li>
+<li>**Seamless Tiling**: If the material needs to tile, ensure the generated maps are seamless.</li>
+<li>**Consistency**: Ensure all maps are aligned with consistent texture coordinates.</li>
+</ul>
+<h2>Summary</h2>
+<p>There are multiple methods to generate PBR maps, choose according to project needs and resources. Baking from high-poly offers highest quality but is time-consuming; generating from photos is fast but limited in accuracy; procedural generation is flexible but requires expertise. It is recommended to combine multiple methods.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>I only have a diffuse color map, can I generate complete PBR maps?</h3><p>Yes, but with limited quality. Tools like Materialize, ShaderMap can infer normal, roughness, etc. from diffuse maps, but results may be inaccurate and require manual adjustment.</p></div>
+<div class="faq-item"><h3>Is it normal for a normal map to appear bluish?</h3><p>Yes. Normal maps are stored in tangent space by default, where the Z axis (blue channel) typically points outward, so the overall appearance is blue.</p></div>
+<div class="faq-item"><h3>What is the difference between roughness and glossiness?</h3><p>Roughness is the inverse of glossiness. In roughness maps, white indicates rough and black indicates smooth; in glossiness maps, it is the opposite. Many engines use roughness.</p></div>
+<div class="faq-item"><h3>Does the metallic map have to be pure black and white?</h3><p>Not necessarily. For most materials, the boundary between metal and non-metal is clear, but transition areas (e.g., rusted metal) can use grayscale values.</p></div>
+<div class="faq-item"><h3>How to ensure baked normal map details are correct?</h3><p>Ensure the high-poly and low-poly models match well, UVs are properly unwrapped, and use sufficient sampling and cage settings during baking.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

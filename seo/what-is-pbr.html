@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PBR 物理渲染：基于物理的渲染技术详解 - TA工具箱</title>
+<meta name="description" content="PBR（Physically Based Rendering）是一种基于物理原理的渲染技术，通过模拟真实世界的光照和材质交互，实现高度逼真的视觉效果。本文介绍 PBR 的核心概念、金属度/粗糙度工作流、常见实现及优缺点，帮助读者全面理解 PBR。">
+<meta name="keywords" content="PBR,基于物理的渲染,金属度粗糙度工作流,Physically Based Rendering,能量守恒,微表面理论,菲涅尔效应,PBR贴图,游戏渲染,材质系统">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/what-is-pbr.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/what-is-pbr.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"PBR 物理渲染：基于物理的渲染技术详解"}]},{"@type":"Article","name":"PBR 物理渲染：基于物理的渲染技术详解","headline":"PBR 物理渲染：基于物理的渲染技术详解","description":"PBR（Physically Based Rendering）是一种基于物理原理的渲染技术，通过模拟真实世界的光照和材质交互，实现高度逼真的视觉效果。本文介绍 PBR 的核心概念、金属度/粗糙度工作流、常见实现及优缺点，帮助读者全面理解 PBR。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/what-is-pbr.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/what-is-pbr.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"PBR 和传统渲染有什么区别？","acceptedAnswer":{"@type":"Answer","text":"传统渲染（如 Blinn-Phong）使用经验模型，参数缺乏物理意义；PBR 基于物理原理，使用能量守恒和微表面理论，渲染结果更真实且在不同光照下保持一致。"}},{"@type":"Question","name":"金属度贴图和粗糙度贴图如何使用？","acceptedAnswer":{"@type":"Answer","text":"金属度贴图用灰度表示金属（白）和非金属（黑）；粗糙度贴图用灰度表示粗糙（白）和光滑（黑）。两者共同定义材质的光学属性。"}},{"@type":"Question","name":"为什么 PBR 材质在不同光照下看起来更自然？","acceptedAnswer":{"@type":"Answer","text":"因为 PBR 遵循能量守恒和物理规律，材质属性固定，光照变化时材质响应物理正确。"}},{"@type":"Question","name":"如何选择金属度/粗糙度工作流还是高光/光泽度工作流？","acceptedAnswer":{"@type":"Answer","text":"金属度/粗糙度工作流更直观、贴图更少，但可能有边缘伪影；高光/光泽度工作流控制更精细但贴图更多。现代引擎多推荐前者。"}},{"@type":"Question","name":"PBR 是否只适用于 3D 游戏？","acceptedAnswer":{"@type":"Answer","text":"不是。PBR 也广泛用于影视特效、建筑可视化、产品设计等领域，任何需要真实感渲染的场景均可使用。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>PBR 物理渲染：基于物理的渲染技术详解</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 PBR 物理渲染</h2>
+<p>PBR（Physically Based Rendering，基于物理的渲染）是一种渲染技术，它基于物理原理模拟光线与物体表面的交互，从而产生逼真的视觉效果。与传统渲染方法相比，PBR 更注重能量守恒和微表面理论，使得材质在不同光照环境下都能保持一致的观感。PBR 已成为现代游戏引擎和 3D 软件的标准渲染方式。</p>
+<h2>PBR 的核心原理</h2>
+<p>PBR 的核心在于模拟真实世界的光照行为，主要包括以下方面：</p>
+<ul>
+<li>**能量守恒**：物体表面反射的光能不会超过接收的光能。这意味着高光越强，漫反射越弱，反之亦然。</li>
+<li>**微表面理论**：物体表面由无数微小平面组成，这些微表面的朝向分布决定了粗糙度。粗糙度越低，微表面越整齐，反射越清晰；粗糙度越高，反射越模糊。</li>
+<li>**菲涅尔效应**：所有表面在掠射角（与视线夹角很小）时反射率都会增强。例如，站在湖边看远处水面会反射天空，而看脚下水面则更透明。</li>
+</ul>
+<h2>金属度/粗糙度工作流</h2>
+<p>PBR 最常用的工作流是金属度/粗糙度工作流，它使用两张关键贴图定义材质属性：</p>
+<ul>
+<li>**金属度贴图（Metallic）**：指定哪些区域是金属（白色）或非金属（黑色）。金属的漫反射为黑色，高光为金属色；非金属的漫反射为固有色，高光为白色。</li>
+<li>**粗糙度贴图（Roughness）**：指定表面粗糙程度。白色表示完全粗糙（漫反射强，高光分散），黑色表示完全光滑（高光锐利）。</li>
+</ul>
+<p>此外，还有反照率贴图（Albedo）定义基础颜色，法线贴图（Normal Map）定义表面细节。</p>
+<h2>PBR 的实现与应用</h2>
+<p>PBR 在多种引擎和软件中得到广泛应用：</p>
+<ul>
+<li>**游戏引擎**：Unity 使用 Standard Shader 和 URP/HDRP 中的 Lit Shader；Unreal Engine 使用基于物理的材质系统。</li>
+<li>**离线渲染器**：如 Arnold、V-Ray、Blender 的 Cycles 等，都支持 PBR 材质。</li>
+<li>**纹理制作**：使用 Substance Painter、Quixel Mixer 等工具可以便捷地创建 PBR 贴图。</li>
+</ul>
+<p>在实际项目中，PBR 材质通常包括反照率、金属度、粗糙度、法线、环境光遮蔽（AO）等贴图，有时还会使用高度图进行视差映射。</p>
+<h2>PBR 的优缺点</h2>
+<p>**优点**：</p>
+<ul>
+<li>**一致性**：材质在不同光照条件下表现一致，无需为每个场景调整参数。</li>
+<li>**真实性**：基于物理原理，渲染结果更接近真实世界。</li>
+<li>**可预测性**：艺术家只需关注材质属性，无需手动调整复杂的光照参数。</li>
+</ul>
+<p>**缺点**：</p>
+<ul>
+<li>**计算成本**：PBR 渲染涉及更复杂的计算，对性能有一定影响，尤其在移动端。</li>
+<li>**学习曲线**：需要理解物理概念，对初学者可能较陡峭。</li>
+<li>**贴图要求**：需要多张贴图，增加资源管理和制作成本。</li>
+</ul>
+<h2>常见问题</h2>
+<h3>PBR 和传统渲染有什么区别？</h3>
+<p>传统渲染（如 Blinn-Phong）通常使用经验模型，参数（如高光强度、光泽度）没有物理意义，在不同光照下可能失真。PBR 基于物理原理，使用能量守恒和微表面理论，结果更真实且一致。</p>
+<h3>金属度贴图和粗糙度贴图如何使用？</h3>
+<p>金属度贴图通常使用灰度图，白色区域为金属，黑色为非金属。粗糙度贴图同样使用灰度图，白色表示粗糙，黑色表示光滑。在着色器中，金属度影响漫反射和高光颜色，粗糙度影响高光模糊程度。</p>
+<h3>为什么 PBR 材质在不同光照下看起来更自然？</h3>
+<p>因为 PBR 遵循能量守恒和物理规律，材质属性（如反照率、粗糙度）是固定的，不随光照变化。因此，当光照条件改变时，材质响应是物理正确的，看起来自然。</p>
+<h3>如何选择金属度/粗糙度工作流还是高光/光泽度工作流？</h3>
+<p>金属度/粗糙度工作流更直观，贴图占用更少，但边缘可能有白边伪影。高光/光泽度工作流控制更精细，但需要更多贴图。现代引擎多推荐金属度/粗糙度工作流。</p>
+<h3>PBR 是否只适用于 3D 游戏？</h3>
+<p>不是。PBR 也广泛应用于影视特效、建筑可视化、产品设计等领域。任何需要真实感渲染的场景都可以使用 PBR。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>PBR 和传统渲染有什么区别？</h3><p>传统渲染（如 Blinn-Phong）使用经验模型，参数缺乏物理意义；PBR 基于物理原理，使用能量守恒和微表面理论，渲染结果更真实且在不同光照下保持一致。</p></div>
+<div class="faq-item"><h3>金属度贴图和粗糙度贴图如何使用？</h3><p>金属度贴图用灰度表示金属（白）和非金属（黑）；粗糙度贴图用灰度表示粗糙（白）和光滑（黑）。两者共同定义材质的光学属性。</p></div>
+<div class="faq-item"><h3>为什么 PBR 材质在不同光照下看起来更自然？</h3><p>因为 PBR 遵循能量守恒和物理规律，材质属性固定，光照变化时材质响应物理正确。</p></div>
+<div class="faq-item"><h3>如何选择金属度/粗糙度工作流还是高光/光泽度工作流？</h3><p>金属度/粗糙度工作流更直观、贴图更少，但可能有边缘伪影；高光/光泽度工作流控制更精细但贴图更多。现代引擎多推荐前者。</p></div>
+<div class="faq-item"><h3>PBR 是否只适用于 3D 游戏？</h3><p>不是。PBR 也广泛用于影视特效、建筑可视化、产品设计等领域，任何需要真实感渲染的场景均可使用。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

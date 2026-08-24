@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRDF：双向反射分布函数详解 - TA工具箱</title>
+<meta name="description" content="BRDF（双向反射分布函数）是描述光在表面反射的数学模型，是PBR渲染的核心。本文介绍BRDF的定义、性质、常见模型及其在实时渲染中的应用。">
+<meta name="keywords" content="BRDF,双向反射分布函数,PBR,微表面模型,Cook-Torrance,GGX,菲涅尔,渲染,着色器,光照模型">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/brdf.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/brdf.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/brdf.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"BRDF：双向反射分布函数详解"}]},{"@type":"Article","name":"BRDF：双向反射分布函数详解","headline":"BRDF：双向反射分布函数详解","description":"BRDF（双向反射分布函数）是描述光在表面反射的数学模型，是PBR渲染的核心。本文介绍BRDF的定义、性质、常见模型及其在实时渲染中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/brdf.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/seo/brdf.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"BRDF 与 PBR 有什么关系？","acceptedAnswer":{"@type":"Answer","text":"PBR 基于物理的渲染必须使用物理正确的 BRDF 模型，如 Cook-Torrance，以确保能量守恒和真实感。"}},{"@type":"Question","name":"为什么需要多个 BRDF 模型？","acceptedAnswer":{"@type":"Answer","text":"不同模型在性能、真实感和复杂性之间权衡，简单模型适合移动端，复杂模型适合高端渲染。"}},{"@type":"Question","name":"什么是微表面模型？","acceptedAnswer":{"@type":"Answer","text":"微表面模型假设表面由微小平面组成，通过统计分布描述粗糙度，是 Cook-Torrance 的基础。"}},{"@type":"Question","name":"BRDF 满足互易性吗？","acceptedAnswer":{"@type":"Answer","text":"物理正确的 BRDF 必须满足互易性，即交换入射和出射方向结果相同。"}},{"@type":"Question","name":"如何选择 BRDF 模型？","acceptedAnswer":{"@type":"Answer","text":"对于 PBR 渲染，推荐使用 GGX 微表面模型，它在真实感和性能之间取得了良好平衡。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>BRDF：双向反射分布函数详解</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>什么是 BRDF</h2>
+<p>BRDF（Bidirectional Reflectance Distribution Function，双向反射分布函数）是一个四维函数，描述光在物体表面如何反射。它定义了给定入射方向和观察方向时，反射光辐射率与入射光辐照度的比率。BRDF 是 PBR 的理论基础，用于计算材质的光照响应。</p>
+<h2>BRDF 的数学定义</h2>
+<p>BRDF 定义为：</p>
+<p>`f_r(ω_i, ω_o) = dL_o(ω_o) / dE_i(ω_i)`</p>
+<p>其中 ω_i 是入射光方向，ω_o 是反射光方向，L_o 是反射辐射率，E_i 是入射辐照度。BRDF 必须满足两个物理约束：</p>
+<ul>
+<li>**互易性**：交换入射和出射方向，BRDF 值不变。</li>
+<li>**能量守恒**：对所有出射方向积分，反射总能量不超过入射能量。</li>
+</ul>
+<h2>常见 BRDF 模型</h2>
+<h3>Lambertian 漫反射</h3>
+<p>最简单的漫反射模型，假设表面完全粗糙，反射均匀分布。BRDF 为常数 `ρ/π`，其中 ρ 是反照率。它常用于漫反射项。</p>
+<h3>Phong 和 Blinn-Phong</h3>
+<p>经典经验模型，Phong 使用反射向量与视线点积的高光，Blinn-Phong 使用半角向量优化计算。它们不严格满足能量守恒，但计算高效。</p>
+<h3>Cook-Torrance 模型</h3>
+<p>现代 PBR 中广泛使用的微表面模型。它将 BRDF 分为漫反射项和镜面反射项，镜面项基于微表面理论：</p>
+<p>`f_spec = (D * G * F) / (4 * (N·L) * (N·V))`</p>
+<ul>
+<li>**D（法线分布函数）**：描述微表面法线分布，常用 GGX/Trowbridge-Reitz。</li>
+<li>**G（几何衰减函数）**：描述微表面自遮挡，常用 Smith 模型。</li>
+<li>**F（菲涅尔项）**：描述反射率随角度变化，常用 Schlick 近似。</li>
+</ul>
+<h3>其他模型</h3>
+<ul>
+<li>**Oren-Nayar**：考虑粗糙表面的漫反射，比 Lambertian 更准确。</li>
+<li>**Disney Principled BRDF**：艺术家友好的参数化模型，被许多引擎采用。</li>
+</ul>
+<h2>在实时渲染中的应用</h2>
+<p>实时渲染中，着色器通常使用简化版 Cook-Torrance 模型。例如，Unity 的 Standard Shader 和 Unreal 的 Lit Shader 都基于 GGX 微表面模型和 Schlick 菲涅尔近似。BRDF 还用于预计算环境光照（如 IBL 的预滤波）。</p>
+<h2>常见问题</h2>
+<h3>BRDF 与 PBR 有什么关系？</h3>
+<p>PBR 基于物理的渲染必须使用物理正确的 BRDF 模型，如 Cook-Torrance，以确保能量守恒和真实感。</p>
+<h3>为什么需要多个 BRDF 模型？</h3>
+<p>不同模型在性能、真实感和复杂性之间权衡。简单模型适合移动端，复杂模型适合高端渲染。</p>
+<h3>什么是微表面模型？</h3>
+<p>微表面模型假设表面由微小平面组成，通过统计分布描述粗糙度，是 Cook-Torrance 的基础。</p>
+<h3>BRDF 满足互易性吗？</h3>
+<p>物理正确的 BRDF 必须满足互易性，即交换入射和出射方向结果相同。</p>
+<h3>如何选择 BRDF 模型？</h3>
+<p>对于 PBR 渲染，推荐使用 GGX 微表面模型，它在真实感和性能之间取得了良好平衡。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>BRDF 与 PBR 有什么关系？</h3><p>PBR 基于物理的渲染必须使用物理正确的 BRDF 模型，如 Cook-Torrance，以确保能量守恒和真实感。</p></div>
+<div class="faq-item"><h3>为什么需要多个 BRDF 模型？</h3><p>不同模型在性能、真实感和复杂性之间权衡，简单模型适合移动端，复杂模型适合高端渲染。</p></div>
+<div class="faq-item"><h3>什么是微表面模型？</h3><p>微表面模型假设表面由微小平面组成，通过统计分布描述粗糙度，是 Cook-Torrance 的基础。</p></div>
+<div class="faq-item"><h3>BRDF 满足互易性吗？</h3><p>物理正确的 BRDF 必须满足互易性，即交换入射和出射方向结果相同。</p></div>
+<div class="faq-item"><h3>如何选择 BRDF 模型？</h3><p>对于 PBR 渲染，推荐使用 GGX 微表面模型，它在真实感和性能之间取得了良好平衡。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/subsurface-scattering.html">次表面散射 SSS</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

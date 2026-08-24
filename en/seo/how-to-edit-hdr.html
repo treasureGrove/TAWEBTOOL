@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HDR/HDRI Environment Map Editing: From Basics to Advanced Techniques - TA Toolbox</title>
+<meta name="description" content="This tutorial introduces how to edit HDR/HDRI environment maps, covering common tools like Photoshop, GIMP, Blender, and professional software, including adjustments for exposure, color, compositing, cropping, and format conversion.">
+<meta name="keywords" content="HDR editing, HDRI, environment map, Photoshop, Blender, exposure adjustment, color correction, image-based lighting">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/how-to-edit-hdr.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-edit-hdr.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"Tool Tutorial","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"HDR/HDRI Environment Map Editing: From Basics to Advanced Techniques"}]},{"@type":"HowTo","name":"HDR/HDRI Environment Map Editing: From Basics to Advanced Techniques","headline":"HDR/HDRI Environment Map Editing: From Basics to Advanced Techniques","description":"This tutorial introduces how to edit HDR/HDRI environment maps, covering common tools like Photoshop, GIMP, Blender, and professional software, including adjustments for exposure, color, compositing, cropping, and format conversion.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do my HDRI colors turn gray after editing?","acceptedAnswer":{"@type":"Answer","text":"It may be incorrect color management settings; ensure editing in linear space or convert to 32-bit mode. Editing in 8-bit mode loses dynamic range."}},{"@type":"Question","name":"How to reduce the brightness of the sun in HDRI?","acceptedAnswer":{"@type":"Answer","text":"Use Photoshop's exposure adjustment or curves to locally reduce highlights, or use color grading nodes in Blender."}},{"@type":"Question","name":"How to combine multiple photos into an HDRI?","acceptedAnswer":{"@type":"Answer","text":"Use Photoshop's \"Merge to HDR Pro\" or professional software like PTGui, Luminance HDR, by shooting multiple exposures and merging."}},{"@type":"Question","name":"Can I paint directly on HDRI?","acceptedAnswer":{"@type":"Answer","text":"Yes, use brushes in 32-bit mode, but be mindful of brush dynamic range. Blender's texture paint mode is better for direct editing in 3D environment."}},{"@type":"Question","name":"How to optimize HDRI for game engines?","acceptedAnswer":{"@type":"Answer","text":"Usually need to remap dynamic range, crop and adjust resolution, and save in engine-supported formats (.hdr or .exr)."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">Tool Tutorial</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">Tool Tutorial</a></p>
+    <h1>HDR/HDRI Environment Map Editing: From Basics to Advanced Techniques</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>Introduction</h2>
+<p>HDR (High Dynamic Range) environment maps, often HDRI files, contain a wider brightness range than normal images and are used for image-based lighting (IBL) in 3D rendering. Editing HDRI can adjust lighting mood, fix imperfections, or create custom environments. This tutorial will guide you through editing HDR maps with various tools.</p>
+<h2>Editing HDR with Photoshop</h2>
+<h3>Opening and Converting</h3>
+<p>Photoshop supports 32-bit floating-point HDR files (e.g., .hdr, .exr). Simply open them. If the image is 8-bit, you can convert to HDR via &quot;Image&quot; &gt; &quot;Mode&quot; &gt; &quot;32 Bits/Channel&quot;, but no additional information is gained.</p>
+<h3>Basic Adjustments</h3>
+<ul>
+<li>**Exposure**: Use &quot;Image&quot; &gt; &quot;Adjustments&quot; &gt; &quot;Exposure&quot; to adjust overall brightness.</li>
+<li>**Levels/Curves**: Available in 32-bit mode, but recommended to adjust in 16-bit mode and convert back.</li>
+<li>**Fixing Imperfections**: Use the Clone Stamp or Healing Brush to remove unwanted objects (like tripods). Note that some tools are limited in 32-bit mode; convert to 16-bit for editing and return.</li>
+</ul>
+<h3>Compositing and Modifying</h3>
+<ul>
+<li>Adding lights: Use the Brush tool to paint highlights or gradients to change sky color.</li>
+<li>Replacing areas: Use layer masks to combine multiple HDRs.</li>
+</ul>
+<h2>Using GIMP</h2>
+<p>GIMP has limited HDR support but can work via plugins (like G'MIC) or by converting to 16-bit float TIFF. Specialized tools are recommended.</p>
+<h2>Using Blender</h2>
+<p>Blender has a powerful compositor and 3D viewport for editing HDRI.</p>
+<h3>Importing and Editing</h3>
+<ol>
+<li>Switch to the &quot;Compositing&quot; workspace in Blender.</li>
+<li>Import HDRI as an Image input node.</li>
+<li>Use color nodes (such as Brightness/Contrast, Hue/Saturation) for adjustments.</li>
+<li>Output the edited image.</li>
+</ul>
+<h3>Painting and Modifying</h3>
+<p>Use Texture Paint mode in the 3D viewport to directly modify the environment map.</p>
+<h2>Professional Tools</h2>
+<ul>
+<li>**Substance Designer**: Node-based editing, can procedurally modify HDRI.</li>
+<li>**Affinity Photo**: Supports 32-bit editing, offers HDR merging and tone mapping.</li>
+<li>**Luminance HDR**: Open-source HDR processing software with many operations.</li>
+</ul>
+<h2>Common Editing Operations</h2>
+<ul>
+<li>**Adjust Color Temperature**: Change overall mood, e.g., from day to dusk.</li>
+<li>**Reduce Overly Bright Areas**: Use highlight compression or tone mapping.</li>
+<li>**Blur or Sharpen**: Change the clarity of environment reflections.</li>
+<li>**Crop and Rotate**: Change light direction.</li>
+</ul>
+<h2>Format Conversion</h2>
+<ul>
+<li>Save as .hdr or .exr to preserve dynamic range.</li>
+<li>For web preview, tone map and save as LDR format (like JPEG).</li>
+</ul>
+<h2>Notes</h2>
+<ul>
+<li>**Linear Workflow**: Ensure editing in linear color space to avoid color shifts.</li>
+<li>**Backup Originals**: HDR editing can be error-prone; keep original files.</li>
+</ul>
+<h2>Summary</h2>
+<p>Editing HDRI requires appropriate tools and understanding of HDR characteristics. Photoshop and Blender are common choices, while professional software provides more control. By adjusting exposure, color, and compositing, you can create ideal lighting environments.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Why do my HDRI colors turn gray after editing?</h3><p>It may be incorrect color management settings; ensure editing in linear space or convert to 32-bit mode. Editing in 8-bit mode loses dynamic range.</p></div>
+<div class="faq-item"><h3>How to reduce the brightness of the sun in HDRI?</h3><p>Use Photoshop's exposure adjustment or curves to locally reduce highlights, or use color grading nodes in Blender.</p></div>
+<div class="faq-item"><h3>How to combine multiple photos into an HDRI?</h3><p>Use Photoshop's &quot;Merge to HDR Pro&quot; or professional software like PTGui, Luminance HDR, by shooting multiple exposures and merging.</p></div>
+<div class="faq-item"><h3>Can I paint directly on HDRI?</h3><p>Yes, use brushes in 32-bit mode, but be mindful of brush dynamic range. Blender's texture paint mode is better for direct editing in 3D environment.</p></div>
+<div class="faq-item"><h3>How to optimize HDRI for game engines?</h3><p>Usually need to remap dynamic range, crop and adjust resolution, and save in engine-supported formats (.hdr or .exr).</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

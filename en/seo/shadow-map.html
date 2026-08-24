@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadow Mapping: Principles, Algorithms, and Optimization - TA Toolbox</title>
+<meta name="description" content="Shadow mapping is a real-time shadow rendering technique that determines occlusion by rendering a depth map from the light's perspective. This article introduces the principles of shadow mapping, common problems (such as shadow acne, aliasing), and optimization methods.">
+<meta name="keywords" content="Shadow Mapping, Shadow Map, Depth Comparison, Shadow Acne, Cascaded Shadow Maps, CSM, PCF, Real-time Shadows, Unity, Unreal">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/shadow-map.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/shadow-map.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/shadow-map.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Shadow Mapping: Principles, Algorithms, and Optimization"}]},{"@type":"Article","name":"Shadow Mapping: Principles, Algorithms, and Optimization","headline":"Shadow Mapping: Principles, Algorithms, and Optimization","description":"Shadow mapping is a real-time shadow rendering technique that determines occlusion by rendering a depth map from the light's perspective. This article introduces the principles of shadow mapping, common problems (such as shadow acne, aliasing), and optimization methods.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/shadow-map.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/shadow-map.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between shadow mapping and ray traced shadows?","acceptedAnswer":{"@type":"Answer","text":"Shadow mapping is an approximate method based on depth comparison, with precision issues; ray traced shadows are accurate but have high performance cost."}},{"@type":"Question","name":"Why does shadow mapping need depth bias?","acceptedAnswer":{"@type":"Answer","text":"Depth bias avoids self-shadowing (shadow acne) because depth buffer precision is limited."}},{"@type":"Question","name":"How do point lights generate shadow maps?","acceptedAnswer":{"@type":"Answer","text":"Point lights typically use cube shadow maps, rendering depth from six directions, or use single-pass dual-paraboloid mapping."}},{"@type":"Question","name":"How to optimize shadows on mobile?","acceptedAnswer":{"@type":"Answer","text":"On mobile, use low-resolution shadow maps, limit shadow distance, use simple hard shadows, or disable shadows."}},{"@type":"Question","name":"What is CSM?","acceptedAnswer":{"@type":"Answer","text":"Cascaded Shadow Maps divide the view frustum into multiple regions, each with different resolution shadow maps, balancing shadow quality near and far."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Shadow Mapping: Principles, Algorithms, and Optimization</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is Shadow Mapping</h2>
+<p>Shadow mapping is a real-time shadow generation technique widely used in games and real-time rendering. The basic idea is to render the scene's depth information from the light's perspective into a texture (shadow map), then in the main rendering pass, transform each pixel to light space and compare its depth with the depth in the shadow map. If the pixel's depth is greater than the shadow map depth, the pixel is in shadow.</p>
+<h2>Principles of Shadow Mapping</h2>
+<p>Shadow mapping typically involves two passes:</p>
+<ol>
+<li>**Shadow Pass**: Render the scene from the light's position, writing only depth, to obtain the shadow map. For directional lights, use orthographic projection; for point lights, use perspective projection or cube maps (six faces).</li>
+<li>**Main Rendering Pass**: Render the scene normally. In the fragment shader, transform world coordinates to light space, sample the shadow map, and compare depths. If the current fragment's depth is greater than the corresponding depth in the shadow map (plus bias), the fragment is in shadow, and lighting is attenuated.</li>
+</ul>
+<h2>Common Problems</h2>
+<h3>Shadow Acne</h3>
+<p>Due to limited depth buffer precision, surfaces can be incorrectly self-shadowed, causing stripes or spots. Solution: Use depth bias and normal offset to add a small offset when comparing depths.</p>
+<h3>Peter Panning</h3>
+<p>Excessive bias causes shadows to detach from objects, making shadows float. Adjust the bias amount.</p>
+<h3>Shadow Aliasing</h3>
+<p>Limited shadow map resolution leads to jagged edges. Solution: Use Percentage Closer Filtering (PCF) for soft shadows, or increase shadow map resolution.</p>
+<h3>Shadow Map Precision</h3>
+<p>Shadow maps use depth textures, which have limited precision; distant areas may suffer from Z-fighting. Use Cascaded Shadow Maps (CSM) to improve precision for directional lights in large scenes.</p>
+<h2>Optimization Methods</h2>
+<ul>
+<li>**Cascaded Shadow Maps (CSM)**: Divide the view frustum into multiple regions, each using a different resolution shadow map to improve near shadow quality.</li>
+<li>**Tight Light Frustum**: Adjust the light projection range to tightly enclose the scene, improving shadow map utilization.</li>
+<li>**Use Lower Resolution Shadow Maps**: For distant or small objects, reduce shadow map resolution.</li>
+<li>**Shadow Distance Limit**: Do not render shadows beyond a certain distance.</li>
+<li>**Cache Static Shadows**: Bake shadows for static objects into lightmaps.</li>
+</ul>
+<h2>Application in Engines</h2>
+<ul>
+<li>**Unity**: Uses Shadow Map technology, supports CSM, soft shadows, shadow distance, etc.</li>
+<li>**Unreal**: Uses Shadow Map and Ray Traced Shadows, supports various optimizations.</li>
+</ul>
+<h2>Frequently Asked Questions</h2>
+<h3>What is the difference between shadow mapping and ray traced shadows?</h3>
+<p>Shadow mapping is an approximate method based on depth comparison, with precision issues; ray traced shadows are accurate but have high performance cost.</p>
+<h3>Why does shadow mapping need depth bias?</h3>
+<p>Depth bias avoids self-shadowing (shadow acne) because depth buffer precision is limited.</p>
+<h3>How do point lights generate shadow maps?</h3>
+<p>Point lights typically use cube shadow maps, rendering depth from six directions, or use single-pass dual-paraboloid mapping.</p>
+<h3>How to optimize shadows on mobile?</h3>
+<p>On mobile, use low-resolution shadow maps, limit shadow distance, use simple hard shadows, or disable shadows.</p>
+<h3>What is CSM?</h3>
+<p>Cascaded Shadow Maps divide the view frustum into multiple regions, each with different resolution shadow maps, balancing shadow quality near and far.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between shadow mapping and ray traced shadows?</h3><p>Shadow mapping is an approximate method based on depth comparison, with precision issues; ray traced shadows are accurate but have high performance cost.</p></div>
+<div class="faq-item"><h3>Why does shadow mapping need depth bias?</h3><p>Depth bias avoids self-shadowing (shadow acne) because depth buffer precision is limited.</p></div>
+<div class="faq-item"><h3>How do point lights generate shadow maps?</h3><p>Point lights typically use cube shadow maps, rendering depth from six directions, or use single-pass dual-paraboloid mapping.</p></div>
+<div class="faq-item"><h3>How to optimize shadows on mobile?</h3><p>On mobile, use low-resolution shadow maps, limit shadow distance, use simple hard shadows, or disable shadows.</p></div>
+<div class="faq-item"><h3>What is CSM?</h3><p>Cascaded Shadow Maps divide the view frustum into multiple regions, each with different resolution shadow maps, balancing shadow quality near and far.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/lod-level-of-detail.html">LOD 细节层次</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

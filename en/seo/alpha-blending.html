@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alpha Blending and Transparency Sorting: Key Mechanisms for Rendering Transparent Objects - TA Toolbox</title>
+<meta name="description" content="Alpha blending is used to achieve semi-transparent effects, but the rendering order of transparent objects significantly affects the result. This article introduces the principles of alpha blending, blend factors, transparency sorting issues, and solutions.">
+<meta name="keywords" content="Alpha Blending, Transparency Sorting, Render Queue, Blend Factors, Depth Buffer, Order-Independent Transparency, Unity, Unreal, Game Development, Semi-transparent">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/alpha-blending.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/alpha-blending.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/alpha-blending.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Alpha Blending and Transparency Sorting: Key Mechanisms for Rendering Transparent Objects"}]},{"@type":"Article","name":"Alpha Blending and Transparency Sorting: Key Mechanisms for Rendering Transparent Objects","headline":"Alpha Blending and Transparency Sorting: Key Mechanisms for Rendering Transparent Objects","description":"Alpha blending is used to achieve semi-transparent effects, but the rendering order of transparent objects significantly affects the result. This article introduces the principles of alpha blending, blend factors, transparency sorting issues, and solutions.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/alpha-blending.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/alpha-blending.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why don't transparent objects write to the depth buffer?","acceptedAnswer":{"@type":"Answer","text":"If they write to depth, they will occlude transparent objects behind them, causing rendering errors. Therefore depth writing is usually disabled."}},{"@type":"Question","name":"How to solve transparent object sorting errors?","acceptedAnswer":{"@type":"Answer","text":"You can improve sorting algorithms, use OIT, or split objects into convex pieces. Adjusting render queue order in engines can also mitigate."}},{"@type":"Question","name":"Does alpha blending affect performance?","acceptedAnswer":{"@type":"Answer","text":"Yes, transparent objects add blending operations and sorting overhead, and may cause overdraw, so minimize their use."}},{"@type":"Question","name":"How to handle alpha blending on mobile?","acceptedAnswer":{"@type":"Answer","text":"Mobile bandwidth is limited, so use cautiously and avoid heavy overlap. Using alpha testing instead of blending can improve performance."}},{"@type":"Question","name":"Why do particle systems often use additive blending?","acceptedAnswer":{"@type":"Answer","text":"Additive blending produces glow effects and does not require sorting, making it suitable for particles."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Alpha Blending and Transparency Sorting: Key Mechanisms for Rendering Transparent Objects</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is Alpha Blending</h2>
+<p>Alpha blending is a technique that mixes the current fragment color with the destination framebuffer color in a certain proportion to achieve semi-transparent effects, such as glass, smoke, and particles. Blending uses the fragment's alpha value as a weight, typically with the following formula:</p>
+<p>`Final Color = Source Color * Source Factor + Destination Color * Destination Factor`</p>
+<p>Common blend modes include:</p>
+<ul>
+<li>**Standard Alpha Blending**: `SrcAlpha, OneMinusSrcAlpha`, i.e., `C_out = C_src * A_src + C_dst * (1 - A_src)`.</li>
+<li>**Additive Blending**: `One, One`, used for glow effects.</li>
+<li>**Multiplicative Blending**: `Zero, SrcColor`, used for shadows or tinting.</li>
+</ul>
+<p>In the rendering pipeline, alpha blending is typically performed after depth testing. However, transparent objects do not write to the depth buffer to avoid occluding subsequent objects, which leads to sorting issues.</p>
+<h2>Transparency Sorting Problems</h2>
+<p>Because transparent objects do not write to depth, rendering order becomes important. If rendered back-to-front (painter's algorithm), results are correct; but if the order is wrong, blending results will be incorrect. A common sorting method is to sort objects by distance from the camera. However, for intersecting or non-convex objects, per-object sorting may fail.</p>
+<p>Solutions include:</p>
+<ul>
+<li>**Per-object sorting**: Simple but may be incorrect.</li>
+<li>**Per-fragment sorting**: Such as A-Buffer or per-pixel linked lists, accurate but expensive.</li>
+<li>**Separate transparent from opaque**: First render opaque objects (writing depth), then render transparent objects (depth test but not write depth).</li>
+<li>**Use order-independent transparency (OIT)**: Such as weighted average OIT or depth peeling, for high-quality effects.</li>
+</ul>
+<h2>Handling in Engines</h2>
+<ul>
+<li>**Unity**: Transparent materials use the Transparent render queue, and the engine automatically sorts by distance. You can adjust the render queue order (e.g., Transparent-100 to +100) to manually control.</li>
+<li>**Unreal**: Transparent materials use the Translucent blend mode, with support for per-object sorting and OIT options.</li>
+</ul>
+<h2>Difference between Alpha Test and Blending</h2>
+<p>Alpha testing is a hard switch that discards fragments based on a threshold, without blending. It is suitable for fully transparent or opaque objects (such as foliage), avoids sorting issues, but edges may have aliasing. Alpha blending is better for semi-transparent effects.</p>
+<h2>Frequently Asked Questions</h2>
+<h3>Why don't transparent objects write to the depth buffer?</h3>
+<p>If transparent objects write to depth, they will occlude transparent objects behind them, causing those objects not to be rendered and blending results to be wrong. Therefore depth writing is usually disabled.</p>
+<h3>How to solve transparent object sorting errors?</h3>
+<p>You can improve sorting algorithms, use OIT, or split objects into convex pieces. Adjusting render queue order in engines can also mitigate.</p>
+<h3>Does alpha blending affect performance?</h3>
+<p>Yes, transparent objects add blending operations and sorting overhead, and may cause overdraw. Minimize the number of transparent objects and screen coverage area.</p>
+<h3>How to handle alpha blending on mobile?</h3>
+<p>Mobile bandwidth is limited, so use transparent blending cautiously and avoid heavy overlap. Using alpha testing instead of blending can improve performance.</p>
+<h3>Why do particle systems often use additive blending?</h3>
+<p>Additive blending produces glow effects and does not require sorting (because the order of color addition doesn't affect the result), making it suitable for particles.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Why don't transparent objects write to the depth buffer?</h3><p>If they write to depth, they will occlude transparent objects behind them, causing rendering errors. Therefore depth writing is usually disabled.</p></div>
+<div class="faq-item"><h3>How to solve transparent object sorting errors?</h3><p>You can improve sorting algorithms, use OIT, or split objects into convex pieces. Adjusting render queue order in engines can also mitigate.</p></div>
+<div class="faq-item"><h3>Does alpha blending affect performance?</h3><p>Yes, transparent objects add blending operations and sorting overhead, and may cause overdraw, so minimize their use.</p></div>
+<div class="faq-item"><h3>How to handle alpha blending on mobile?</h3><p>Mobile bandwidth is limited, so use cautiously and avoid heavy overlap. Using alpha testing instead of blending can improve performance.</p></div>
+<div class="faq-item"><h3>Why do particle systems often use additive blending?</h3><p>Additive blending produces glow effects and does not require sorting, making it suitable for particles.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/bloom.html">Bloom 泛光</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

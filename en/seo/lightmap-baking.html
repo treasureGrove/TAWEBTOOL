@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lightmap Baking: Principles, Workflow, and Optimization - TA Toolbox</title>
+<meta name="description" content="Lightmap baking precomputes static lighting information and stores it in textures to improve runtime performance. This article introduces the principles of lightmaps, the baking process, and usage considerations.">
+<meta name="keywords" content="Lightmap, Baking, Global Illumination, Static Lighting, Game Development, Mobile Optimization, Unity, Unreal, Light Probes, UV Unwrapping">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/lightmap-baking.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/lightmap-baking.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Lightmap Baking: Principles, Workflow, and Optimization"}]},{"@type":"Article","name":"Lightmap Baking: Principles, Workflow, and Optimization","headline":"Lightmap Baking: Principles, Workflow, and Optimization","description":"Lightmap baking precomputes static lighting information and stores it in textures to improve runtime performance. This article introduces the principles of lightmaps, the baking process, and usage considerations.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/lightmap-baking.html","datePublished":"2026-08-24","dateModified":"2026-08-24","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/lightmap-baking.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between lightmaps and real-time global illumination?","acceptedAnswer":{"@type":"Answer","text":"Lightmaps are precomputed offline and sampled at runtime; real-time global illumination computes at runtime, supports dynamic changes but has high performance cost."}},{"@type":"Question","name":"How do dynamic objects benefit from lightmaps?","acceptedAnswer":{"@type":"Answer","text":"Use light probes; dynamic objects sample nearby probes to get approximate indirect lighting."}},{"@type":"Question","name":"Why do we need a second UV set?","acceptedAnswer":{"@type":"Answer","text":"The first UV set may have overlaps and stretching; the second UV set is dedicated to lightmaps and needs to be unique and non-overlapping."}},{"@type":"Question","name":"How long does baking light take?","acceptedAnswer":{"@type":"Answer","text":"It depends on scene complexity, parameters, and hardware, ranging from minutes to hours."}},{"@type":"Question","name":"Is lightmap necessary on mobile?","acceptedAnswer":{"@type":"Answer","text":"Not mandatory, but highly recommended because mobile performance is limited, and lightmaps can significantly improve frame rate."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Lightmap Baking: Principles, Workflow, and Optimization</h1>
+    <p class="seo-meta">2026-08-24</p>
+    <div class="seo-content">
+<h2>What is Lightmap Baking</h2>
+<p>A lightmap is a texture that stores static lighting information of a scene. Baking refers to offline computation of global illumination (including direct light, indirect light, shadows, color bouncing, etc.) and saving the result into a lightmap. At runtime, models sample the lightmap via UV mapping to obtain precomputed lighting effects, eliminating the need for real-time complex lighting calculations, greatly improving performance. Lightmaps are widely used in game development for mobile and low-end devices.</p>
+<h2>Principles of Lightmaps</h2>
+<p>The baking process typically uses ray tracing or radiosity algorithms to simulate the propagation of photons in the scene and compute the incident lighting on each surface point. Results can be stored as:</p>
+<ul>
+<li>**Lightmaps**: 2D textures recording diffuse lighting colors.</li>
+<li>**Light Probes**: For indirect lighting of dynamic objects.</li>
+<li>**Reflection Probes**: Recording environment reflection information.</li>
+</ul>
+<p>Baking results are bound to static objects, so static objects in the scene must not move at runtime.</p>
+<h2>Baking Workflow</h2>
+<p>In Unity and Unreal, lightmap baking typically involves the following steps:</p>
+<ol>
+<li>**Mark Static Objects**: Mark non-moving objects as Static (Unity) or set Mobility to Static (Unreal).</li>
+<li>**Set Up UVs**: Ensure the model has a suitable second UV set (for lightmaps), which must be unique and non-overlapping.</li>
+<li>**Configure Lights**: Set lights to Baked or Mixed mode.</li>
+<li>**Adjust Baking Parameters**: Such as resolution, indirect lighting intensity, ambient light, etc.</li>
+<li>**Start Baking**: The engine offline computes lighting and generates lightmaps.</li>
+<li>**Apply**: At runtime, lightmaps are automatically sampled.</li>
+</ul>
+<h2>Advantages and Disadvantages of Lightmaps</h2>
+<p>**Advantages**:</p>
+<ul>
+<li>High runtime performance, no need for real-time global illumination calculations.</li>
+<li>Realistic lighting effects, supporting soft shadows, color bouncing, etc.</li>
+<li>Suitable for mobile and low-end hardware.</li>
+</ul>
+<p>**Disadvantages**:</p>
+<ul>
+<li>Only for static scenes; dynamic objects cannot use them.</li>
+<li>Baking is time-consuming; scene modifications require re-baking.</li>
+<li>Lightmaps consume memory and storage space.</li>
+<li>Cannot respond to real-time lighting changes.</li>
+</ul>
+<h2>Optimization and Considerations</h2>
+<ul>
+<li>**Reduce Lightmap Resolution**: Distant or less important objects can use lower resolution.</li>
+<li>**Use Light Probes**: Provide approximate indirect lighting for dynamic objects.</li>
+<li>**Compress Lightmaps**: Use ASTC, ETC2, etc., to reduce memory.</li>
+<li>**Merge UV Islands**: Optimize UV layout to reduce texture space waste.</li>
+<li>**Avoid Seams**: Ensure enough padding between adjacent UV islands to prevent bleeding.</li>
+</ul>
+<h2>Frequently Asked Questions</h2>
+<h3>What is the difference between lightmaps and real-time global illumination?</h3>
+<p>Lightmaps are precomputed offline and sampled at runtime; real-time global illumination computes at runtime, supports dynamic changes but has high performance cost.</p>
+<h3>How do dynamic objects benefit from lightmaps?</h3>
+<p>Use light probes; dynamic objects sample nearby probes to get approximate indirect lighting.</p>
+<h3>Why do we need a second UV set?</h3>
+<p>The first UV set may have overlaps and stretching; the second UV set is dedicated to lightmaps and needs to be unique and non-overlapping.</p>
+<h3>How long does baking light take?</h3>
+<p>It depends on scene complexity, parameters, and hardware, ranging from minutes to hours.</p>
+<h3>Is lightmap necessary on mobile?</h3>
+<p>Not mandatory, but highly recommended because mobile performance is limited, and lightmaps can significantly improve frame rate.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between lightmaps and real-time global illumination?</h3><p>Lightmaps are precomputed offline and sampled at runtime; real-time global illumination computes at runtime, supports dynamic changes but has high performance cost.</p></div>
+<div class="faq-item"><h3>How do dynamic objects benefit from lightmaps?</h3><p>Use light probes; dynamic objects sample nearby probes to get approximate indirect lighting.</p></div>
+<div class="faq-item"><h3>Why do we need a second UV set?</h3><p>The first UV set may have overlaps and stretching; the second UV set is dedicated to lightmaps and needs to be unique and non-overlapping.</p></div>
+<div class="faq-item"><h3>How long does baking light take?</h3><p>It depends on scene complexity, parameters, and hardware, ranging from minutes to hours.</p></div>
+<div class="faq-item"><h3>Is lightmap necessary on mobile?</h3><p>Not mandatory, but highly recommended because mobile performance is limited, and lightmaps can significantly improve frame rate.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>
