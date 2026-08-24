@@ -1,0 +1,77 @@
+/* 程序化 SEO 内容页样式（独立于工具页 App 布局） */
+:root {
+  --seo-bg: #f7f8fa;
+  --seo-card: #ffffff;
+  --seo-text: #1f2328;
+  --seo-muted: #6b7280;
+  --seo-accent: #4f6ef7;
+  --seo-border: #e5e7eb;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--seo-bg);
+  color: var(--seo-text);
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+.seo-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--seo-card);
+  border-bottom: 1px solid var(--seo-border);
+}
+
+.seo-header a { color: var(--seo-accent); text-decoration: none; }
+.seo-logo { font-weight: 700; font-size: 18px; color: var(--seo-text) !important; }
+.seo-header nav a { margin-left: 12px; }
+
+.seo-main {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.seo-crumb { color: var(--seo-muted); font-size: 14px; }
+.seo-crumb a { color: var(--seo-accent); text-decoration: none; }
+
+h1 { font-size: 30px; line-height: 1.35; margin: 12px 0 6px; }
+.seo-meta { color: var(--seo-muted); font-size: 14px; }
+
+.seo-content { background: var(--seo-card); border: 1px solid var(--seo-border); border-radius: 12px; padding: 24px 28px; margin-top: 18px; }
+.seo-content h2 { font-size: 21px; margin: 26px 0 12px; border-left: 4px solid var(--seo-accent); padding-left: 10px; }
+.seo-content h2:first-child { margin-top: 0; }
+.seo-content h3 { font-size: 17px; margin: 20px 0 8px; }
+.seo-content p { margin: 10px 0; }
+.seo-content ul, .seo-content ol { padding-left: 24px; margin: 10px 0; }
+.seo-content li { margin: 6px 0; }
+.seo-content a { color: var(--seo-accent); }
+
+.seo-faq { margin-top: 22px; }
+.seo-faq h2 { font-size: 21px; border-left: 4px solid var(--seo-accent); padding-left: 10px; }
+.faq-item { background: var(--seo-card); border: 1px solid var(--seo-border); border-radius: 10px; padding: 16px 20px; margin: 12px 0; }
+.faq-item h3 { margin: 0 0 8px; font-size: 16px; }
+.faq-item p { margin: 0; color: #374151; }
+
+.seo-related { margin-top: 22px; background: var(--seo-card); border: 1px solid var(--seo-border); border-radius: 12px; padding: 16px 20px; }
+.seo-related h2 { font-size: 18px; margin: 0 0 10px; }
+.seo-related a { color: var(--seo-accent); text-decoration: none; margin-right: 8px; white-space: nowrap; }
+
+.seo-index { list-style: none; padding: 0; }
+.seo-index li { background: var(--seo-card); border: 1px solid var(--seo-border); border-radius: 10px; margin: 8px 0; }
+.seo-index li a { display: block; padding: 12px 18px; color: var(--seo-text); text-decoration: none; }
+.seo-index li a:hover { color: var(--seo-accent); }
+
+.seo-footer { text-align: center; color: var(--seo-muted); font-size: 13px; padding: 20px; }
+.seo-footer a { color: var(--seo-accent); text-decoration: none; }
+
+@media (max-width: 640px) {
+  h1 { font-size: 24px; }
+  .seo-content { padding: 18px; }
+}
