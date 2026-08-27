@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLSS FSR 超分辨率 - TA工具箱</title>
+<meta name="description" content="DLSS和FSR是两大主流图像超分辨率技术，通过低分辨率渲染并智能放大，提升游戏帧率。本文对比其原理、效果、硬件要求和适用性。">
+<meta name="keywords" content="DLSS,FSR,超分辨率,深度学习超采样,FidelityFX Super Resolution,帧生成,游戏性能,图像放大,NVIDIA,AMD">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/dlss-fsr-upscaling.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"DLSS FSR 超分辨率"}]},{"@type":"Article","name":"DLSS FSR 超分辨率","headline":"DLSS FSR 超分辨率","description":"DLSS和FSR是两大主流图像超分辨率技术，通过低分辨率渲染并智能放大，提升游戏帧率。本文对比其原理、效果、硬件要求和适用性。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"DLSS 和 FSR 哪个画质更好？","acceptedAnswer":{"@type":"Answer","text":"通常认为 DLSS 在细节重建上略优，但 FSR 2.0 已非常接近。具体效果因游戏而异，建议实际测试。"}},{"@type":"Question","name":"FSR 可以在 NVIDIA 显卡上使用吗？","acceptedAnswer":{"@type":"Answer","text":"可以，FSR 是开源的，支持 NVIDIA、AMD 和 Intel 显卡，只要游戏支持 FSR。"}},{"@type":"Question","name":"DLSS 需要什么硬件？","acceptedAnswer":{"@type":"Answer","text":"需要 NVIDIA RTX 20 系列或更新的显卡，因为依赖 Tensor Core 进行 AI 计算。"}},{"@type":"Question","name":"什么是帧生成？","acceptedAnswer":{"@type":"Answer","text":"帧生成是 DLSS 3 和 FSR 3 引入的技术，通过 AI 或算法在真实帧之间插入合成帧，可进一步提升帧率，但可能引入延迟。"}},{"@type":"Question","name":"超分辨率技术能提升多少性能？","acceptedAnswer":{"@type":"Answer","text":"通常可提升 30% 到 100% 的帧率，取决于质量设置和原始分辨率。质量模式画质较好但性能提升较少，性能模式提升更大但画质略降。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>DLSS FSR 超分辨率</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是 DLSS 和 FSR</h2>
+<p>DLSS（Deep Learning Super Sampling）和 FSR（FidelityFX Super Resolution）是两种图像超分辨率技术，旨在以较低分辨率渲染游戏画面，然后通过算法放大到目标分辨率，从而显著提升帧率，同时尽量保持画质。DLSS 由 NVIDIA 开发，依赖 AI 和专用硬件；FSR 由 AMD 开发，开源且跨平台。</p>
+<h2>技术原理</h2>
+<h3>DLSS（深度学习超采样）</h3>
+<p>DLSS 利用深度学习模型，通过大量高分辨率图像训练，学习从低分辨率输入重建高分辨率细节。DLSS 1.0 需要每个游戏单独训练，效果一般；DLSS 2.0 采用通用模型，结合时间反馈（Motion Vectors）和帧历史，显著提升画质。DLSS 3.0 进一步引入帧生成（Frame Generation），通过 AI 插帧提升流畅度。</p>
+<h3>FSR（FidelityFX 超分辨率）</h3>
+<p>FSR 是基于空间和时间的上采样算法，不使用机器学习。FSR 1.0 是纯空间上采样，边缘重建效果有限；FSR 2.0 加入时间数据，画质大幅提升，接近 DLSS 2。FSR 3.0 也支持帧生成。FSR 开源，可在多种 GPU 上运行。</p>
+<h2>效果对比</h2>
+<p>通常认为 DLSS 在细节保留和稳定性上略优于 FSR，尤其在低分辨率输入时。DLSS 借助 AI 能更好地重建纹理细节和抗锯齿；FSR 则效率较高，且不依赖专用硬件。不过 FSR 2.0 已大幅缩小差距。</p>
+<h2>硬件与平台支持</h2>
+<ul>
+<li>**DLSS**：仅支持 NVIDIA RTX 显卡（20 系列及以上），需要 Tensor Core。</li>
+<li>**FSR**：支持几乎所有显卡，包括 AMD、NVIDIA 和 Intel，跨平台（Windows、Linux、部分主机）。</li>
+</ul>
+<h2>游戏集成</h2>
+<p>DLSS 和 FSR 需要通过游戏引擎集成，开发者需提供运动矢量、深度缓冲等数据。主流引擎如 Unity、Unreal 均有对应插件。</p>
+<h2>选择建议</h2>
+<ul>
+<li>拥有 RTX 显卡，优先考虑 DLSS，可能获得更好画质。</li>
+<li>非 RTX 显卡或跨平台需求，FSR 是理想选择。</li>
+<li>性能优先且可接受画质轻微损失，可尝试 FSR 或 DLSS 的性能模式。</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>DLSS 和 FSR 哪个画质更好？</h3><p>通常认为 DLSS 在细节重建上略优，但 FSR 2.0 已非常接近。具体效果因游戏而异，建议实际测试。</p></div>
+<div class="faq-item"><h3>FSR 可以在 NVIDIA 显卡上使用吗？</h3><p>可以，FSR 是开源的，支持 NVIDIA、AMD 和 Intel 显卡，只要游戏支持 FSR。</p></div>
+<div class="faq-item"><h3>DLSS 需要什么硬件？</h3><p>需要 NVIDIA RTX 20 系列或更新的显卡，因为依赖 Tensor Core 进行 AI 计算。</p></div>
+<div class="faq-item"><h3>什么是帧生成？</h3><p>帧生成是 DLSS 3 和 FSR 3 引入的技术，通过 AI 或算法在真实帧之间插入合成帧，可进一步提升帧率，但可能引入延迟。</p></div>
+<div class="faq-item"><h3>超分辨率技术能提升多少性能？</h3><p>通常可提升 30% 到 100% 的帧率，取决于质量设置和原始分辨率。质量模式画质较好但性能提升较少，性能模式提升更大但画质略降。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/seo/gpu-driven-rendering.html">GPU Driven 渲染</a> · <a href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">光线追踪基础</a> · <a href="https://tools.treasuregrove.art/seo/variable-rate-shading.html">可变速率着色 VRS</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>视差贴图 - TA工具箱</title>
+<meta name="description" content="视差贴图（Parallax Mapping）是一种用于增强纹理表面立体感的着色技术，通过根据视角偏移纹理坐标来模拟高度变化，相比法线贴图能产生更真实的深度效果。本文介绍其原理、类型、优缺点及在游戏中的应用。">
+<meta name="keywords" content="视差贴图,Parallax Mapping,高度图,法线贴图,陡峭视差贴图,视差遮蔽贴图,POM,游戏渲染,着色器技术,纹理映射">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/parallax-mapping.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/parallax-mapping.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/parallax-mapping.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"视差贴图"}]},{"@type":"Article","name":"视差贴图","headline":"视差贴图","description":"视差贴图（Parallax Mapping）是一种用于增强纹理表面立体感的着色技术，通过根据视角偏移纹理坐标来模拟高度变化，相比法线贴图能产生更真实的深度效果。本文介绍其原理、类型、优缺点及在游戏中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/parallax-mapping.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/parallax-mapping.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"视差贴图和法线贴图有什么区别？","acceptedAnswer":{"@type":"Answer","text":"法线贴图仅改变光照计算的法线方向，不改变纹理采样位置，因此没有视差位移。视差贴图根据视角偏移纹理坐标，模拟高度差产生的遮挡效果，视觉立体感更强。"}},{"@type":"Question","name":"视差贴图需要什么额外的纹理？","acceptedAnswer":{"@type":"Answer","text":"需要一张高度图（Height Map），通常灰度图表示表面高度。高度图可以单独存储，也可以打包在法线贴图的 Alpha 通道中。"}},{"@type":"Question","name":"视差贴图有哪些常见类型？","acceptedAnswer":{"@type":"Answer","text":"常见类型包括基础视差贴图、带偏移限制的视差贴图、陡峭视差贴图、浮雕视差贴图和视差遮蔽贴图（POM），它们在效果和性能上有所不同。"}},{"@type":"Question","name":"视差贴图在游戏中的应用有哪些？","acceptedAnswer":{"@type":"Answer","text":"广泛用于砖墙、鹅卵石路面、科幻面板、地形细节等，为平面模型增加立体感，提升视觉质量。"}},{"@type":"Question","name":"视差贴图的性能开销如何？","acceptedAnswer":{"@type":"Answer","text":"基础视差贴图性能开销较低，但高级变体如 POM 需要多次纹理采样和循环计算，开销较大。实际应用中需要权衡效果与性能。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>视差贴图</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是视差贴图</h2>
+<p>视差贴图（Parallax Mapping）是一种先进的纹理映射技术，用于在平面表面上模拟凹凸不平的立体效果。它通过根据观察角度和表面高度图（Height Map）来偏移纹理坐标，使得纹理的不同部分产生视差位移，从而营造出比法线贴图更加强烈的深度感。与法线贴图仅改变光照方向不同，视差贴图实际上改变了纹理采样的位置，因此在视角变化时，凸起区域会遮挡凹陷区域，效果更接近真实几何体。</p>
+<h2>基本原理</h2>
+<p>视差贴图的核心思想基于简单的几何关系。当观察者从侧面看一个带有高度的表面时，原本在纹理坐标中的点会因为高度而偏移。假设表面有一个高度场 h(u,v)，观察方向为 V，那么实际看到的点应该是从原始位置沿着 V 在表面上的投影偏移后的位置。为了简化计算，通常采用近似方法：根据高度 h 和视角的切平面分量，将纹理坐标向视角方向偏移一个量。公式为：</p>
+<p>`offset = h * V.xy / V.z`</p>
+<p>这种近似在高度变化平缓时效果很好，但在高度变化剧烈或视角非常倾斜时会产生扭曲。</p>
+<h2>常见类型与变体</h2>
+<h3>基础视差贴图</h3>
+<p>最简单的形式，使用上述公式进行一次偏移。实现简单，性能开销低，但在陡峭角度下会出现明显的滑动和失真。</p>
+<h3>带偏移限制的视差贴图</h3>
+<p>为了减少失真，在偏移量上加上一个缩放因子，通常与视角的切平面夹角相关。这可以防止纹理坐标偏移过大导致的采样错误，但会减弱效果。</p>
+<h3>陡峭视差贴图（Steep Parallax Mapping）</h3>
+<p>通过将高度场分成多个层，沿着视线方向逐步采样高度图，找到第一个被遮挡的层，从而得到更精确的偏移。层数越多效果越好，但性能开销也越大。</p>
+<h3>浮雕视差贴图（Relief Parallax Mapping）</h3>
+<p>在陡峭视差贴图的基础上进一步细化，在找到的层之间进行插值，获得亚像素级的精确度。效果接近真实位移映射，但计算量较高。</p>
+<h3>视差遮蔽贴图（Parallax Occlusion Mapping，POM）</h3>
+<p>一种改进的陡峭视差贴图，通过线性插值或二分查找来精确确定视线与高度场的交点，能够产生自阴影和更准确的轮廓。POM 在现代游戏中广泛使用。</p>
+<h2>与法线贴图、位移贴图的对比</h2>
+<ul>
+<li>**法线贴图**：改变光照计算的法线方向，但不改变纹理坐标，因此表面几何形状不变，没有视差位移。</li>
+<li>**视差贴图**：改变纹理采样坐标，使得纹理看起来有深度，但不改变几何表面，光照仍基于原始法线（除非结合法线贴图）。</li>
+<li>**位移贴图**：实际改变几何体的顶点位置，产生真实的凹凸，需要足够的顶点密度，性能开销最大。</li>
+</ul>
+<p>视差贴图通常在片元着色器中实现，需要高度图，并且为了获得最佳效果通常与法线贴图结合使用。</p>
+<h2>优点与局限</h2>
+<p>**优点**：</p>
+<ul>
+<li>相比位移贴图，无需额外几何体，性能开销较低。</li>
+<li>能产生比法线贴图更真实的深度和视差效果。</li>
+<li>适合表现砖墙、鹅卵石、雕刻表面等细节。</li>
+</ul>
+<p>**局限**：</p>
+<ul>
+<li>仍然是近似，在极端视角下可能出现扭曲或伪影。</li>
+<li>表面轮廓边缘仍是平的，无法产生真实的轮廓变化。</li>
+<li>需要额外的高度图，增加纹理内存和采样次数。</li>
+<li>对于复杂的几何体，计算量可能较大，特别是 POM 等高级变体。</li>
+</ul>
+<h2>应用场景</h2>
+<p>视差贴图常用于游戏和实时渲染中，特别是需要表现细节凹凸的材质，如：</p>
+<ul>
+<li>建筑墙面、砖块、石板路</li>
+<li>科幻表面、机械面板</li>
+<li>地形细节（如岩石、沙砾）</li>
+<li>任何需要增强深度感的平面材质</li>
+</ul>
+<p>在实现时，通常将高度信息存储在法线贴图的 Alpha 通道或单独的高度图中。现代游戏引擎（如 Unity、Unreal）内置了视差贴图或 POM 的支持。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>视差贴图和法线贴图有什么区别？</h3><p>法线贴图仅改变光照计算的法线方向，不改变纹理采样位置，因此没有视差位移。视差贴图根据视角偏移纹理坐标，模拟高度差产生的遮挡效果，视觉立体感更强。</p></div>
+<div class="faq-item"><h3>视差贴图需要什么额外的纹理？</h3><p>需要一张高度图（Height Map），通常灰度图表示表面高度。高度图可以单独存储，也可以打包在法线贴图的 Alpha 通道中。</p></div>
+<div class="faq-item"><h3>视差贴图有哪些常见类型？</h3><p>常见类型包括基础视差贴图、带偏移限制的视差贴图、陡峭视差贴图、浮雕视差贴图和视差遮蔽贴图（POM），它们在效果和性能上有所不同。</p></div>
+<div class="faq-item"><h3>视差贴图在游戏中的应用有哪些？</h3><p>广泛用于砖墙、鹅卵石路面、科幻面板、地形细节等，为平面模型增加立体感，提升视觉质量。</p></div>
+<div class="faq-item"><h3>视差贴图的性能开销如何？</h3><p>基础视差贴图性能开销较低，但高级变体如 POM 需要多次纹理采样和循环计算，开销较大。实际应用中需要权衡效果与性能。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/tessellation.html">曲面细分</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

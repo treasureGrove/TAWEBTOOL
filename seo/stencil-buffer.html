@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模板缓冲 - TA工具箱</title>
+<meta name="description" content="模板缓冲（Stencil Buffer）是图形渲染中存储每个像素整数标记的缓冲区，用于控制渲染区域或实现特殊效果。本文介绍其原理、应用场景及与深度缓冲的关系。">
+<meta name="keywords" content="模板缓冲,Stencil Buffer,模板测试,阴影体积,镜面反射,贴花,渲染控制,图形管线,深度缓冲,游戏开发">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/stencil-buffer.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/stencil-buffer.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/stencil-buffer.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"模板缓冲"}]},{"@type":"Article","name":"模板缓冲","headline":"模板缓冲","description":"模板缓冲（Stencil Buffer）是图形渲染中存储每个像素整数标记的缓冲区，用于控制渲染区域或实现特殊效果。本文介绍其原理、应用场景及与深度缓冲的关系。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/stencil-buffer.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/stencil-buffer.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"模板缓冲和深度缓冲可以同时使用吗？","acceptedAnswer":{"@type":"Answer","text":"可以，它们通常存储在同一个缓冲区中（如24位深度+8位模板），同时进行深度测试和模板测试。"}},{"@type":"Question","name":"模板缓冲的典型应用有哪些？","acceptedAnswer":{"@type":"Answer","text":"阴影体积、镜面反射、贴花、自定义裁剪、UI遮罩等。任何需要逐像素标记和测试的场景都可以使用。"}},{"@type":"Question","name":"移动设备支持模板缓冲吗？","acceptedAnswer":{"@type":"Answer","text":"大多数现代移动GPU支持模板缓冲，但精度可能为8位。在某些旧设备上可能不支持，需要回退方案。"}},{"@type":"Question","name":"如何清除模板缓冲？","acceptedAnswer":{"@type":"Answer","text":"在渲染帧开始时，使用清除命令将模板缓冲重置为0（或其他指定值）。在OpenGL中可用`glClearStencil`和`glClear`，DirectX中类似。"}},{"@type":"Question","name":"模板测试发生在片段着色器之前吗？","acceptedAnswer":{"@type":"Answer","text":"现代GPU支持Early Stencil Test，可以在片段着色器之前执行模板测试，如果测试失败则跳过着色器，节省计算。但某些情况下（如片段着色器修改模板值）可能无法提前。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>模板缓冲</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是模板缓冲</h2>
+<p>模板缓冲（Stencil Buffer）是图形渲染管线中的一个缓冲区，与颜色缓冲区和深度缓冲区并列。它为每个像素存储一个整数值（通常为8位，范围0-255），用于控制渲染操作。模板缓冲可以用于标记特定区域、限制渲染范围、实现阴影、镜面反射等效果。</p>
+<p>模板缓冲通常与深度缓冲共享同一块内存区域，例如在32位深度/模板缓冲中，24位用于深度，8位用于模板。</p>
+<h2>模板缓冲的工作原理</h2>
+<p>模板缓冲通过模板测试（Stencil Test）来控制像素是否被写入。基本流程如下：</p>
+<ol>
+<li>对于每个片段，读取模板缓冲区中对应位置的当前值。</li>
+<li>将当前值与参考值（由应用程序设置）进行比较，比较函数可配置（如Always、Equal、Less等）。</li>
+<li>如果比较通过，则片段继续处理；否则被丢弃。</li>
+<li>无论通过与否，都可以根据模板操作（如保持、递增、递减、替换）更新模板缓冲区的值。</li>
+</ul>
+<p>这些操作可以用于实现复杂的渲染逻辑。</p>
+<h2>模板缓冲的常见应用</h2>
+<ul>
+<li>**阴影体积（Shadow Volume）**：使用模板缓冲标记阴影区域，常用算法如Depth-fail或Depth-pass。</li>
+<li>**镜面反射**：在渲染反射场景时，使用模板缓冲标记镜面区域，限制反射物体只出现在镜面内。</li>
+<li>**贴花（Decal）**：使用模板缓冲防止贴花渲染到不需要的表面。</li>
+<li>**自定义裁剪**：例如在UI中裁剪滚动区域，或渲染到特定形状的视口。</li>
+<li>**光线步进标记**：在体积渲染中标记已访问区域。</li>
+<li>**多Pass效果**：在不同渲染阶段之间传递标记。</li>
+</ul>
+<h2>模板缓冲与深度缓冲的区别</h2>
+<ul>
+<li>**数据类型**：深度缓冲存储浮点深度值，模板缓冲存储整数标记。</li>
+<li>**用途**：深度缓冲用于可见性判断，模板缓冲用于控制渲染区域和实现特殊效果。</li>
+<li>**精度**：深度缓冲通常24位或32位，模板缓冲通常8位。</li>
+<li>**更新**：深度缓冲通过深度测试自动更新，模板缓冲需要应用程序设置操作。</li>
+</ul>
+<h2>使用模板缓冲的注意事项</h2>
+<ul>
+<li>**清除**：每帧开始时应清除模板缓冲（通常设置为0）。</li>
+<li>**带宽**：模板缓冲与深度缓冲共享带宽，额外操作可能影响性能。</li>
+<li>**格式**：在移动平台，模板缓冲可能不可用或精度较低，需要检查支持。</li>
+<li>**顺序**：模板测试发生在片段着色器之前（Early Stencil），可用于提前丢弃片段，优化性能。</li>
+</ul>
+<h2>总结</h2>
+<p>模板缓冲是强大的渲染控制工具，掌握其用法可以实现多种高级效果。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>模板缓冲和深度缓冲可以同时使用吗？</h3><p>可以，它们通常存储在同一个缓冲区中（如24位深度+8位模板），同时进行深度测试和模板测试。</p></div>
+<div class="faq-item"><h3>模板缓冲的典型应用有哪些？</h3><p>阴影体积、镜面反射、贴花、自定义裁剪、UI遮罩等。任何需要逐像素标记和测试的场景都可以使用。</p></div>
+<div class="faq-item"><h3>移动设备支持模板缓冲吗？</h3><p>大多数现代移动GPU支持模板缓冲，但精度可能为8位。在某些旧设备上可能不支持，需要回退方案。</p></div>
+<div class="faq-item"><h3>如何清除模板缓冲？</h3><p>在渲染帧开始时，使用清除命令将模板缓冲重置为0（或其他指定值）。在OpenGL中可用`glClearStencil`和`glClear`，DirectX中类似。</p></div>
+<div class="faq-item"><h3>模板测试发生在片段着色器之前吗？</h3><p>现代GPU支持Early Stencil Test，可以在片段着色器之前执行模板测试，如果测试失败则跳过着色器，节省计算。但某些情况下（如片段着色器修改模板值）可能无法提前。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/z-fighting.html">Z-Fighting 深度冲突</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

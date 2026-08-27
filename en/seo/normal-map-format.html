@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Normal Map Format: DirectX vs OpenGL - TA Toolbox</title>
+<meta name="description" content="Normal maps come in DirectX and OpenGL formats, with the main difference being the direction of the green channel (Y-axis). DirectX uses +Y up, while OpenGL uses +Y down (or vice versa depending on convention), causing normal maps to display incorrectly across different APIs. This article introduces format differences, identification methods, and conversion techniques.">
+<meta name="keywords" content="normal map format, DirectX normal map, OpenGL normal map, green channel flip, normal map, game development, 3D rendering, texture format, normal map conversion, graphics API difference">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/normal-map-format.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/normal-map-format.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/normal-map-format.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Normal Map Format: DirectX vs OpenGL"}]},{"@type":"Article","name":"Normal Map Format: DirectX vs OpenGL","headline":"Normal Map Format: DirectX vs OpenGL","description":"Normal maps come in DirectX and OpenGL formats, with the main difference being the direction of the green channel (Y-axis). DirectX uses +Y up, while OpenGL uses +Y down (or vice versa depending on convention), causing normal maps to display incorrectly across different APIs. This article introduces format differences, identification methods, and conversion techniques.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/normal-map-format.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/normal-map-format.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between DirectX and OpenGL normal maps?","acceptedAnswer":{"@type":"Answer","text":"The main difference is the green channel: DirectX normal maps have the green channel pointing up (Y+), while OpenGL has it pointing down (Y-). This can cause bump effects to appear reversed when used on the wrong platform."}},{"@type":"Question","name":"How to tell if a normal map is DirectX or OpenGL?","acceptedAnswer":{"@type":"Answer","text":"Observe convex areas: if they appear yellow-green, it's likely DirectX; if blue-purple, it's likely OpenGL. A more reliable method is to use tools or test renders."}},{"@type":"Question","name":"How to convert a DirectX normal map to OpenGL?","acceptedAnswer":{"@type":"Answer","text":"Flip the green channel. In image editing software, invert the green channel (e.g., in Photoshop, Ctrl+I on the green channel). You can also use engine import options to auto-flip."}},{"@type":"Question","name":"Which normal map format does Unity use?","acceptedAnswer":{"@type":"Answer","text":"Unity defaults to OpenGL style, but when importing normal maps, it can auto-handle based on platform. If normal direction appears wrong, you can flip the green channel in import settings."}},{"@type":"Question","name":"What happens if the normal map format is wrong?","acceptedAnswer":{"@type":"Answer","text":"Lighting direction may be reversed, convex parts become concave, and surface details invert. For example, brick gaps may bulge instead of recess."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Normal Map Format: DirectX vs OpenGL</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Normal Map Format</h2>
+<p>A normal map stores surface normal information, used to simulate high-resolution details on low-poly models. Due to differences in coordinate systems between graphics APIs, normal maps are divided into two main formats: DirectX and OpenGL. The key difference lies in the orientation of the green channel (corresponding to the Y-axis or bi-tangent direction in tangent space) in the normal map.</p>
+<ul>
+<li>**DirectX format**: Typically uses +Y direction up, meaning the green channel in the normal map represents normals pointing upward.</li>
+<li>**OpenGL format**: Typically uses +Y direction down, meaning the green channel represents normals pointing downward.</li>
+</ul>
+<p>This difference arises from different conventions in texture coordinates and projection matrices between the two APIs. Using the wrong format can cause lighting to appear reversed or bump effects to be incorrect.</p>
+<h2>How to Distinguish DirectX and OpenGL Normal Maps</h2>
+<p>You can roughly tell by observing the colors of the normal map:</p>
+<ul>
+<li>**DirectX**: Convex parts (such as brick edges) usually appear green or yellow-green because the green channel value is high.</li>
+<li>**OpenGL**: Convex parts may appear purple or blue-purple because the green channel value is low, while red and blue channels are unaffected.</li>
+</ul>
+<p>A more accurate method is to check flat areas facing the camera: in DirectX, such areas are typically light purple (128,128,255); in OpenGL, they may also be (128,128,255), because a flat normal in tangent space is (0,0,1), mapping to color (128,128,255) (R=0.5, G=0.5, B=1.0). The green channel value of 0.5 corresponds to Y component 0, so direction does not affect flat colors. For non-flat areas, you can judge by known bump directions.</p>
+<p>Many DCC tools (such as Substance Painter) allow you to choose the export format.</p>
+<h2>Why Are There Two Formats</h2>
+<p>DirectX and OpenGL have differences in texture coordinate systems: DirectX's texture coordinate origin is at the top-left, while OpenGL's is at the bottom-left. This causes the V-axis (affecting the green channel) in normal maps to be reversed. Additionally, the construction of tangent space may also differ. Therefore, normal maps generated for different APIs need to be adapted.</p>
+<p>In actual development, engines usually handle this difference. For example, Unity defaults to OpenGL style (but can be switched in import settings), while Unreal Engine uses DirectX style. Care is needed when exchanging assets across engines.</p>
+<h2>How to Convert Normal Map Formats</h2>
+<p>Converting normal map formats is very simple: just flip the green channel. That is, G' = 1 - G (in normalized values) or G' = 255 - G (in 8-bit color). This can be done in image editing software like Photoshop through channel operations, or via scripts for batch processing.</p>
+<p>Many tools provide automatic conversion, for example:</p>
+<ul>
+<li>**xNormal**: Offers format selection when exporting.</li>
+<li>**Substance Designer/Painter**: In export settings, you can choose DirectX or OpenGL.</li>
+<li>**Blender**: When importing normal maps, you can choose color space and flip the green channel.</li>
+</ul>
+<h2>Handling in Game Engines</h2>
+<ul>
+<li>**Unity**: When importing a normal map, in the texture import settings, if the format does not match project settings, you can check &quot;Flip Green Channel&quot; to flip it. By default, Unity expects OpenGL style but can auto-handle based on platform.</li>
+<li>**Unreal Engine**: Uses DirectX style, but usually automatically detects and provides flip options when importing normal maps.</li>
+<li>**Custom engines**: Ensure shaders decode normal maps correctly and consider API differences.</li>
+</ul>
+<h2>Summary</h2>
+<p>Understanding the differences between DirectX and OpenGL normal map formats is crucial to avoid rendering errors. By correctly identifying and converting formats, you can ensure normal maps display properly on the target platform.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between DirectX and OpenGL normal maps?</h3><p>The main difference is the green channel: DirectX normal maps have the green channel pointing up (Y+), while OpenGL has it pointing down (Y-). This can cause bump effects to appear reversed when used on the wrong platform.</p></div>
+<div class="faq-item"><h3>How to tell if a normal map is DirectX or OpenGL?</h3><p>Observe convex areas: if they appear yellow-green, it's likely DirectX; if blue-purple, it's likely OpenGL. A more reliable method is to use tools or test renders.</p></div>
+<div class="faq-item"><h3>How to convert a DirectX normal map to OpenGL?</h3><p>Flip the green channel. In image editing software, invert the green channel (e.g., in Photoshop, Ctrl+I on the green channel). You can also use engine import options to auto-flip.</p></div>
+<div class="faq-item"><h3>Which normal map format does Unity use?</h3><p>Unity defaults to OpenGL style, but when importing normal maps, it can auto-handle based on platform. If normal direction appears wrong, you can flip the green channel in import settings.</p></div>
+<div class="faq-item"><h3>What happens if the normal map format is wrong?</h3><p>Lighting direction may be reversed, convex parts become concave, and surface details invert. For example, brick gaps may bulge instead of recess.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/uv-mapping.html">UV 映射与展开</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

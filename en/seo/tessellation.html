@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tessellation - TA Toolbox</title>
+<meta name="description" content="Tessellation is a real-time rendering technique that dynamically subdivides polygon meshes on the GPU to increase geometric detail, making surfaces smoother or enabling complex displacement effects. This article introduces its principles, pipeline, applications, and pros and cons.">
+<meta name="keywords" content="tessellation, DirectX 11, OpenGL 4, hull shader, domain shader, displacement mapping, adaptive LOD, GPU rendering, geometric detail">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/tessellation.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/tessellation.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/tessellation.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Tessellation"}]},{"@type":"Article","name":"Tessellation","headline":"Tessellation","description":"Tessellation is a real-time rendering technique that dynamically subdivides polygon meshes on the GPU to increase geometric detail, making surfaces smoother or enabling complex displacement effects. This article introduces its principles, pipeline, applications, and pros and cons.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/tessellation.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/tessellation.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the relationship between tessellation and displacement mapping?","acceptedAnswer":{"@type":"Answer","text":"Displacement mapping requires sufficient vertex density to show details. Tessellation can dynamically increase vertex count, so they are often used together. Tessellation provides the geometric base, and displacement mapping offsets vertices in the domain shader."}},{"@type":"Question","name":"In which graphics APIs is tessellation available?","acceptedAnswer":{"@type":"Answer","text":"DirectX 11 and above, OpenGL 4.0 and above, Vulkan, and Metal (partial support) support tessellation. Note that some mobile GPUs may not support it or have poor performance."}},{"@type":"Question","name":"Does tessellation affect performance?","acceptedAnswer":{"@type":"Answer","text":"Yes, tessellation increases vertex count and computation, but adaptive tessellation factors (e.g., based on distance) can balance performance and quality. Proper use yields good benefits."}},{"@type":"Question","name":"What is the difference between tessellation and normal mapping?","acceptedAnswer":{"@type":"Answer","text":"Normal mapping only changes normals in lighting calculations, not geometry. Tessellation actually generates new vertices, altering surface topology, resulting in more realistic silhouettes and shadows."}},{"@type":"Question","name":"How to use tessellation in Unity?","acceptedAnswer":{"@type":"Answer","text":"Unity's HDRP and URP support tessellation shaders. You need to write hull and domain shaders in Shader code, or use built-in tessellation options. Refer to Unity documentation for details."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Tessellation</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Tessellation</h2>
+<p>Tessellation is a programmable rendering pipeline stage introduced in DirectX 11 and OpenGL 4.0. It allows the GPU to dynamically subdivide coarse meshes into smaller triangles based on certain rules (e.g., distance, curvature), thereby increasing geometric detail in real time without increasing initial model data. This technique enables smooth surfaces, complex displacement, and adaptive level of detail (LOD).</p>
+<h2>Position in the Rendering Pipeline</h2>
+<p>Tessellation sits after the vertex shader and before the geometry shader. It comprises three optional stages:</p>
+<ul>
+<li>**Hull Shader**: Defines tessellation factors, determining how much each primitive is subdivided.</li>
+<li>**Tessellator**: A fixed-function unit that actually generates new vertices and topology based on tessellation factors.</li>
+<li>**Domain Shader**: Computes position, normal, and other attributes for new vertices, often combined with displacement mapping.</li>
+</ul>
+<p>In OpenGL, the corresponding stages are Tessellation Control Shader (TCS), Tessellation Engine, and Tessellation Evaluation Shader (TES).</p>
+<h2>Main Application Scenarios</h2>
+<h3>Smooth Surfaces</h3>
+<p>By subdividing coarse meshes and applying smoothing algorithms (such as PN triangles), generate surfaces similar to high-polygon models. Commonly used for character skin, car bodies, etc.</p>
+<h3>Displacement Mapping</h3>
+<p>Combined with height or displacement maps, offset vertices along the normal in the domain shader to create real geometric bumps, such as terrain folds and relief details.</p>
+<h3>Adaptive LOD</h3>
+<p>Dynamically adjust tessellation factors based on camera distance: closer objects get more subdivision, farther objects get less, achieving continuous and efficient detail transitions without traditional LOD popping.</p>
+<h3>Terrain Rendering</h3>
+<p>Using frustum culling and distance checks, only tessellate visible and near terrain chunks, saving performance.</p>
+<h2>Advantages and Limitations</h2>
+<p>**Advantages**:</p>
+<ul>
+<li>Initial models can be low-poly; details are added in real time via subdivision, saving memory and bandwidth.</li>
+<li>Supports dynamic LOD, allowing geometry complexity to change smoothly with distance.</li>
+<li>Combined with displacement mapping, generates highly realistic surface details.</li>
+</ul>
+<p>**Limitations**:</p>
+<ul>
+<li>Requires GPU and graphics API support for tessellation (DX11+ / OpenGL 4+); some mobile platforms do not support it.</li>
+<li>Improper tessellation factors may cause performance drops or cracks (T-junctions).</li>
+<li>Additional computational overhead for post-vertex-shader data; heavy tessellation can become a bottleneck.</li>
+</ul>
+<h2>Differences from Related Techniques</h2>
+<ul>
+<li>**Normal Mapping**: Only changes lighting normals, not geometry.</li>
+<li>**Parallax Mapping**: Offsets texture coordinates in the fragment shader to simulate depth, but does not alter geometry topology.</li>
+<li>**Displacement Mapping**: Typically requires tessellation to provide enough vertex density; otherwise displacement cannot show detail.</li>
+</ul>
+<p>Tessellation is a true geometric operation; generated vertices participate in subsequent pipeline stages, producing correct silhouettes and shadows.</p>
+<h2>Implementation Example (Pseudocode)</h2>
+<p>```</p>
+<p>// Hull Shader: Set tessellation factors</p>
+<p>HS_CONSTANT_DATA_OUTPUT ConstantsHS(InputPatch&lt;VS_OUTPUT, 3&gt; p, uint PatchID : SV_PrimitiveID)</p>
+<p>{</p>
+<p>    float tessFactor = ComputeTessFactorFromDistance(p);</p>
+<p>    HS_CONSTANT_DATA_OUTPUT output;</p>
+<p>    output.Edges[0] = output.Edges[1] = output.Edges[2] = tessFactor;</p>
+<p>    output.Inside = tessFactor;</p>
+<p>    return output;</p>
+<p>}</p>
+<p>// Domain Shader: Compute new vertex position</p>
+<p>[domain(&quot;tri&quot;)]</p>
+<p>DS_OUTPUT DomainShader(HS_CONSTANT_DATA_OUTPUT input, float3 uvw : SV_DomainLocation, const OutputPatch&lt;VS_OUTPUT, 3&gt; patch)</p>
+<p>{</p>
+<p>    DS_OUTPUT output;</p>
+<p>    float3 p = uvw.x * patch[0].pos + uvw.y * patch[1].pos + uvw.z * patch[2].pos;</p>
+<p>    // Apply displacement map if available</p>
+<p>    p += Displacement(p, uvw);</p>
+<p>    output.pos = mul(float4(p, 1.0f), ViewProjMatrix);</p>
+<p>    return output;</p>
+<p>}</p>
+<p>```</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the relationship between tessellation and displacement mapping?</h3><p>Displacement mapping requires sufficient vertex density to show details. Tessellation can dynamically increase vertex count, so they are often used together. Tessellation provides the geometric base, and displacement mapping offsets vertices in the domain shader.</p></div>
+<div class="faq-item"><h3>In which graphics APIs is tessellation available?</h3><p>DirectX 11 and above, OpenGL 4.0 and above, Vulkan, and Metal (partial support) support tessellation. Note that some mobile GPUs may not support it or have poor performance.</p></div>
+<div class="faq-item"><h3>Does tessellation affect performance?</h3><p>Yes, tessellation increases vertex count and computation, but adaptive tessellation factors (e.g., based on distance) can balance performance and quality. Proper use yields good benefits.</p></div>
+<div class="faq-item"><h3>What is the difference between tessellation and normal mapping?</h3><p>Normal mapping only changes normals in lighting calculations, not geometry. Tessellation actually generates new vertices, altering surface topology, resulting in more realistic silhouettes and shadows.</p></div>
+<div class="faq-item"><h3>How to use tessellation in Unity?</h3><p>Unity's HDRP and URP support tessellation shaders. You need to write hull and domain shaders in Shader code, or use built-in tessellation options. Refer to Unity documentation for details.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/parallax-mapping.html">视差贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

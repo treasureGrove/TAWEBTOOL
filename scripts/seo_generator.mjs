@@ -87,6 +87,53 @@ const TOPICS = [
   { slug: 'how-to-pack-sprite-sheet', type: 'tutorial', term: '图集打包 Sprite Sheet', query: '如何打包图集 sprite sheet' },
   { slug: 'how-to-convert-video-format', type: 'tutorial', term: '视频格式转换', query: '如何转换视频格式 mp4 webm' },
   { slug: 'how-to-convert-color-space', type: 'tutorial', term: '色彩空间转换', query: '如何转换色彩空间 linear sRGB gamma' },
+  // ── 第二批：长尾术语 + 工具向词条 ──
+  { slug: 'texel-density', type: 'glossary', term: '贴图密度 Texel Density', query: 'texel密度 贴图密度 是什么' },
+  { slug: 'uv-overlap', type: 'glossary', term: 'UV 重叠检查', query: 'UV重叠 检查 贴图' },
+  { slug: 'normal-map-format', type: 'glossary', term: '法线贴图格式 DirectX OpenGL', query: '法线贴图 DirectX OpenGL 区别 绿通道' },
+  { slug: 'bc-texture-compression', type: 'glossary', term: 'BC 贴图压缩格式', query: 'BC1 BC3 BC7 贴图压缩 区别' },
+  { slug: 'render-target', type: 'glossary', term: '渲染目标 Render Target', query: '渲染目标 RenderTarget 是什么' },
+  { slug: 'g-buffer', type: 'glossary', term: 'G-Buffer 延迟渲染', query: 'G-Buffer 是什么 延迟渲染' },
+  { slug: 'shader-complexity-optimization', type: 'glossary', term: 'Shader 复杂度优化', query: 'Shader 复杂度 优化 指令数' },
+  { slug: 'overdraw', type: 'glossary', term: 'Overdraw 过度绘制', query: 'Overdraw 过度绘制 是什么 优化' },
+  { slug: 'fill-rate', type: 'glossary', term: '填充率 Fill Rate', query: '填充率 Fill Rate 是什么' },
+  { slug: 'batch-rendering', type: 'glossary', term: '合批渲染 Batching', query: '合批渲染 batching 是什么' },
+  { slug: 'srgb-texture-workflow', type: 'glossary', term: 'sRGB 贴图工作流', query: 'sRGB 贴图 工作流 线性空间' },
+  { slug: 'hdr-render-pipeline', type: 'glossary', term: 'HDR 渲染管线', query: 'HDR 渲染管线 是什么' },
+  { slug: 'aces-color-management', type: 'glossary', term: 'ACES 色彩管理', query: 'ACES 色彩管理 是什么' },
+  { slug: 'color-grading', type: 'glossary', term: '调色 Color Grading', query: '调色 Color Grading 是什么' },
+  { slug: 'post-processing-stack', type: 'glossary', term: '后处理特效', query: '后处理 特效 是什么 渲染' },
+  { slug: 'depth-buffer', type: 'glossary', term: '深度缓冲', query: '深度缓冲 是什么 z-buffer' },
+  { slug: 'stencil-buffer', type: 'glossary', term: '模板缓冲', query: '模板缓冲 stencil buffer 是什么' },
+  { slug: 'cubemap', type: 'glossary', term: '立方体贴图 Cubemap', query: '立方体贴图 cubemap 是什么' },
+  { slug: 'reflection-probe', type: 'glossary', term: '反射探针', query: '反射探针 reflection probe 是什么' },
+  { slug: 'screen-space-reflection', type: 'glossary', term: '屏幕空间反射 SSR', query: '屏幕空间反射 SSR 是什么' },
+  { slug: 'parallax-mapping', type: 'glossary', term: '视差贴图', query: '视差贴图 parallax mapping 是什么' },
+  { slug: 'tessellation', type: 'glossary', term: '曲面细分', query: '曲面细分 tessellation 是什么' },
+  { slug: 'skeletal-animation', type: 'glossary', term: '骨骼动画', query: '骨骼动画 蒙皮 是什么' },
+  { slug: 'blend-shape', type: 'glossary', term: 'BlendShape 混合变形', query: 'BlendShape 混合变形 是什么' },
+  { slug: 'compute-shader', type: 'glossary', term: '计算着色器', query: '计算着色器 compute shader 是什么' },
+  { slug: 'ray-tracing-basics', type: 'glossary', term: '光线追踪基础', query: '光线追踪 基础 是什么' },
+  { slug: 'dlss-fsr-upscaling', type: 'glossary', term: 'DLSS FSR 超分辨率', query: 'DLSS FSR 区别 超分辨率' },
+  { slug: 'variable-rate-shading', type: 'glossary', term: '可变速率着色 VRS', query: '可变速率着色 VRS 是什么' },
+  { slug: 'mesh-shader', type: 'glossary', term: 'Mesh Shader', query: 'Mesh Shader 是什么' },
+  { slug: 'gpu-driven-rendering', type: 'glossary', term: 'GPU Driven 渲染', query: 'GPU Driven 渲染 是什么' },
+  // 工具向教程（长尾低竞争）
+  { slug: 'how-to-ai-draw', type: 'tutorial', term: 'AI 绘画', query: 'AI绘画 在线 文生图 工具' },
+  { slug: 'how-to-ai-image', type: 'tutorial', term: 'AI 通用生图', query: 'AI生图 在线 文字生成图片' },
+  { slug: 'how-to-chatgpt', type: 'tutorial', term: 'ChatGPT 对话', query: 'ChatGPT 在线 对话 使用' },
+  { slug: 'how-to-ai-video', type: 'tutorial', term: 'AI 生视频', query: 'AI生视频 在线 文字生成视频' },
+  { slug: 'how-to-base64-image', type: 'tutorial', term: '图片 Base64 互转', query: '图片转Base64 在线 工具' },
+  { slug: 'how-to-gif-compress', type: 'tutorial', term: 'GIF 压缩', query: 'GIF压缩 在线 动图压缩' },
+  { slug: 'how-to-combine-rgba', type: 'tutorial', term: '贴图通道合成', query: '贴图通道合成 RGBA 在线' },
+  { slug: 'how-to-tiling-texture', type: 'tutorial', term: 'Tiling 贴图预览', query: '无缝贴图 平铺 在线预览' },
+  { slug: 'how-to-collage-texture', type: 'tutorial', term: '拼贴图', query: '贴图拼贴 网格排列 在线' },
+  { slug: 'how-to-ps-online', type: 'tutorial', term: '在线 PS', query: '在线PS 网页版Photoshop 免费' },
+  { slug: 'how-to-sprite-sheet-splitter', type: 'tutorial', term: '雪碧图拆分', query: '雪碧图 拆分 切图 在线' },
+  { slug: 'how-to-shader-library', type: 'tutorial', term: 'Shader 函数库', query: 'Shader 函数库 HLSL GLSL 代码' },
+  { slug: 'how-to-physics-light', type: 'tutorial', term: '物理光照计算', query: '物理光照 曝光 EV 计算器' },
+  { slug: 'how-to-image-metadata', type: 'tutorial', term: '贴图信息查看', query: '贴图信息 显存 分辨率 查看' },
+  { slug: 'how-to-cloud-music', type: 'tutorial', term: '网易云音乐', query: '网易云音乐 在线 网页版' },
 ];
 
 // ───────────────────────── AI 会话 ─────────────────────────
@@ -271,9 +318,13 @@ async function main() {
   await fs.mkdir(SEO_DIR, { recursive: true });
   await fs.mkdir(EN_SEO_DIR, { recursive: true });
 
+  const force = process.argv.includes('--force');
+  const topics = TOPICS.filter((t) => force || !fsSync.existsSync(path.join(SEO_DIR, `${t.slug}.html`)));
+  console.log(`[seo] 待生成 ${topics.length}/${TOPICS.length} 词条（${force ? 'force 全量' : '跳过已有'}）`);
+
   const results = [];
   let ok = 0;
-  for (const topic of TOPICS) {
+  for (const topic of topics) {
     try {
       const session = topic.type === 'glossary' ? glossarySession : tutorialSession;
       const prompt = `术语/主题：${topic.term}\n搜索意图：${topic.query}\nslug：${topic.slug}\n候选相关 slug（供 related 挑选）：${slugList}`;
@@ -310,26 +361,34 @@ async function main() {
     }
   }
 
-  // 索引页
-  await writeIndexPages(results);
-
-  // sitemap
-  await writeSitemap(results);
-
-  // 推送清单
-  const urls = results.map((r) => r.url).concat(results.filter((r) => r.enUrl).map((r) => r.enUrl));
+  // 索引页 / sitemap / 推送清单（从目录重建，增量运行不丢已有页面）
+  const allSlugs = (await fs.readdir(SEO_DIR)).filter((f) => f.endsWith('.html') && f !== 'index.html').map((f) => f.replace(/\.html$/, ''));
+  await writeIndexPages(allSlugs);
+  await writeSitemap(allSlugs);
+  const urls = [];
+  for (const slug of allSlugs) {
+    urls.push(`${BASE}/seo/${slug}.html`);
+    if (fsSync.existsSync(path.join(EN_SEO_DIR, `${slug}.html`))) urls.push(`${BASE}/en/seo/${slug}.html`);
+  }
   await fs.writeFile(path.join(ROOT, 'scripts', 'seo_urls.txt'), urls.join('\n') + '\n', 'utf8');
 
-  console.log(`[seo] done. 生成 ${ok}/${TOPICS.length} 词条，共 ${urls.length} 个 URL`);
+  console.log(`[seo] done. 本次生成 ${ok}/${topics.length}，全站共 ${allSlugs.length} 词条 / ${urls.length} URL`);
 }
 
-async function writeIndexPages(results) {
-  const date = new Date().toISOString().slice(0, 10);
+async function writeIndexPages(slugs) {
   for (const en of [false, true]) {
     const dir = en ? EN_SEO_DIR : SEO_DIR;
     const prefix = en ? '/en' : '';
     const home = en ? 'TA Toolbox' : 'TA工具箱';
-    const list = results.map((r) => `<li><a href="${prefix}/seo/${r.slug}.html">${esc(r.title)}</a></li>`).join('\n');
+    const list = slugs.map((slug) => {
+      let title = slug;
+      try {
+        const h = fsSync.readFileSync(path.join(dir, `${slug}.html`), 'utf8');
+        const m = /<title>([^<]*)<\/title>/.exec(h);
+        if (m) title = m[1].replace(new RegExp(en ? ' - TA Toolbox$' : ' - TA工具箱$'), '');
+      } catch {}
+      return `<li><a href="${prefix}/seo/${slug}.html">${esc(title)}</a></li>`;
+    }).join('\n');
     const html = `<!DOCTYPE html>
 <html lang="${en ? 'en' : 'zh-CN'}">
 <head>
@@ -351,16 +410,19 @@ async function writeIndexPages(results) {
   }
 }
 
-async function writeSitemap(results) {
+async function writeSitemap(slugs) {
   const date = new Date().toISOString().slice(0, 10);
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-  for (const r of results) {
-    xml += `  <url><loc>${esc(r.url)}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>\n`;
-    if (r.enUrl) xml += `  <url><loc>${esc(r.enUrl)}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>\n`;
+  let n = 0;
+  for (const slug of slugs) {
+    xml += `  <url><loc>${esc(`${BASE}/seo/${slug}.html`)}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>\n`; n++;
+    if (fsSync.existsSync(path.join(EN_SEO_DIR, `${slug}.html`))) {
+      xml += `  <url><loc>${esc(`${BASE}/en/seo/${slug}.html`)}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>\n`; n++;
+    }
   }
   xml += '</urlset>\n';
   await fs.writeFile(SITEMAP_FILE, xml, 'utf8');
-  console.log(`[seo] sitemap-seo.xml written with ${results.length * 2} URLs`);
+  console.log(`[seo] sitemap-seo.xml written with ${n} URLs`);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI绘画在线文生图工具使用教程 - TA工具箱</title>
+<meta name="description" content="本教程介绍如何使用在线AI绘画工具进行文生图创作。涵盖工具选择、提示词编写技巧、参数设置、生成步骤及常见问题解答，帮助零基础用户快速上手，生成高质量AI图片。">
+<meta name="keywords" content="AI绘画,在线文生图,提示词,Stable Diffusion,Midjourney,DALL·E,文心一格,通义万相,生成参数,负面提示词">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/how-to-ai-draw.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/how-to-ai-draw.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-ai-draw.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"工具教程","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"AI绘画在线文生图工具使用教程"}]},{"@type":"HowTo","name":"AI绘画在线文生图工具使用教程","headline":"AI绘画在线文生图工具使用教程","description":"本教程介绍如何使用在线AI绘画工具进行文生图创作。涵盖工具选择、提示词编写技巧、参数设置、生成步骤及常见问题解答，帮助零基础用户快速上手，生成高质量AI图片。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/how-to-ai-draw.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/how-to-ai-draw.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"为什么我生成的图片很模糊？","acceptedAnswer":{"@type":"Answer","text":"可能原因：图片尺寸过小、采样步数太低、模型质量不高。建议调大尺寸、增加步数至30左右，并选择高质量模型。"}},{"@type":"Question","name":"提示词用中文还是英文？","acceptedAnswer":{"@type":"Answer","text":"多数国外工具对英文支持更好，但国内工具如文心一格、通义万相支持中文。建议英文提示词为主，可借助翻译工具。"}},{"@type":"Question","name":"如何固定生成同一角色的不同姿势？","acceptedAnswer":{"@type":"Answer","text":"使用角色参考图功能，或使用同一seed值并微调提示词，也可训练专属LoRA模型。"}},{"@type":"Question","name":"生成图片有版权吗？","acceptedAnswer":{"@type":"Answer","text":"不同工具规定不同。一般用户拥有生成图片的使用权，但商用需注意平台条款，部分开源模型允许商用。"}},{"@type":"Question","name":"免费在线工具和付费工具区别大吗？","acceptedAnswer":{"@type":"Answer","text":"付费工具通常生成质量更高、速度更快、功能更多。免费工具可能有次数限制或水印。可根据需求选择。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">工具教程</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">工具教程</a></p>
+    <h1>AI绘画在线文生图工具使用教程</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>选择合适的在线AI绘画工具</h2>
+<p>目前主流的在线AI绘画文生图工具包括：</p>
+<ul>
+<li>**Midjourney**：以艺术风格著称，需要通过Discord使用，生成质量高。</li>
+<li>**Stable Diffusion WebUI**：开源免费，可本地部署或使用在线托管平台，可定制性强。</li>
+<li>**DALL·E 3**：由OpenAI开发，集成在ChatGPT中，对自然语言理解较好。</li>
+<li>**文心一格、通义万相**：国产工具，支持中文提示词，访问方便。</li>
+</ul>
+<p>对于新手，建议从**在线平台**（如即梦、LiblibAI）开始，无需配置环境，注册即可使用。</p>
+<h2>编写有效的提示词（Prompt）</h2>
+<p>提示词是文生图的关键。基本结构为：**主体描述 + 风格/艺术家 + 细节/光照 + 画质标签**。</p>
+<p>示例：</p>
+<p>`一个穿着汉服的女孩，站在樱花树下，唯美古风，柔和光线，高质量，细节丰富，8k`</p>
+<p>技巧：</p>
+<ul>
+<li>使用具体名词和形容词，避免模糊表述。</li>
+<li>指定风格，如“赛博朋克”、“水彩”、“油画”。</li>
+<li>添加负面提示词（Negative Prompt）排除不想要的内容，如“低质量，模糊，变形”。</li>
+<li>参考优秀作品的提示词进行学习。</li>
+</ul>
+<h2>设置生成参数</h2>
+<p>不同工具参数略有差异，常见参数包括：</p>
+<ul>
+<li>**图片尺寸**：影响构图和细节，常用512x512、768x1024等。</li>
+<li>**采样步数（Steps）**：一般20-30步足够，过高可能过拟合。</li>
+<li>**引导系数（CFG Scale）**：控制提示词符合程度，7-10较常用。</li>
+<li>**种子（Seed）**：固定种子可复现相同图片。</li>
+<li>**模型选择**：不同模型擅长不同风格，可切换尝试。</li>
+</ul>
+<h2>在线文生图操作步骤</h2>
+<ol>
+<li>打开所选工具的网页（如即梦：https://jimeng.jianying.com）。</li>
+<li>注册/登录账号。</li>
+<li>找到“文生图”或“Text to Image”功能入口。</li>
+<li>在文本框中输入提示词，可添加负面提示词。</li>
+<li>设置图片尺寸、数量、风格等参数。</li>
+<li>点击“生成”按钮，等待几秒到几分钟。</li>
+<li>预览生成结果，选择满意的图片下载保存。</li>
+<li>若效果不理想，可调整提示词或参数后重新生成。</li>
+</ul>
+<h2>进阶技巧与提示</h2>
+<ul>
+<li>**迭代优化**：先快速生成低步数草图，锁定构图后再提高步数和质量。</li>
+<li>**参考图功能**：部分工具支持上传参考图，结合提示词实现风格迁移或人物一致性。</li>
+<li>**局部重绘**：对不满意的区域进行涂鸦重绘，提升细节。</li>
+<li>**批量生成**：一次生成多张，从中挑选最佳。</li>
+<li>**社区学习**：浏览工具社区，借鉴他人提示词和参数。</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>为什么我生成的图片很模糊？</h3><p>可能原因：图片尺寸过小、采样步数太低、模型质量不高。建议调大尺寸、增加步数至30左右，并选择高质量模型。</p></div>
+<div class="faq-item"><h3>提示词用中文还是英文？</h3><p>多数国外工具对英文支持更好，但国内工具如文心一格、通义万相支持中文。建议英文提示词为主，可借助翻译工具。</p></div>
+<div class="faq-item"><h3>如何固定生成同一角色的不同姿势？</h3><p>使用角色参考图功能，或使用同一seed值并微调提示词，也可训练专属LoRA模型。</p></div>
+<div class="faq-item"><h3>生成图片有版权吗？</h3><p>不同工具规定不同。一般用户拥有生成图片的使用权，但商用需注意平台条款，部分开源模型允许商用。</p></div>
+<div class="faq-item"><h3>免费在线工具和付费工具区别大吗？</h3><p>付费工具通常生成质量更高、速度更快、功能更多。免费工具可能有次数限制或水印。可根据需求选择。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/seo/how-to-ai-image.html">AI 通用生图</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a> · <a href="https://tools.treasuregrove.art/seo/how-to-chatgpt.html">ChatGPT 对话</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

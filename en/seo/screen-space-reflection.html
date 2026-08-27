@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screen Space Reflection (SSR) - TA Toolbox</title>
+<meta name="description" content="Screen Space Reflection (SSR) is a real-time reflection technique based on screen-space information, using depth buffer and normal information to compute reflections. This article introduces its principles, advantages, limitations, and optimization methods.">
+<meta name="keywords" content="screen space reflection, SSR, reflection, ray marching, depth buffer, real-time rendering, game development, post-processing, performance optimization">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Screen Space Reflection (SSR)"}]},{"@type":"Article","name":"Screen Space Reflection (SSR)","headline":"Screen Space Reflection (SSR)","description":"Screen Space Reflection (SSR) is a real-time reflection technique based on screen-space information, using depth buffer and normal information to compute reflections. This article introduces its principles, advantages, limitations, and optimization methods.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/screen-space-reflection.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/screen-space-reflection.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between SSR and ray-traced reflections?","acceptedAnswer":{"@type":"Answer","text":"SSR only uses screen-space information, cannot reflect off-screen objects, and has limited accuracy; ray-traced reflections can handle reflections in any direction, more accurate but with higher performance cost."}},{"@type":"Question","name":"Does SSR support rough surface reflections?","acceptedAnswer":{"@type":"Answer","text":"Yes, but rough surface reflections are blurry, requiring more samples or pre-filtering. SSR works best for smooth surfaces; rough surfaces can rely on reflection probes."}},{"@type":"Question","name":"How to reduce SSR noise?","acceptedAnswer":{"@type":"Answer","text":"Use temporal filtering, spatial filtering, increase marching precision, or use importance sampling. Combining with blur can also help."}},{"@type":"Question","name":"Is SSR suitable for mobile platforms?","acceptedAnswer":{"@type":"Answer","text":"Mobile platforms have limited performance, SSR may be too expensive. But simplified versions can be used, or rely on reflection probes."}},{"@type":"Question","name":"What buffers does SSR require?","acceptedAnswer":{"@type":"Answer","text":"Requires color buffer, depth buffer, and normal buffer. These are easily obtained in deferred rendering; forward rendering may need extra generation."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Screen Space Reflection (SSR)</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Screen Space Reflection</h2>
+<p>Screen Space Reflection (SSR) is a real-time rendering technique used to simulate reflections on smooth surfaces. It computes reflection rays based on screen-space information (such as color buffer, depth buffer, normal buffer) rather than relying on pre-baked environment maps. SSR provides more accurate dynamic reflections than reflection probes, especially for reflecting objects visible on screen.</p>
+<h2>How SSR Works</h2>
+<p>The basic process of SSR is as follows:</p>
+<ol>
+<li>For each pixel, compute the reflection direction based on its world-space position and normal.</li>
+<li>Perform ray marching in screen space along the reflection direction, sampling the depth buffer to find surfaces intersected by the reflection ray.</li>
+<li>If an intersection is found, retrieve the color from the color buffer at that point as the reflection color.</li>
+<li>If no intersection is found, fall back to other reflection sources (e.g., reflection probes).</li>
+</ul>
+<p>Ray marching can use fixed steps, hierarchical steps (Hi-Z), or hybrid methods to improve performance and accuracy.</p>
+<h2>Advantages of SSR</h2>
+<ul>
+<li>**Dynamic Reflections**: Can reflect dynamic objects on screen, not limited by pre-baking.</li>
+<li>**Rich Detail**: Reflection content is based on actual rendered results, high realism.</li>
+<li>**No Extra Geometry Rendering**: Uses only screen-space data, cheaper than planar reflections or render-to-texture.</li>
+</ul>
+<h2>Limitations of SSR</h2>
+<ul>
+<li>**Screen-Space Limitation**: Can only reflect objects visible on screen; off-screen or back-facing objects cannot be reflected.</li>
+<li>**Performance Cost**: Ray marching requires multiple depth samples, can be expensive at high resolutions.</li>
+<li>**Noise**: If marching precision is insufficient, noise or banding may occur, requiring post-process denoising.</li>
+<li>**Thickness Issue**: For thin objects, depth comparison may be inaccurate, causing missing or incorrect reflections.</li>
+</ul>
+<h2>SSR Optimization</h2>
+<ul>
+<li>**Reduce Resolution**: Compute SSR at half or quarter resolution, then upsample.</li>
+<li>**Hierarchical Depth (Hi-Z)**: Use mipmap chain to accelerate ray marching, reducing steps.</li>
+<li>**Limit Reflection Distance**: Set a maximum reflection distance to avoid long marches.</li>
+<li>**Temporal Filtering**: Combine with previous frame results to reduce noise.</li>
+<li>**Importance Sampling**: Adjust marching strategy based on material roughness.</li>
+</ul>
+<h2>Combining SSR with Other Reflection Techniques</h2>
+<p>SSR is often used in conjunction with reflection probes and planar reflections. When SSR fails, fall back to reflection probes to ensure reflection information is always available. Ray tracing can also be used for more complete reflections.</p>
+<h2>Conclusion</h2>
+<p>SSR is an important reflection technique in modern real-time rendering, offering a good balance between performance and quality.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between SSR and ray-traced reflections?</h3><p>SSR only uses screen-space information, cannot reflect off-screen objects, and has limited accuracy; ray-traced reflections can handle reflections in any direction, more accurate but with higher performance cost.</p></div>
+<div class="faq-item"><h3>Does SSR support rough surface reflections?</h3><p>Yes, but rough surface reflections are blurry, requiring more samples or pre-filtering. SSR works best for smooth surfaces; rough surfaces can rely on reflection probes.</p></div>
+<div class="faq-item"><h3>How to reduce SSR noise?</h3><p>Use temporal filtering, spatial filtering, increase marching precision, or use importance sampling. Combining with blur can also help.</p></div>
+<div class="faq-item"><h3>Is SSR suitable for mobile platforms?</h3><p>Mobile platforms have limited performance, SSR may be too expensive. But simplified versions can be used, or rely on reflection probes.</p></div>
+<div class="faq-item"><h3>What buffers does SSR require?</h3><p>Requires color buffer, depth buffer, and normal buffer. These are easily obtained in deferred rendering; forward rendering may need extra generation.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/en/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html">光线追踪基础</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

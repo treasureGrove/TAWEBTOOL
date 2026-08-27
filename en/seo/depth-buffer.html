@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Depth Buffer - TA Toolbox</title>
+<meta name="description" content="The depth buffer (also known as Z-Buffer) stores depth values for each pixel, used to determine the ordering of objects and solve visibility issues. This article explains its principles, precision problems, optimization methods, and applications in rendering.">
+<meta name="keywords" content="depth buffer, Z-Buffer, depth test, visibility, 3D rendering, Z-fighting, Early-Z, rendering optimization, graphics pipeline">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/depth-buffer.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/depth-buffer.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Depth Buffer"}]},{"@type":"Article","name":"Depth Buffer","headline":"Depth Buffer","description":"The depth buffer (also known as Z-Buffer) stores depth values for each pixel, used to determine the ordering of objects and solve visibility issues. This article explains its principles, precision problems, optimization methods, and applications in rendering.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/depth-buffer.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/depth-buffer.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between depth buffer and stencil buffer?","acceptedAnswer":{"@type":"Answer","text":"The depth buffer stores depth values for visibility determination, while the stencil buffer stores integer markers for controlling rendering regions or implementing special effects (like shadow volumes). They can share the same buffer."}},{"@type":"Question","name":"How to solve Z-fighting?","acceptedAnswer":{"@type":"Answer","text":"Increase depth buffer precision (e.g., 24-bit or 32-bit), reduce the distance between near and far clip planes, use polygon offset, or adopt Reverse-Z technique."}},{"@type":"Question","name":"How to handle depth for transparent objects?","acceptedAnswer":{"@type":"Answer","text":"Transparent objects usually disable depth writes (to avoid blocking subsequent transparent objects) but enable depth testing (to ensure not penetrating opaque objects), and are rendered back-to-front."}},{"@type":"Question","name":"What is Early-Z?","acceptedAnswer":{"@type":"Answer","text":"Early-Z is a hardware optimization that performs depth testing before the fragment shader. If the fragment is occluded, the shader is skipped, saving computation. However, certain operations (like enabling alpha test or depth write) may disable Early-Z."}},{"@type":"Question","name":"Why is depth buffer precision low at far distances?","acceptedAnswer":{"@type":"Answer","text":"Because depth after projection transformation is non-linear, with most precision concentrated near the camera. This adapts to human eye sensitivity to near objects, but distant objects are prone to Z-fighting."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Depth Buffer</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is a Depth Buffer</h2>
+<p>The depth buffer is a buffer in graphics rendering that stores a depth value for each pixel, corresponding to the color buffer. The depth value represents the distance from the pixel to the camera (or a transformed depth), typically ranging from 0.0 to 1.0, where 0.0 is nearest and 1.0 is farthest.</p>
+<p>During rendering, the GPU performs a depth test, comparing the depth value of the new fragment with the stored value in the depth buffer. If the test passes (e.g., the new fragment is closer), the color and depth buffers are updated; otherwise, the fragment is discarded. This mechanism ensures objects are displayed in correct front-to-back order, solving visibility issues.</p>
+<h2>How the Depth Buffer Works</h2>
+<p>The depth buffer stores a depth value per pixel, with precision depending on the texture format. Common formats include:</p>
+<ul>
+<li>**16-bit**: lower precision, may cause depth conflicts.</li>
+<li>**24-bit**: commonly used, higher precision.</li>
+<li>**32-bit float**: used for high precision requirements, such as shadow mapping.</li>
+</ul>
+<p>Depth values are non-linear after projection transformation, with higher precision near the camera and lower precision far away. This non-linear distribution better utilizes limited bit depth but may lead to Z-fighting for distant objects.</p>
+<h2>Depth Test and Depth Write</h2>
+<ul>
+<li>**Depth Test Function**: Can be set to Less, Greater, Equal, etc. Default is Less, meaning a fragment passes if its depth is less than the stored depth.</li>
+<li>**Depth Write**: After passing the test, you can choose whether to update the depth buffer. For transparent objects, depth write is typically disabled to avoid interfering with subsequent transparent rendering.</li>
+</ul>
+<h2>Depth Buffer Precision Issues</h2>
+<ul>
+<li>**Z-fighting**: When two planes are extremely close, insufficient depth precision may cause alternating display and flickering. Solutions include increasing depth buffer precision, adjusting near/far clip planes, using polygon offset, etc.</li>
+<li>**Insufficient precision far away**: Non-linear depth results in low precision at distance, which can be improved by adjusting the projection matrix or using Reverse-Z technique.</li>
+</ul>
+<h2>Depth Buffer Optimization</h2>
+<ul>
+<li>**Early-Z/Depth Prepass**: Render depth to the depth buffer first, then during the main rendering use depth test as Equal to skip the fragment shader for occluded pixels, reducing overdraw.</li>
+<li>**Avoid unnecessary depth writes**: Enable depth writes for opaque objects; disable for transparent objects.</li>
+<li>**Use appropriate depth format**: Choose based on scene requirements; mobile devices often use 24-bit or 16-bit.</li>
+</ul>
+<h2>Depth Buffer and Deferred Rendering</h2>
+<p>In deferred rendering, the depth buffer is used to reconstruct pixel world-space positions, so it is often stored in high precision (e.g., 32-bit float), or depth reconstruction techniques are used.</p>
+<h2>Conclusion</h2>
+<p>The depth buffer is fundamental to 3D rendering. Understanding its principles and characteristics helps solve visibility and performance issues.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between depth buffer and stencil buffer?</h3><p>The depth buffer stores depth values for visibility determination, while the stencil buffer stores integer markers for controlling rendering regions or implementing special effects (like shadow volumes). They can share the same buffer.</p></div>
+<div class="faq-item"><h3>How to solve Z-fighting?</h3><p>Increase depth buffer precision (e.g., 24-bit or 32-bit), reduce the distance between near and far clip planes, use polygon offset, or adopt Reverse-Z technique.</p></div>
+<div class="faq-item"><h3>How to handle depth for transparent objects?</h3><p>Transparent objects usually disable depth writes (to avoid blocking subsequent transparent objects) but enable depth testing (to ensure not penetrating opaque objects), and are rendered back-to-front.</p></div>
+<div class="faq-item"><h3>What is Early-Z?</h3><p>Early-Z is a hardware optimization that performs depth testing before the fragment shader. If the fragment is occluded, the shader is skipped, saving computation. However, certain operations (like enabling alpha test or depth write) may disable Early-Z.</p></div>
+<div class="faq-item"><h3>Why is depth buffer precision low at far distances?</h3><p>Because depth after projection transformation is non-linear, with most precision concentrated near the camera. This adapts to human eye sensitivity to near objects, but distant objects are prone to Z-fighting.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/stencil-buffer.html">模板缓冲</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cubemap - TA Toolbox</title>
+<meta name="description" content="A cubemap is a texture type composed of six square textures, representing the images seen from a center point in six directions (up, down, left, right, forward, back). It is commonly used for environment mapping, skyboxes, and reflections. This article introduces its principles, creation methods, and applications.">
+<meta name="keywords" content="cubemap, skybox, environment mapping, reflection, IBL, image-based lighting, game development, texture, rendering">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/cubemap.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/cubemap.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/cubemap.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Cubemap"}]},{"@type":"Article","name":"Cubemap","headline":"Cubemap","description":"A cubemap is a texture type composed of six square textures, representing the images seen from a center point in six directions (up, down, left, right, forward, back). It is commonly used for environment mapping, skyboxes, and reflections. This article introduces its principles, creation methods, and applications.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/cubemap.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/cubemap.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between a cubemap and a 2D texture?","acceptedAnswer":{"@type":"Answer","text":"2D textures are sampled using UV coordinates, while cubemaps are sampled using 3D direction vectors, allowing representation of a full environment. A cubemap is composed of six 2D textures."}},{"@type":"Question","name":"How to generate a cubemap?","acceptedAnswer":{"@type":"Answer","text":"Use 6 square images, convert from a panorama, or render the scene to six faces in real time. Many engines provide tools for automatic generation."}},{"@type":"Question","name":"How are cubemaps used in PBR?","acceptedAnswer":{"@type":"Answer","text":"In Image-Based Lighting (IBL), cubemaps store environmental radiance, used to compute indirect diffuse and specular reflections. Pre-filtered mipmaps are often used to approximate reflections at different roughness levels."}},{"@type":"Question","name":"Why do cubemaps have seams?","acceptedAnswer":{"@type":"Answer","text":"Seams usually occur because the six face textures are not continuous at edges, or filtering is inconsistent during sampling. Solutions include using seamless textures and enabling seamless cubemap sampling if hardware supports it."}},{"@type":"Question","name":"How to optimize cubemap memory?","acceptedAnswer":{"@type":"Answer","text":"Reduce resolution, use compressed formats (like BC6H for HDR), store only necessary mip levels. On mobile, consider using pre-convolved irradiance maps and pre-filtered environment maps."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Cubemap</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is a Cubemap</h2>
+<p>A cubemap is a special texture consisting of six independent 2D textures, corresponding to the six faces of a cube: positive X, negative X, positive Y, negative Y, positive Z, and negative Z. Together, these six faces represent a panoramic image observed from the center of the cube in all directions.</p>
+<p>In shaders, a cubemap is sampled using a three-dimensional direction vector. The GPU selects the appropriate texture face based on the direction vector and performs interpolation.</p>
+<h2>Uses of Cubemaps</h2>
+<ul>
+<li>**Skybox**: Renders the scene background, simulating distant environments.</li>
+<li>**Environment Mapping**: Used for reflection and refraction effects, simulating reflections of the surrounding environment on object surfaces.</li>
+<li>**Image-Based Lighting (IBL)**: Stores precomputed environment lighting information for PBR materials.</li>
+<li>**Dynamic Reflections**: Can render the scene to a cubemap in real time for dynamic reflections.</li>
+<li>**Light Probes**: Captures ambient lighting at specific locations for indirect lighting on dynamic objects.</li>
+</ul>
+<h2>Creating Cubemaps</h2>
+<p>Cubemaps can be created in the following ways:</p>
+<ul>
+<li>**Static Images**: Use 6 square textures, each corresponding to a face, import into the engine and set as a cubemap.</li>
+<li>**Panorama Conversion**: Convert an equirectangular panorama image to a cubemap.</li>
+<li>**Real-time Rendering**: Place a camera in the scene, render six directions to render targets, generating a dynamic cubemap.</li>
+<li>**Generate HDR Environment Maps**: Use tools like Substance or Blender for baking.</li>
+</ul>
+<h2>Sampling Cubemaps</h2>
+<p>In shaders, use `samplerCUBE` (or `TextureCube`) for sampling. Sampling requires a 3D direction vector that points from the cubemap center in the sampling direction. The GPU finds the cube face intersected by that direction and returns the color at the corresponding texture coordinate.</p>
+<h2>Cubemaps and Mipmaps</h2>
+<p>Cubemaps support mipmap chains, each mip level is a downscaled version of the original. In reflections and IBL, roughness is often used to select the mip level, simulating blurred reflections on surfaces with different roughness.</p>
+<h2>Considerations for Cubemaps</h2>
+<ul>
+<li>**Seams**: If the edges of the six faces are inconsistent, visible seams may appear. Ensure texture edges are seamless.</li>
+<li>**Orientation Conventions**: Different engines may have different conventions for cubemap face layout and orientation (e.g., Y-axis flip). Pay attention when importing.</li>
+<li>**Memory Usage**: A cubemap contains six faces, so memory is 6 times that of a normal 2D texture. Optimize as needed.</li>
+<li>**Performance**: Dynamically generating cubemaps requires rendering the scene six times, which is costly; use with caution.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Cubemaps are fundamental for environment effects and widely used in modern rendering pipelines.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between a cubemap and a 2D texture?</h3><p>2D textures are sampled using UV coordinates, while cubemaps are sampled using 3D direction vectors, allowing representation of a full environment. A cubemap is composed of six 2D textures.</p></div>
+<div class="faq-item"><h3>How to generate a cubemap?</h3><p>Use 6 square images, convert from a panorama, or render the scene to six faces in real time. Many engines provide tools for automatic generation.</p></div>
+<div class="faq-item"><h3>How are cubemaps used in PBR?</h3><p>In Image-Based Lighting (IBL), cubemaps store environmental radiance, used to compute indirect diffuse and specular reflections. Pre-filtered mipmaps are often used to approximate reflections at different roughness levels.</p></div>
+<div class="faq-item"><h3>Why do cubemaps have seams?</h3><p>Seams usually occur because the six face textures are not continuous at edges, or filtering is inconsistent during sampling. Solutions include using seamless textures and enabling seamless cubemap sampling if hardware supports it.</p></div>
+<div class="faq-item"><h3>How to optimize cubemap memory?</h3><p>Reduce resolution, use compressed formats (like BC6H for HDR), store only necessary mip levels. On mobile, consider using pre-convolved irradiance maps and pre-filtered environment maps.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">屏幕空间反射 SSR</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

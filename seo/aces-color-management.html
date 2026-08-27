@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACES 色彩管理 - TA工具箱</title>
+<meta name="description" content="ACES（Academy Color Encoding System）是电影行业开发的色彩管理系统，用于统一不同设备和流程中的颜色。本文介绍ACES的概念、工作流程、优势及在实时渲染中的应用。">
+<meta name="keywords" content="ACES,色彩管理,色调映射,Academy Color Encoding System,颜色空间,游戏开发,电影制作,HDR,线性空间,后期处理">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/aces-color-management.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/aces-color-management.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"ACES 色彩管理"}]},{"@type":"Article","name":"ACES 色彩管理","headline":"ACES 色彩管理","description":"ACES（Academy Color Encoding System）是电影行业开发的色彩管理系统，用于统一不同设备和流程中的颜色。本文介绍ACES的概念、工作流程、优势及在实时渲染中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/aces-color-management.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/aces-color-management.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"ACES和sRGB有什么关系？","acceptedAnswer":{"@type":"Answer","text":"sRGB是常见的显示色彩空间，而ACES是一个色彩管理系统，可以输出到sRGB。ACES定义了更大的工作色彩空间，避免颜色损失，并通过ODT转换到sRGB显示。"}},{"@type":"Question","name":"为什么ACES色调映射比Reinhard好？","acceptedAnswer":{"@type":"Answer","text":"ACES色调映射能更好地保留高光细节和色彩饱和度，避免亮部变灰，同时提供更自然的对比度，更接近电影效果。"}},{"@type":"Question","name":"在Unity中如何使用ACES？","acceptedAnswer":{"@type":"Answer","text":"在Unity的Post Processing或URP/HDRP中，选择Color Grading，然后选择ACES色调映射。确保项目使用线性空间和HDR渲染。"}},{"@type":"Question","name":"ACES只用于电影吗？","acceptedAnswer":{"@type":"Answer","text":"不，ACES也广泛应用于游戏、动画和实时渲染。游戏引擎内置ACES色调映射，以提升画面质量。"}},{"@type":"Question","name":"ACES会增加性能开销吗？","acceptedAnswer":{"@type":"Answer","text":"ACES色调映射的计算成本较低，通常是后处理中的一小部分。整体颜色管理流程对性能影响微小。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>ACES 色彩管理</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是ACES</h2>
+<p>ACES（Academy Color Encoding System，学院色彩编码系统）是由美国电影艺术与科学学院开发的开放色彩管理标准，旨在为电影、电视和数字媒体提供统一的色彩工作流程。ACES定义了一组色彩空间、转换函数和规范，确保从拍摄到后期到发行的颜色一致性。</p>
+<p>在实时渲染和游戏开发中，ACES常特指ACES色调映射（ACES Tone Mapping）和ACES色彩空间转换，用于将HDR渲染结果转换为适合显示的颜色。</p>
+<h2>ACES的组成</h2>
+<p>ACES包含多个核心组件：</p>
+<ul>
+<li>**ACES色彩空间**：一个超大色域的色彩空间，能包含所有可见颜色，避免色彩信息丢失。</li>
+<li>**输入设备转换（IDT）**：将不同摄像机的色彩空间转换为ACES。</li>
+<li>**输出设备转换（ODT）**：将ACES转换为特定显示设备的色彩空间（如sRGB、Rec.709、HDR10）。</li>
+<li>**参考渲染变换（RRT）**：将场景参考的线性数据转换为显示参考的色调映射结果。</li>
+<li>**ACES色调映射**：常用的近似实现，如ACES Filmic Tone Mapping，将HDR值映射到LDR范围。</li>
+</ul>
+<h2>为什么使用ACES</h2>
+<ul>
+<li>**色彩一致性**：在不同设备和软件之间保持颜色一致。</li>
+<li>**高质量色调映射**：ACES色调映射提供自然的色彩和对比度，保留高光细节，避免传统Reinhard的灰暗感。</li>
+<li>**未来兼容性**：ACES支持HDR和广色域，适应未来显示技术。</li>
+<li>**行业标准**：被电影和游戏行业广泛采用，便于协作。</li>
+</ul>
+<h2>ACES色调映射</h2>
+<p>在游戏引擎中，最常用的是ACES色调映射，其函数输入线性HDR颜色，输出适合显示的LDR颜色。常见实现有：</p>
+<ul>
+<li>**ACES Filmic Tone Mapping**（Narkowicz 2015近似）：简单高效，广泛使用。</li>
+<li>**ACES Central**：更接近官方RRT，但计算稍复杂。</li>
+</ul>
+<p>例如，Unity的Post Processing Stack和Unreal Engine都提供了ACES色调映射选项。</p>
+<h2>实现ACES色彩管理</h2>
+<p>在实时渲染管线中，通常按照以下步骤集成ACES：</p>
+<ol>
+<li>**线性空间渲染**：确保场景光照在线性空间计算。</li>
+<li>**HDR浮点渲染目标**：存储HDR颜色。</li>
+<li>**应用ACES色调映射**：在后处理阶段将HDR颜色转换为显示颜色。</li>
+<li>**颜色分级**：在ACES空间或显示空间进行调色。</li>
+<li>**输出转换**：根据目标显示设备应用ODT（如sRGB或HDR10）。</li>
+</ul>
+<p>许多引擎已经内置ACES，开发者只需选择相应的颜色管理配置。</p>
+<h2>ACES与sRGB的区别</h2>
+<p>sRGB是一个具体的色彩空间，用于消费级显示器；ACES是一个更广泛的色彩管理系统，包含色彩空间和转换流程。ACES可以将sRGB作为输出目标之一。</p>
+<h2>总结</h2>
+<p>ACES色彩管理为现代渲染提供了标准化的颜色处理流程，尤其其色调映射算法在游戏和电影中广受欢迎。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>ACES和sRGB有什么关系？</h3><p>sRGB是常见的显示色彩空间，而ACES是一个色彩管理系统，可以输出到sRGB。ACES定义了更大的工作色彩空间，避免颜色损失，并通过ODT转换到sRGB显示。</p></div>
+<div class="faq-item"><h3>为什么ACES色调映射比Reinhard好？</h3><p>ACES色调映射能更好地保留高光细节和色彩饱和度，避免亮部变灰，同时提供更自然的对比度，更接近电影效果。</p></div>
+<div class="faq-item"><h3>在Unity中如何使用ACES？</h3><p>在Unity的Post Processing或URP/HDRP中，选择Color Grading，然后选择ACES色调映射。确保项目使用线性空间和HDR渲染。</p></div>
+<div class="faq-item"><h3>ACES只用于电影吗？</h3><p>不，ACES也广泛应用于游戏、动画和实时渲染。游戏引擎内置ACES色调映射，以提升画面质量。</p></div>
+<div class="faq-item"><h3>ACES会增加性能开销吗？</h3><p>ACES色调映射的计算成本较低，通常是后处理中的一小部分。整体颜色管理流程对性能影响微小。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/seo/color-grading.html">调色 Color Grading</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

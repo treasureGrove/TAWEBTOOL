@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skeletal Animation - TA Toolbox</title>
+<meta name="description" content="Skeletal animation is a computer animation technique that drives mesh vertex deformation through a hierarchy of bones, widely used in games and films. This article introduces its principles, skinning algorithms, advantages and disadvantages, and engine implementation.">
+<meta name="keywords" content="skeletal animation, skinning, linear blend skinning, dual quaternion skinning, bone hierarchy, vertex weights, game animation, character animation">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/skeletal-animation.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/skeletal-animation.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/skeletal-animation.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Skeletal Animation"}]},{"@type":"Article","name":"Skeletal Animation","headline":"Skeletal Animation","description":"Skeletal animation is a computer animation technique that drives mesh vertex deformation through a hierarchy of bones, widely used in games and films. This article introduces its principles, skinning algorithms, advantages and disadvantages, and engine implementation.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/skeletal-animation.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/skeletal-animation.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between skeletal animation and per-vertex animation?","acceptedAnswer":{"@type":"Answer","text":"Per-vertex animation directly stores vertex position sequences, large data and hard to blend; skeletal animation drives vertices indirectly through bone transforms, small data, supports blending and reuse."}},{"@type":"Question","name":"What are skin weights?","acceptedAnswer":{"@type":"Answer","text":"Skin weights define the influence of each bone on a specific vertex, usually summing to 1. Higher weight means the vertex follows that bone more closely. Weight painting is a key step in skinning."}},{"@type":"Question","name":"What are the disadvantages of linear blend skinning?","acceptedAnswer":{"@type":"Answer","text":"At large joint bends, linear blend skinning may cause volume collapse (candy wrapper artifact). Dual quaternion skinning can alleviate this."}},{"@type":"Question","name":"How is skeletal animation implemented on GPU?","acceptedAnswer":{"@type":"Answer","text":"Typically skinning is done in the vertex shader, with bone matrix arrays passed as constant buffers, and vertices blended based on bone indices and weights. This leverages GPU parallelism."}},{"@type":"Question","name":"How to solve joint twisting issues in skeletal animation?","acceptedAnswer":{"@type":"Answer","text":"Use advanced algorithms like dual quaternion skinning or spherical blend skinning, or add helper bones (like twist bones) to improve deformation."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Skeletal Animation</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Skeletal Animation</h2>
+<p>Skeletal animation is an animation technique that uses a hierarchical structure of bones to drive the deformation of a 3D model mesh. Unlike per-vertex animation, skeletal animation binds mesh vertices to a virtual skeleton system and moves vertices indirectly by rotating and translating bones, producing smooth and natural motions. This technique has become the mainstream method for character animation in modern games due to its efficiency and flexibility.</p>
+<h2>Core Concepts</h2>
+<h3>Bones and Joints</h3>
+<p>Bones consist of a series of joints, typically arranged in a tree hierarchy. The root bone is the starting point of the animation, and child bones inherit transformations from their parents. Each bone stores a transformation relative to its parent (position, rotation, scale), and a global transformation is obtained by multiplying matrices along the hierarchy.</p>
+<h3>Skinning</h3>
+<p>Skinning is the process of associating mesh vertices with bones. Each vertex can be influenced by one or more bones, and influence weights determine the effect of bone movement on the vertex. The final vertex position is a weighted combination of all influencing bone transformations.</p>
+<h3>Bind Pose</h3>
+<p>The bind pose is the initial skeleton position, usually T-pose or A-pose. Skinning calculations are based on vertex positions and bone spatial relationships in bind pose.</p>
+<h2>Skinning Algorithms</h2>
+<h3>Linear Blend Skinning</h3>
+<p>Most commonly used skinning algorithm. For vertex V influenced by bone i with weight wi, the deformed position is:</p>
+<p>`V' = Σ wi * Mi * V`</p>
+<p>where Mi is the global transformation matrix of bone i multiplied by the inverse bind pose matrix. Linear blend skinning is simple but may cause &quot;candy wrapper&quot; artifacts (volume collapse) at joint bends.</p>
+<h3>Dual Quaternion Skinning</h3>
+<p>Uses dual quaternions to blend transformations, avoiding rotation interpolation issues of linear blending and reducing volume loss, maintaining better volume. Slightly more complex but yields better results.</p>
+<h3>Spherical Blend Skinning</h3>
+<p>Blends around rotation centers, further improving joint deformation, but higher computational cost.</p>
+<h2>Animation Playback and Blending</h2>
+<p>Skeletal animation data is typically stored as a sequence of keyframes, each recording transformations of bones. Playback interpolates between keyframes (linear, spline, etc.) for smooth motion. Modern engines support animation blending, layering, and state machines to control complex character behaviors.</p>
+<h2>GPU Implementation</h2>
+<p>Skeletal animation is usually performed in the vertex shader. The bone transformation matrix array (Bone Matrix Palette) is passed to the shader, and vertices are transformed based on influencing bone indices and weights. Due to GPU parallel processing, performance is high. For many bones or vertices, skinning may become a bottleneck, and compute shaders can be used for optimization.</p>
+<h2>Advantages and Limitations</h2>
+<p>**Advantages**:</p>
+<ul>
+<li>Small memory footprint compared to per-vertex animation (only bone transforms, not per-frame vertex positions).</li>
+<li>Animation data can be reused; the same skeleton can drive different meshes.</li>
+<li>Supports advanced controls like animation blending and IK (Inverse Kinematics).</li>
+<li>Suitable for real-time rendering with good performance.</li>
+</ul>
+<p>**Limitations**:</p>
+<ul>
+<li>Not good at non-rigid deformations like cloth and fluids; needs physics simulation or mesh deformation.</li>
+<li>Skin weight painting is time-consuming and requires artistic skill.</li>
+<li>Linear blend skinning artifacts in extreme poses.</li>
+</ul>
+<h2>Related Tools and Pipeline</h2>
+<p>Common modeling software (Maya, Blender, 3ds Max) support bone creation, skinning, and animation. Game engines (Unity, Unreal) provide pipelines for importing and managing skeletal animation. Procedural animation and motion capture are complementary techniques.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between skeletal animation and per-vertex animation?</h3><p>Per-vertex animation directly stores vertex position sequences, large data and hard to blend; skeletal animation drives vertices indirectly through bone transforms, small data, supports blending and reuse.</p></div>
+<div class="faq-item"><h3>What are skin weights?</h3><p>Skin weights define the influence of each bone on a specific vertex, usually summing to 1. Higher weight means the vertex follows that bone more closely. Weight painting is a key step in skinning.</p></div>
+<div class="faq-item"><h3>What are the disadvantages of linear blend skinning?</h3><p>At large joint bends, linear blend skinning may cause volume collapse (candy wrapper artifact). Dual quaternion skinning can alleviate this.</p></div>
+<div class="faq-item"><h3>How is skeletal animation implemented on GPU?</h3><p>Typically skinning is done in the vertex shader, with bone matrix arrays passed as constant buffers, and vertices blended based on bone indices and weights. This leverages GPU parallelism.</p></div>
+<div class="faq-item"><h3>How to solve joint twisting issues in skeletal animation?</h3><p>Use advanced algorithms like dual quaternion skinning or spherical blend skinning, or add helper bones (like twist bones) to improve deformation.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/blend-shape.html">BlendShape 混合变形</a> · <a href="https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html">顶点着色器与片元着色器</a> · <a href="https://tools.treasuregrove.art/en/seo/compute-shader.html">计算着色器</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

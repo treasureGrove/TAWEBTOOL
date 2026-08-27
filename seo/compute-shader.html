@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>计算着色器 - TA工具箱</title>
+<meta name="description" content="计算着色器（Compute Shader）是一种在GPU上执行通用并行计算的着色器阶段，独立于图形管线，广泛用于物理模拟、后处理、AI等。本文介绍其原理、优势、应用场景及编程模型。">
+<meta name="keywords" content="计算着色器,Compute Shader,GPGPU,并行计算,DirectX,OpenGL,后处理,粒子系统,物理模拟,GPU编程">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/compute-shader.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/compute-shader.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/compute-shader.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"计算着色器"}]},{"@type":"Article","name":"计算着色器","headline":"计算着色器","description":"计算着色器（Compute Shader）是一种在GPU上执行通用并行计算的着色器阶段，独立于图形管线，广泛用于物理模拟、后处理、AI等。本文介绍其原理、优势、应用场景及编程模型。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/compute-shader.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/compute-shader.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"计算着色器和像素着色器有什么区别？","acceptedAnswer":{"@type":"Answer","text":"像素着色器是图形管线的一部分，每个像素执行一次，输出到渲染目标；计算着色器独立于管线，可自由定义线程数量和资源访问，适合通用并行计算。"}},{"@type":"Question","name":"计算着色器能直接渲染到屏幕吗？","acceptedAnswer":{"@type":"Answer","text":"不能直接渲染到屏幕，但可以写入纹理或缓冲区，然后通过图形管线（如全屏四边形）呈现结果。"}},{"@type":"Question","name":"计算着色器支持哪些API？","acceptedAnswer":{"@type":"Answer","text":"DirectX 11及以上、OpenGL 4.3及以上、Vulkan、Metal等现代图形API都支持计算着色器。"}},{"@type":"Question","name":"如何优化计算着色器性能？","acceptedAnswer":{"@type":"Answer","text":"优化内存访问模式（合并访问、使用共享内存）、选择合适的工作组大小、减少线程发散、利用向量化指令等。"}},{"@type":"Question","name":"计算着色器可以做光线追踪吗？","acceptedAnswer":{"@type":"Answer","text":"可以，计算着色器可用于实现光线追踪算法，但专用光线追踪管线（如DXR）通常更高效。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>计算着色器</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是计算着色器</h2>
+<p>计算着色器（Compute Shader）是一种可编程着色器，允许开发者利用GPU的大规模并行计算能力处理通用任务，而不仅限于图形渲染。它运行在独立的计算管线上，可以读写缓冲区和纹理，适合处理大量数据并行的问题。</p>
+<h2>核心概念</h2>
+<h3>线程与工作组</h3>
+<p>计算着色器以线程（Thread）为基本执行单元，多个线程组成工作组（Work Group）。工作组内的线程可以通过共享内存（Shared Memory）进行通信和同步。所有工作组构成一个全局的调度空间，通常用三维索引（x, y, z）标识。</p>
+<h3>着色器存储对象</h3>
+<p>计算着色器可以访问多种资源：</p>
+<ul>
+<li>**结构化缓冲区（Structured Buffer）**：存储自定义数据结构。</li>
+<li>**原始缓冲区（Raw Buffer）**：存储原始字节数据。</li>
+<li>**读写纹理（RWTexture）**：可直接读写纹理，无需渲染管线。</li>
+<li>**常量缓冲区（Constant Buffer）**：传递常量参数。</li>
+</ul>
+<h3>同步机制</h3>
+<p>工作组内线程可通过屏障（Barrier）同步执行，确保共享内存的一致性。不同工作组之间无法直接同步，通常通过多次调度或原子操作协调。</p>
+<h2>与图形管线的区别</h2>
+<p>计算着色器独立于图形管线，没有固定的输入装配、光栅化等阶段。它直接由应用程序调度执行，无需绑定顶点缓冲区、渲染目标等。因此，它更适合非图形任务，但也可以用于优化图形相关的计算（如剔除、LOD生成）。</p>
+<h2>应用场景</h2>
+<h3>后处理与图像处理</h3>
+<p>计算着色器常用于模糊、色调映射、直方图计算等后处理效果，比基于像素着色器的全屏四边形更灵活高效。</p>
+<h3>粒子系统</h3>
+<p>模拟海量粒子的运动、碰撞，存储粒子状态在缓冲区，计算着色器更新位置和速度。</p>
+<h3>物理模拟</h3>
+<p>例如布料、流体、软体等，利用并行性加速数值计算。</p>
+<h3>剔除与场景管理</h3>
+<p>在计算着色器中进行视锥体裁剪、遮挡剔除，减少渲染批次。</p>
+<h3>通用计算</h3>
+<p>如排序、矩阵运算、神经网络推理等，类似GPGPU。</p>
+<h2>编程模型与API</h2>
+<p>在DirectX 11+中，使用HLSL编写计算着色器，通过`Dispatch`调用；在OpenGL 4.3+中使用GLSL，通过`glDispatchCompute`调用。着色器代码中需要声明`numthreads`指定工作组大小。典型工作流程：</p>
+<ol>
+<li>创建计算着色器并编译。</li>
+<li>绑定输入/输出资源（UAV、SRV等）。</li>
+<li>调用`Dispatch`指定工作组数量。</li>
+<li>GPU执行着色器，结果写回资源。</li>
+</ul>
+<h2>优势与挑战</h2>
+<p>**优势**：</p>
+<ul>
+<li>高度并行，适合数据并行任务。</li>
+<li>绕过图形管线，减少固定功能开销。</li>
+<li>共享内存可加速工作组内通信。</li>
+</ul>
+<p>**挑战**：</p>
+<ul>
+<li>需要理解GPU架构，合理安排工作组大小和内存访问模式。</li>
+<li>调试较困难，需要工具支持（如NVIDIA Nsight、RenderDoc）。</li>
+<li>不同硬件之间性能差异大。</li>
+</ul>
+<h2>实践建议</h2>
+<ul>
+<li>尽量合并内存访问，避免随机读写。</li>
+<li>合理选择工作组大小，通常为64或128线程，但需测试。</li>
+<li>利用共享内存减少全局内存访问。</li>
+<li>用多个小Dispatch代替一个大Dispatch，便于负载均衡。</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>计算着色器和像素着色器有什么区别？</h3><p>像素着色器是图形管线的一部分，每个像素执行一次，输出到渲染目标；计算着色器独立于管线，可自由定义线程数量和资源访问，适合通用并行计算。</p></div>
+<div class="faq-item"><h3>计算着色器能直接渲染到屏幕吗？</h3><p>不能直接渲染到屏幕，但可以写入纹理或缓冲区，然后通过图形管线（如全屏四边形）呈现结果。</p></div>
+<div class="faq-item"><h3>计算着色器支持哪些API？</h3><p>DirectX 11及以上、OpenGL 4.3及以上、Vulkan、Metal等现代图形API都支持计算着色器。</p></div>
+<div class="faq-item"><h3>如何优化计算着色器性能？</h3><p>优化内存访问模式（合并访问、使用共享内存）、选择合适的工作组大小、减少线程发散、利用向量化指令等。</p></div>
+<div class="faq-item"><h3>计算着色器可以做光线追踪吗？</h3><p>可以，计算着色器可用于实现光线追踪算法，但专用光线追踪管线（如DXR）通常更高效。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a> · <a href="https://tools.treasuregrove.art/seo/mesh-shader.html">Mesh Shader</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

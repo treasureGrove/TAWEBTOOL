@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>立方体贴图 Cubemap - TA工具箱</title>
+<meta name="description" content="立方体贴图（Cubemap）是由六个正方形纹理组成的纹理类型，表示从中心点向六个方向（上下左右前后）看到的图像，常用于环境映射、天空盒和反射。本文介绍其原理、创建方法及应用。">
+<meta name="keywords" content="立方体贴图,Cubemap,天空盒,环境映射,反射,IBL,基于图像的光照,游戏开发,纹理,渲染">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/cubemap.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/cubemap.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/cubemap.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"立方体贴图 Cubemap"}]},{"@type":"Article","name":"立方体贴图 Cubemap","headline":"立方体贴图 Cubemap","description":"立方体贴图（Cubemap）是由六个正方形纹理组成的纹理类型，表示从中心点向六个方向（上下左右前后）看到的图像，常用于环境映射、天空盒和反射。本文介绍其原理、创建方法及应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/cubemap.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/cubemap.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"立方体贴图和2D纹理有什么区别？","acceptedAnswer":{"@type":"Answer","text":"2D纹理使用UV坐标采样，立方体贴图使用3D方向向量采样，能够表示全方位环境。立方体贴图由六个2D纹理组成。"}},{"@type":"Question","name":"如何生成立方体贴图？","acceptedAnswer":{"@type":"Answer","text":"可以使用6张正方形图片，或从全景图转换，也可以实时渲染场景到六个面。许多引擎提供工具自动生成。"}},{"@type":"Question","name":"立方体贴图在PBR中如何使用？","acceptedAnswer":{"@type":"Answer","text":"在基于图像的光照（IBL）中，立方体贴图存储环境辐射度，用于计算间接漫反射和镜面反射。常使用预滤波的mipmap来近似不同粗糙度的反射。"}},{"@type":"Question","name":"为什么立方体贴图有接缝？","acceptedAnswer":{"@type":"Answer","text":"接缝通常由于六个面纹理在边缘处不连续，或者采样时滤波不一致。解决方法包括使用无缝纹理、启用无缝立方体贴图采样（如果硬件支持）。"}},{"@type":"Question","name":"如何优化立方体贴图的内存？","acceptedAnswer":{"@type":"Answer","text":"降低分辨率、使用压缩格式（如BC6H用于HDR）、只存储必要的mip级别。在移动平台，可以考虑使用预卷积的辐照度图和预滤波环境图。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>立方体贴图 Cubemap</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是立方体贴图</h2>
+<p>立方体贴图（Cubemap）是一种特殊的纹理，由六个独立的2D纹理组成，分别对应于立方体的六个面：正X、负X、正Y、负Y、正Z、负Z。这六个面共同表示从立方体中心点向周围空间观察到的全景图像。</p>
+<p>在着色器中，通过一个三维方向向量来采样立方体贴图，GPU会根据方向向量选择适当的纹理面并进行插值。</p>
+<h2>立方体贴图的用途</h2>
+<ul>
+<li>**天空盒（Skybox）**：渲染场景背景，模拟远处环境。</li>
+<li>**环境映射（Environment Mapping）**：用于反射和折射效果，模拟物体表面对周围环境的反射。</li>
+<li>**基于图像的光照（IBL）**：存储预计算的环境光照信息，用于PBR材质。</li>
+<li>**动态反射**：可以实时渲染场景到立方体贴图，实现动态反射。</li>
+<li>**光照探针**：在特定位置捕获环境光照，用于对动态物体进行间接光照。</li>
+</ul>
+<h2>创建立方体贴图</h2>
+<p>立方体贴图可以通过以下方式创建：</p>
+<ul>
+<li>**静态图像**：使用6张正方形纹理，分别对应六个面，导入引擎并设置为Cubemap。</li>
+<li>**全景图转换**：将等距柱状投影（Equirectangular）的全景图转换为立方体贴图。</li>
+<li>**实时渲染**：在场景中放置摄像机，渲染六个方向到渲染目标，生成动态Cubemap。</li>
+<li>**生成HDR环境贴图**：使用工具（如Substance、Blender）烘焙。</li>
+</ul>
+<h2>立方体贴图的采样</h2>
+<p>在着色器中，使用`samplerCUBE`（或`TextureCube`）进行采样。采样时需要一个三维方向向量，该向量从立方体中心指向采样方向。GPU会找到与该方向相交的立方体面，并返回对应纹理坐标处的颜色。</p>
+<h2>立方体贴图与Mipmap</h2>
+<p>立方体贴图支持Mipmap链，每个mip级别是原分辨率的缩小版。在反射和IBL中，常使用粗糙度来选择mip级别，模拟不同粗糙度表面的模糊反射。</p>
+<h2>立方体贴图的注意事项</h2>
+<ul>
+<li>**接缝**：如果六个面边缘不一致，可能出现可见接缝。确保纹理边缘无缝对接。</li>
+<li>**方向约定**：不同引擎可能对立方体贴图的面布局和方向有不同约定（如Y轴翻转），导入时需注意。</li>
+<li>**内存占用**：立方体贴图包含六个面，内存是普通2D纹理的6倍，注意优化。</li>
+<li>**性能**：动态生成立方体贴图需要渲染场景六次，开销较大，应谨慎使用。</li>
+</ul>
+<h2>总结</h2>
+<p>立方体贴图是实现环境效果的基础，广泛应用于现代渲染管线。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>立方体贴图和2D纹理有什么区别？</h3><p>2D纹理使用UV坐标采样，立方体贴图使用3D方向向量采样，能够表示全方位环境。立方体贴图由六个2D纹理组成。</p></div>
+<div class="faq-item"><h3>如何生成立方体贴图？</h3><p>可以使用6张正方形图片，或从全景图转换，也可以实时渲染场景到六个面。许多引擎提供工具自动生成。</p></div>
+<div class="faq-item"><h3>立方体贴图在PBR中如何使用？</h3><p>在基于图像的光照（IBL）中，立方体贴图存储环境辐射度，用于计算间接漫反射和镜面反射。常使用预滤波的mipmap来近似不同粗糙度的反射。</p></div>
+<div class="faq-item"><h3>为什么立方体贴图有接缝？</h3><p>接缝通常由于六个面纹理在边缘处不连续，或者采样时滤波不一致。解决方法包括使用无缝纹理、启用无缝立方体贴图采样（如果硬件支持）。</p></div>
+<div class="faq-item"><h3>如何优化立方体贴图的内存？</h3><p>降低分辨率、使用压缩格式（如BC6H用于HDR）、只存储必要的mip级别。在移动平台，可以考虑使用预卷积的辐照度图和预滤波环境图。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

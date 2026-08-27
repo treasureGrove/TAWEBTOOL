@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stencil Buffer - TA Toolbox</title>
+<meta name="description" content="The stencil buffer is a buffer in graphics rendering that stores integer markers per pixel, used to control rendering regions or implement special effects. This article explains its principles, application scenarios, and relationship with the depth buffer.">
+<meta name="keywords" content="stencil buffer, stencil test, shadow volume, mirror reflection, decals, rendering control, graphics pipeline, depth buffer, game development">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/stencil-buffer.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/stencil-buffer.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/stencil-buffer.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Stencil Buffer"}]},{"@type":"Article","name":"Stencil Buffer","headline":"Stencil Buffer","description":"The stencil buffer is a buffer in graphics rendering that stores integer markers per pixel, used to control rendering regions or implement special effects. This article explains its principles, application scenarios, and relationship with the depth buffer.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/stencil-buffer.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/stencil-buffer.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can stencil buffer and depth buffer be used simultaneously?","acceptedAnswer":{"@type":"Answer","text":"Yes, they are often stored in the same buffer (e.g., 24-bit depth + 8-bit stencil), and depth test and stencil test are performed together."}},{"@type":"Question","name":"What are typical applications of stencil buffer?","acceptedAnswer":{"@type":"Answer","text":"Shadow volumes, mirror reflections, decals, custom clipping, UI masking, etc. Any per-pixel marking and testing scenario can use it."}},{"@type":"Question","name":"Do mobile devices support stencil buffer?","acceptedAnswer":{"@type":"Answer","text":"Most modern mobile GPUs support stencil buffer, but precision may be 8-bit. On some older devices, it may not be supported, requiring fallbacks."}},{"@type":"Question","name":"How to clear the stencil buffer?","acceptedAnswer":{"@type":"Answer","text":"At the start of a frame, use clear commands to reset the stencil buffer to 0 (or another specified value). In OpenGL, use `glClearStencil` and `glClear`; similar in DirectX."}},{"@type":"Question","name":"Does stencil test happen before fragment shader?","acceptedAnswer":{"@type":"Answer","text":"Modern GPUs support Early Stencil Test, which can run the stencil test before the fragment shader; if the test fails, the shader is skipped, saving computation. However, in some cases (such as fragment shader modifying stencil values), it may not be possible to run early."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Stencil Buffer</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is a Stencil Buffer</h2>
+<p>The stencil buffer is a buffer in the graphics rendering pipeline, alongside the color buffer and depth buffer. It stores an integer value for each pixel (typically 8-bit, range 0-255) to control rendering operations. The stencil buffer can be used to mark specific areas, restrict rendering, implement shadows, mirror reflections, and other effects.</p>
+<p>The stencil buffer is often stored in the same memory as the depth buffer, e.g., in a 32-bit depth/stencil buffer, 24 bits are used for depth and 8 bits for stencil.</p>
+<h2>How the Stencil Buffer Works</h2>
+<p>The stencil buffer controls whether a pixel is written through the stencil test. The basic process is as follows:</p>
+<ol>
+<li>For each fragment, read the current value in the stencil buffer at the corresponding position.</li>
+<li>Compare the current value with a reference value (set by the application) using a configurable comparison function (e.g., Always, Equal, Less).</li>
+<li>If the comparison passes, the fragment continues processing; otherwise, it is discarded.</li>
+<li>Regardless of pass or fail, the stencil buffer value can be updated based on stencil operations (e.g., Keep, Increment, Decrement, Replace).</li>
+</ul>
+<p>These operations enable complex rendering logic.</p>
+<h2>Common Applications of Stencil Buffer</h2>
+<ul>
+<li>**Shadow Volume**: Uses stencil buffer to mark shadow areas, with algorithms like Depth-fail or Depth-pass.</li>
+<li>**Mirror Reflections**: When rendering reflective scenes, use stencil buffer to mark the mirror area, restricting reflective objects to appear only within the mirror.</li>
+<li>**Decals**: Use stencil buffer to prevent decals from being rendered on unwanted surfaces.</li>
+<li>**Custom Clipping**: For example, clipping scrollable areas in UI, or rendering to a specific shape viewport.</li>
+<li>**Ray Marching Markers**: Mark visited areas in volume rendering.</li>
+<li>**Multi-pass Effects**: Pass markers between different rendering stages.</li>
+</ul>
+<h2>Difference Between Stencil Buffer and Depth Buffer</h2>
+<ul>
+<li>**Data Type**: Depth buffer stores floating-point depth values, stencil buffer stores integer markers.</li>
+<li>**Purpose**: Depth buffer is for visibility determination, stencil buffer is for controlling rendering regions and special effects.</li>
+<li>**Precision**: Depth buffer usually 24-bit or 32-bit, stencil buffer usually 8-bit.</li>
+<li>**Update**: Depth buffer is automatically updated by depth test, stencil buffer requires application-set operations.</li>
+</ul>
+<h2>Considerations When Using Stencil Buffer</h2>
+<ul>
+<li>**Clearing**: The stencil buffer should be cleared at the beginning of each frame (usually set to 0).</li>
+<li>**Bandwidth**: The stencil buffer shares bandwidth with the depth buffer, so additional operations may impact performance.</li>
+<li>**Format**: On mobile platforms, stencil buffer may be unavailable or have lower precision; check support.</li>
+<li>**Order**: Stencil test can occur before the fragment shader (Early Stencil), allowing early fragment discard and performance optimization.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>The stencil buffer is a powerful rendering control tool. Mastering its usage enables a variety of advanced effects.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Can stencil buffer and depth buffer be used simultaneously?</h3><p>Yes, they are often stored in the same buffer (e.g., 24-bit depth + 8-bit stencil), and depth test and stencil test are performed together.</p></div>
+<div class="faq-item"><h3>What are typical applications of stencil buffer?</h3><p>Shadow volumes, mirror reflections, decals, custom clipping, UI masking, etc. Any per-pixel marking and testing scenario can use it.</p></div>
+<div class="faq-item"><h3>Do mobile devices support stencil buffer?</h3><p>Most modern mobile GPUs support stencil buffer, but precision may be 8-bit. On some older devices, it may not be supported, requiring fallbacks.</p></div>
+<div class="faq-item"><h3>How to clear the stencil buffer?</h3><p>At the start of a frame, use clear commands to reset the stencil buffer to 0 (or another specified value). In OpenGL, use `glClearStencil` and `glClear`; similar in DirectX.</p></div>
+<div class="faq-item"><h3>Does stencil test happen before fragment shader?</h3><p>Modern GPUs support Early Stencil Test, which can run the stencil test before the fragment shader; if the test fails, the shader is skipped, saving computation. However, in some cases (such as fragment shader modifying stencil values), it may not be possible to run early.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G-Buffer Deferred Rendering - TA Toolbox</title>
+<meta name="description" content="G-Buffer (Geometry Buffer) is a collection of buffers in deferred rendering that stores scene geometry information, including position, normal, albedo, and other data. This article introduces the concept, composition, advantages, and challenges of G-Buffer, as well as its application in real-time rendering.">
+<meta name="keywords" content="G-Buffer, geometry buffer, deferred rendering, MRT, multiple render targets, game development, real-time rendering, lighting calculation, graphics pipeline">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/g-buffer.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/g-buffer.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/g-buffer.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"G-Buffer Deferred Rendering"}]},{"@type":"Article","name":"G-Buffer Deferred Rendering","headline":"G-Buffer Deferred Rendering","description":"G-Buffer (Geometry Buffer) is a collection of buffers in deferred rendering that stores scene geometry information, including position, normal, albedo, and other data. This article introduces the concept, composition, advantages, and challenges of G-Buffer, as well as its application in real-time rendering.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/g-buffer.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/g-buffer.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between G-Buffer and framebuffer?","acceptedAnswer":{"@type":"Answer","text":"Framebuffer is a general concept in graphics APIs for rendering output, containing color, depth, stencil buffers. G-Buffer is a specific set of render targets in deferred rendering used to store geometry information, and is an application of framebuffer."}},{"@type":"Question","name":"Why is G-Buffer needed in deferred rendering?","acceptedAnswer":{"@type":"Answer","text":"Deferred rendering separates geometry and lighting. G-Buffer stores the attributes output by the geometry stage so that lighting can be computed per-pixel in the lighting stage, avoiding reprocessing geometry for each light."}},{"@type":"Question","name":"What data does G-Buffer typically contain?","acceptedAnswer":{"@type":"Answer","text":"Commonly albedo, normal, depth, material properties (roughness, metallic, etc.). Some engines also store position, emissive, etc. The layout is customized based on requirements."}},{"@type":"Question","name":"Is deferred rendering suitable for mobile platforms?","acceptedAnswer":{"@type":"Answer","text":"Mobile platforms have limited bandwidth, so traditional deferred rendering may perform poorly. Forward rendering or optimized variants (like forward+, tile-based deferred) are often used to balance."}},{"@type":"Question","name":"How to reduce G-Buffer bandwidth consumption?","acceptedAnswer":{"@type":"Answer","text":"Use compressed texture formats, reduce texture precision, reduce the number of render targets, use depth to reconstruct position, etc. Techniques like tile-based deferred can also reduce global bandwidth."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>G-Buffer Deferred Rendering</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is G-Buffer</h2>
+<p>G-Buffer (Geometry Buffer) is the core data structure in the deferred rendering pipeline. In deferred rendering, the geometry processing stage does not directly compute lighting; instead, it outputs geometric properties (such as position, normal, albedo, material parameters, etc.) for each pixel into a set of render targets, which is the G-Buffer. Subsequently, the lighting stage uses the data in the G-Buffer to shade each pixel.</p>
+<p>G-Buffer is typically composed of multiple render targets (MRT), each storing different attributes.</p>
+<h2>Typical Composition of G-Buffer</h2>
+<p>Common G-Buffer layouts include:</p>
+<ul>
+<li>**Albedo**: The base color of objects, usually stored as RGBA8.</li>
+<li>**Normal**: Surface normal in world or view space, often RGBA16F or RGBA8 (compressed format).</li>
+<li>**Position**: World space position of the pixel; can be reconstructed from depth buffer and inverse projection matrix, so sometimes not stored directly to save bandwidth.</li>
+<li>**Material properties**: Such as roughness, metallic, specular reflectance, often packed into one RGBA8 texture.</li>
+<li>**Depth**: Stored in the depth buffer, used for position reconstruction and depth testing.</li>
+<li>**Others**: Such as emissive, AO, custom data, etc.</li>
+</ul>
+<p>Different engines have different G-Buffer layouts; for example, Unreal Engine's G-Buffer may include more attributes to support complex materials.</p>
+<h2>Advantages of Deferred Rendering</h2>
+<ul>
+<li>**Decoupled lighting**: Geometry and lighting are separated, allowing efficient handling of many dynamic lights because lighting calculations are per-pixel and independent of scene complexity.</li>
+<li>**Easier post-processing**: Information in the G-Buffer can be used for screen-space effects like SSAO, SSR.</li>
+<li>**Simpler shaders**: Geometry stage uses simple shaders, lighting stage uses a unified lighting model.</li>
+</ul>
+<h2>Challenges of Deferred Rendering</h2>
+<ul>
+<li>**Bandwidth consumption**: G-Buffer requires reading and writing large amounts of data, which can become a bottleneck especially on mobile platforms with limited bandwidth.</li>
+<li>**Memory usage**: Multiple render targets consume video memory.</li>
+<li>**Transparent object handling**: Deferred rendering struggles with transparent objects, often requiring forward rendering assistance.</li>
+<li>**Anti-aliasing**: Traditional MSAA is incompatible with deferred rendering; alternatives like TAA, FXAA are needed.</li>
+</ul>
+<h2>G-Buffer Optimization</h2>
+<ul>
+<li>**Compressed formats**: Use appropriate texture formats to reduce bandwidth, such as storing normals in RGBA8 (via encoding), using R16F for depth, etc.</li>
+<li>**Reducing render target count**: Store only necessary attributes; reconstruct others via computation.</li>
+<li>**Tile-based rendering**: Use tile-based architectures to optimize lighting.</li>
+<li>**Bandwidth optimization**: On mobile, consider forward+ rendering or tile-based deferred.</li>
+</ul>
+<h2>Summary</h2>
+<p>G-Buffer is key to deferred rendering. Understanding its design principles and trade-offs helps in developing high-performance real-time rendering applications.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between G-Buffer and framebuffer?</h3><p>Framebuffer is a general concept in graphics APIs for rendering output, containing color, depth, stencil buffers. G-Buffer is a specific set of render targets in deferred rendering used to store geometry information, and is an application of framebuffer.</p></div>
+<div class="faq-item"><h3>Why is G-Buffer needed in deferred rendering?</h3><p>Deferred rendering separates geometry and lighting. G-Buffer stores the attributes output by the geometry stage so that lighting can be computed per-pixel in the lighting stage, avoiding reprocessing geometry for each light.</p></div>
+<div class="faq-item"><h3>What data does G-Buffer typically contain?</h3><p>Commonly albedo, normal, depth, material properties (roughness, metallic, etc.). Some engines also store position, emissive, etc. The layout is customized based on requirements.</p></div>
+<div class="faq-item"><h3>Is deferred rendering suitable for mobile platforms?</h3><p>Mobile platforms have limited bandwidth, so traditional deferred rendering may perform poorly. Forward rendering or optimized variants (like forward+, tile-based deferred) are often used to balance.</p></div>
+<div class="faq-item"><h3>How to reduce G-Buffer bandwidth consumption?</h3><p>Use compressed texture formats, reduce texture precision, reduce the number of render targets, use depth to reconstruct position, etc. Techniques like tile-based deferred can also reduce global bandwidth.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reflection Probe - TA Toolbox</title>
+<meta name="description" content="A reflection probe is a tool used to capture environmental lighting and reflection information around a specific location in a scene, providing indirect lighting and reflections for nearby objects. This article introduces its principles, types, usage, and optimization.">
+<meta name="keywords" content="reflection probe, environment reflection, indirect lighting, cubemap, game development, Unity, Unreal, global illumination, performance optimization">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/reflection-probe.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/reflection-probe.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/reflection-probe.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Reflection Probe"}]},{"@type":"Article","name":"Reflection Probe","headline":"Reflection Probe","description":"A reflection probe is a tool used to capture environmental lighting and reflection information around a specific location in a scene, providing indirect lighting and reflections for nearby objects. This article introduces its principles, types, usage, and optimization.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/reflection-probe.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/reflection-probe.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between reflection probes and lightmaps?","acceptedAnswer":{"@type":"Answer","text":"Lightmaps are mainly for indirect diffuse lighting on static objects, while reflection probes are for reflections and indirect specular on dynamic objects. They can be used together."}},{"@type":"Question","name":"How to create a reflection probe?","acceptedAnswer":{"@type":"Answer","text":"In Unity, create a Reflection Probe GameObject and adjust its position and range; in Unreal, use a Reflection Capture Actor. Then bake or set to real-time update."}},{"@type":"Question","name":"Can reflection probes reflect dynamic objects?","acceptedAnswer":{"@type":"Answer","text":"Only dynamic or real-time reflection probes can include dynamic objects, but this comes with high performance cost. Static probes only reflect the static scene as baked."}},{"@type":"Question","name":"Do reflection probes affect performance?","acceptedAnswer":{"@type":"Answer","text":"Yes, especially real-time updating probes. Static probes have almost no runtime overhead (except sampling). Dynamic probes require scene rendering, so control count and update frequency."}},{"@type":"Question","name":"How to make objects use multiple reflection probes?","acceptedAnswer":{"@type":"Answer","text":"Engines usually automatically select and blend nearby probes based on object position. You can set blending distances and weights for smooth transitions."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Reflection Probe</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is a Reflection Probe</h2>
+<p>A reflection probe is a component placed in a 3D scene that captures the surrounding environment information (typically stored as a cubemap) at that location, providing reflection and indirect lighting data for nearby dynamic or static objects. It is an essential tool for achieving global illumination and high-quality reflections, especially for metallic or glossy surfaces.</p>
+<p>Reflection probes are widely used in game engines, such as Unity's Reflection Probe and Unreal Engine's Reflection Capture.</p>
+<h2>How Reflection Probes Work</h2>
+<p>A reflection probe renders or captures the scene view in six directions (up, down, left, right, forward, back) at its position, generating a cubemap. This cubemap is then used in shaders: when objects need reflections, they sample this cubemap to simulate environment reflections. For indirect diffuse lighting, a pre-convolved irradiance map can be used.</p>
+<p>Reflection probes can be static (baked at edit time) or dynamic (updated at runtime). Dynamic probes render the scene in real time, which is more expensive and typically used for important areas or moving objects.</p>
+<h2>Types of Reflection Probes</h2>
+<ul>
+<li>**Static Reflection Probes**: Baked at build time, do not change at runtime, low performance overhead. Suitable for fixed scenes.</li>
+<li>**Dynamic Reflection Probes**: Updated at runtime, can reflect moving objects and lighting changes, but high performance cost. Often update frequency and resolution are limited.</li>
+<li>**Real-time Reflection Probes**: Updated every frame for high-fidelity reflections, such as mirrors, but highest cost.</li>
+</ul>
+<h2>Placement and Influence Range of Reflection Probes</h2>
+<p>Reflection probes can be placed at key positions in the scene with defined influence ranges (e.g., spherical or box-shaped areas). Objects select the most relevant probe or blend data from multiple probes based on their position for smooth transitions.</p>
+<p>Some engines support probe priority and blending weights.</p>
+<h2>Reflection Probes vs. Screen Space Reflections</h2>
+<p>Reflection probes provide static or low-frequency environment reflections but cannot capture off-screen details or precise reflections of dynamic objects. Screen Space Reflections (SSR) can supplement this, but limited to what is on screen. Both are often used together.</p>
+<h2>Performance Optimization</h2>
+<ul>
+<li>**Reduce Resolution**: The cubemap resolution of reflection probes need not be very high; usually 128-256 is sufficient for most reflections.</li>
+<li>**Limit Update Frequency**: Dynamic probes can update a few times per second instead of every frame.</li>
+<li>**Use Time Slicing**: Render the six faces across frames to reduce per-frame cost.</li>
+<li>**Reasonably Layout**: Avoid too many probes; use blending to reduce count.</li>
+<li>**Use Pre-filtering**: Pre-generate mipmaps for different roughness levels to reduce runtime computation.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Reflection probes are practical tools for achieving environmental reflections and indirect lighting in real-time rendering. Proper use can significantly enhance scene realism.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between reflection probes and lightmaps?</h3><p>Lightmaps are mainly for indirect diffuse lighting on static objects, while reflection probes are for reflections and indirect specular on dynamic objects. They can be used together.</p></div>
+<div class="faq-item"><h3>How to create a reflection probe?</h3><p>In Unity, create a Reflection Probe GameObject and adjust its position and range; in Unreal, use a Reflection Capture Actor. Then bake or set to real-time update.</p></div>
+<div class="faq-item"><h3>Can reflection probes reflect dynamic objects?</h3><p>Only dynamic or real-time reflection probes can include dynamic objects, but this comes with high performance cost. Static probes only reflect the static scene as baked.</p></div>
+<div class="faq-item"><h3>Do reflection probes affect performance?</h3><p>Yes, especially real-time updating probes. Static probes have almost no runtime overhead (except sampling). Dynamic probes require scene rendering, so control count and update frequency.</p></div>
+<div class="faq-item"><h3>How to make objects use multiple reflection probes?</h3><p>Engines usually automatically select and blend nearby probes based on object position. You can set blending distances and weights for smooth transitions.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

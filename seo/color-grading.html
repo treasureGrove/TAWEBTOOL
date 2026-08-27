@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>调色 Color Grading - TA工具箱</title>
+<meta name="description" content="调色（Color Grading）是对图像或视频进行色彩调整的过程，用于改变氛围、统一风格或修正色彩。本文介绍调色的概念、工具、工作流程及在游戏开发中的应用。">
+<meta name="keywords" content="调色,Color Grading,色彩分级,颜色查找表,LUT,游戏开发,后处理,影视调色,色彩校正,视觉风格">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/color-grading.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/color-grading.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/color-grading.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"调色 Color Grading"}]},{"@type":"Article","name":"调色 Color Grading","headline":"调色 Color Grading","description":"调色（Color Grading）是对图像或视频进行色彩调整的过程，用于改变氛围、统一风格或修正色彩。本文介绍调色的概念、工具、工作流程及在游戏开发中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/color-grading.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/color-grading.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"调色和色彩校正有什么区别？","acceptedAnswer":{"@type":"Answer","text":"色彩校正主要修正技术问题（如白平衡、曝光），使画面自然；调色则更侧重于艺术创作，改变色彩和氛围。"}},{"@type":"Question","name":"什么是LUT？在调色中如何使用？","acceptedAnswer":{"@type":"Answer","text":"LUT（Look-Up Table）是一个颜色映射表，将输入颜色转换为输出颜色。在游戏引擎中，可以应用LUT纹理快速实现复杂调色，性能开销小。"}},{"@type":"Question","name":"调色在游戏开发中什么时候进行？","acceptedAnswer":{"@type":"Answer","text":"通常在渲染管线的后处理阶段，在色调映射之后或之前。许多引擎允许在其他后处理效果之后应用调色。"}},{"@type":"Question","name":"调色会影响性能吗？","acceptedAnswer":{"@type":"Answer","text":"调色本身计算简单，但作为全屏后处理会消耗一定的GPU资源。使用LUT可以非常高效，通常性能影响可忽略。"}},{"@type":"Question","name":"如何为游戏创建LUT？","acceptedAnswer":{"@type":"Answer","text":"可以使用图像编辑软件（如Photoshop）对标准LUT图进行调色，或使用DaVinci Resolve等专业工具生成，然后导入引擎。有些引擎支持直接从截图调色生成LUT。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>调色 Color Grading</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是调色</h2>
+<p>调色（Color Grading）是指对图像或视频的颜色和色调进行艺术性调整的过程，以达到特定的视觉效果。与色彩校正（Color Correction）侧重于修正技术问题（如白平衡、曝光）不同，调色更偏向于创造情绪和风格，例如使画面更温暖、冷峻、电影感等。</p>
+<p>在游戏开发和实时渲染中，调色通常作为后处理效果的一部分，通过调整颜色映射来改变整个场景的视觉效果。</p>
+<h2>调色的作用</h2>
+<ul>
+<li>**统一风格**：确保场景中所有元素色彩协调。</li>
+<li>**传达情绪**：通过色调表达氛围，如恐怖游戏的阴暗冷色调，或温馨场景的暖色调。</li>
+<li>**提升视觉质量**：增强对比度、饱和度，使画面更有冲击力。</li>
+<li>**模拟电影效果**：如模仿特定电影的色彩风格。</li>
+</ul>
+<h2>调色工具与参数</h2>
+<p>常见的调色工具包括：</p>
+<ul>
+<li>**颜色查找表（LUT）**：使用预先生成的查找表对颜色进行映射，可以快速应用复杂调色。许多引擎支持导入LUT纹理。</li>
+<li>**色彩平衡**：调整阴影、中间调、高光的颜色偏移。</li>
+<li>**曲线**：通过曲线调整亮度、对比度、RGB通道。</li>
+<li>**色相/饱和度/亮度（HSL）**：针对特定颜色范围调整。</li>
+<li>**色调映射**：与调色结合，影响整体对比度。</li>
+</ul>
+<p>在游戏引擎中，如Unity的Post Processing Stack、Unreal Engine的Color Grading模块，都提供了上述参数。</p>
+<h2>调色的工作流程</h2>
+<p>典型的工作流程如下：</p>
+<ol>
+<li>**基础校正**：确保曝光、白平衡正确，通常在线性空间处理。</li>
+<li>**风格化调色**：应用LUT或调整参数，实现艺术效果。</li>
+<li>**输出转换**：应用色调映射和色彩空间转换，确保在目标设备上显示正确。</li>
+<li>**迭代测试**：在不同场景和光照下测试调色效果。</li>
+</ul>
+<p>调色通常在HDR渲染之后、输出到屏幕之前进行。</p>
+<h2>在游戏开发中使用调色</h2>
+<ul>
+<li>**实现方式**：大多数引擎提供后处理体积或相机效果，允许全局调色。也可以使用脚本动态调整，例如根据游戏状态改变色调。</li>
+<li>**LUT生成**：可以使用Photoshop、DaVinci Resolve等工具创建LUT，然后导入引擎。</li>
+<li>**性能考虑**：调色通常是全屏后处理，但计算成本相对较低，使用LUT时尤其高效。</li>
+</ul>
+<h2>总结</h2>
+<p>调色是提升游戏和影视视觉表现的重要手段，通过合理运用调色工具，可以营造独特的视觉风格，增强沉浸感。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>调色和色彩校正有什么区别？</h3><p>色彩校正主要修正技术问题（如白平衡、曝光），使画面自然；调色则更侧重于艺术创作，改变色彩和氛围。</p></div>
+<div class="faq-item"><h3>什么是LUT？在调色中如何使用？</h3><p>LUT（Look-Up Table）是一个颜色映射表，将输入颜色转换为输出颜色。在游戏引擎中，可以应用LUT纹理快速实现复杂调色，性能开销小。</p></div>
+<div class="faq-item"><h3>调色在游戏开发中什么时候进行？</h3><p>通常在渲染管线的后处理阶段，在色调映射之后或之前。许多引擎允许在其他后处理效果之后应用调色。</p></div>
+<div class="faq-item"><h3>调色会影响性能吗？</h3><p>调色本身计算简单，但作为全屏后处理会消耗一定的GPU资源。使用LUT可以非常高效，通常性能影响可忽略。</p></div>
+<div class="faq-item"><h3>如何为游戏创建LUT？</h3><p>可以使用图像编辑软件（如Photoshop）对标准LUT图进行调色，或使用DaVinci Resolve等专业工具生成，然后导入引擎。有些引擎支持直接从截图调色生成LUT。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

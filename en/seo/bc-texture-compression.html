@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BC Texture Compression Formats - TA Toolbox</title>
+<meta name="description" content="BC (Block Compression) is a family of GPU texture compression formats, including BC1, BC3, BC5, BC7, etc., used to reduce video memory usage and bandwidth. This article introduces the principles, characteristics, differences, and selection recommendations of BC formats.">
+<meta name="keywords" content="BC compression, BC1, BC3, BC5, BC7, texture compression, DirectX, video memory optimization, game development">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/bc-texture-compression.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/bc-texture-compression.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/bc-texture-compression.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"BC Texture Compression Formats"}]},{"@type":"Article","name":"BC Texture Compression Formats","headline":"BC Texture Compression Formats","description":"BC (Block Compression) is a family of GPU texture compression formats, including BC1, BC3, BC5, BC7, etc., used to reduce video memory usage and bandwidth. This article introduces the principles, characteristics, differences, and selection recommendations of BC formats.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/bc-texture-compression.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/bc-texture-compression.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between BC1 and BC7?","acceptedAnswer":{"@type":"Answer","text":"BC1 has a higher compression ratio (8:1) but lower color quality and only 1-bit alpha; BC7 has a compression ratio of 4:1 but offers higher color and alpha quality, suitable for complex textures, though compression is slower."}},{"@type":"Question","name":"Which BC format should be used for normal maps?","acceptedAnswer":{"@type":"Answer","text":"BC5 is recommended because it stores dual-channel data with high quality and 4:1 compression, suitable for normal map X and Y components. If quality requirements are lower, BC1 can be used."}},{"@type":"Question","name":"Do mobile platforms support BC formats?","acceptedAnswer":{"@type":"Answer","text":"Most mobile GPUs do not support BC formats; they use ETC, ASTC, etc. Therefore, mobile development should use platform-specific formats or choose universal formats."}},{"@type":"Question","name":"Does BC compression cause noticeable quality loss?","acceptedAnswer":{"@type":"Answer","text":"It depends on the format and texture content. BC1 may produce color banding on smooth gradients, while BC7 typically provides near-lossless visual quality. Choosing the right format can balance quality."}},{"@type":"Question","name":"How to generate BC compressed textures?","acceptedAnswer":{"@type":"Answer","text":"You can use tools provided by GPU vendors (such as NVIDIA Texture Tools, AMD Compressonator) or engine import settings to compress automatically. Many image editing software also support exporting BC formats."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>BC Texture Compression Formats</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is BC Texture Compression</h2>
+<p>BC (Block Compression) is a block-based texture compression technique widely used in DirectX and modern GPUs. It divides the texture into 4x4 pixel blocks, compressing each block independently, thus supporting random access and fast decompression. The BC family includes BC1 through BC7, each designed for different data types, balancing compression ratio and image quality.</p>
+<h2>Detailed Common BC Formats</h2>
+<ul>
+<li>**BC1 (DXT1)**: Used for opaque textures or textures with only 1-bit alpha. Each 4x4 block is 64 bits, compression ratio 8:1 (for RGB textures). Supports RGB and 1-bit alpha, but color precision is lower, may cause color banding.</li>
+<li>**BC2 (DXT3)**: Used for textures with explicit alpha. Each block is 128 bits, compression ratio 4:1. Alpha uses 4 bits per pixel, suitable for sharp alpha edges, but color part is same as BC1.</li>
+<li>**BC3 (DXT5)**: Used for textures with gradient alpha. Each block is 128 bits, compression ratio 4:1. Color part same as BC1, alpha uses BC4 format, providing better alpha smoothness.</li>
+<li>**BC4 (ATI1)**: Single-channel format, storing height maps or roughness, etc. Each block is 64 bits, compression ratio 2:1 (for single channel).</li>
+<li>**BC5 (ATI2)**: Dual-channel format, often used for normal maps (storing X and Y components). Each block is 128 bits, compression ratio 4:1. High quality.</li>
+<li>**BC6H**: Used for HDR textures (RGB half-float). Each block is 128 bits, compression ratio 6:1 (for RGB16F). Supports signed and unsigned modes.</li>
+<li>**BC7**: High-quality RGBA format, each block is 128 bits, compression ratio 4:1. Provides better quality than BC3, especially for complex colors and alpha, but compression is slower.</li>
+</ul>
+<h2>How to Choose BC Formats</h2>
+<p>Choosing a BC format depends on texture type and quality requirements:</p>
+<ul>
+<li>**Opaque color maps**: Commonly BC1, or BC7 if quality is high.</li>
+<li>**Color maps with alpha**: Choose BC2 or BC3 based on alpha needs, or BC7 for high quality.</li>
+<li>**Normal maps**: Recommend BC5 (only X and Y are stored, Z is reconstructed in shader) or BC1 (lower quality). Note the format difference between DirectX and OpenGL normal maps.</li>
+<li>**Single-channel data** (like roughness, metallic, AO): Can be packed into BC4 or the alpha channel of BC7.</li>
+<li>**HDR textures**: Use BC6H.</li>
+</ul>
+<h2>Advantages and Disadvantages of BC Compression</h2>
+<p>**Advantages**:</p>
+<ul>
+<li>Significantly reduces video memory usage, allowing more textures to reside.</li>
+<li>Lowers texture sampling bandwidth, improving performance.</li>
+<li>Hardware decompression support, no extra computational cost.</li>
+</ul>
+<p>**Disadvantages**:</p>
+<ul>
+<li>Lossy compression, may introduce blocky artifacts or banding.</li>
+<li>Quality varies greatly between formats, requiring targeted selection.</li>
+<li>Compression process may be slow (especially BC7), affecting asset import time.</li>
+</ul>
+<h2>Practical Considerations</h2>
+<ul>
+<li>**Normal maps**: When using BC5, ensure the shader reconstructs the Z component from the two channels and normalizes.</li>
+<li>**sRGB**: Color maps are often stored in sRGB format; compression involves color space conversion to ensure correct decoding.</li>
+<li>**Mipmaps**: BC formats support mipmaps; enable them to reduce distant texture shimmering.</li>
+<li>**Platform support**: All modern GPUs support BC1-BC5; BC6H/BC7 supported on newer hardware. Mobile platforms may use different compression standards (e.g., ETC, ASTC).</li>
+</ul>
+<h2>Summary</h2>
+<p>BC texture compression is an important tool for optimizing memory and bandwidth in real-time rendering. Understanding the characteristics of different BC formats helps make reasonable choices in projects, balancing quality and performance.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between BC1 and BC7?</h3><p>BC1 has a higher compression ratio (8:1) but lower color quality and only 1-bit alpha; BC7 has a compression ratio of 4:1 but offers higher color and alpha quality, suitable for complex textures, though compression is slower.</p></div>
+<div class="faq-item"><h3>Which BC format should be used for normal maps?</h3><p>BC5 is recommended because it stores dual-channel data with high quality and 4:1 compression, suitable for normal map X and Y components. If quality requirements are lower, BC1 can be used.</p></div>
+<div class="faq-item"><h3>Do mobile platforms support BC formats?</h3><p>Most mobile GPUs do not support BC formats; they use ETC, ASTC, etc. Therefore, mobile development should use platform-specific formats or choose universal formats.</p></div>
+<div class="faq-item"><h3>Does BC compression cause noticeable quality loss?</h3><p>It depends on the format and texture content. BC1 may produce color banding on smooth gradients, while BC7 typically provides near-lossless visual quality. Choosing the right format can balance quality.</p></div>
+<div class="faq-item"><h3>How to generate BC compressed textures?</h3><p>You can use tools provided by GPU vendors (such as NVIDIA Texture Tools, AMD Compressonator) or engine import settings to compress automatically. Many image editing software also support exporting BC formats.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map-format.html">法线贴图格式 DirectX OpenGL</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/en/seo/texel-density.html">贴图密度 Texel Density</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

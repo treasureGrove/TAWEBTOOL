@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlendShape 混合变形 - TA工具箱</title>
+<meta name="description" content="BlendShape（混合变形）是一种通过顶点位置插值来创建面部表情或形状动画的技术，常用作骨骼动画的补充。本文介绍其原理、应用场景、实现方式及优缺点。">
+<meta name="keywords" content="BlendShape,Morph Target,混合变形,变形目标,面部动画,口型同步,顶点插值,游戏动画,美术流程,角色表情">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/blend-shape.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/blend-shape.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/blend-shape.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"BlendShape 混合变形"}]},{"@type":"Article","name":"BlendShape 混合变形","headline":"BlendShape 混合变形","description":"BlendShape（混合变形）是一种通过顶点位置插值来创建面部表情或形状动画的技术，常用作骨骼动画的补充。本文介绍其原理、应用场景、实现方式及优缺点。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/blend-shape.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/blend-shape.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"BlendShape 和 Morph Target 是同一个概念吗？","acceptedAnswer":{"@type":"Answer","text":"是的，BlendShape 在 Autodesk Maya 中称呼，Morph Target 在 Unreal Engine 等中称呼，两者原理相同，都是通过顶点插值实现形变。"}},{"@type":"Question","name":"BlendShape 可以使用在哪些部位？","acceptedAnswer":{"@type":"Answer","text":"常用于面部表情、口型同步、肌肉膨胀、物体变形等。任何需要精细顶点级变形的场合都可考虑使用。"}},{"@type":"Question","name":"BlendShape 数据和骨骼动画数据哪个更占内存？","acceptedAnswer":{"@type":"Answer","text":"通常 BlendShape 数据占内存更大，因为每个目标形状都需要存储完整的顶点偏移数组；骨骼动画只需存储少数骨骼的变换。因此需要合理控制 BlendShape 数量。"}},{"@type":"Question","name":"BlendShape 能跟骨骼动画同时使用吗？","acceptedAnswer":{"@type":"Answer","text":"可以。在蒙皮计算后，叠加 BlendShape 变形，或反之。通常先应用骨骼蒙皮，再应用 BlendShape 偏移，但顺序可根据需求调整。"}},{"@type":"Question","name":"如何创建 BlendShape？","acceptedAnswer":{"@type":"Answer","text":"在 DCC 软件（如 Maya、Blender）中，复制基础网格，雕刻出目标形状，然后使用 BlendShape 工具关联到基础网格上。导出到游戏引擎时保留 BlendShape 信息。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>BlendShape 混合变形</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是 BlendShape</h2>
+<p>BlendShape（混合变形，也称 Morph Target 变形目标）是一种基于顶点插值的动画技术。它通过在多个预先雕刻好的目标形状之间进行线性插值，实时改变网格的顶点位置，从而产生平滑的形变效果。BlendShape 特别适合表现面部表情、口型同步等细微的局部变形，与骨骼动画互补。</p>
+<h2>工作原理</h2>
+<p>BlendShape 需要一组基础形状（Base Shape）和多个目标形状（Target Shapes）。每个目标形状定义了相对于基础形状的顶点偏移量。最终顶点位置通过以下公式计算：</p>
+<p>`V_final = V_base + Σ (wi * ΔVi)`</p>
+<p>其中，ΔVi 是第 i 个目标形状的顶点偏移，wi 是该目标的混合权重。权重通常在 0 到 1 之间，但也可以超出此范围以获得夸张效果。所有目标共享相同的拓扑结构（顶点数和三角形连接关系）。</p>
+<h2>与骨骼动画的区别</h2>
+<ul>
+<li>**骨骼动画**：通过层级骨骼变换间接驱动顶点，适合肢体等大幅度的刚体运动。</li>
+<li>**BlendShape**：直接操作顶点位置，适合精细的表面变形，如面部肌肉运动、皱纹等。</li>
+</ul>
+<p>两者常结合使用：骨骼动画控制头部转动和身体动作，BlendShape 控制面部表情。</p>
+<h2>应用场景</h2>
+<h3>面部动画</h3>
+<p>BlendShape 是游戏和电影中面部表情制作的标准技术。通常为角色创建数十个表情目标，如微笑、皱眉、眨眼、张嘴等，通过组合权重产生丰富表情。</p>
+<h3>口型同步</h3>
+<p>根据语音音素制作对应的口型 BlendShape，在角色说话时实时混合，实现自动口型动画。</p>
+<h3>物体变形</h3>
+<p>可用于非角色物体，如汽车碰撞变形、布料褶皱、肌肉膨胀等。</p>
+<h2>实现方式</h2>
+<h3>在建模软件中创建</h3>
+<p>在 Maya、Blender、3ds Max 等软件中，通过复制基础网格并雕刻出目标形状，然后导出为 BlendShape 或 Morph Target。这些软件支持权重绘画和动画关键帧。</p>
+<h3>在游戏引擎中使用</h3>
+<p>Unity 和 Unreal 均支持 BlendShape（Unity 称 BlendShapes，Unreal 称 Morph Targets）。引擎在导入模型时可识别并存储 BlendShape 数据，在动画系统中可通过曲线控制权重。</p>
+<h3>GPU 上的计算</h3>
+<p>BlendShape 计算通常在顶点着色器中进行。顶点数据包含基础位置、多个目标偏移量和对应权重，着色器计算加权和。对于大量 BlendShape，可使用计算着色器或合并通道优化性能。</p>
+<h2>优点与局限</h2>
+<p>**优点**：</p>
+<ul>
+<li>能够表现非常精细的形变，不受骨骼结构限制。</li>
+<li>直观的美术工作流：直接雕刻目标形状即可。</li>
+<li>与骨骼动画兼容，可叠加使用。</li>
+</ul>
+<p>**局限**：</p>
+<ul>
+<li>每个 BlendShape 都需要存储完整的顶点偏移数据，占用较多内存，尤其是高模。</li>
+<li>只能进行线性插值，对于非线性的复杂形变可能需要更多目标。</li>
+<li>难以处理拓扑变化（如嘴巴张合造成的拓扑改变），通常需要保持一致拓扑。</li>
+</ul>
+<h2>数据压缩与优化</h2>
+<p>由于 BlendShape 数据量较大，常用压缩技术：</p>
+<ul>
+<li>仅存储发生变化的顶点偏移，忽略静态顶点。</li>
+<li>使用更低精度的浮点数（如半精度）存储偏移。</li>
+<li>对于频繁组合的 BlendShape，可预先计算组合结果。</li>
+</ul>
+<h2>实践建议</h2>
+<ul>
+<li>合理规划 BlendShape 数量，避免过多导致内存暴涨。</li>
+<li>使用对称镜像功能减少制作时间。</li>
+<li>在引擎中利用遮罩或局部 BlendShape 减少计算量。</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>BlendShape 和 Morph Target 是同一个概念吗？</h3><p>是的，BlendShape 在 Autodesk Maya 中称呼，Morph Target 在 Unreal Engine 等中称呼，两者原理相同，都是通过顶点插值实现形变。</p></div>
+<div class="faq-item"><h3>BlendShape 可以使用在哪些部位？</h3><p>常用于面部表情、口型同步、肌肉膨胀、物体变形等。任何需要精细顶点级变形的场合都可考虑使用。</p></div>
+<div class="faq-item"><h3>BlendShape 数据和骨骼动画数据哪个更占内存？</h3><p>通常 BlendShape 数据占内存更大，因为每个目标形状都需要存储完整的顶点偏移数组；骨骼动画只需存储少数骨骼的变换。因此需要合理控制 BlendShape 数量。</p></div>
+<div class="faq-item"><h3>BlendShape 能跟骨骼动画同时使用吗？</h3><p>可以。在蒙皮计算后，叠加 BlendShape 变形，或反之。通常先应用骨骼蒙皮，再应用 BlendShape 偏移，但顺序可根据需求调整。</p></div>
+<div class="faq-item"><h3>如何创建 BlendShape？</h3><p>在 DCC 软件（如 Maya、Blender）中，复制基础网格，雕刻出目标形状，然后使用 BlendShape 工具关联到基础网格上。导出到游戏引擎时保留 BlendShape 信息。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/skeletal-animation.html">骨骼动画</a> · <a href="https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html">顶点着色器与片元着色器</a> · <a href="https://tools.treasuregrove.art/seo/compute-shader.html">计算着色器</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overdraw - TA Toolbox</title>
+<meta name="description" content="Overdraw refers to the same pixel being drawn multiple times, causing redundant GPU computation and bandwidth waste. This article introduces its causes, impact, detection methods, and optimization strategies to improve rendering performance.">
+<meta name="keywords" content="Overdraw, fill rate, GPU performance, rendering optimization, alpha blending, depth testing, game development, mobile optimization, pixel fill">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/overdraw.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/overdraw.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/overdraw.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Overdraw"}]},{"@type":"Article","name":"Overdraw","headline":"Overdraw","description":"Overdraw refers to the same pixel being drawn multiple times, causing redundant GPU computation and bandwidth waste. This article introduces its causes, impact, detection methods, and optimization strategies to improve rendering performance.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/overdraw.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/overdraw.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between Overdraw and Draw Call?","acceptedAnswer":{"@type":"Answer","text":"Draw Call is a command from CPU to GPU for drawing; a high count increases CPU overhead. Overdraw is repeated pixel drawing on GPU, increasing fill rate pressure. They are different performance metrics."}},{"@type":"Question","name":"How to view Overdraw in Unity?","acceptedAnswer":{"@type":"Answer","text":"In the Scene view, select Overdraw mode from the top-right dropdown; the scene will show draw counts with different colors, red indicating severe overdraw. You can also check in Frame Debugger."}},{"@type":"Question","name":"Why do transparent objects easily cause Overdraw?","acceptedAnswer":{"@type":"Answer","text":"Transparent objects require blending and cannot be fully culled by depth testing. Each transparent layer performs blending, so stacking many transparent objects multiplies overdraw."}},{"@type":"Question","name":"How does depth prepass reduce Overdraw?","acceptedAnswer":{"@type":"Answer","text":"First render the entire scene's depth to a depth buffer. Then in the main pass, use depth test equal (or less-equal) so only the foremost pixels pass and execute fragment shaders. Occluded pixels are skipped, reducing overdraw."}},{"@type":"Question","name":"How to optimize Overdraw on mobile?","acceptedAnswer":{"@type":"Answer","text":"Mobile GPUs have limited bandwidth, so overdraw impact is greater. Minimize transparent objects, simplify UI, use occlusion culling, avoid excessive full-screen post-processing, and use depth prepass."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Overdraw</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Overdraw</h2>
+<p>Overdraw refers to the situation in rendering where the same screen pixel is written to the color buffer multiple times. This is often caused by multiple opaque or semi-transparent objects overlapping, or multiple faces of an object overlapping. Each write requires executing the fragment shader and possibly blending, consuming GPU computation and bandwidth resources.</p>
+<h2>Causes of Overdraw</h2>
+<ul>
+<li>**Opaque object overlap**: If rendering order is improper, distant objects are drawn first and then covered by near objects, causing waste. Although depth testing prevents final color errors, the fragment shader has already executed.</li>
+<li>**Transparent objects**: Transparent objects require blending and cannot be fully culled by depth testing; each transparent layer increases overdraw.</li>
+<li>**Complex geometry**: Models with overlapping internal faces, or heavy particle system stacking.</li>
+<li>**UI elements**: Multiple layers of UI overlapping cause overdraw.</li>
+<li>**Post-processing**: Full-screen post-processing effects may sample and write multiple times.</li>
+</ul>
+<h2>Impact of Overdraw</h2>
+<p>Overdraw directly increases fill rate pressure, i.e., the number of pixels the GPU needs to process per second. On high resolutions or mobile devices, fill rate is often a bottleneck. Overdraw can lead to:</p>
+<ul>
+<li>Decreased frame rate</li>
+<li>Increased power consumption</li>
+<li>Device heating</li>
+</ul>
+<h2>How to Detect Overdraw</h2>
+<ul>
+<li>**Rendering debug tools**: Many engines provide overdraw visualization modes. For example, in Unity's Scene view, you can enable Overdraw mode, where different colors represent draw counts.</li>
+<li>**GPU performance profilers**: Such as NVIDIA Nsight, Android GPU Inspector, etc., can report overdraw rates.</li>
+<li>**Custom debugging**: Use replacement shaders that output colors based on draw count.</li>
+</ul>
+<h2>Strategies to Optimize Overdraw</h2>
+<h3>1. Optimize Rendering Order</h3>
+<ul>
+<li>**Opaque objects front-to-back**: Draw near objects first, using depth testing to reject distant occluded pixels, reducing overdraw. However, in practice back-to-front is often used to reduce state changes; trade-offs are needed.</li>
+<li>**Transparent objects back-to-front**: This is standard practice to ensure correct blending.</li>
+</ul>
+<h3>2. Reduce Coverage of Transparent Objects</h3>
+<ul>
+<li>**Use alpha test instead of alpha blend**: For cutout effects, alpha test avoids blending but may cause aliasing.</li>
+<li>**Simplify transparent geometry**: Use simpler meshes to lower coverage.</li>
+<li>**Limit particle count**: Optimize particle systems to reduce overlap.</li>
+</ul>
+<h3>3. Optimize Geometry</h3>
+<ul>
+<li>**Avoid overlapping internal faces**: Ensure models have no hidden internal faces.</li>
+<li>**Use occlusion culling**: Cull objects fully occluded at CPU or GPU stage to avoid drawing.</li>
+</ul>
+<h3>4. Optimize UI</h3>
+<ul>
+<li>**Reduce UI layering**: Merge UI elements and use atlases to reduce draw calls and overdraw.</li>
+<li>**Clip UI areas**: Only draw visible parts.</li>
+</ul>
+<h3>5. Use Depth Prepass</h3>
+<p>For complex scenes, render depth buffer first, then in main rendering use depth test equal (or less) to skip occluded pixels, reducing overdraw.</p>
+<h2>Summary</h2>
+<p>Overdraw is a common performance bottleneck in real-time rendering. By optimizing ordering, reducing transparent complexity, and optimizing geometry and UI, overdraw can be effectively reduced, improving performance.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between Overdraw and Draw Call?</h3><p>Draw Call is a command from CPU to GPU for drawing; a high count increases CPU overhead. Overdraw is repeated pixel drawing on GPU, increasing fill rate pressure. They are different performance metrics.</p></div>
+<div class="faq-item"><h3>How to view Overdraw in Unity?</h3><p>In the Scene view, select Overdraw mode from the top-right dropdown; the scene will show draw counts with different colors, red indicating severe overdraw. You can also check in Frame Debugger.</p></div>
+<div class="faq-item"><h3>Why do transparent objects easily cause Overdraw?</h3><p>Transparent objects require blending and cannot be fully culled by depth testing. Each transparent layer performs blending, so stacking many transparent objects multiplies overdraw.</p></div>
+<div class="faq-item"><h3>How does depth prepass reduce Overdraw?</h3><p>First render the entire scene's depth to a depth buffer. Then in the main pass, use depth test equal (or less-equal) so only the foremost pixels pass and execute fragment shaders. Occluded pixels are skipped, reducing overdraw.</p></div>
+<div class="faq-item"><h3>How to optimize Overdraw on mobile?</h3><p>Mobile GPUs have limited bandwidth, so overdraw impact is greater. Minimize transparent objects, simplify UI, use occlusion culling, avoid excessive full-screen post-processing, and use depth prepass.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/fill-rate.html">填充率 Fill Rate</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/en/seo/alpha-blending.html">Alpha 混合与透明排序</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

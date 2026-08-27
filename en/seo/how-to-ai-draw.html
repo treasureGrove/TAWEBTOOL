@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Painting Online Text-to-Image Tool Tutorial - TA Toolbox</title>
+<meta name="description" content="This tutorial introduces how to use online AI painting tools for text-to-image creation. It covers tool selection, prompt writing techniques, parameter settings, generation steps, and common FAQs, helping beginners quickly get started and generate high-quality AI images.">
+<meta name="keywords" content="AI painting, online text-to-image, prompt, Stable Diffusion, Midjourney, DALL·E, Wenxin Yige, Tongyi Wanxiang, generation parameters, negative prompt">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/how-to-ai-draw.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/how-to-ai-draw.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-ai-draw.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"Tool Tutorial","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"AI Painting Online Text-to-Image Tool Tutorial"}]},{"@type":"HowTo","name":"AI Painting Online Text-to-Image Tool Tutorial","headline":"AI Painting Online Text-to-Image Tool Tutorial","description":"This tutorial introduces how to use online AI painting tools for text-to-image creation. It covers tool selection, prompt writing techniques, parameter settings, generation steps, and common FAQs, helping beginners quickly get started and generate high-quality AI images.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/how-to-ai-draw.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/how-to-ai-draw.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why are the images I generate blurry?","acceptedAnswer":{"@type":"Answer","text":"Possible reasons: image size too small, sampling steps too low, or model quality not high. It is recommended to increase size, increase steps to around 30, and select high-quality models."}},{"@type":"Question","name":"Should I use Chinese or English for prompts?","acceptedAnswer":{"@type":"Answer","text":"Most foreign tools support English better, but Chinese tools like Wenxin Yige and Tongyi Wanxiang support Chinese. It is recommended to use English prompts mainly, with the help of translation tools if needed."}},{"@type":"Question","name":"How can I fix the same character in different poses?","acceptedAnswer":{"@type":"Answer","text":"Use the character reference image feature, or use the same seed value and fine-tune prompts. Training a dedicated LoRA model is also possible."}},{"@type":"Question","name":"Do generated images have copyright?","acceptedAnswer":{"@type":"Answer","text":"Different tools have different regulations. Generally, users have the right to use generated images, but commercial use requires attention to platform terms; some open-source models allow commercial use."}},{"@type":"Question","name":"Is there a big difference between free and paid online tools?","acceptedAnswer":{"@type":"Answer","text":"Paid tools usually offer higher generation quality, faster speed, and more features. Free tools may have usage limits or watermarks. Choose according to your needs."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">Tool Tutorial</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">Tool Tutorial</a></p>
+    <h1>AI Painting Online Text-to-Image Tool Tutorial</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>Choosing the Right Online AI Painting Tool</h2>
+<p>Currently, mainstream online AI painting text-to-image tools include:</p>
+<ul>
+<li>**Midjourney**: Known for artistic styles, requires Discord, high generation quality.</li>
+<li>**Stable Diffusion WebUI**: Open-source and free, can be deployed locally or used on hosted platforms, highly customizable.</li>
+<li>**DALL·E 3**: Developed by OpenAI, integrated into ChatGPT, good at understanding natural language.</li>
+<li>**Wenxin Yige, Tongyi Wanxiang**: Chinese tools supporting Chinese prompts, easy access.</li>
+</ul>
+<p>For beginners, it is recommended to start with **online platforms** (such as Jimeng, LiblibAI) that require no environment setup, just registration.</p>
+<h2>Writing Effective Prompts</h2>
+<p>Prompts are the key to text-to-image. The basic structure is: **Subject description + Style/Artist + Details/Lighting + Quality tags**.</p>
+<p>Example:</p>
+<p>`A girl wearing Hanfu, standing under a cherry blossom tree, beautiful ancient style, soft lighting, high quality, rich details, 8k`</p>
+<p>Tips:</p>
+<ul>
+<li>Use specific nouns and adjectives, avoid vague expressions.</li>
+<li>Specify styles, such as &quot;cyberpunk&quot;, &quot;watercolor&quot;, &quot;oil painting&quot;.</li>
+<li>Add negative prompts to exclude unwanted content, like &quot;low quality, blurry, deformed&quot;.</li>
+<li>Learn from prompts of excellent works.</li>
+</ul>
+<h2>Setting Generation Parameters</h2>
+<p>Parameters vary slightly among tools, common ones include:</p>
+<ul>
+<li>**Image size**: Affects composition and detail; common sizes are 512x512, 768x1024, etc.</li>
+<li>**Sampling steps**: Generally 20-30 steps are enough; too high may overfit.</li>
+<li>**CFG Scale**: Controls prompt adherence; 7-10 is commonly used.</li>
+<li>**Seed**: Fixing the seed can reproduce the same image.</li>
+<li>**Model selection**: Different models excel in different styles; can switch and try.</li>
+</ul>
+<h2>Steps for Online Text-to-Image</h2>
+<ol>
+<li>Open the website of the chosen tool (e.g., Jimeng: https://jimeng.jianying.com).</li>
+<li>Register/Log in.</li>
+<li>Find the &quot;Text to Image&quot; feature entry.</li>
+<li>Enter prompts in the text box; negative prompts can be added.</li>
+<li>Set image size, quantity, style, and other parameters.</li>
+<li>Click &quot;Generate&quot; and wait from a few seconds to a few minutes.</li>
+<li>Preview results and download/save the satisfactory image.</li>
+<li>If results are unsatisfactory, adjust prompts or parameters and regenerate.</li>
+</ul>
+<h2>Advanced Tips and Tricks</h2>
+<ul>
+<li>**Iterative optimization**: Quickly generate low-step drafts to lock composition, then increase steps and quality.</li>
+<li>**Reference image feature**: Some tools support uploading reference images to achieve style transfer or character consistency.</li>
+<li>**Inpainting**: Redraw unsatisfactory areas to improve details.</li>
+<li>**Batch generation**: Generate multiple images at once and pick the best.</li>
+<li>**Community learning**: Browse tool communities to learn prompts and parameters from others.</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Why are the images I generate blurry?</h3><p>Possible reasons: image size too small, sampling steps too low, or model quality not high. It is recommended to increase size, increase steps to around 30, and select high-quality models.</p></div>
+<div class="faq-item"><h3>Should I use Chinese or English for prompts?</h3><p>Most foreign tools support English better, but Chinese tools like Wenxin Yige and Tongyi Wanxiang support Chinese. It is recommended to use English prompts mainly, with the help of translation tools if needed.</p></div>
+<div class="faq-item"><h3>How can I fix the same character in different poses?</h3><p>Use the character reference image feature, or use the same seed value and fine-tune prompts. Training a dedicated LoRA model is also possible.</p></div>
+<div class="faq-item"><h3>Do generated images have copyright?</h3><p>Different tools have different regulations. Generally, users have the right to use generated images, but commercial use requires attention to platform terms; some open-source models allow commercial use.</p></div>
+<div class="faq-item"><h3>Is there a big difference between free and paid online tools?</h3><p>Paid tools usually offer higher generation quality, faster speed, and more features. Free tools may have usage limits or watermarks. Choose according to your needs.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-ai-image.html">AI 通用生图</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-chatgpt.html">ChatGPT 对话</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

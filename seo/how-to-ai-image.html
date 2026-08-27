@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 通用生图在线工具使用教程 - TA工具箱</title>
+<meta name="description" content="本教程全面介绍使用在线 AI 生图工具进行文字生成图片的方法。涵盖主流平台选择、提示词编写、参数调优、操作步骤及常见问题，帮助用户无需安装软件即可快速生成高质量图片。">
+<meta name="keywords" content="AI生图,在线生图,文字生成图片,文生图,Stable Diffusion,Midjourney,DALL·E,文心一格,通义万相,即梦,提示词,负面提示词,生成参数">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/how-to-ai-image.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/how-to-ai-image.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-ai-image.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"工具教程","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"AI 通用生图在线工具使用教程"}]},{"@type":"HowTo","name":"AI 通用生图在线工具使用教程","headline":"AI 通用生图在线工具使用教程","description":"本教程全面介绍使用在线 AI 生图工具进行文字生成图片的方法。涵盖主流平台选择、提示词编写、参数调优、操作步骤及常见问题，帮助用户无需安装软件即可快速生成高质量图片。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/how-to-ai-image.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/how-to-ai-image.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"AI 生成的图片可以商用吗？","acceptedAnswer":{"@type":"Answer","text":"取决于平台条款。部分平台允许免费商用，部分需付费会员或禁止商用。建议查看具体平台的使用协议，开源模型如 Stable Diffusion 通常允许商用。"}},{"@type":"Question","name":"为什么生成的图片有畸形或多余肢体？","acceptedAnswer":{"@type":"Answer","text":"这是 AI 生图常见问题。可在负面提示词中添加“畸形，多余肢体，解剖结构错误”，或使用专门优化手部的模型和 LoRA。"}},{"@type":"Question","name":"如何让生成的图片更清晰？","acceptedAnswer":{"@type":"Answer","text":"提高图片尺寸、增加采样步数、使用高质量模型，并可借助 AI 放大工具进行超分辨率处理。"}},{"@type":"Question","name":"提示词用中文好还是英文好？","acceptedAnswer":{"@type":"Answer","text":"多数国际工具对英文支持更好，但国内平台中文效果不错。建议英文提示词为主，可借助翻译工具优化表达。"}},{"@type":"Question","name":"免费在线工具够用吗？","acceptedAnswer":{"@type":"Answer","text":"免费工具通常有次数限制、速度较慢或带水印。付费工具可提供更高分辨率、更快生成和更多高级功能。可根据需求选择。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">工具教程</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">工具教程</a></p>
+    <h1>AI 通用生图在线工具使用教程</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>选择适合的在线 AI 生图工具</h2>
+<p>目前主流的在线 AI 生图工具包括：</p>
+<ul>
+<li>**Stable Diffusion WebUI（在线托管版）**：如 DreamStudio、Playground AI，提供丰富参数调节。</li>
+<li>**Midjourney**：通过 Discord 使用，以艺术风格和高质量著称。</li>
+<li>**DALL·E 3**：集成于 ChatGPT，对自然语言理解能力强。</li>
+<li>**国内平台**：如文心一格（百度）、通义万相（阿里）、即梦（字节），支持中文，访问便捷。</li>
+</ul>
+<p>对于新手，建议从 **即梦** 或 **LiblibAI** 开始，界面友好，教程丰富。</p>
+<h2>编写高效的提示词（Prompt）</h2>
+<p>提示词是 AI 生图的核心。基本公式：**主体 + 场景 + 风格 + 光照 + 画质**。</p>
+<p>示例：</p>
+<p>`一只可爱的橘猫坐在窗台上，阳光透过窗帘，温馨氛围，摄影风格，浅景深，高清，细节丰富`</p>
+<p>技巧：</p>
+<ul>
+<li>描述具体，避免歧义。</li>
+<li>添加风格词汇，如“赛博朋克”、“水彩画”、“3D渲染”。</li>
+<li>使用负面提示词排除不需要的元素，例如“模糊，低质量，多余的手指”。</li>
+<li>适当参考社区优秀作品的提示词进行修改。</li>
+</ul>
+<h2>调整生成参数</h2>
+<p>不同工具参数不同，常见参数包括：</p>
+<ul>
+<li>**图片尺寸**：影响构图和细节，常用 512x512、768x512、1024x1024。</li>
+<li>**采样步数（Steps）**：一般 20-30 步平衡速度与质量。</li>
+<li>**引导系数（CFG Scale）**：控制提示词遵循程度，5-15 常用，7-10 较安全。</li>
+<li>**种子（Seed）**：固定后复现相同结果，便于微调。</li>
+<li>**模型（Model）**：选择擅长特定风格的基础模型或微调模型。</li>
+</ul>
+<h2>在线文字生成图片操作步骤</h2>
+<ol>
+<li>打开选定的在线 AI 生图网站并注册登录。</li>
+<li>进入“文生图”或“Text to Image”页面。</li>
+<li>在提示词输入框填写描述，添加负面提示词。</li>
+<li>设置尺寸、数量、风格等参数。</li>
+<li>点击“生成”按钮，等待处理。</li>
+<li>预览生成结果，可放大查看细节。</li>
+<li>下载满意的图片，或继续调整提示词重新生成。</li>
+</ul>
+<h2>进阶技巧</h2>
+<ul>
+<li>**迭代优化**：先用低步数生成草图，确定构图后提高步数和分辨率。</li>
+<li>**使用参考图**：上传图片作为风格或内容参考，结合提示词进行图生图。</li>
+<li>**局部重绘**：对图片不满意区域进行涂鸦重绘，增强可控性。</li>
+<li>**批量生成**：一次生成 4-8 张，从中挑选最佳。</li>
+<li>**学习社区**：浏览平台社区，复制他人提示词进行实验。</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>AI 生成的图片可以商用吗？</h3><p>取决于平台条款。部分平台允许免费商用，部分需付费会员或禁止商用。建议查看具体平台的使用协议，开源模型如 Stable Diffusion 通常允许商用。</p></div>
+<div class="faq-item"><h3>为什么生成的图片有畸形或多余肢体？</h3><p>这是 AI 生图常见问题。可在负面提示词中添加“畸形，多余肢体，解剖结构错误”，或使用专门优化手部的模型和 LoRA。</p></div>
+<div class="faq-item"><h3>如何让生成的图片更清晰？</h3><p>提高图片尺寸、增加采样步数、使用高质量模型，并可借助 AI 放大工具进行超分辨率处理。</p></div>
+<div class="faq-item"><h3>提示词用中文好还是英文好？</h3><p>多数国际工具对英文支持更好，但国内平台中文效果不错。建议英文提示词为主，可借助翻译工具优化表达。</p></div>
+<div class="faq-item"><h3>免费在线工具够用吗？</h3><p>免费工具通常有次数限制、速度较慢或带水印。付费工具可提供更高分辨率、更快生成和更多高级功能。可根据需求选择。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-ai-draw.html">AI 绘画</a> · <a href="https://tools.treasuregrove.art/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a> · <a href="https://tools.treasuregrove.art/seo/how-to-chatgpt.html">ChatGPT 对话</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

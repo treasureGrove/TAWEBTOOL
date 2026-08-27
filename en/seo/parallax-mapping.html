@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parallax Mapping - TA Toolbox</title>
+<meta name="description" content="Parallax mapping is a shading technique used to enhance the three-dimensional appearance of textured surfaces by offsetting texture coordinates based on the viewing angle to simulate height variations, producing more realistic depth than normal mapping. This article introduces its principles, types, advantages, limitations, and applications in games.">
+<meta name="keywords" content="parallax mapping, height map, normal mapping, steep parallax mapping, parallax occlusion mapping, POM, game rendering, shader technique, texture mapping">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/parallax-mapping.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/parallax-mapping.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/parallax-mapping.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Parallax Mapping"}]},{"@type":"Article","name":"Parallax Mapping","headline":"Parallax Mapping","description":"Parallax mapping is a shading technique used to enhance the three-dimensional appearance of textured surfaces by offsetting texture coordinates based on the viewing angle to simulate height variations, producing more realistic depth than normal mapping. This article introduces its principles, types, advantages, limitations, and applications in games.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/parallax-mapping.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/parallax-mapping.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between parallax mapping and normal mapping?","acceptedAnswer":{"@type":"Answer","text":"Normal mapping only changes the normal direction for lighting calculations, not the texture sampling position, so there is no parallax displacement. Parallax mapping offsets texture coordinates based on viewing angle, simulating occlusion effects from height differences, resulting in stronger visual depth."}},{"@type":"Question","name":"What additional texture is needed for parallax mapping?","acceptedAnswer":{"@type":"Answer","text":"A height map (Height Map) is required, typically a grayscale texture representing surface height. The height map can be stored separately or packed into the alpha channel of the normal map."}},{"@type":"Question","name":"What are common types of parallax mapping?","acceptedAnswer":{"@type":"Answer","text":"Common types include basic parallax mapping, parallax mapping with offset limiting, steep parallax mapping, relief parallax mapping, and parallax occlusion mapping (POM). They differ in effect and performance."}},{"@type":"Question","name":"What are the applications of parallax mapping in games?","acceptedAnswer":{"@type":"Answer","text":"Widely used for brick walls, cobblestone paths, sci-fi panels, terrain details, etc., to add depth to flat models and enhance visual quality."}},{"@type":"Question","name":"What is the performance cost of parallax mapping?","acceptedAnswer":{"@type":"Answer","text":"Basic parallax mapping has low performance cost, but advanced variants like POM require multiple texture samples and loop calculations, resulting in higher cost. A balance between effect and performance is needed in practice."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Parallax Mapping</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Parallax Mapping</h2>
+<p>Parallax mapping is an advanced texture mapping technique used to simulate bumpy, three-dimensional surfaces on flat polygons. It offsets texture coordinates based on the viewing angle and a surface height map, creating a parallax displacement that gives a stronger sense of depth than normal mapping. Unlike normal mapping, which only alters the lighting normal, parallax mapping actually changes the texture sampling position, so raised areas can occlude recessed areas as the view angle changes, producing an effect closer to real geometry.</p>
+<h2>Basic Principle</h2>
+<p>The core idea of parallax mapping is based on simple geometric relationships. When viewing a surface with height from an angle, a point in texture space is shifted due to the height. Suppose the surface has a height field h(u,v), and the view direction is V. The actual visible point should be offset from the original position by projecting along V onto the surface. For simplification, an approximation is often used: based on the height h and the tangent-plane component of the view direction, the texture coordinates are shifted toward the view direction by an amount. The formula is:</p>
+<p>`offset = h * V.xy / V.z`</p>
+<p>This approximation works well for gradual height changes but can cause distortion for steep heights or very oblique viewing angles.</p>
+<h2>Common Types and Variants</h2>
+<h3>Basic Parallax Mapping</h3>
+<p>The simplest form, using the above formula for a single offset. Easy to implement and low performance cost, but may exhibit visible sliding and distortion at steep angles.</p>
+<h3>Parallax Mapping with Offset Limiting</h3>
+<p>To reduce distortion, a scaling factor is applied to the offset, often related to the angle of the view direction in the tangent plane. This prevents excessive texture coordinate offsets and sampling errors, but weakens the effect.</p>
+<h3>Steep Parallax Mapping</h3>
+<p>Divides the height field into multiple layers and samples the height map incrementally along the view direction to find the first occluded layer, obtaining a more accurate offset. More layers produce better results but higher performance cost.</p>
+<h3>Relief Parallax Mapping</h3>
+<p>Refines steep parallax mapping by interpolating between found layers for sub-pixel accuracy. Effect approaches true displacement mapping but with higher computational cost.</p>
+<h3>Parallax Occlusion Mapping (POM)</h3>
+<p>An improved steep parallax mapping that uses linear interpolation or binary search to precisely determine the intersection of the view ray with the height field, producing self-shadowing and more accurate silhouettes. POM is widely used in modern games.</p>
+<h2>Comparison with Normal Mapping and Displacement Mapping</h2>
+<ul>
+<li>**Normal Mapping**: Changes the normal used in lighting calculations but does not alter texture coordinates, so the geometric surface remains flat with no parallax displacement.</li>
+<li>**Parallax Mapping**: Changes texture sampling coordinates, making the texture appear to have depth, but does not alter the geometric surface; lighting is still based on the original normal (unless combined with normal mapping).</li>
+<li>**Displacement Mapping**: Actually changes vertex positions of the geometry, producing real bumps, requires sufficient vertex density, highest performance cost.</li>
+</ul>
+<p>Parallax mapping is typically implemented in the fragment shader, requires a height map, and is often combined with normal mapping for best results.</p>
+<h2>Advantages and Limitations</h2>
+<p>**Advantages**:</p>
+<ul>
+<li>Compared to displacement mapping, no extra geometry needed, lower performance cost.</li>
+<li>Produces more realistic depth and parallax effects than normal mapping.</li>
+<li>Suitable for details like brick walls, cobblestones, carved surfaces.</li>
+</ul>
+<p>**Limitations**:</p>
+<ul>
+<li>Still an approximation, can produce distortion or artifacts at extreme viewing angles.</li>
+<li>Surface silhouette edges remain flat, cannot produce true contour changes.</li>
+<li>Requires an additional height map, increasing texture memory and sampling count.</li>
+<li>For complex geometry, computation can be heavy, especially for advanced variants like POM.</li>
+</ul>
+<h2>Application Scenarios</h2>
+<p>Parallax mapping is commonly used in games and real-time rendering for materials requiring detailed bumps, such as:</p>
+<ul>
+<li>Building walls, bricks, stone pathways</li>
+<li>Sci-fi surfaces, mechanical panels</li>
+<li>Terrain details (e.g., rocks, gravel)</li>
+<li>Any flat material needing enhanced depth perception</li>
+</ul>
+<p>In implementation, height information is often stored in the alpha channel of the normal map or in a separate height map. Modern game engines (e.g., Unity, Unreal) have built-in support for parallax mapping or POM.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between parallax mapping and normal mapping?</h3><p>Normal mapping only changes the normal direction for lighting calculations, not the texture sampling position, so there is no parallax displacement. Parallax mapping offsets texture coordinates based on viewing angle, simulating occlusion effects from height differences, resulting in stronger visual depth.</p></div>
+<div class="faq-item"><h3>What additional texture is needed for parallax mapping?</h3><p>A height map (Height Map) is required, typically a grayscale texture representing surface height. The height map can be stored separately or packed into the alpha channel of the normal map.</p></div>
+<div class="faq-item"><h3>What are common types of parallax mapping?</h3><p>Common types include basic parallax mapping, parallax mapping with offset limiting, steep parallax mapping, relief parallax mapping, and parallax occlusion mapping (POM). They differ in effect and performance.</p></div>
+<div class="faq-item"><h3>What are the applications of parallax mapping in games?</h3><p>Widely used for brick walls, cobblestone paths, sci-fi panels, terrain details, etc., to add depth to flat models and enhance visual quality.</p></div>
+<div class="faq-item"><h3>What is the performance cost of parallax mapping?</h3><p>Basic parallax mapping has low performance cost, but advanced variants like POM require multiple texture samples and loop calculations, resulting in higher cost. A balance between effect and performance is needed in practice.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/tessellation.html">曲面细分</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/uv-mapping.html">UV 映射与展开</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反射探针 - TA工具箱</title>
+<meta name="description" content="反射探针（Reflection Probe）是用于捕获场景中某位置周围环境光照和反射信息的工具，为附近物体提供间接光照和反射。本文介绍其原理、类型、使用方法和优化。">
+<meta name="keywords" content="反射探针,Reflection Probe,环境反射,间接光照,立方体贴图,游戏开发,Unity,Unreal,全局光照,性能优化">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/reflection-probe.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/reflection-probe.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/reflection-probe.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"反射探针"}]},{"@type":"Article","name":"反射探针","headline":"反射探针","description":"反射探针（Reflection Probe）是用于捕获场景中某位置周围环境光照和反射信息的工具，为附近物体提供间接光照和反射。本文介绍其原理、类型、使用方法和优化。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/reflection-probe.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/reflection-probe.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"反射探针和光照贴图有什么区别？","acceptedAnswer":{"@type":"Answer","text":"光照贴图主要用于静态物体的间接漫反射，而反射探针用于动态物体的反射和间接镜面反射。两者可以结合使用。"}},{"@type":"Question","name":"如何创建反射探针？","acceptedAnswer":{"@type":"Answer","text":"在Unity中，可以创建Reflection Probe GameObject并调整其位置、范围；在Unreal中，使用Reflection Capture Actor。然后烘焙或设置为实时更新。"}},{"@type":"Question","name":"反射探针可以反射动态物体吗？","acceptedAnswer":{"@type":"Answer","text":"只有动态或实时反射探针才能包含动态物体，但性能开销大。静态探针只能反射烘焙时的静态场景。"}},{"@type":"Question","name":"反射探针会影响性能吗？","acceptedAnswer":{"@type":"Answer","text":"会，尤其是实时更新的探针。静态探针在运行时几乎没有开销（除了采样）。动态探针需要渲染场景，应控制数量和更新频率。"}},{"@type":"Question","name":"如何让物体使用多个反射探针？","acceptedAnswer":{"@type":"Answer","text":"引擎通常会自动根据物体位置选择并混合附近的探针。可以设置探针的混合距离和权重，实现平滑过渡。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>反射探针</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是反射探针</h2>
+<p>反射探针（Reflection Probe）是一种在3D场景中放置的组件，用于捕获该位置周围的环境信息（通常存储为立方体贴图），为附近的动态或静态物体提供反射和间接光照数据。它是实现全局光照和高质量反射的重要手段，尤其对于金属或光滑表面。</p>
+<p>反射探针在游戏引擎中广泛使用，如Unity的Reflection Probe、Unreal Engine的Reflection Capture。</p>
+<h2>反射探针的工作原理</h2>
+<p>反射探针在指定位置渲染或捕获六个方向（上、下、左、右、前、后）的场景视图，生成一个立方体贴图。这个立方体贴图随后被用于着色器中，当物体需要反射时，采样该立方体贴图来模拟环境反射。对于间接漫反射，可以使用预卷积的辐照度图。</p>
+<p>反射探针可以是静态的（在编辑时烘焙）或动态的（在运行时更新）。动态探针会实时渲染场景，开销较大，通常用于重要区域或移动物体。</p>
+<h2>反射探针的类型</h2>
+<ul>
+<li>**静态反射探针**：在构建时烘焙环境，不随运行时变化，性能开销低。适用于固定场景。</li>
+<li>**动态反射探针**：在运行时更新，可以反映移动物体和光照变化，但性能消耗高。通常限制更新频率和分辨率。</li>
+<li>**实时反射探针**：每帧更新，用于高保真反射，如镜面，但成本最高。</li>
+</ul>
+<h2>反射探针的放置与影响范围</h2>
+<p>反射探针可以放置在场景中的关键位置，并设置影响范围（如球形或盒形区域）。物体根据其位置选择最相关的探针或混合多个探针的数据，以获得平滑过渡。</p>
+<p>一些引擎支持探针的优先级和混合权重。</p>
+<h2>反射探针与屏幕空间反射</h2>
+<p>反射探针提供的是静态或低频的环境反射，无法捕捉屏幕外的细节或动态物体的精确反射。屏幕空间反射（SSR）可以补充这一点，但仅限于屏幕空间内。两者常结合使用。</p>
+<h2>性能优化</h2>
+<ul>
+<li>**降低分辨率**：反射探针的立方体贴图分辨率不必很高，通常128-256即可满足大多数反射。</li>
+<li>**限制更新频率**：动态探针可以每秒更新几次，而不是每帧。</li>
+<li>**使用时间切片**：分帧渲染六个面，减少单帧开销。</li>
+<li>**合理布局**：避免过多的探针，利用混合减少数量。</li>
+<li>**使用预滤波**：为不同粗糙度预生成mipmap，减少运行时计算。</li>
+</ul>
+<h2>总结</h2>
+<p>反射探针是实时渲染中实现环境反射和间接光照的实用工具，正确使用可以显著提升场景真实感。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>反射探针和光照贴图有什么区别？</h3><p>光照贴图主要用于静态物体的间接漫反射，而反射探针用于动态物体的反射和间接镜面反射。两者可以结合使用。</p></div>
+<div class="faq-item"><h3>如何创建反射探针？</h3><p>在Unity中，可以创建Reflection Probe GameObject并调整其位置、范围；在Unreal中，使用Reflection Capture Actor。然后烘焙或设置为实时更新。</p></div>
+<div class="faq-item"><h3>反射探针可以反射动态物体吗？</h3><p>只有动态或实时反射探针才能包含动态物体，但性能开销大。静态探针只能反射烘焙时的静态场景。</p></div>
+<div class="faq-item"><h3>反射探针会影响性能吗？</h3><p>会，尤其是实时更新的探针。静态探针在运行时几乎没有开销（除了采样）。动态探针需要渲染场景，应控制数量和更新频率。</p></div>
+<div class="faq-item"><h3>如何让物体使用多个反射探针？</h3><p>引擎通常会自动根据物体位置选择并混合附近的探针。可以设置探针的混合距离和权重，实现平滑过渡。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

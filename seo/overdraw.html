@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overdraw 过度绘制 - TA工具箱</title>
+<meta name="description" content="Overdraw（过度绘制）是指同一像素被多次绘制，导致GPU重复计算和带宽浪费。本文介绍其成因、影响、检测方法及优化策略，帮助提升渲染性能。">
+<meta name="keywords" content="Overdraw,过度绘制,填充率,GPU性能,渲染优化,透明混合,深度测试,游戏开发,移动端优化,像素填充">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/overdraw.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/overdraw.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/overdraw.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"Overdraw 过度绘制"}]},{"@type":"Article","name":"Overdraw 过度绘制","headline":"Overdraw 过度绘制","description":"Overdraw（过度绘制）是指同一像素被多次绘制，导致GPU重复计算和带宽浪费。本文介绍其成因、影响、检测方法及优化策略，帮助提升渲染性能。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/overdraw.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/overdraw.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Overdraw和Draw Call有什么区别？","acceptedAnswer":{"@type":"Answer","text":"Draw Call是CPU向GPU发出的绘制指令，数量多会增加CPU开销。Overdraw是GPU像素被重复绘制，增加GPU填充率压力，两者是不同维度的性能指标。"}},{"@type":"Question","name":"如何查看Unity中的Overdraw？","acceptedAnswer":{"@type":"Answer","text":"在Scene视图的右上角，选择Overdraw模式，场景会以不同颜色显示绘制次数，红色表示overdraw严重。也可以在Frame Debugger中查看。"}},{"@type":"Question","name":"透明物体为什么容易导致Overdraw？","acceptedAnswer":{"@type":"Answer","text":"透明物体需要混合，不能仅通过深度测试剔除被遮挡像素，每个透明层都会执行混合操作，大量透明物体叠加会成倍增加overdraw。"}},{"@type":"Question","name":"深度预渲染如何减少Overdraw？","acceptedAnswer":{"@type":"Answer","text":"先渲染整个场景的深度到深度缓冲，然后在正式渲染时，使用深度测试为“相等”或“小于等于”，这样只有最前面的像素会通过深度测试并执行片段着色器，被遮挡像素不会执行，减少overdraw。"}},{"@type":"Question","name":"移动端如何优化Overdraw？","acceptedAnswer":{"@type":"Answer","text":"移动GPU带宽有限，overdraw影响更大。应尽量减少透明物体使用，简化UI，使用遮挡剔除，避免全屏后处理过度，并利用深度预渲染。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>Overdraw 过度绘制</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是Overdraw</h2>
+<p>Overdraw（过度绘制）指的是在渲染过程中，同一个屏幕像素被多次写入颜色缓冲区。这通常是由于多个不透明或半透明物体相互重叠，或者物体自身多个面重叠导致的。每次写入都需要执行片段着色器并进行混合，消耗GPU计算和带宽资源。</p>
+<h2>Overdraw的原因</h2>
+<ul>
+<li>**不透明物体重叠**：如果渲染顺序不当，较远的物体先被绘制，然后被近处物体覆盖，造成浪费。虽然深度测试可以避免最终颜色错误，但片段着色器已经执行。</li>
+<li>**透明物体**：透明物体需要混合，无法通过深度测试完全剔除，每个透明层都会增加overdraw。</li>
+<li>**复杂几何体**：模型内部有重叠面，或者粒子系统大量叠加。</li>
+<li>**UI元素**：多层UI叠加导致overdraw。</li>
+<li>**后处理**：全屏后处理效果可能多次采样和写入。</li>
+</ul>
+<h2>Overdraw的影响</h2>
+<p>Overdraw直接增加填充率（Fill Rate）压力，即GPU每秒需要处理的像素数量。在高分辨率或移动设备上，填充率往往是瓶颈。过度绘制会导致：</p>
+<ul>
+<li>帧率下降</li>
+<li>功耗增加</li>
+<li>设备发热</li>
+</ul>
+<h2>如何检测Overdraw</h2>
+<ul>
+<li>**渲染调试工具**：许多引擎提供overdraw可视化模式，例如Unity中的Scene视图可以开启Overdraw模式，不同颜色代表绘制次数。</li>
+<li>**GPU性能分析器**：如NVIDIA Nsight、Android GPU Inspector等，可以统计overdraw率。</li>
+<li>**自定义调试**：使用替换shader，根据绘制次数输出颜色。</li>
+</ul>
+<h2>优化Overdraw的策略</h2>
+<h3>1. 优化渲染顺序</h3>
+<ul>
+<li>**不透明物体从前往后排序**：先绘制近处物体，利用深度测试剔除远处被遮挡的像素，减少overdraw。但实际中常用从后往前以减少状态切换，需权衡。</li>
+<li>**透明物体从后往前排序**：这是标准做法，确保混合正确。</li>
+</ul>
+<h3>2. 减少透明物体覆盖面积</h3>
+<ul>
+<li>**使用Alpha Test代替Alpha Blend**：对于需要镂空效果的物体，使用alpha test可以避免混合，但会产生锯齿。</li>
+<li>**简化透明几何体**：使用更简单的网格，降低覆盖率。</li>
+<li>**限制粒子数量**：优化粒子系统，减少重叠。</li>
+</ul>
+<h3>3. 优化几何体</h3>
+<ul>
+<li>**避免内部重叠面**：确保模型没有隐藏的内部面。</li>
+<li>**使用遮挡剔除**：在CPU或GPU阶段剔除被完全遮挡的物体，避免绘制。</li>
+</ul>
+<h3>4. 优化UI</h3>
+<ul>
+<li>**减少UI层叠**：合并UI元素，使用图集减少draw call和overdraw。</li>
+<li>**裁剪UI区域**：只绘制可见部分。</li>
+</ul>
+<h3>5. 利用深度预渲染</h3>
+<p>对于复杂场景，可以先渲染深度缓冲，然后在主渲染时使用深度测试等于（或小于）来跳过被遮挡的像素，减少overdraw。</p>
+<h2>总结</h2>
+<p>Overdraw是实时渲染中常见的性能瓶颈，通过合理排序、减少透明复杂度、优化几何和UI，可以有效降低overdraw，提升性能。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>Overdraw和Draw Call有什么区别？</h3><p>Draw Call是CPU向GPU发出的绘制指令，数量多会增加CPU开销。Overdraw是GPU像素被重复绘制，增加GPU填充率压力，两者是不同维度的性能指标。</p></div>
+<div class="faq-item"><h3>如何查看Unity中的Overdraw？</h3><p>在Scene视图的右上角，选择Overdraw模式，场景会以不同颜色显示绘制次数，红色表示overdraw严重。也可以在Frame Debugger中查看。</p></div>
+<div class="faq-item"><h3>透明物体为什么容易导致Overdraw？</h3><p>透明物体需要混合，不能仅通过深度测试剔除被遮挡像素，每个透明层都会执行混合操作，大量透明物体叠加会成倍增加overdraw。</p></div>
+<div class="faq-item"><h3>深度预渲染如何减少Overdraw？</h3><p>先渲染整个场景的深度到深度缓冲，然后在正式渲染时，使用深度测试为“相等”或“小于等于”，这样只有最前面的像素会通过深度测试并执行片段着色器，被遮挡像素不会执行，减少overdraw。</p></div>
+<div class="faq-item"><h3>移动端如何优化Overdraw？</h3><p>移动GPU带宽有限，overdraw影响更大。应尽量减少透明物体使用，简化UI，使用遮挡剔除，避免全屏后处理过度，并利用深度预渲染。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/fill-rate.html">填充率 Fill Rate</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/alpha-blending.html">Alpha 混合与透明排序</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

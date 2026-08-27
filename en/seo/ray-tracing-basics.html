@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ray Tracing Fundamentals - TA Toolbox</title>
+<meta name="description" content="Ray tracing is a rendering technique that generates realistic images by simulating the paths of light rays, naturally producing effects such as reflections, refractions, and shadows. This article introduces its basic principles, algorithms, hardware acceleration, and real-time applications.">
+<meta name="keywords" content="ray tracing, path tracing, global illumination, real-time rendering, RTX, DXR, BVH, Monte Carlo, graphics">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Ray Tracing Fundamentals"}]},{"@type":"Article","name":"Ray Tracing Fundamentals","headline":"Ray Tracing Fundamentals","description":"Ray tracing is a rendering technique that generates realistic images by simulating the paths of light rays, naturally producing effects such as reflections, refractions, and shadows. This article introduces its basic principles, algorithms, hardware acceleration, and real-time applications.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between ray tracing and rasterization?","acceptedAnswer":{"@type":"Answer","text":"Rasterization projects geometry to screen and shades per pixel, fast but struggles with global illumination; ray tracing simulates light transport, naturally producing reflections and refractions, but high computational cost."}},{"@type":"Question","name":"What is path tracing?","acceptedAnswer":{"@type":"Answer","text":"Path tracing is a Monte Carlo ray tracing algorithm that randomly samples light paths to solve the rendering equation, producing unbiased global illumination, but requires many samples to converge."}},{"@type":"Question","name":"What hardware is needed for real-time ray tracing?","acceptedAnswer":{"@type":"Answer","text":"Typically a GPU with hardware acceleration, such as NVIDIA RTX series, AMD RDNA 2 and later. These GPUs contain dedicated ray intersection units."}},{"@type":"Question","name":"Can ray tracing completely replace rasterization?","acceptedAnswer":{"@type":"Answer","text":"Not yet, because ray tracing is still too expensive for complex scenes. Hybrid rendering is mainstream; full ray tracing may come in the future."}},{"@type":"Question","name":"How does ray tracing handle dynamic scenes?","acceptedAnswer":{"@type":"Answer","text":"Acceleration structures (like BVH) need updates, which can cause overhead. Modern engines use incremental updates or rebuild strategies."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Ray Tracing Fundamentals</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Ray Tracing</h2>
+<p>Ray tracing is a rendering technique based on physical optics simulation. It shoots one or more rays per pixel from the camera, computes intersections with scene objects, and recursively traces secondary rays for reflection and refraction based on material properties, accumulating colors to form the final pixel. Unlike rasterization, ray tracing accurately handles global illumination effects like soft shadows, reflections, refractions, and caustics, producing images closer to the real world.</p>
+<h2>Basic Principles</h2>
+<h3>Ray-Scene Intersection</h3>
+<p>A ray is defined by origin O and direction D: `P(t) = O + tD`. The nearest intersection with geometric primitives (triangles, spheres, etc.) must be found. Acceleration structures like BVH (Bounding Volume Hierarchy) speed up intersection queries.</p>
+<h3>Shading Model</h3>
+<p>At the intersection, direct and indirect lighting are computed based on material properties (e.g., BRDF). Direct lighting may cast shadow rays to detect occlusion; indirect lighting recursively spawns reflection and refraction rays to simulate multiple light bounces.</p>
+<h3>Rendering Equation</h3>
+<p>The core equation solved by ray tracing is:</p>
+<p>`L_o(p, ω_o) = L_e(p, ω_o) + ∫ f_r(p, ω_i, ω_o) L_i(p, ω_i) (n·ω_i) dω_i`</p>
+<p>In practice, Monte Carlo sampling approximates the integral, as in path tracing.</p>
+<h2>Main Algorithms</h2>
+<h3>Recursive Ray Tracing (Whitted Ray Tracing)</h3>
+<p>Classic algorithm that fires reflection and refraction rays at each intersection with limited recursion depth. Handles perfect specular reflection and transparency but not diffuse global illumination.</p>
+<h3>Path Tracing</h3>
+<p>Monte Carlo method that traces random paths from the camera to simulate light propagation. Unbiased global illumination, produces photorealistic results but requires many samples and converges slowly.</p>
+<h3>Photon Mapping</h3>
+<p>Two-pass algorithm: photons are emitted from lights and stored in a photon map, then the camera pass collects photon contributions. Good at caustics but biased compared to path tracing.</p>
+<h2>Hardware Acceleration and Real-time Applications</h2>
+<h3>Dedicated Hardware</h3>
+<p>NVIDIA RTX GPUs introduced RT Cores specifically for accelerating ray-triangle and BVH intersections. AMD's RDNA 2 architecture also added ray acceleration units. This hardware makes real-time ray tracing feasible.</p>
+<h3>Graphics API Support</h3>
+<p>DirectX 12 Ultimate, Vulkan, Metal provide ray tracing interfaces (DXR, VK_KHR_ray_tracing), allowing hybrid rendering with rasterization.</p>
+<h3>Hybrid Rendering</h3>
+<p>Current games typically use hybrid rendering: rasterization for most of the scene, ray tracing for selected effects like reflections, shadows, ambient occlusion, global illumination. This balances performance and quality.</p>
+<h2>Advantages and Limitations</h2>
+<p>**Advantages**:</p>
+<ul>
+<li>Physically correct: directly simulates light transport, producing complex optical effects naturally.</li>
+<li>Simplifies art workflow: no need to bake lighting or create reflection probes manually.</li>
+<li>Scalable: quality improves with more samples.</li>
+</ul>
+<p>**Limitations**:</p>
+<ul>
+<li>High computational cost: real-time still requires heavy optimization and denoising.</li>
+<li>Hardware support required: dedicated ray tracing hardware accelerates significantly, but older hardware cannot use it.</li>
+<li>Scene complexity: dynamic scenes and large geometry cause BVH update overhead.</li>
+</ul>
+<h2>Future Trends</h2>
+<p>With hardware improvements and algorithmic optimizations (denoising, importance sampling, spatiotemporal reuse), real-time ray tracing is becoming more prevalent. Fully ray-traced pipelines may be possible in the future.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between ray tracing and rasterization?</h3><p>Rasterization projects geometry to screen and shades per pixel, fast but struggles with global illumination; ray tracing simulates light transport, naturally producing reflections and refractions, but high computational cost.</p></div>
+<div class="faq-item"><h3>What is path tracing?</h3><p>Path tracing is a Monte Carlo ray tracing algorithm that randomly samples light paths to solve the rendering equation, producing unbiased global illumination, but requires many samples to converge.</p></div>
+<div class="faq-item"><h3>What hardware is needed for real-time ray tracing?</h3><p>Typically a GPU with hardware acceleration, such as NVIDIA RTX series, AMD RDNA 2 and later. These GPUs contain dedicated ray intersection units.</p></div>
+<div class="faq-item"><h3>Can ray tracing completely replace rasterization?</h3><p>Not yet, because ray tracing is still too expensive for complex scenes. Hybrid rendering is mainstream; full ray tracing may come in the future.</p></div>
+<div class="faq-item"><h3>How does ray tracing handle dynamic scenes?</h3><p>Acceleration structures (like BVH) need updates, which can cause overhead. Modern engines use incremental updates or rebuild strategies.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/en/seo/ssao.html">SSAO 环境光遮蔽</a> · <a href="https://tools.treasuregrove.art/en/seo/dlss-fsr-upscaling.html">DLSS FSR 超分辨率</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

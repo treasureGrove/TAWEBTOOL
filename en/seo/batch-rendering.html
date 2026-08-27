@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Batching - TA Toolbox</title>
+<meta name="description" content="Batching is a technique to combine multiple draw calls into fewer calls, reducing CPU overhead and improving rendering performance. This article introduces common methods like dynamic batching, static batching, GPU instancing, and discusses their conditions and limitations.">
+<meta name="keywords" content="batching, static batching, dynamic batching, GPU instancing, SRP Batcher, draw call, rendering optimization, game development, CPU performance">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/batch-rendering.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/batch-rendering.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/batch-rendering.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Batching"}]},{"@type":"Article","name":"Batching","headline":"Batching","description":"Batching is a technique to combine multiple draw calls into fewer calls, reducing CPU overhead and improving rendering performance. This article introduces common methods like dynamic batching, static batching, GPU instancing, and discusses their conditions and limitations.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/batch-rendering.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/batch-rendering.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between static and dynamic batching?","acceptedAnswer":{"@type":"Answer","text":"Static batching merges meshes before runtime, suitable for non-moving objects but increases memory; dynamic batching merges vertices at runtime, suitable for small objects but has vertex count limits and consumes CPU."}},{"@type":"Question","name":"What is the difference between GPU Instancing and batching?","acceptedAnswer":{"@type":"Answer","text":"GPU Instancing is a form of batching that uses one draw call to draw multiple instances without merging meshes; it distinguishes instances via instancing data. It suits many identical objects."}},{"@type":"Question","name":"Why are transparent objects hard to batch?","acceptedAnswer":{"@type":"Answer","text":"Transparent objects require back-to-front sorting for correct blending. After sorting, adjacent objects may not meet batching conditions (e.g., different materials), and forced batching would break render order."}},{"@type":"Question","name":"How to check which objects are not batched in Unity?","acceptedAnswer":{"@type":"Answer","text":"Use the Frame Debugger to see the source of each draw call and the reason for not being batched. The Profiler also shows draw call count and batching statistics."}},{"@type":"Question","name":"Does batching always improve performance?","acceptedAnswer":{"@type":"Answer","text":"Reducing draw calls usually lowers CPU overhead, but batching can have side effects, such as static batching increasing memory, dynamic batching consuming CPU, and instancing requiring shader support. Trade-offs are needed."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Batching</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Batching</h2>
+<p>Batching is an important method for optimizing rendering performance. Its core idea is to combine multiple independent draw calls into one or a few draw calls, thereby reducing communication overhead between CPU and GPU. In real-time rendering, a high number of draw calls can cause CPU bottlenecks and lower frame rates. Batching can significantly improve rendering efficiency.</p>
+<h2>Common Batching Techniques</h2>
+<h3>1. Static Batching</h3>
+<p>Static batching is suitable for game objects that do not move, rotate, or scale in the scene. The engine merges the meshes of these objects into one large mesh at build time or runtime, then renders it with a single draw call. The advantage is reduced draw calls, but it increases memory usage because the merged mesh takes extra space. It is suitable for many static objects like buildings, props, etc.</p>
+<h3>2. Dynamic Batching</h3>
+<p>Dynamic batching targets movable small objects, transforming their vertex data to world space and merging them at runtime. It has limitations: usually each mesh's vertex count must be below a threshold (e.g., 300 vertices in Unity) and the same material must be used. Dynamic batching requires CPU computation and may introduce overhead, but it is effective when vertex counts are low.</p>
+<h3>3. GPU Instancing</h3>
+<p>GPU Instancing allows drawing multiple instances of the same mesh with a single draw call, with each instance potentially having different transforms and material properties (via instancing buffers). It is suitable for many identical objects (like vegetation, rocks) and is efficient, but requires objects to use the same mesh and material, and the shader must support instancing.</p>
+<h3>4. SRP Batcher (Scriptable Render Pipeline Batcher)</h3>
+<p>In Unity's SRP, the SRP Batcher is an advanced batching mechanism that does not merge meshes but reduces CPU setup overhead by caching material properties. It is suitable for multiple materials using the same shader, especially effective in complex scenes.</p>
+<h2>Conditions and Limitations of Batching</h2>
+<p>Batching typically requires the following conditions:</p>
+<ul>
+<li>**Same material**: Must use the same material instance, otherwise cannot batch.</li>
+<li>**Same shader**: At least the shader must be the same; material properties can differ if supported.</li>
+<li>**Consistent vertex format**: Vertex data layout must be consistent.</li>
+<li>**No transparent sorting issues**: Transparent objects are often difficult to batch because they require strict rendering order.</li>
+</ul>
+<p>Additionally, dynamic batching has vertex count limits, static batching increases memory, and GPU Instancing requires shader support.</p>
+<h2>How to Optimize for Batching</h2>
+<ul>
+<li>**Use texture atlases**: Combine multiple small textures into one large texture so different objects can use the same material.</li>
+<li>**Reduce material variety**: Merge materials that use the same shader and textures.</li>
+<li>**Utilize engine batching tools**: For example, Unity's Frame Debugger can inspect which objects are not batched and why.</li>
+<li>**Organize scenes properly**: Mark static objects as Static to enable static batching.</li>
+<li>**Use GPU Instancing**: For repeated objects, use instanced rendering.</li>
+</ul>
+<h2>Relationship between Batching and Draw Calls</h2>
+<p>Batching directly reduces the number of draw calls, thereby lowering CPU overhead in submitting rendering commands. However, batching is not a silver bullet; excessive batching may increase memory or cause GPU load imbalance. Choose the appropriate batching strategy based on project needs.</p>
+<h2>Summary</h2>
+<p>Batching is a key technique for optimizing CPU performance. Understanding the principles and limitations of various batching methods helps efficiently reduce draw calls and improve frame rates in projects.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between static and dynamic batching?</h3><p>Static batching merges meshes before runtime, suitable for non-moving objects but increases memory; dynamic batching merges vertices at runtime, suitable for small objects but has vertex count limits and consumes CPU.</p></div>
+<div class="faq-item"><h3>What is the difference between GPU Instancing and batching?</h3><p>GPU Instancing is a form of batching that uses one draw call to draw multiple instances without merging meshes; it distinguishes instances via instancing data. It suits many identical objects.</p></div>
+<div class="faq-item"><h3>Why are transparent objects hard to batch?</h3><p>Transparent objects require back-to-front sorting for correct blending. After sorting, adjacent objects may not meet batching conditions (e.g., different materials), and forced batching would break render order.</p></div>
+<div class="faq-item"><h3>How to check which objects are not batched in Unity?</h3><p>Use the Frame Debugger to see the source of each draw call and the reason for not being batched. The Profiler also shows draw call count and batching statistics.</p></div>
+<div class="faq-item"><h3>Does batching always improve performance?</h3><p>Reducing draw calls usually lowers CPU overhead, but batching can have side effects, such as static batching increasing memory, dynamic batching consuming CPU, and instancing requiring shader support. Trade-offs are needed.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

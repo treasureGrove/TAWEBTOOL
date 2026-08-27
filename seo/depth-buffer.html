@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深度缓冲 - TA工具箱</title>
+<meta name="description" content="深度缓冲（Depth Buffer，又称Z-Buffer）存储每个像素的深度值，用于确定物体前后关系，解决可见性问题。本文介绍其原理、精度问题、优化方法及在渲染中的应用。">
+<meta name="keywords" content="深度缓冲,Depth Buffer,Z-Buffer,深度测试,可见性,3D渲染,Z-fighting,Early-Z,渲染优化,图形管线">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/depth-buffer.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/depth-buffer.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"深度缓冲"}]},{"@type":"Article","name":"深度缓冲","headline":"深度缓冲","description":"深度缓冲（Depth Buffer，又称Z-Buffer）存储每个像素的深度值，用于确定物体前后关系，解决可见性问题。本文介绍其原理、精度问题、优化方法及在渲染中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/depth-buffer.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/depth-buffer.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"深度缓冲和模板缓冲有什么区别？","acceptedAnswer":{"@type":"Answer","text":"深度缓冲存储深度值用于可见性判断，模板缓冲存储整数标记用于控制渲染区域或实现特殊效果（如阴影体积）。两者可以共享同一缓冲区。\n"}},{"@type":"Question","name":"如何解决Z-fighting？","acceptedAnswer":{"@type":"Answer","text":"可以增加深度缓冲精度（如使用24位或32位）、缩小远近裁剪平面距离、使用多边形偏移（Polygon Offset）、或采用Reverse-Z技术。"}},{"@type":"Question","name":"透明物体如何处理深度？","acceptedAnswer":{"@type":"Answer","text":"透明物体通常关闭深度写入（避免遮挡后续透明物体），但开启深度测试（确保不穿透不透明物体），并从后往前排序渲染。"}},{"@type":"Question","name":"Early-Z是什么？","acceptedAnswer":{"@type":"Answer","text":"Early-Z是一种硬件优化，在片段着色器之前执行深度测试，如果片段被遮挡则跳过着色器，从而节省计算。但某些操作（如开启Alpha Test或深度写入）可能禁用Early-Z。"}},{"@type":"Question","name":"为什么深度缓冲在远处精度低？","acceptedAnswer":{"@type":"Answer","text":"因为投影变换后的深度是非线性的，大部分精度集中在近处。这是为了适应人眼对近处物体更敏感的特性，但远处物体容易发生Z-fighting。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>深度缓冲</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是深度缓冲</h2>
+<p>深度缓冲（Depth Buffer）是图形渲染中用于存储每个像素深度值的缓冲区，与颜色缓冲区相对应。深度值表示像素到摄像机的距离（或经过变换后的深度），范围通常在0.0到1.0之间，0.0表示最近，1.0表示最远。</p>
+<p>在渲染过程中，GPU会进行深度测试（Depth Test），比较新片段的深度值与深度缓冲区中已存储的值，如果通过测试（如新片段更近），则更新颜色和深度缓冲区；否则丢弃该片段。这一机制确保了场景中的物体按照正确的前后顺序显示，解决了可见性问题。</p>
+<h2>深度缓冲的原理</h2>
+<p>深度缓冲通常为每个像素存储一个深度值，精度取决于纹理格式，常见的有：</p>
+<ul>
+<li>**16位**：精度较低，可能导致深度冲突。</li>
+<li>**24位**：常用，精度较高。</li>
+<li>**32位浮点**：用于高精度需求，如阴影映射。</li>
+</ul>
+<p>深度值在投影变换后是非线性的，近处精度高，远处精度低。这种非线性分布是为了更好地利用有限位深，但也可能导致远处物体的深度冲突（Z-fighting）。</p>
+<h2>深度测试与深度写入</h2>
+<ul>
+<li>**深度测试函数**：可以设置为Less、Greater、Equal等，默认使用Less，即新片段深度小于缓冲区中的深度时通过。</li>
+<li>**深度写入**：通过测试后，可以选择是否更新深度缓冲区。对于透明物体，通常关闭深度写入，以避免影响后续透明物体的渲染。</li>
+</ul>
+<h2>深度缓冲的精度问题</h2>
+<ul>
+<li>**Z-fighting**：当两个平面距离极近时，由于深度精度不足，可能出现交替显示，产生闪烁。解决方法包括：增加深度缓冲精度、调整远近裁剪平面、使用多边形偏移等。</li>
+<li>**远处精度不足**：非线性深度导致远处精度低，可以通过调整投影矩阵或使用反向Z（Reverse-Z）技术改善。</li>
+</ul>
+<h2>深度缓冲的优化</h2>
+<ul>
+<li>**Early-Z/Depth Prepass**：先渲染深度到深度缓冲，然后在主渲染时使用深度测试为Equal，跳过被遮挡像素的片段着色器，减少Overdraw。</li>
+<li>**避免不必要的深度写入**：对于不透明物体，可以开启深度写入；对于透明物体，关闭。</li>
+<li>**使用合适的深度格式**：根据场景需求选择，移动设备通常使用24位或16位。</li>
+</ul>
+<h2>深度缓冲与延迟渲染</h2>
+<p>在延迟渲染中，深度缓冲用于重建像素的世界空间位置，因此常存储为高精度格式（如32位浮点），或使用深度重建技术。</p>
+<h2>总结</h2>
+<p>深度缓冲是3D渲染的基础，理解其原理和特性有助于解决可见性和性能问题。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>深度缓冲和模板缓冲有什么区别？</h3><p>深度缓冲存储深度值用于可见性判断，模板缓冲存储整数标记用于控制渲染区域或实现特殊效果（如阴影体积）。两者可以共享同一缓冲区。
+</p></div>
+<div class="faq-item"><h3>如何解决Z-fighting？</h3><p>可以增加深度缓冲精度（如使用24位或32位）、缩小远近裁剪平面距离、使用多边形偏移（Polygon Offset）、或采用Reverse-Z技术。</p></div>
+<div class="faq-item"><h3>透明物体如何处理深度？</h3><p>透明物体通常关闭深度写入（避免遮挡后续透明物体），但开启深度测试（确保不穿透不透明物体），并从后往前排序渲染。</p></div>
+<div class="faq-item"><h3>Early-Z是什么？</h3><p>Early-Z是一种硬件优化，在片段着色器之前执行深度测试，如果片段被遮挡则跳过着色器，从而节省计算。但某些操作（如开启Alpha Test或深度写入）可能禁用Early-Z。</p></div>
+<div class="faq-item"><h3>为什么深度缓冲在远处精度低？</h3><p>因为投影变换后的深度是非线性的，大部分精度集中在近处。这是为了适应人眼对近处物体更敏感的特性，但远处物体容易发生Z-fighting。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/seo/stencil-buffer.html">模板缓冲</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

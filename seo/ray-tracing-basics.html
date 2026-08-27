@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光线追踪基础 - TA工具箱</title>
+<meta name="description" content="光线追踪是一种通过模拟光线传播路径来生成逼真图像的渲染技术，能自然产生反射、折射、阴影等效果。本文介绍其基本原理、算法、硬件加速及在实时渲染中的应用。">
+<meta name="keywords" content="光线追踪,Ray Tracing,路径追踪,全局光照,实时渲染,RTX,DXR,BVH,蒙特卡洛,图形学">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"光线追踪基础"}]},{"@type":"Article","name":"光线追踪基础","headline":"光线追踪基础","description":"光线追踪是一种通过模拟光线传播路径来生成逼真图像的渲染技术，能自然产生反射、折射、阴影等效果。本文介绍其基本原理、算法、硬件加速及在实时渲染中的应用。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/ray-tracing-basics.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/ray-tracing-basics.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"光线追踪和光栅化有什么区别？","acceptedAnswer":{"@type":"Answer","text":"光栅化将几何体投影到屏幕并逐像素着色，速度快但难以处理全局光照；光线追踪模拟光线传播，能自然产生反射、折射等效果，但计算成本高。"}},{"@type":"Question","name":"什么是路径追踪？","acceptedAnswer":{"@type":"Answer","text":"路径追踪是一种蒙特卡洛光线追踪算法，通过随机采样光线路径来求解渲染方程，能产生无偏的全局光照结果，但需要大量样本收敛。"}},{"@type":"Question","name":"实时光线追踪需要什么硬件？","acceptedAnswer":{"@type":"Answer","text":"通常需要支持硬件加速的GPU，如NVIDIA RTX系列、AMD RDNA 2及以后的显卡。这些GPU包含专门的光线求交单元。"}},{"@type":"Question","name":"光线追踪能完全替代光栅化吗？","acceptedAnswer":{"@type":"Answer","text":"目前还不能，因为光线追踪计算量仍然很大，尤其对于复杂场景。混合渲染是当前主流，未来可能实现完全光线追踪。"}},{"@type":"Question","name":"光线追踪如何处理动态场景？","acceptedAnswer":{"@type":"Answer","text":"需要更新加速结构（如BVH），这可能会带来额外开销。现代引擎采用增量更新或重建策略来平衡性能。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>光线追踪基础</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是光线追踪</h2>
+<p>光线追踪（Ray Tracing）是一种基于物理光学模拟的渲染技术。它从摄像机出发，为每个像素发射一条或多条光线，计算光线与场景中物体的交点，并根据材质属性递归追踪反射、折射等次级光线，最终累积得到像素颜色。与光栅化不同，光线追踪能精确处理全局光照效果，如软阴影、反射、折射、焦散等，因此生成的图像更接近真实世界。</p>
+<h2>基本原理</h2>
+<h3>光线与场景求交</h3>
+<p>光线定义为原点 O 和方向 D：`P(t) = O + tD`。需要求解光线与几何图元（三角形、球体等）的最近交点。常用数据结构如 BVH（层次包围盒）加速求交过程。</p>
+<h3>着色模型</h3>
+<p>在交点处，根据材质属性（如 BRDF）计算直接光照和间接光照。直接光照可发射阴影光线（Shadow Ray）检测遮挡；间接光照则递归发射反射光线、折射光线等，模拟光线的多次反弹。</p>
+<h3>渲染方程</h3>
+<p>光线追踪求解的核心是渲染方程：</p>
+<p>`L_o(p, ω_o) = L_e(p, ω_o) + ∫ f_r(p, ω_i, ω_o) L_i(p, ω_i) (n·ω_i) dω_i`</p>
+<p>实际中通过蒙特卡洛采样近似积分，如路径追踪算法。</p>
+<h2>主要算法</h2>
+<h3>递归光线追踪（Whitted 光线追踪）</h3>
+<p>经典算法，对每个交点发射反射和折射光线，递归深度有限。能表现完美镜面反射和透明折射，但无法处理漫反射全局光照。</p>
+<h3>路径追踪</h3>
+<p>蒙特卡洛方法，从摄像机发射大量随机路径，模拟光线在场景中的传播。是无偏的全局光照算法，能产生逼真结果，但需要大量样本，收敛慢。</p>
+<h3>光子映射</h3>
+<p>两阶段算法：从光源发射光子存储于光子图，然后从摄像机出发收集光子贡献。擅长焦散等效果，但与路径追踪相比有偏。</p>
+<h2>硬件加速与实时应用</h2>
+<h3>专用硬件</h3>
+<p>NVIDIA RTX 系列 GPU 引入了 RT Core，专门加速光线与三角形、BVH 的求交。AMD 的 RDNA 2 架构也加入了光线加速单元。这些硬件使实时光线追踪成为可能。</p>
+<h3>图形 API 支持</h3>
+<p>DirectX 12 Ultimate、Vulkan、Metal 等提供了光线追踪接口（如 DXR、VK_KHR_ray_tracing），允许在标准图形管线中混合光栅化和光线追踪。</p>
+<h3>混合渲染</h3>
+<p>当前游戏通常采用混合渲染：使用光栅化处理大部分场景，用光线追踪增强特定效果，如反射、阴影、环境光遮蔽、全局光照等。这样在性能与画质间取得平衡。</p>
+<h2>优点与局限</h2>
+<p>**优点**：</p>
+<ul>
+<li>物理正确：直接模拟光线传播，自然产生复杂光学效果。</li>
+<li>简化美术流程：无需手工烘焙光照或制作反射探针。</li>
+<li>可扩展：通过增加样本可逐步提高质量。</li>
+</ul>
+<p>**局限**：</p>
+<ul>
+<li>计算量大：实时渲染仍需大幅优化和降噪。</li>
+<li>需要硬件支持：专用光追硬件能显著加速，但老硬件无法使用。</li>
+<li>场景复杂度：动态场景和大量几何体会导致加速结构更新开销。</li>
+</ul>
+<h2>未来趋势</h2>
+<p>随着硬件性能提升和算法优化（如降噪、重要性采样、时空复用），实时光线追踪正逐步普及。未来可能实现完全基于光线追踪的渲染管线，带来更真实的交互体验。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>光线追踪和光栅化有什么区别？</h3><p>光栅化将几何体投影到屏幕并逐像素着色，速度快但难以处理全局光照；光线追踪模拟光线传播，能自然产生反射、折射等效果，但计算成本高。</p></div>
+<div class="faq-item"><h3>什么是路径追踪？</h3><p>路径追踪是一种蒙特卡洛光线追踪算法，通过随机采样光线路径来求解渲染方程，能产生无偏的全局光照结果，但需要大量样本收敛。</p></div>
+<div class="faq-item"><h3>实时光线追踪需要什么硬件？</h3><p>通常需要支持硬件加速的GPU，如NVIDIA RTX系列、AMD RDNA 2及以后的显卡。这些GPU包含专门的光线求交单元。</p></div>
+<div class="faq-item"><h3>光线追踪能完全替代光栅化吗？</h3><p>目前还不能，因为光线追踪计算量仍然很大，尤其对于复杂场景。混合渲染是当前主流，未来可能实现完全光线追踪。</p></div>
+<div class="faq-item"><h3>光线追踪如何处理动态场景？</h3><p>需要更新加速结构（如BVH），这可能会带来额外开销。现代引擎采用增量更新或重建策略来平衡性能。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/seo/ssao.html">SSAO 环境光遮蔽</a> · <a href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">DLSS FSR 超分辨率</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

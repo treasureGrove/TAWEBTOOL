@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>物理光照曝光EV计算器使用教程 - TA工具箱</title>
+<meta name="description" content="本教程介绍物理光照中曝光值（EV）的计算方法及在线计算器使用，涵盖EV与光照强度、快门、ISO的关系，帮助摄影师和3D渲染师准确设置曝光参数。">
+<meta name="keywords" content="物理光照,曝光值,EV计算器,光圈,快门,ISO,场景亮度,3D渲染,摄影曝光">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/how-to-physics-light.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/how-to-physics-light.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/how-to-physics-light.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"工具教程","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"物理光照曝光EV计算器使用教程"}]},{"@type":"HowTo","name":"物理光照曝光EV计算器使用教程","headline":"物理光照曝光EV计算器使用教程","description":"本教程介绍物理光照中曝光值（EV）的计算方法及在线计算器使用，涵盖EV与光照强度、快门、ISO的关系，帮助摄影师和3D渲染师准确设置曝光参数。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/how-to-physics-light.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/how-to-physics-light.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"EV值越大越亮还是越暗？","acceptedAnswer":{"@type":"Answer","text":"EV值越大表示场景越亮，所需的曝光量越少（如小光圈、快快门或低ISO）。EV值越小表示场景越暗，需要更多曝光。"}},{"@type":"Question","name":"如何用EV计算光照强度？","acceptedAnswer":{"@type":"Answer","text":"已知EV和ISO，可反推场景亮度L：L = (2^EV * K) / S。在3D渲染中可用于校准光源亮度。"}},{"@type":"Question","name":"在线计算器准确吗？","acceptedAnswer":{"@type":"Answer","text":"对于标准测光模型是准确的，但实际场景中存在多种光源和反射，EV仅作为参考。建议结合直方图和试拍调整。"}},{"@type":"Question","name":"可以计算视频曝光的EV吗？","acceptedAnswer":{"@type":"Answer","text":"可以，视频曝光同样适用EV概念，需考虑帧率对快门速度的限制。通常使用180度快门规则（快门时间=1/(2*帧率)）。"}},{"@type":"Question","name":"有没有移动端EV计算器？","acceptedAnswer":{"@type":"Answer","text":"有，PhotoPills、Lightme等应用提供EV计算和场景参考，适合户外拍摄使用。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">工具教程</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">工具教程</a></p>
+    <h1>物理光照曝光EV计算器使用教程</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>理解曝光值（EV）</h2>
+<p>曝光值（Exposure Value, EV）是表示曝光组合的数值，将快门速度、光圈和ISO感光度统一为一个数字。EV越高，所需光线越少；EV越低，所需光线越多。在物理光照和摄影中，EV用于快速比较曝光设置或计算光强度。</p>
+<h2>EV计算公式</h2>
+<p>EV 与场景亮度（L，单位cd/m²）和曝光参数的关系如下：</p>
+<p>```</p>
+<p>EV = log2(N² / t) - log2(ISO/100)</p>
+<p>```</p>
+<p>其中 N 为光圈f值，t 为快门时间（秒），ISO 为感光度。</p>
+<p>场景亮度对应的 EV 估算：</p>
+<p>```</p>
+<p>EV = log2(L * S / K)</p>
+<p>```</p>
+<p>其中 L 为亮度，S 为ISO，K 为反射光测光常数（通常12.5）。</p>
+<h2>使用在线EV计算器</h2>
+<p>许多摄影和3D网站提供EV计算器，例如：</p>
+<ul>
+<li>**Omni Calculator EV Calculator**：输入光圈、快门、ISO，计算EV。</li>
+<li>**Exposure Value Calculator by scantips.com**：提供EV表和详细说明。</li>
+<li>**PhotoPills EV Calculator**：移动应用，适合户外拍摄。</li>
+</ul>
+<p>推荐使用 Omni Calculator，界面友好。</p>
+<h2>在线计算EV操作步骤</h2>
+<p>以 Omni Calculator 为例：</p>
+<ol>
+<li>打开 Omni EV Calculator 网页。</li>
+<li>在输入框中选择或输入：</li>
+</ul>
+<p>   - **Aperture (f-stop)**：如 f/2.8</p>
+<p>   - **Shutter speed**：如 1/125 秒</p>
+<p>   - **ISO**：如 100</p>
+<ol>
+<li>计算器自动显示 EV 值，同时可显示场景亮度建议。</li>
+<li>也可反向计算：输入所需 EV 和两个参数，求第三个参数。</li>
+<li>参考 EV 对照表，了解常见场景的 EV 范围（如明亮阳光 EV15，室内 EV5-7）。</li>
+</ul>
+<h2>在3D渲染中的应用</h2>
+<p>在物理渲染器中（如Blender Cycles、Unreal Engine），曝光设置影响最终图像亮度。可使用EV指导相机参数：</p>
+<ul>
+<li>将EV转换为曝光增益：`曝光增益 = 2^EV`</li>
+<li>在渲染器中直接输入EV或调整光圈、快门、ISO来匹配真实摄影。</li>
+<li>使用 HDRI 环境贴图时，EV 可用于平衡环境光与人工光。</li>
+</ul>
+<h2>常见场景EV参考</h2>
+<p>| 场景 | EV (ISO 100) |</p>
+<p>|------|-------------|</p>
+<p>| 明亮阳光 | 15-16 |</p>
+<p>| 阴天 | 12-13 |</p>
+<p>| 室内明亮 | 7-8 |</p>
+<p>| 夜景街灯 | 3-5 |</p>
+<p>| 烛光 | 1-2 |</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>EV值越大越亮还是越暗？</h3><p>EV值越大表示场景越亮，所需的曝光量越少（如小光圈、快快门或低ISO）。EV值越小表示场景越暗，需要更多曝光。</p></div>
+<div class="faq-item"><h3>如何用EV计算光照强度？</h3><p>已知EV和ISO，可反推场景亮度L：L = (2^EV * K) / S。在3D渲染中可用于校准光源亮度。</p></div>
+<div class="faq-item"><h3>在线计算器准确吗？</h3><p>对于标准测光模型是准确的，但实际场景中存在多种光源和反射，EV仅作为参考。建议结合直方图和试拍调整。</p></div>
+<div class="faq-item"><h3>可以计算视频曝光的EV吗？</h3><p>可以，视频曝光同样适用EV概念，需考虑帧率对快门速度的限制。通常使用180度快门规则（快门时间=1/(2*帧率)）。</p></div>
+<div class="faq-item"><h3>有没有移动端EV计算器？</h3><p>有，PhotoPills、Lightme等应用提供EV计算和场景参考，适合户外拍摄使用。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

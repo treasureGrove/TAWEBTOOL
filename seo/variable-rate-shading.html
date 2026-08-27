@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>可变速率着色 VRS - TA工具箱</title>
+<meta name="description" content="可变速率着色（Variable Rate Shading，VRS）是一种允许对不同屏幕区域使用不同着色频率的技术，以降低计算量、提升性能。本文介绍其原理、类型、应用及优缺点。">
+<meta name="keywords" content="可变速率着色,VRS,Variable Rate Shading,着色率,性能优化,VR注视点渲染,DirectX 12,Vulkan,GPU渲染,图形技术">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/variable-rate-shading.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/variable-rate-shading.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/variable-rate-shading.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"可变速率着色 VRS"}]},{"@type":"Article","name":"可变速率着色 VRS","headline":"可变速率着色 VRS","description":"可变速率着色（Variable Rate Shading，VRS）是一种允许对不同屏幕区域使用不同着色频率的技术，以降低计算量、提升性能。本文介绍其原理、类型、应用及优缺点。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/variable-rate-shading.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/variable-rate-shading.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"VRS 能提升多少性能？","acceptedAnswer":{"@type":"Answer","text":"性能提升取决于着色率降低的程度和场景内容。在 VR 注视点渲染中，可提升 30% 以上；在传统游戏中，一般可提升 10%-20%，且画质损失较小。"}},{"@type":"Question","name":"VRS 和 DLSS/FSR 有什么区别？","acceptedAnswer":{"@type":"Answer","text":"VRS 是降低实际着色工作的技术，不改变分辨率；DLSS/FSR 是通过低分辨率渲染再放大，两者都能提升性能，但原理不同，可结合使用。"}},{"@type":"Question","name":"哪些 GPU 支持 VRS？","acceptedAnswer":{"@type":"Answer","text":"NVIDIA Turing（RTX 20 系列及 GTX 16 系列）及以后、AMD RDNA 2（RX 6000 系列）及以后、Intel Xe 系列等支持 VRS。"}},{"@type":"Question","name":"VRS 会导致画质下降吗？","acceptedAnswer":{"@type":"Answer","text":"如果使用得当，降低不敏感区域的着色率，主观画质影响很小。但不当使用可能导致明显的锯齿或细节丢失。"}},{"@type":"Question","name":"如何在游戏引擎中启用 VRS？","acceptedAnswer":{"@type":"Answer","text":"Unity 和 Unreal 引擎提供 VRS 支持，可通过渲染设置或插件开启。具体需参考引擎文档，并确保硬件和 API 支持。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>可变速率着色 VRS</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是可变速率着色</h2>
+<p>可变速率着色（VRS）是一种图形渲染优化技术，允许开发者控制屏幕不同区域的像素着色频率。传统渲染中，每个像素执行一次像素着色器（着色率1x1）；VRS 可以将多个像素合并为一个着色单元，即着色率降低（如2x2表示2x2像素块只执行一次着色），从而减少计算量，提升帧率。</p>
+<h2>原理与类型</h2>
+<h3>着色率定义</h3>
+<p>着色率指每个片元着色器调用覆盖的像素数。例如：</p>
+<ul>
+<li>1x1：每个像素着色一次（默认）。</li>
+<li>1x2 或 2x1：两个像素共享一次着色。</li>
+<li>2x2：四个像素共享一次着色。</li>
+<li>4x4 等：更低着色率。</li>
+</ul>
+<h3>VRS 实现层级</h3>
+<p>VRS 可通过多种方式设置着色率：</p>
+<ul>
+<li>**每绘制调用（Per-Draw）**：对整个 draw call 设置统一着色率。</li>
+<li>**每图元（Per-Primitive）**：在几何着色器或网格着色器中根据图元属性（如距离）设置。</li>
+<li>**屏幕空间图像（Screen-Space Image）**：使用一张纹理指定屏幕各区域的着色率，最灵活。</li>
+<li>**组合（Combiner）**：将上述来源结合，取最粗粒度。</li>
+</ul>
+<h3>硬件支持</h3>
+<p>VRS 是 DirectX 12 Ultimate、Vulkan 1.2 的特性，需要较新 GPU（NVIDIA Turing、AMD RDNA 2、Intel Xe 等）。</p>
+<h2>应用场景</h2>
+<h3>周边区域降低着色率</h3>
+<p>人眼对视野中心细节敏感，对边缘不敏感。可使用屏幕空间图像降低屏幕边缘的着色率，不影响主观画质。</p>
+<h3>运动区域降低着色率</h3>
+<p>快速运动的物体不易被察觉细节，可对其降低着色率。</p>
+<h3>暗部或低对比度区域</h3>
+<p>在阴影或平坦颜色区域，可降低着色率而不引起注意。</p>
+<h3>结合注视点渲染（Foveated Rendering）</h3>
+<p>在 VR 中，根据眼球追踪，在用户注视点使用高着色率，周围大幅降低着色率，显著提升性能。</p>
+<h2>优点与挑战</h2>
+<p>**优点**：</p>
+<ul>
+<li>直接减少像素着色器调用次数，降低 GPU 负载。</li>
+<li>灵活可控，可针对不同区域优化。</li>
+<li>与其他优化技术（如 LOD、剔除）互补。</li>
+</ul>
+<p>**挑战**：</p>
+<ul>
+<li>降低着色率可能导致锯齿、模糊或细节丢失。</li>
+<li>需要合理设计着色率分配，否则画质下降明显。</li>
+<li>部分硬件不支持或支持有限。</li>
+</ul>
+<h2>实践建议</h2>
+<ul>
+<li>从每绘制调用 VRS 开始，对远处物体或小物体降低着色率。</li>
+<li>使用屏幕空间图像实现注视点渲染，在 VR 中收益最大。</li>
+<li>避免在 UI、文字或重要边缘区域降低着色率。</li>
+<li>结合时间抗锯齿（TAA）可抵消部分画质损失。</li>
+</ul>
+<h2>未来趋势</h2>
+<p>VRS 是图形 API 演进的重要方向，与网格着色器、采样器反馈等技术共同构成现代渲染优化基础。未来可能出现更细粒度的着色率控制，如基于内容的自适应 VRS，利用机器学习预测最佳着色率分布。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>VRS 能提升多少性能？</h3><p>性能提升取决于着色率降低的程度和场景内容。在 VR 注视点渲染中，可提升 30% 以上；在传统游戏中，一般可提升 10%-20%，且画质损失较小。</p></div>
+<div class="faq-item"><h3>VRS 和 DLSS/FSR 有什么区别？</h3><p>VRS 是降低实际着色工作的技术，不改变分辨率；DLSS/FSR 是通过低分辨率渲染再放大，两者都能提升性能，但原理不同，可结合使用。</p></div>
+<div class="faq-item"><h3>哪些 GPU 支持 VRS？</h3><p>NVIDIA Turing（RTX 20 系列及 GTX 16 系列）及以后、AMD RDNA 2（RX 6000 系列）及以后、Intel Xe 系列等支持 VRS。</p></div>
+<div class="faq-item"><h3>VRS 会导致画质下降吗？</h3><p>如果使用得当，降低不敏感区域的着色率，主观画质影响很小。但不当使用可能导致明显的锯齿或细节丢失。</p></div>
+<div class="faq-item"><h3>如何在游戏引擎中启用 VRS？</h3><p>Unity 和 Unreal 引擎提供 VRS 支持，可通过渲染设置或插件开启。具体需参考引擎文档，并确保硬件和 API 支持。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/gpu-driven-rendering.html">GPU Driven 渲染</a> · <a href="https://tools.treasuregrove.art/seo/mesh-shader.html">Mesh Shader</a> · <a href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">DLSS FSR 超分辨率</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

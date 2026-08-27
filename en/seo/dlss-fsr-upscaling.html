@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DLSS &amp; FSR Super Resolution - TA Toolbox</title>
+<meta name="description" content="DLSS and FSR are two mainstream image super-resolution technologies that render at lower resolutions and intelligently upscale to boost game frame rates. This article compares their principles, effects, hardware requirements, and applicability.">
+<meta name="keywords" content="DLSS, FSR, super resolution, deep learning super sampling, FidelityFX Super Resolution, frame generation, game performance, image upscaling, NVIDIA, AMD">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/dlss-fsr-upscaling.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"DLSS & FSR Super Resolution"}]},{"@type":"Article","name":"DLSS & FSR Super Resolution","headline":"DLSS & FSR Super Resolution","description":"DLSS and FSR are two mainstream image super-resolution technologies that render at lower resolutions and intelligently upscale to boost game frame rates. This article compares their principles, effects, hardware requirements, and applicability.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/dlss-fsr-upscaling.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/dlss-fsr-upscaling.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which has better image quality, DLSS or FSR?","acceptedAnswer":{"@type":"Answer","text":"DLSS is generally considered slightly better at detail reconstruction, but FSR 2.0 is very close. Actual quality varies by game; test to compare."}},{"@type":"Question","name":"Can FSR be used on NVIDIA graphics cards?","acceptedAnswer":{"@type":"Answer","text":"Yes, FSR is open-source and supports NVIDIA, AMD, and Intel GPUs, as long as the game supports FSR."}},{"@type":"Question","name":"What hardware is required for DLSS?","acceptedAnswer":{"@type":"Answer","text":"NVIDIA RTX 20 series or newer, because it relies on Tensor Cores for AI computation."}},{"@type":"Question","name":"What is Frame Generation?","acceptedAnswer":{"@type":"Answer","text":"Frame Generation is a feature introduced in DLSS 3 and FSR 3 that inserts synthetic frames between real frames using AI or algorithms, further increasing frame rate but potentially adding latency."}},{"@type":"Question","name":"How much performance improvement can super-resolution provide?","acceptedAnswer":{"@type":"Answer","text":"Typically 30% to 100% frame rate improvement, depending on quality settings and original resolution. Quality mode offers better image but smaller gains; performance mode gives larger gains with slight quality loss."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>DLSS &amp; FSR Super Resolution</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What are DLSS and FSR</h2>
+<p>DLSS (Deep Learning Super Sampling) and FSR (FidelityFX Super Resolution) are image super-resolution technologies designed to render game frames at lower resolutions and then upscale them to target resolutions using algorithms, significantly improving frame rates while maintaining image quality. DLSS is developed by NVIDIA, relying on AI and dedicated hardware; FSR is developed by AMD, open-source and cross-platform.</p>
+<h2>Technical Principles</h2>
+<h3>DLSS (Deep Learning Super Sampling)</h3>
+<p>DLSS uses deep learning models trained on high-resolution images to reconstruct high-resolution details from low-resolution input. DLSS 1.0 required per-game training and had mediocre results; DLSS 2.0 uses a generalized model with temporal feedback (motion vectors) and frame history, greatly improving quality. DLSS 3.0 adds Frame Generation, inserting AI-generated frames to increase smoothness.</p>
+<h3>FSR (FidelityFX Super Resolution)</h3>
+<p>FSR is a spatial and temporal upscaling algorithm that does not use machine learning. FSR 1.0 is pure spatial upscaling with limited edge reconstruction; FSR 2.0 adds temporal data, greatly enhancing quality, approaching DLSS 2. FSR 3.0 also supports frame generation. FSR is open-source and runs on a wide range of GPUs.</p>
+<h2>Quality Comparison</h2>
+<p>DLSS is generally considered slightly better at detail preservation and stability, especially at low input resolutions. DLSS leverages AI to reconstruct texture detail and anti-aliasing more effectively; FSR is efficient and does not require dedicated hardware. However, FSR 2.0 has closed the gap significantly.</p>
+<h2>Hardware and Platform Support</h2>
+<ul>
+<li>**DLSS**: Only supported on NVIDIA RTX graphics cards (20 series and above), requiring Tensor Cores.</li>
+<li>**FSR**: Supports almost all GPUs, including AMD, NVIDIA, and Intel, cross-platform (Windows, Linux, some consoles).</li>
+</ul>
+<h2>Game Integration</h2>
+<p>DLSS and FSR require integration into the game engine, with developers providing motion vectors, depth buffers, etc. Mainstream engines like Unity and Unreal have corresponding plugins.</p>
+<h2>Choosing Between DLSS and FSR</h2>
+<ul>
+<li>If you have an RTX GPU, DLSS may offer better image quality.</li>
+<li>For non-RTX GPUs or cross-platform needs, FSR is the ideal choice.</li>
+<li>For maximum performance and acceptable slight quality loss, try performance modes of either technology.</li>
+</ul>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Which has better image quality, DLSS or FSR?</h3><p>DLSS is generally considered slightly better at detail reconstruction, but FSR 2.0 is very close. Actual quality varies by game; test to compare.</p></div>
+<div class="faq-item"><h3>Can FSR be used on NVIDIA graphics cards?</h3><p>Yes, FSR is open-source and supports NVIDIA, AMD, and Intel GPUs, as long as the game supports FSR.</p></div>
+<div class="faq-item"><h3>What hardware is required for DLSS?</h3><p>NVIDIA RTX 20 series or newer, because it relies on Tensor Cores for AI computation.</p></div>
+<div class="faq-item"><h3>What is Frame Generation?</h3><p>Frame Generation is a feature introduced in DLSS 3 and FSR 3 that inserts synthetic frames between real frames using AI or algorithms, further increasing frame rate but potentially adding latency.</p></div>
+<div class="faq-item"><h3>How much performance improvement can super-resolution provide?</h3><p>Typically 30% to 100% frame rate improvement, depending on quality settings and original resolution. Quality mode offers better image but smaller gains; performance mode gives larger gains with slight quality loss.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-driven-rendering.html">GPU Driven 渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html">光线追踪基础</a> · <a href="https://tools.treasuregrove.art/en/seo/variable-rate-shading.html">可变速率着色 VRS</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

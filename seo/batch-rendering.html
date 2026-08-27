@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合批渲染 Batching - TA工具箱</title>
+<meta name="description" content="合批渲染（Batching）是将多个绘制调用合并为较少调用的技术，以减少CPU开销和提升渲染性能。本文介绍动态合批、静态合批、GPU Instancing等常见方法，并讨论其适用条件和限制。">
+<meta name="keywords" content="合批渲染,Batching,静态合批,动态合批,GPU实例化,SRP Batcher,Draw Call,渲染优化,游戏开发,CPU性能">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/batch-rendering.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/batch-rendering.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/batch-rendering.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"合批渲染 Batching"}]},{"@type":"Article","name":"合批渲染 Batching","headline":"合批渲染 Batching","description":"合批渲染（Batching）是将多个绘制调用合并为较少调用的技术，以减少CPU开销和提升渲染性能。本文介绍动态合批、静态合批、GPU Instancing等常见方法，并讨论其适用条件和限制。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/batch-rendering.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/batch-rendering.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"静态合批和动态合批有什么区别？","acceptedAnswer":{"@type":"Answer","text":"静态合批在运行时之前合并网格，适合不动的物体，但增加内存；动态合批在运行时合并顶点，适合小物体，但有顶点数限制且消耗CPU。"}},{"@type":"Question","name":"GPU Instancing和合批有什么区别？","acceptedAnswer":{"@type":"Answer","text":"GPU Instancing是合批的一种，它使用一个Draw Call绘制多个实例，但不需要合并网格，而是通过实例化数据区分。适合大量相同物体。"}},{"@type":"Question","name":"为什么透明物体难以合批？","acceptedAnswer":{"@type":"Answer","text":"透明物体需要从后往前排序以保证混合正确，排序后相邻物体可能不满足合批条件（如不同材质），强制合批会破坏渲染顺序。"}},{"@type":"Question","name":"如何检查Unity中哪些物体没有合批？","acceptedAnswer":{"@type":"Answer","text":"使用Frame Debugger可以查看每个Draw Call的来源，并显示未合批的原因。还可以使用Profiler查看Draw Call数量和合批统计。"}},{"@type":"Question","name":"合批一定提升性能吗？","acceptedAnswer":{"@type":"Answer","text":"通常减少Draw Call可以降低CPU开销，但合批也可能带来副作用，如静态合批增加内存、动态合批消耗CPU、实例化需要Shader支持。需要权衡。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>合批渲染 Batching</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是合批渲染</h2>
+<p>合批渲染（Batching）是优化渲染性能的重要手段，其核心思想是将多个独立的绘制调用（Draw Call）合并为一个或少数几个绘制调用，从而减少CPU与GPU之间的通信开销。在实时渲染中，Draw Call数量过多会导致CPU瓶颈，降低帧率。通过合批，可以显著提升渲染效率。</p>
+<h2>常见的合批技术</h2>
+<h3>1. 静态合批（Static Batching）</h3>
+<p>静态合批适用于在场景中不会移动、旋转或缩放的游戏对象。引擎在构建时或运行时将这些对象的网格合并成一个大的网格，然后使用一个Draw Call渲染。优点是减少Draw Call，但会增加内存占用，因为合并后的网格占用额外空间。适用于大量静态物体，如建筑、道具等。</p>
+<h3>2. 动态合批（Dynamic Batching）</h3>
+<p>动态合批针对可移动的小物体，在运行时将它们的顶点数据转换到世界空间并合并。限制较多：通常要求每个网格顶点数小于一定阈值（如Unity中300顶点），且使用相同材质。动态合批需要CPU计算，可能带来额外开销，但在顶点数少时有效。</p>
+<h3>3. GPU Instancing（GPU实例化）</h3>
+<p>GPU Instancing允许使用一个Draw Call绘制多个相同网格的实例，每个实例可以有不同的变换和材质属性（通过实例化缓冲区）。适合大量相同物体（如植被、石块），效率高，但要求物体使用相同网格和材质，并且Shader支持实例化。</p>
+<h3>4. SRP Batcher（可编程渲染管线合批）</h3>
+<p>在Unity的SRP中，SRP Batcher是一种高级合批机制，它不合并网格，而是通过缓存材质属性来减少CPU设置开销。适用于使用相同Shader的多种材质，尤其适合复杂场景。</p>
+<h2>合批的条件与限制</h2>
+<p>合批通常需要满足以下条件：</p>
+<ul>
+<li>**相同材质**：必须使用相同的材质实例，否则无法合批。</li>
+<li>**相同Shader**：至少Shader要相同，材质属性可以不同但需要支持。</li>
+<li>**顶点格式一致**：顶点数据布局需一致。</li>
+<li>**无透明排序问题**：透明物体通常难以合批，因为需要严格的渲染顺序。</li>
+</ul>
+<p>此外，动态合批受顶点数量限制，静态合批增加内存，GPU Instancing需要Shader支持。</p>
+<h2>如何优化以支持合批</h2>
+<ul>
+<li>**使用纹理图集**：将多个小纹理合并到一张大纹理，使不同物体可以使用同一材质。</li>
+<li>**减少材质种类**：合并使用相同Shader和纹理的材质。</li>
+<li>**利用引擎的合批工具**：如Unity的Frame Debugger可以检查哪些物体没有合批及原因。</li>
+<li>**合理组织场景**：将静态物体标记为Static，以启用静态合批。</li>
+<li>**使用GPU Instancing**：对于重复物体，使用实例化渲染。</li>
+</ul>
+<h2>合批与Draw Call的关系</h2>
+<p>合批直接减少Draw Call数量，从而降低CPU的渲染命令提交开销。但合批并非万能，过度合批可能导致内存增加或GPU负载不均衡。需要结合项目实际情况选择合适的合批策略。</p>
+<h2>总结</h2>
+<p>合批渲染是优化CPU性能的关键技术，理解各种合批方法的原理和限制，有助于在项目中高效地减少Draw Call，提升帧率。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>静态合批和动态合批有什么区别？</h3><p>静态合批在运行时之前合并网格，适合不动的物体，但增加内存；动态合批在运行时合并顶点，适合小物体，但有顶点数限制且消耗CPU。</p></div>
+<div class="faq-item"><h3>GPU Instancing和合批有什么区别？</h3><p>GPU Instancing是合批的一种，它使用一个Draw Call绘制多个实例，但不需要合并网格，而是通过实例化数据区分。适合大量相同物体。</p></div>
+<div class="faq-item"><h3>为什么透明物体难以合批？</h3><p>透明物体需要从后往前排序以保证混合正确，排序后相邻物体可能不满足合批条件（如不同材质），强制合批会破坏渲染顺序。</p></div>
+<div class="faq-item"><h3>如何检查Unity中哪些物体没有合批？</h3><p>使用Frame Debugger可以查看每个Draw Call的来源，并显示未合批的原因。还可以使用Profiler查看Draw Call数量和合批统计。</p></div>
+<div class="faq-item"><h3>合批一定提升性能吗？</h3><p>通常减少Draw Call可以降低CPU开销，但合批也可能带来副作用，如静态合批增加内存、动态合批消耗CPU、实例化需要Shader支持。需要权衡。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

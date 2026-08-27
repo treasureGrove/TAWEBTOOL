@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sRGB Texture Workflow - TA Toolbox</title>
+<meta name="description" content="The sRGB texture workflow involves correctly handling color space in real-time rendering, ensuring color textures are stored in sRGB space, converted to linear space for lighting calculations after sampling, and finally converted back to sRGB for output. This article introduces its principles, importance, and implementation methods.">
+<meta name="keywords" content="sRGB, texture workflow, linear space, gamma correction, color management, rendering pipeline, Unity, texture settings, lighting calculation, color space">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"sRGB Texture Workflow"}]},{"@type":"Article","name":"sRGB Texture Workflow","headline":"sRGB Texture Workflow","description":"The sRGB texture workflow involves correctly handling color space in real-time rendering, ensuring color textures are stored in sRGB space, converted to linear space for lighting calculations after sampling, and finally converted back to sRGB for output. This article introduces its principles, importance, and implementation methods.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why should color textures be marked as sRGB?","acceptedAnswer":{"@type":"Answer","text":"Because color textures are stored in sRGB space. Marking them as sRGB allows the GPU to automatically convert them to linear space upon sampling, ensuring correct lighting calculations. If not checked, colors will appear darker."}},{"@type":"Question","name":"Do normal maps need to be marked as sRGB?","acceptedAnswer":{"@type":"Answer","text":"No. Normal maps store directional data, not colors, and should use linear space. If marked as sRGB, normal directions will be misinterpreted, causing lighting anomalies."}},{"@type":"Question","name":"How to set up sRGB texture workflow in Unity?","acceptedAnswer":{"@type":"Answer","text":"In Player Settings, set Color Space to Linear. Then in texture import settings, color textures should have sRGB checked by default, while data textures should have it unchecked."}},{"@type":"Question","name":"Is linear space rendering better than gamma space?","acceptedAnswer":{"@type":"Answer","text":"Yes, linear space rendering provides physically correct lighting, more realistic colors, and avoids overexposure or distortion. Modern engines and mobile devices recommend using linear space."}},{"@type":"Question","name":"What is the relationship between sRGB and gamma correction?","acceptedAnswer":{"@type":"Answer","text":"sRGB encoding includes gamma correction (about 2.2) to compensate for display nonlinearity. Gamma correction is the process of converting linear values to sRGB values; inverse gamma correction converts them back to linear."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>sRGB Texture Workflow</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is sRGB Texture Workflow</h2>
+<p>The sRGB texture workflow is a key part of color management in real-time rendering. It involves correctly handling color space in the graphics pipeline to ensure accurate final displayed colors. The core principle is: color textures (such as albedo, diffuse) are typically stored in sRGB color space because human perception of brightness is nonlinear, and sRGB encoding utilizes limited bit depth more effectively. However, lighting calculations must be performed in linear space; otherwise results are incorrect. Therefore, after sampling a texture, colors need to be converted from sRGB to linear space, and after rendering, the output is converted back to sRGB for display.</p>
+<h2>Why sRGB Workflow is Needed</h2>
+<ul>
+<li>**Physical correctness**: Lighting equations hold only in linear space. If computed directly in sRGB space, lighting will be too bright or color shifted.</li>
+<li>**Avoid color distortion**: Incorrect color space handling causes texture colors to deviate from design, especially in shadows and highlights.</li>
+<li>**Consistency**: Ensures colors appear consistent across platforms and displays.</li>
+</ul>
+<h2>Difference between sRGB and Linear Space</h2>
+<ul>
+<li>**sRGB**: A nonlinear color space that encodes gamma correction (about 2.2) for storage and display, matching human perception.</li>
+<li>**Linear space**: Lighting calculations and physical simulations should occur in this space; pixel values are proportional to light intensity.</li>
+</ul>
+<h2>Implementing sRGB Workflow</h2>
+<p>In graphics APIs and engines, this is typically achieved by:</p>
+<ol>
+<li>**Texture import settings**: Mark color textures as sRGB so the GPU automatically converts them to linear space upon sampling. For example, in Unity, color textures default to &quot;sRGB (Color Texture)&quot; checked, while data textures like normal maps, roughness, etc., use linear.</li>
+<li>**Render target format**: Use framebuffer formats that support sRGB (e.g., sRGB8_ALPHA8); the GPU automatically performs linear-to-sRGB conversion on write.</li>
+<li>**In shaders**: If handled manually, perform `pow(color, 2.2)` after sampling color textures, or use hardware sRGB texture sampling.</li>
+<li>**Final output**: If rendering to a non-sRGB target, manual gamma correction is needed.</li>
+</ul>
+<h2>Considerations</h2>
+<ul>
+<li>**Do not use sRGB for non-color data**: Normal maps, roughness, metallic, AO, etc., should use linear space; otherwise values are decoded incorrectly.</li>
+<li>**Blending order**: Transparent blending should occur in linear space, then converted to sRGB for output.</li>
+<li>**Mipmap generation**: Mipmaps for sRGB textures should be generated in sRGB space; otherwise average colors appear too dark.</li>
+<li>**UI elements**: UI is usually designed in sRGB space and should avoid being linearized.</li>
+</ul>
+<h2>Common Mistakes</h2>
+<ul>
+<li>Setting color textures as linear by mistake, causing images to appear darker.</li>
+<li>Setting data textures as sRGB, causing incorrect values.</li>
+<li>Forgetting to convert back to sRGB at final output, causing overbright images.</li>
+</ul>
+<h2>Summary</h2>
+<p>The sRGB texture workflow is fundamental to ensuring rendering quality. Correctly configuring texture and render target color spaces can avoid many visual issues.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>Why should color textures be marked as sRGB?</h3><p>Because color textures are stored in sRGB space. Marking them as sRGB allows the GPU to automatically convert them to linear space upon sampling, ensuring correct lighting calculations. If not checked, colors will appear darker.</p></div>
+<div class="faq-item"><h3>Do normal maps need to be marked as sRGB?</h3><p>No. Normal maps store directional data, not colors, and should use linear space. If marked as sRGB, normal directions will be misinterpreted, causing lighting anomalies.</p></div>
+<div class="faq-item"><h3>How to set up sRGB texture workflow in Unity?</h3><p>In Player Settings, set Color Space to Linear. Then in texture import settings, color textures should have sRGB checked by default, while data textures should have it unchecked.</p></div>
+<div class="faq-item"><h3>Is linear space rendering better than gamma space?</h3><p>Yes, linear space rendering provides physically correct lighting, more realistic colors, and avoids overexposure or distortion. Modern engines and mobile devices recommend using linear space.</p></div>
+<div class="faq-item"><h3>What is the relationship between sRGB and gamma correction?</h3><p>sRGB encoding includes gamma correction (about 2.2) to compensate for display nonlinearity. Gamma correction is the process of converting linear values to sRGB values; inverse gamma correction converts them back to linear.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

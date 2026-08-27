@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>曲面细分 - TA工具箱</title>
+<meta name="description" content="曲面细分（Tessellation）是一种实时渲染技术，通过在GPU上动态细分多边形网格来增加几何细节，使表面更光滑或呈现复杂位移效果。本文介绍其原理、流程、应用及优缺点。">
+<meta name="keywords" content="曲面细分,Tessellation,DirectX 11,OpenGL 4,外壳着色器,域着色器,位移贴图,自适应LOD,GPU渲染,几何细节">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/tessellation.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/tessellation.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/tessellation.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"曲面细分"}]},{"@type":"Article","name":"曲面细分","headline":"曲面细分","description":"曲面细分（Tessellation）是一种实时渲染技术，通过在GPU上动态细分多边形网格来增加几何细节，使表面更光滑或呈现复杂位移效果。本文介绍其原理、流程、应用及优缺点。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/tessellation.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/tessellation.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"曲面细分和位移贴图是什么关系？","acceptedAnswer":{"@type":"Answer","text":"位移贴图需要足够的顶点密度才能体现细节，曲面细分可以动态增加顶点数量，因此两者常结合使用。曲面细分提供几何基础，位移贴图在域着色器中对顶点进行偏移。"}},{"@type":"Question","name":"曲面细分在哪些图形API中可用？","acceptedAnswer":{"@type":"Answer","text":"DirectX 11及以上版本、OpenGL 4.0及以上版本、Vulkan和Metal（部分支持）都支持曲面细分。需要注意的是，部分移动GPU可能不支持或性能较差。"}},{"@type":"Question","name":"曲面细分会影响性能吗？","acceptedAnswer":{"@type":"Answer","text":"是的，曲面细分会增加顶点数量和计算量，但通过自适应细分因子（如根据距离调整）可以平衡性能与画质。合理使用可获得较好收益。"}},{"@type":"Question","name":"曲面细分和法线贴图有什么区别？","acceptedAnswer":{"@type":"Answer","text":"法线贴图仅改变光照计算中的法线，不改变几何形状；曲面细分实际生成新的几何顶点，改变表面拓扑，因此轮廓和阴影也更真实。"}},{"@type":"Question","name":"如何在Unity中使用曲面细分？","acceptedAnswer":{"@type":"Answer","text":"Unity的HDRP和URP支持曲面细分着色器，需要在Shader中编写外壳和域着色器，或使用内置的曲面细分选项。具体可参考Unity文档。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>曲面细分</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是曲面细分</h2>
+<p>曲面细分（Tessellation）是DirectX 11和OpenGL 4.0引入的可编程渲染管线阶段，它允许GPU根据特定规则（如距离、曲率等）动态地将粗糙的网格细分为更细小的三角形，从而在不增加初始模型数据量的情况下，实时提升几何细节。这一技术使得平滑曲面、复杂位移和自适应细节层次（LOD）成为可能。</p>
+<h2>渲染管线中的位置</h2>
+<p>曲面细分位于顶点着色器之后、几何着色器之前。它包含三个可选阶段：</p>
+<ul>
+<li>**外壳着色器（Hull Shader）**：定义细分因子，决定每个图元被细分的程度。</li>
+<li>**曲面细分器（Tessellator）**：固定功能单元，根据细分因子实际生成新的顶点和拓扑。</li>
+<li>**域着色器（Domain Shader）**：计算新顶点的位置、法线等属性，通常结合位移贴图。</li>
+</ul>
+<p>在OpenGL中，对应的是曲面细分控制着色器（TCS）、曲面细分引擎和曲面细分评估着色器（TES）。</p>
+<h2>主要应用场景</h2>
+<h3>平滑曲面</h3>
+<p>通过细分粗糙的网格并使用平滑算法（如PN三角形），生成类似高精度模型的曲面。常用于角色皮肤、汽车车身等。</p>
+<h3>位移贴图</h3>
+<p>结合高度图或位移贴图，在域着色器中将顶点沿法线方向偏移，生成真实的凹凸几何细节，如地形褶皱、浮雕等。</p>
+<h3>自适应LOD</h3>
+<p>根据摄像机距离动态调整细分因子：近处物体细分更多，远处物体细分更少，从而实现连续且高效的细节过渡，避免传统LOD的跳变。</p>
+<h3>地形渲染</h3>
+<p>利用视锥体裁剪和距离判断，只对可见且近处的地形块进行高细分，节省性能。</p>
+<h2>优点与局限</h2>
+<p>**优点**：</p>
+<ul>
+<li>初始模型只需低多边形，通过细分实时增加细节，节省内存和带宽。</li>
+<li>支持动态LOD，使几何复杂度随距离平滑变化。</li>
+<li>与位移贴图结合可生成高度逼真的表面细节。</li>
+</ul>
+<p>**局限**：</p>
+<ul>
+<li>需要支持曲面细分的GPU和图形API（DX11+ / OpenGL 4+），部分移动平台不支持。</li>
+<li>细分因子设置不当可能导致性能下降或产生裂缝（T-junctions）。</li>
+<li>对顶点着色器后的数据有额外计算开销，大量细分可能成为瓶颈。</li>
+</ul>
+<h2>与相关技术的区别</h2>
+<ul>
+<li>**法线贴图**：仅改变光照计算，不改变几何形状。</li>
+<li>**视差贴图**：在片元着色器中偏移纹理坐标模拟深度，但不改变几何拓扑。</li>
+<li>**位移贴图**：通常需要曲面细分来提供足够的顶点密度，否则位移无法体现细节。</li>
+</ul>
+<p>曲面细分是真正的几何操作，生成的新顶点参与后续管线处理，因此可产生正确的轮廓和阴影。</p>
+<h2>实现示例（伪代码）</h2>
+<p>```</p>
+<p>// 外壳着色器：设置细分因子</p>
+<p>HS_CONSTANT_DATA_OUTPUT ConstantsHS(InputPatch&lt;VS_OUTPUT, 3&gt; p, uint PatchID : SV_PrimitiveID)</p>
+<p>{</p>
+<p>    // 根据距离计算细分因子</p>
+<p>    float tessFactor = ComputeTessFactorFromDistance(p);</p>
+<p>    HS_CONSTANT_DATA_OUTPUT output;</p>
+<p>    output.Edges[0] = output.Edges[1] = output.Edges[2] = tessFactor;</p>
+<p>    output.Inside = tessFactor;</p>
+<p>    return output;</p>
+<p>}</p>
+<p>// 域着色器：计算新顶点位置</p>
+<p>[domain(&quot;tri&quot;)]</p>
+<p>DS_OUTPUT DomainShader(HS_CONSTANT_DATA_OUTPUT input, float3 uvw : SV_DomainLocation, const OutputPatch&lt;VS_OUTPUT, 3&gt; patch)</p>
+<p>{</p>
+<p>    DS_OUTPUT output;</p>
+<p>    float3 p = uvw.x * patch[0].pos + uvw.y * patch[1].pos + uvw.z * patch[2].pos;</p>
+<p>    // 可应用位移贴图</p>
+<p>    p += Displacement(p, uvw);</p>
+<p>    output.pos = mul(float4(p, 1.0f), ViewProjMatrix);</p>
+<p>    return output;</p>
+<p>}</p>
+<p>```</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>曲面细分和位移贴图是什么关系？</h3><p>位移贴图需要足够的顶点密度才能体现细节，曲面细分可以动态增加顶点数量，因此两者常结合使用。曲面细分提供几何基础，位移贴图在域着色器中对顶点进行偏移。</p></div>
+<div class="faq-item"><h3>曲面细分在哪些图形API中可用？</h3><p>DirectX 11及以上版本、OpenGL 4.0及以上版本、Vulkan和Metal（部分支持）都支持曲面细分。需要注意的是，部分移动GPU可能不支持或性能较差。</p></div>
+<div class="faq-item"><h3>曲面细分会影响性能吗？</h3><p>是的，曲面细分会增加顶点数量和计算量，但通过自适应细分因子（如根据距离调整）可以平衡性能与画质。合理使用可获得较好收益。</p></div>
+<div class="faq-item"><h3>曲面细分和法线贴图有什么区别？</h3><p>法线贴图仅改变光照计算中的法线，不改变几何形状；曲面细分实际生成新的几何顶点，改变表面拓扑，因此轮廓和阴影也更真实。</p></div>
+<div class="faq-item"><h3>如何在Unity中使用曲面细分？</h3><p>Unity的HDRP和URP支持曲面细分着色器，需要在Shader中编写外壳和域着色器，或使用内置的曲面细分选项。具体可参考Unity文档。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/parallax-mapping.html">视差贴图</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

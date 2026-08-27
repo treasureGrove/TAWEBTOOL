@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HDR Rendering Pipeline - TA Toolbox</title>
+<meta name="description" content="The HDR rendering pipeline uses high dynamic range formats to store lighting information, preserving details in highlights and shadows, and converts HDR to LDR for display through tone mapping. This article introduces its principles, advantages, key components, and implementation methods.">
+<meta name="keywords" content="HDR rendering pipeline, high dynamic range, tone mapping, floating-point render target, linear space, ACES, R11G11B10F, game development, rendering optimization, dynamic range">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"HDR Rendering Pipeline"}]},{"@type":"Article","name":"HDR Rendering Pipeline","headline":"HDR Rendering Pipeline","description":"The HDR rendering pipeline uses high dynamic range formats to store lighting information, preserving details in highlights and shadows, and converts HDR to LDR for display through tone mapping. This article introduces its principles, advantages, key components, and implementation methods.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between HDR and LDR?","acceptedAnswer":{"@type":"Answer","text":"HDR uses floating-point formats to store color, can represent brightness values greater than 1.0, preserving high dynamic range; LDR uses 8-bit integers with brightness range 0-1, prone to overexposure. HDR rendering is converted to LDR for display via tone mapping."}},{"@type":"Question","name":"Is tone mapping necessary?","acceptedAnswer":{"@type":"Answer","text":"Yes, because most display devices are LDR and cannot directly display HDR values. Tone mapping compresses HDR to 0-1 range. Even HDR monitors may need slight tone mapping for human perception."}},{"@type":"Question","name":"How to enable HDR in Unity?","acceptedAnswer":{"@type":"Answer","text":"In the render pipeline asset, check the HDR option, choose HDR format (e.g., R11G11B10F) and tone mapping algorithm (e.g., ACES). Also ensure Color Space is set to Linear."}},{"@type":"Question","name":"Does HDR rendering increase performance overhead?","acceptedAnswer":{"@type":"Answer","text":"Yes, floating-point render targets consume more bandwidth and memory. However, modern GPUs handle it well, and R11G11B10F has manageable overhead. On mobile, use cautiously or selectively."}},{"@type":"Question","name":"What are the advantages of ACES tone mapping?","acceptedAnswer":{"@type":"Answer","text":"ACES provides more natural color and contrast, avoids color shifts and highlight clipping, and is widely adopted in film and game industries."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>HDR Rendering Pipeline</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is HDR Rendering Pipeline</h2>
+<p>HDR (High Dynamic Range) rendering pipeline is a rendering workflow that uses floating-point textures (such as RGBA16F) to store scene lighting information. Unlike traditional LDR (Low Dynamic Range) rendering which uses 8-bit integers, HDR allows storing brightness values exceeding 1.0, thereby preserving details in bright areas and avoiding overexposure. Finally, tone mapping converts the HDR image to an LDR image suitable for display devices.</p>
+<h2>Why Use HDR Rendering</h2>
+<ul>
+<li>**Preserve details**: In high-contrast scenes, HDR retains details in both bright and dark areas, avoiding pure white or pure black.</li>
+<li>**Physical correctness**: Paired with PBR materials and lighting, light intensity can exceed 1.0, making rendering more realistic.</li>
+<li>**Post-processing advantages**: Effects like Bloom require HDR information to correctly identify bright areas.</li>
+<li>**Avoid banding**: Floating-point formats provide higher precision, reducing banding artifacts in color gradients.</li>
+</ul>
+<h2>Key Components of HDR Rendering Pipeline</h2>
+<h3>1. HDR Render Target</h3>
+<p>Use floating-point texture formats for color storage, such as RGBA16F (16-bit half-float per channel) or R11G11B10F (compact format suitable for color). These formats allow storing values greater than 1.0.</p>
+<h3>2. Linear Space Workflow</h3>
+<p>HDR rendering is often combined with linear space; lighting calculations are performed in linear space to ensure physical correctness. sRGB textures are converted to linear on sampling.</p>
+<h3>3. Tone Mapping</h3>
+<p>Tone mapping is the operator that maps HDR image to LDR display range. Common algorithms include:</p>
+<ul>
+<li>**Reinhard**: Simple and soft, but may reduce contrast.</li>
+<li>**ACES**: Cinematic tone mapping, providing more natural color and contrast.</li>
+<li>**Filmic**: Simulates film response.</li>
+</ul>
+<h3>4. Post-processing</h3>
+<p>HDR provides better input for effects like bloom and lens flares, as these effects need to identify bright areas.</p>
+<h2>Implementing HDR Rendering Pipeline</h2>
+<p>In game engines, you usually just enable the HDR option:</p>
+<ul>
+<li>**Unity**: Enable HDR in the render pipeline asset, choose HDR format and tone mapping algorithm. Linear space and HDR are default.</li>
+<li>**Unreal Engine**: HDR rendering is default, with built-in tone mappers.</li>
+</ul>
+<p>For custom engines:</p>
+<ol>
+<li>Create floating-point render targets.</li>
+<li>Ensure lighting calculations in linear space with floating-point precision.</li>
+<li>Apply tone mapping in post-processing stage.</li>
+<li>Output to LDR back buffer or directly display if monitor supports HDR.</li>
+</ul>
+<h2>HDR and Display Devices</h2>
+<p>Traditional monitors are LDR, only able to display 0-1 range. Modern HDR monitors support higher brightness ranges (e.g., HDR10) and can directly display HDR content without tone mapping (or with lighter tone mapping). Engines need to detect display capabilities and adapt.</p>
+<h2>Performance Considerations</h2>
+<p>HDR rendering uses floating-point textures, increasing bandwidth and memory consumption. R11G11B10F is a balanced format for color render targets. On mobile platforms, HDR may introduce extra overhead; trade-offs are needed.</p>
+<h2>Summary</h2>
+<p>The HDR rendering pipeline is fundamental to modern real-time rendering. By using floating-point formats and tone mapping, it provides more realistic lighting and post-processing effects.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between HDR and LDR?</h3><p>HDR uses floating-point formats to store color, can represent brightness values greater than 1.0, preserving high dynamic range; LDR uses 8-bit integers with brightness range 0-1, prone to overexposure. HDR rendering is converted to LDR for display via tone mapping.</p></div>
+<div class="faq-item"><h3>Is tone mapping necessary?</h3><p>Yes, because most display devices are LDR and cannot directly display HDR values. Tone mapping compresses HDR to 0-1 range. Even HDR monitors may need slight tone mapping for human perception.</p></div>
+<div class="faq-item"><h3>How to enable HDR in Unity?</h3><p>In the render pipeline asset, check the HDR option, choose HDR format (e.g., R11G11B10F) and tone mapping algorithm (e.g., ACES). Also ensure Color Space is set to Linear.</p></div>
+<div class="faq-item"><h3>Does HDR rendering increase performance overhead?</h3><p>Yes, floating-point render targets consume more bandwidth and memory. However, modern GPUs handle it well, and R11G11B10F has manageable overhead. On mobile, use cautiously or selectively.</p></div>
+<div class="faq-item"><h3>What are the advantages of ACES tone mapping?</h3><p>ACES provides more natural color and contrast, avoids color shifts and highlight clipping, and is widely adopted in film and game industries.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/bloom.html">Bloom 泛光</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

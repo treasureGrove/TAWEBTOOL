@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Grading - TA Toolbox</title>
+<meta name="description" content="Color grading is the process of adjusting the colors and tones of images or videos to alter mood, unify style, or correct colors. This article introduces the concept, tools, workflow, and applications of color grading in game development.">
+<meta name="keywords" content="color grading, color timing, color lookup table, LUT, game development, post-processing, film grading, color correction, visual style">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/en/seo/color-grading.html">
+<link rel="alternate" hreflang="zh-CN" href="https://tools.treasuregrove.art/seo/color-grading.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/color-grading.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA Toolbox Home","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA Glossary","item":"https://tools.treasuregrove.art/en/seo/"},{"@type":"ListItem","position":3,"name":"Color Grading"}]},{"@type":"Article","name":"Color Grading","headline":"Color Grading","description":"Color grading is the process of adjusting the colors and tones of images or videos to alter mood, unify style, or correct colors. This article introduces the concept, tools, workflow, and applications of color grading in game development.","inLanguage":"en","url":"https://tools.treasuregrove.art/en/seo/color-grading.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/en/seo/color-grading.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between color grading and color correction?","acceptedAnswer":{"@type":"Answer","text":"Color correction primarily fixes technical issues (such as white balance, exposure) to make the image natural; color grading focuses more on artistic creation, changing colors and mood."}},{"@type":"Question","name":"What is a LUT? How is it used in color grading?","acceptedAnswer":{"@type":"Answer","text":"A LUT (Look-Up Table) is a color mapping table that converts input colors to output colors. In game engines, applying a LUT texture can quickly implement complex color grading with minimal performance overhead."}},{"@type":"Question","name":"When is color grading performed in game development?","acceptedAnswer":{"@type":"Answer","text":"Typically in the post-processing stage of the rendering pipeline, after or before tone mapping. Many engines allow applying color grading after other post-processing effects."}},{"@type":"Question","name":"Does color grading affect performance?","acceptedAnswer":{"@type":"Answer","text":"Color grading itself is computationally simple, but as a full-screen post-process it consumes some GPU resources. Using LUTs can be very efficient, usually with negligible performance impact."}},{"@type":"Question","name":"How to create a LUT for a game?","acceptedAnswer":{"@type":"Answer","text":"You can use image editing software (like Photoshop) to grade a standard LUT image, or use professional tools like DaVinci Resolve to generate, then import into the engine. Some engines support generating LUTs directly from screenshot grading."}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA Toolbox</a>
+  <nav><a href="/en/seo/">TA Glossary</a> · <a href="/tools_html/TA_wiki.html">TA Wiki</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA Toolbox Home</a> / <a href="/en/seo/">TA Glossary</a></p>
+    <h1>Color Grading</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>What is Color Grading</h2>
+<p>Color grading refers to the artistic adjustment of colors and tones in an image or video to achieve a specific visual effect. Unlike color correction, which focuses on fixing technical issues (such as white balance, exposure), color grading leans more toward creating mood and style, e.g., making the picture warmer, cooler, more cinematic, etc.</p>
+<p>In game development and real-time rendering, color grading is often part of post-processing effects, changing the overall visual appearance of a scene through color mapping adjustments.</p>
+<h2>Purpose of Color Grading</h2>
+<ul>
+<li>**Unify Style**: Ensure all elements in the scene have harmonious colors.</li>
+<li>**Convey Mood**: Express atmosphere through color tones, such as dark and cool tones for horror games, or warm tones for cozy scenes.</li>
+<li>**Enhance Visual Quality**: Increase contrast and saturation to make the image more impactful.</li>
+<li>**Simulate Film Looks**: Mimic the color style of specific movies.</li>
+</ul>
+<h2>Color Grading Tools and Parameters</h2>
+<p>Common color grading tools include:</p>
+<ul>
+<li>**Color Look-Up Table (LUT)**: Uses a pre-generated lookup table to map colors, quickly applying complex color grades. Many engines support importing LUT textures.</li>
+<li>**Color Balance**: Adjusts color shifts in shadows, midtones, and highlights.</li>
+<li>**Curves**: Adjust brightness, contrast, and RGB channels through curves.</li>
+<li>**Hue/Saturation/Lightness (HSL)**: Targets specific color ranges for adjustment.</li>
+<li>**Tone Mapping**: Combined with color grading, affects overall contrast.</li>
+</ul>
+<p>In game engines such as Unity's Post Processing Stack and Unreal Engine's Color Grading module, these parameters are available.</p>
+<h2>Color Grading Workflow</h2>
+<p>A typical workflow is as follows:</p>
+<ol>
+<li>**Basic Correction**: Ensure correct exposure and white balance, usually processed in linear space.</li>
+<li>**Stylized Grading**: Apply LUTs or adjust parameters to achieve artistic effects.</li>
+<li>**Output Transform**: Apply tone mapping and color space conversion to ensure correct display on target devices.</li>
+<li>**Iterative Testing**: Test grading effects under different scenes and lighting conditions.</li>
+</ul>
+<p>Grading is typically done after HDR rendering and before output to the screen.</p>
+<h2>Using Color Grading in Game Development</h2>
+<ul>
+<li>**Implementation**: Most engines provide post-process volumes or camera effects for global grading. Scripts can also dynamically adjust, e.g., changing color tone based on game state.</li>
+<li>**LUT Generation**: Tools like Photoshop, DaVinci Resolve can create LUTs, then import into the engine.</li>
+<li>**Performance Consideration**: Grading is usually a full-screen post-process, but computationally inexpensive, especially when using LUTs.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>Color grading is an important means to enhance visual presentation in games and films. By properly using grading tools, you can create unique visual styles and increase immersion.</p>
+
+    </div>
+    <section class="seo-faq"><h2>FAQ</h2>
+<div class="faq-item"><h3>What is the difference between color grading and color correction?</h3><p>Color correction primarily fixes technical issues (such as white balance, exposure) to make the image natural; color grading focuses more on artistic creation, changing colors and mood.</p></div>
+<div class="faq-item"><h3>What is a LUT? How is it used in color grading?</h3><p>A LUT (Look-Up Table) is a color mapping table that converts input colors to output colors. In game engines, applying a LUT texture can quickly implement complex color grading with minimal performance overhead.</p></div>
+<div class="faq-item"><h3>When is color grading performed in game development?</h3><p>Typically in the post-processing stage of the rendering pipeline, after or before tone mapping. Many engines allow applying color grading after other post-processing effects.</p></div>
+<div class="faq-item"><h3>Does color grading affect performance?</h3><p>Color grading itself is computationally simple, but as a full-screen post-process it consumes some GPU resources. Using LUTs can be very efficient, usually with negligible performance impact.</p></div>
+<div class="faq-item"><h3>How to create a LUT for a game?</h3><p>You can use image editing software (like Photoshop) to grade a standard LUT image, or use professional tools like DaVinci Resolve to generate, then import into the engine. Some engines support generating LUTs directly from screenshot grading.</p></div>
+</section>
+    <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>Part of TA Toolbox by TreasureGrove · <a href="/">TA Toolbox Home</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>屏幕空间反射 SSR - TA工具箱</title>
+<meta name="description" content="屏幕空间反射（Screen Space Reflection, SSR）是一种基于屏幕空间信息的实时反射技术，利用深度缓冲和法线信息计算反射。本文介绍其原理、优势、局限及优化方法。">
+<meta name="keywords" content="屏幕空间反射,SSR,Screen Space Reflection,反射,光线步进,深度缓冲,实时渲染,游戏开发,后处理,性能优化">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"屏幕空间反射 SSR"}]},{"@type":"Article","name":"屏幕空间反射 SSR","headline":"屏幕空间反射 SSR","description":"屏幕空间反射（Screen Space Reflection, SSR）是一种基于屏幕空间信息的实时反射技术，利用深度缓冲和法线信息计算反射。本文介绍其原理、优势、局限及优化方法。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/screen-space-reflection.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/screen-space-reflection.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"SSR和光线追踪反射有什么区别？","acceptedAnswer":{"@type":"Answer","text":"SSR只使用屏幕空间信息，无法反射屏幕外物体，且精度有限；光线追踪反射可以处理任意方向的反射，更精确但性能开销更大。"}},{"@type":"Question","name":"SSR支持粗糙表面的反射吗？","acceptedAnswer":{"@type":"Answer","text":"支持，但粗糙表面反射模糊，需要更多采样或使用预滤波。通常SSR对于光滑表面效果最好，粗糙表面可以依赖反射探针。"}},{"@type":"Question","name":"如何减少SSR的噪点？","acceptedAnswer":{"@type":"Answer","text":"使用时间滤波、空间滤波、增加步进精度或使用重要性采样。也可以结合模糊处理。"}},{"@type":"Question","name":"移动平台适合使用SSR吗？","acceptedAnswer":{"@type":"Answer","text":"移动平台性能有限，SSR可能开销过高。但可以使用简化版本或依赖反射探针。"}},{"@type":"Question","name":"SSR需要哪些缓冲区？","acceptedAnswer":{"@type":"Answer","text":"需要颜色缓冲、深度缓冲和法线缓冲。通常在延迟渲染中容易获得这些数据，前向渲染需要额外生成。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>屏幕空间反射 SSR</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是屏幕空间反射</h2>
+<p>屏幕空间反射（Screen Space Reflection, SSR）是一种实时渲染技术，用于模拟光滑表面的反射效果。它基于屏幕空间中的信息（如颜色缓冲、深度缓冲、法线缓冲）来计算反射光线，而不是依赖预先烘焙的环境贴图。SSR能够提供比反射探针更精确的动态反射，尤其适合反射屏幕内的物体。</p>
+<h2>SSR的工作原理</h2>
+<p>SSR的基本过程如下：</p>
+<ol>
+<li>对于每个像素，根据其世界空间位置和法线，计算反射方向。</li>
+<li>在屏幕空间中沿反射方向进行光线步进（Ray Marching），采样深度缓冲，寻找与反射光线相交的表面。</li>
+<li>如果找到交点，则从颜色缓冲中获取该点的颜色作为反射颜色。</li>
+<li>如果没有找到交点，则回退到其他反射源（如反射探针）。</li>
+</ul>
+<p>光线步进可以使用固定步长、层次化步进（Hi-Z）或混合方法，以提高性能和准确性。</p>
+<h2>SSR的优势</h2>
+<ul>
+<li>**动态反射**：能够反射屏幕内的动态物体，不受预烘焙限制。</li>
+<li>**细节丰富**：反射内容基于实际渲染结果，真实感强。</li>
+<li>**无需额外几何渲染**：只使用屏幕空间数据，比平面反射或渲染到纹理开销低。</li>
+</ul>
+<h2>SSR的局限性</h2>
+<ul>
+<li>**屏幕空间限制**：只能反射屏幕内可见的物体，屏幕外或背向相机的物体无法反射。</li>
+<li>**性能消耗**：光线步进需要多次深度采样，在高分辨率下可能很昂贵。</li>
+<li>**噪点**：如果步进精度不足，可能产生噪点或条纹，需要后处理去噪。</li>
+<li>**厚度问题**：对于薄物体，深度比较可能不准确，导致反射丢失或错误。</li>
+</ul>
+<h2>SSR的优化</h2>
+<ul>
+<li>**降低分辨率**：在半分辨率或四分之一分辨率下计算SSR，然后上采样。</li>
+<li>**层次化深度（Hi-Z）**：使用mipmap链加速光线步进，减少步数。</li>
+<li>**限制反射距离**：设置最大反射距离，避免长距离步进。</li>
+<li>**时间滤波**：结合前一帧结果，减少噪点。</li>
+<li>**重要性采样**：根据材质粗糙度调整步进策略。</li>
+</ul>
+<h2>SSR与其他反射技术的结合</h2>
+<p>SSR通常与反射探针、平面反射结合使用。当SSR失败时，回退到反射探针，确保始终有反射信息。也可以使用光线追踪提供更完整的反射方案。</p>
+<h2>总结</h2>
+<p>SSR是现代实时渲染中重要的反射技术，在性能和质量之间提供了良好平衡。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>SSR和光线追踪反射有什么区别？</h3><p>SSR只使用屏幕空间信息，无法反射屏幕外物体，且精度有限；光线追踪反射可以处理任意方向的反射，更精确但性能开销更大。</p></div>
+<div class="faq-item"><h3>SSR支持粗糙表面的反射吗？</h3><p>支持，但粗糙表面反射模糊，需要更多采样或使用预滤波。通常SSR对于光滑表面效果最好，粗糙表面可以依赖反射探针。</p></div>
+<div class="faq-item"><h3>如何减少SSR的噪点？</h3><p>使用时间滤波、空间滤波、增加步进精度或使用重要性采样。也可以结合模糊处理。</p></div>
+<div class="faq-item"><h3>移动平台适合使用SSR吗？</h3><p>移动平台性能有限，SSR可能开销过高。但可以使用简化版本或依赖反射探针。</p></div>
+<div class="faq-item"><h3>SSR需要哪些缓冲区？</h3><p>需要颜色缓冲、深度缓冲和法线缓冲。通常在延迟渲染中容易获得这些数据，前向渲染需要额外生成。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">光线追踪基础</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>

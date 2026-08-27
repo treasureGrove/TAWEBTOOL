@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sRGB 贴图工作流 - TA工具箱</title>
+<meta name="description" content="sRGB贴图工作流是指在实时渲染中正确处理颜色空间，确保颜色贴图在sRGB空间存储，采样后转换到线性空间进行光照计算，最后再转换回sRGB输出。本文介绍其原理、重要性及实现方法。">
+<meta name="keywords" content="sRGB,贴图工作流,线性空间,伽马校正,颜色管理,渲染管线,Unity,纹理设置,光照计算,颜色空间">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">
+<link rel="alternate" hreflang="en" href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">
+<link rel="alternate" hreflang="x-default" href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
+<link rel="stylesheet" href="/css/seo.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"TA工具箱首页","item":"https://tools.treasuregrove.art/"},{"@type":"ListItem","position":2,"name":"TA 术语百科","item":"https://tools.treasuregrove.art/seo/"},{"@type":"ListItem","position":3,"name":"sRGB 贴图工作流"}]},{"@type":"Article","name":"sRGB 贴图工作流","headline":"sRGB 贴图工作流","description":"sRGB贴图工作流是指在实时渲染中正确处理颜色空间，确保颜色贴图在sRGB空间存储，采样后转换到线性空间进行光照计算，最后再转换回sRGB输出。本文介绍其原理、重要性及实现方法。","inLanguage":"zh-CN","url":"https://tools.treasuregrove.art/seo/srgb-texture-workflow.html","datePublished":"2026-08-27","dateModified":"2026-08-27","mainEntityOfPage":"https://tools.treasuregrove.art/seo/srgb-texture-workflow.html"},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"为什么颜色贴图要勾选sRGB？","acceptedAnswer":{"@type":"Answer","text":"因为颜色贴图以sRGB空间存储，勾选sRGB后GPU在采样时会自动将其转换为线性空间，保证光照计算正确。如果不勾选，颜色会偏暗。"}},{"@type":"Question","name":"法线贴图需要勾选sRGB吗？","acceptedAnswer":{"@type":"Answer","text":"不需要。法线贴图存储的是方向数据，不是颜色，应使用线性空间。如果勾选sRGB，法线方向会被错误解码，导致光照异常。"}},{"@type":"Question","name":"在Unity中如何设置sRGB贴图工作流？","acceptedAnswer":{"@type":"Answer","text":"在Player Settings中，Color Space选择Linear。然后在纹理导入设置中，颜色贴图默认勾选sRGB，数据贴图取消勾选。"}},{"@type":"Question","name":"线性空间渲染比伽马空间好吗？","acceptedAnswer":{"@type":"Answer","text":"是的，线性空间渲染提供物理正确的光照，色彩更真实，避免过曝或失真。现代引擎和移动设备都建议使用线性空间。"}},{"@type":"Question","name":"sRGB和伽马校正有什么关系？","acceptedAnswer":{"@type":"Answer","text":"sRGB编码包含了伽马校正（约2.2），用于补偿显示器的非线性响应。伽马校正是将线性值转换为sRGB值的过程，反伽马校正是将其转回线性。"}}]}]}</script>
+<script>
+var _hmt = _hmt || [];
+(function() { var hm = document.createElement("script"); hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7"; var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(hm, s); })();
+</script>
+</head>
+<body>
+<header class="seo-header">
+  <a class="seo-logo" href="/">TA工具箱</a>
+  <nav><a href="/seo/">TA 术语百科</a> · <a href="/tools_html/TA_wiki.html">TA知识库</a></nav>
+</header>
+<main class="seo-main">
+  <article>
+    <p class="seo-crumb"><a href="/">TA工具箱首页</a> / <a href="/seo/">TA 术语百科</a></p>
+    <h1>sRGB 贴图工作流</h1>
+    <p class="seo-meta">2026-08-27</p>
+    <div class="seo-content">
+<h2>什么是sRGB贴图工作流</h2>
+<p>sRGB贴图工作流是实时渲染中颜色管理的关键部分。它涉及在图形管线中正确处理颜色空间，以确保最终显示的颜色准确。核心原则是：颜色贴图（如反照率、漫反射）通常以sRGB颜色空间存储，因为人眼对亮度的感知是非线性的，sRGB编码可以更有效地利用有限的位深。然而，光照计算必须在线性空间进行，否则结果会不正确。因此，需要在采样纹理后将颜色从sRGB转换到线性空间，渲染完成后再将输出转换回sRGB进行显示。</p>
+<h2>为什么需要sRGB工作流</h2>
+<ul>
+<li>**物理正确性**：光照方程在线性空间中才成立。如果在sRGB空间直接计算，会导致光照过亮或色彩偏移。</li>
+<li>**避免颜色失真**：不正确的颜色空间处理会导致纹理颜色与设计不符，尤其在暗部和亮部。</li>
+<li>**一致性**：确保在不同平台和显示器上颜色一致。</li>
+</ul>
+<h2>sRGB与线性空间的区别</h2>
+<ul>
+<li>**sRGB**：是一种非线性颜色空间，编码了伽马校正（约2.2），用于存储和显示，以匹配人眼感知。</li>
+<li>**线性空间**：光照计算和物理模拟应在该空间进行，像素值与光强度成正比。</li>
+</ul>
+<h2>实现sRGB工作流</h2>
+<p>在图形API和引擎中，通常通过以下方式实现：</p>
+<ol>
+<li>**纹理导入设置**：将颜色贴图标记为sRGB，这样GPU在采样时会自动将其转换到线性空间。例如，在Unity中，颜色贴图默认勾选“sRGB (Color Texture)”，而法线贴图、粗糙度等数据贴图则使用线性。</li>
+<li>**渲染目标格式**：使用支持sRGB的帧缓冲格式（如sRGB8_ALPHA8），GPU在写入时会自动进行线性到sRGB的转换。</li>
+<li>**着色器中的处理**：如果手动处理，需要在采样颜色贴图后执行`pow(color, 2.2)`或使用硬件sRGB纹理采样。</li>
+<li>**最终输出**：如果渲染到非sRGB目标，需要手动进行伽马校正。</li>
+</ul>
+<h2>注意事项</h2>
+<ul>
+<li>**不要对非颜色数据使用sRGB**：法线贴图、粗糙度、金属度、AO等数据应使用线性空间，否则数值会被错误解码。</li>
+<li>**混合顺序**：透明混合应在线性空间进行，然后转换为sRGB输出。</li>
+<li>**Mipmap生成**：sRGB纹理的mipmap应在sRGB空间生成，否则平均颜色会偏暗。</li>
+<li>**UI元素**：UI通常设计在sRGB空间，应避免被线性化处理。</li>
+</ul>
+<h2>常见错误</h2>
+<ul>
+<li>将颜色贴图错误设置为线性，导致画面偏暗。</li>
+<li>将数据贴图设置为sRGB，导致数值错误。</li>
+<li>忘记在最终输出时转换回sRGB，画面过亮。</li>
+</ul>
+<h2>总结</h2>
+<p>sRGB贴图工作流是保证渲染质量的基础，正确配置纹理和渲染目标的颜色空间可以避免许多视觉问题。</p>
+
+    </div>
+    <section class="seo-faq"><h2>常见问题</h2>
+<div class="faq-item"><h3>为什么颜色贴图要勾选sRGB？</h3><p>因为颜色贴图以sRGB空间存储，勾选sRGB后GPU在采样时会自动将其转换为线性空间，保证光照计算正确。如果不勾选，颜色会偏暗。</p></div>
+<div class="faq-item"><h3>法线贴图需要勾选sRGB吗？</h3><p>不需要。法线贴图存储的是方向数据，不是颜色，应使用线性空间。如果勾选sRGB，法线方向会被错误解码，导致光照异常。</p></div>
+<div class="faq-item"><h3>在Unity中如何设置sRGB贴图工作流？</h3><p>在Player Settings中，Color Space选择Linear。然后在纹理导入设置中，颜色贴图默认勾选sRGB，数据贴图取消勾选。</p></div>
+<div class="faq-item"><h3>线性空间渲染比伽马空间好吗？</h3><p>是的，线性空间渲染提供物理正确的光照，色彩更真实，避免过曝或失真。现代引擎和移动设备都建议使用线性空间。</p></div>
+<div class="faq-item"><h3>sRGB和伽马校正有什么关系？</h3><p>sRGB编码包含了伽马校正（约2.2），用于补偿显示器的非线性响应。伽马校正是将线性值转换为sRGB值的过程，反伽马校正是将其转回线性。</p></div>
+</section>
+    <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
+  </article>
+</main>
+<footer class="seo-footer">
+  <p>TA工具箱 · 宝藏小树林出品 · <a href="/">TA工具箱首页</a></p>
+</footer>
+</body>
+</html>
