@@ -684,29 +684,40 @@ async function enrichEntryWithAi(entry, memory) {
   return entry;
 }
 
-async function enrichEntriesWithAi(entries, memory) {
+async function enrichEntriesWithAi(entries, memory, knownIds = new Set()) {
   if (!AI_ENABLED) {
     console.log('[wiki] AI enrichment skipped: set WIKI_AI_API_KEY or DEEPSEEK_API_KEY to enable.');
     return entries;
   }
 
-  const out = [];
+  // Every source re-reports its recent items on every run, so most collected entries are
+  // already in the knowledge base. Spend the AI_MAX_ENTRIES budget on genuinely new items
+  // first, otherwise the quota is consumed re-enriching known entries and new articles are
+  // stored as low-quality drafts.
+  const ordered = entries
+    .map((entry, index) => ({ entry, index }))
+    .sort((a, b) => (knownIds.has(a.entry.id) ? 1 : 0) - (knownIds.has(b.entry.id) ? 1 : 0) || a.index - b.index);
+
+  const result = new Map();
   let used = 0;
-  for (const entry of entries) {
+  let skipped = 0;
+  for (const { entry } of ordered) {
     if (used >= AI_MAX_ENTRIES) {
-      out.push(entry);
+      result.set(entry, entry);
+      skipped += 1;
       continue;
     }
     try {
-      out.push(await enrichEntryWithAi(entry, memory));
+      result.set(entry, await enrichEntryWithAi(entry, memory));
       used += 1;
       console.log(`[wiki] AI enriched: ${entry.title}`);
     } catch (err) {
       console.warn(`[wiki] AI enrich failed: ${entry.title}: ${err.message}`);
-      out.push(entry);
+      result.set(entry, entry);
     }
   }
-  return out;
+  if (skipped) console.log(`[wiki] AI enrichment quota (${AI_MAX_ENTRIES}) reached, ${skipped} entries left as drafts`);
+  return entries.map((entry) => result.get(entry) || entry);
 }
 
 let filterSession = null;
@@ -1179,7 +1190,8 @@ async function main() {
     }
   }
 
-  const enriched = await enrichEntriesWithAi(collected, memory);
+  const knownIds = new Set(existing.map((item) => item.id).filter(Boolean));
+  const enriched = await enrichEntriesWithAi(collected, memory, knownIds);
   const merged = mergeEntries(existing, enriched, sources);
   await ensureEntryImages(merged);
   await fs.writeFile(ENTRIES_FILE, JSON.stringify(merged, null, 2) + '\n', 'utf8');
