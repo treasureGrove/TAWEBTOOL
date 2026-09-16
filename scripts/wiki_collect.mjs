@@ -15,7 +15,7 @@ const MEMORY_FILE = path.join(ROOT, 'data/wiki_memory.json');
 const MAX_PER_SOURCE = Number(process.env.WIKI_MAX_PER_SOURCE || 5);
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
-const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-v4-flash';
+const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-flash';
 const AI_ENABLED = process.env.WIKI_AI !== '0' && Boolean(AI_API_KEY);
 const AI_MAX_ENTRIES = Number(process.env.WIKI_AI_MAX_ENTRIES || 20);
 const AI_FILTER_ENABLED = AI_ENABLED && process.env.WIKI_AI_FILTER !== '0';

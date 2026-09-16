@@ -46,7 +46,7 @@ node scripts/wiki_collect.mjs
 ```bash
 export WIKI_AI_API_KEY="你的 DeepSeek 或 OpenCode 中配置的 DeepSeek Token"
 export WIKI_AI_BASE_URL="https://api.deepseek.com"
-export WIKI_AI_MODEL="deepseek-v4-flash"
+export WIKI_AI_MODEL="deepseek-flash"
 export WIKI_AI_FILTER="1"
 ```
 
@@ -88,13 +88,13 @@ AI Agent 只适合作为可选增强，例如：
 
 ```bash
 cd /path/to/TAWEBTOOL
-WIKI_AI_API_KEY="$DEEPSEEK_API_KEY" WIKI_AI_MODEL="deepseek-v4-flash" WIKI_AI_FILTER="1" node scripts/wiki_collect.mjs
+WIKI_AI_API_KEY="$DEEPSEEK_API_KEY" WIKI_AI_MODEL="deepseek-flash" WIKI_AI_FILTER="1" node scripts/wiki_collect.mjs
 ```
 
 每天凌晨 3:20 更新：
 
 ```cron
-20 3 * * * cd /path/to/TAWEBTOOL && WIKI_AI_API_KEY="$DEEPSEEK_API_KEY" WIKI_AI_MODEL="deepseek-v4-flash" WIKI_AI_FILTER="1" node scripts/wiki_collect.mjs >> logs/wiki_collect.log 2>&1
+20 3 * * * cd /path/to/TAWEBTOOL && WIKI_AI_API_KEY="$DEEPSEEK_API_KEY" WIKI_AI_MODEL="deepseek-flash" WIKI_AI_FILTER="1" node scripts/wiki_collect.mjs >> logs/wiki_collect.log 2>&1
 ```
 
 ## 当前服务器

@@ -27,7 +27,7 @@ if (!process.env.WIKI_AI_API_KEY && !process.env.DEEPSEEK_API_KEY && !process.en
 }
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
-const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-v4-flash';
+const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-flash';
 const AI_ENABLED = Boolean(AI_API_KEY);
 
 function loadDotEnv(file) {
