@@ -23,7 +23,7 @@ if [ -z "${DEEPSEEK_API_KEY:-}" ] && [ -z "${WIKI_AI_API_KEY:-}" ] && [ -f /root
   export DEEPSEEK_API_KEY
 fi
 
-export WIKI_AI_MODEL="${WIKI_AI_MODEL:-deepseek-v4-pro}"
+export WIKI_AI_MODEL="${WIKI_AI_MODEL:-deepseek-v4-flash}"
 export WIKI_AI_FILTER="${WIKI_AI_FILTER:-1}"
 export WIKI_MIN_RELEVANCE_SCORE="${WIKI_MIN_RELEVANCE_SCORE:-5}"
 export WIKI_AI_MAX_ENTRIES="${WIKI_AI_MAX_ENTRIES:-20}"
@@ -114,9 +114,9 @@ opencode_status=0
 if command -v opencode >/dev/null 2>&1; then
   prompt="You are maintaining the TA Wiki in this project. Read data/ta_wiki_entries.json, data/wiki_sources.json, data/wiki_memory.json if present, and the latest collector log at logs/wiki_collect.last.log. Do not edit files in this scheduled run. Output only a concise maintenance note in Simplified Chinese Markdown covering: 1) newly collected useful graphics knowledge, 2) rejected or weak content patterns if visible, 3) whether the wiki page needs UI/framework improvements later, 4) next actions. Keep it practical for a technical artist."
   if command -v script >/dev/null 2>&1; then
-    timeout 180s script -q -e -c "opencode run \"$prompt\" --auto -m deepseek/deepseek-v4-pro --dir \"$SITE\"" "$OPEN_CODE_LOG" >/dev/null 2>&1 || opencode_status=$?
+    timeout 180s script -q -e -c "opencode run \"$prompt\" --auto -m deepseek/deepseek-v4-flash --dir \"$SITE\"" "$OPEN_CODE_LOG" >/dev/null 2>&1 || opencode_status=$?
   else
-    timeout 180s opencode run "$prompt" --auto -m "deepseek/deepseek-v4-pro" --dir "$SITE" > "$OPEN_CODE_LOG" 2>&1 || opencode_status=$?
+    timeout 180s opencode run "$prompt" --auto -m "deepseek/deepseek-v4-flash" --dir "$SITE" > "$OPEN_CODE_LOG" 2>&1 || opencode_status=$?
   fi
   perl -pe 's/\e\[[0-9;?]*[ -\/]*[@-~]//g' "$OPEN_CODE_LOG" | grep -v '^Script started' | grep -v '^Script done' > "$OPEN_CODE_CLEAN" || true
   {
