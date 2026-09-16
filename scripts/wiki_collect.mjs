@@ -12,14 +12,18 @@ loadDotEnv(path.join(ROOT, '.env'));
 const SOURCES_FILE = path.join(ROOT, 'data/wiki_sources.json');
 const ENTRIES_FILE = path.join(ROOT, 'data/ta_wiki_entries.json');
 const MEMORY_FILE = path.join(ROOT, 'data/wiki_memory.json');
-const MAX_PER_SOURCE = Number(process.env.WIKI_MAX_PER_SOURCE || 5);
+const MAX_PER_SOURCE = Number(process.env.WIKI_MAX_PER_SOURCE || 8);
 const AI_API_KEY = process.env.WIKI_AI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENCODE_DEEPSEEK_API_KEY || '';
 const AI_BASE_URL = (process.env.WIKI_AI_BASE_URL || 'https://api.deepseek.com').replace(/\/+$/, '');
 const AI_MODEL = process.env.WIKI_AI_MODEL || 'deepseek-flash';
 const AI_ENABLED = process.env.WIKI_AI !== '0' && Boolean(AI_API_KEY);
-const AI_MAX_ENTRIES = Number(process.env.WIKI_AI_MAX_ENTRIES || 20);
+const AI_MAX_ENTRIES = Number(process.env.WIKI_AI_MAX_ENTRIES || 40);
 const AI_FILTER_ENABLED = AI_ENABLED && process.env.WIKI_AI_FILTER !== '0';
 const MIN_RELEVANCE_SCORE = Number(process.env.WIKI_MIN_RELEVANCE_SCORE || 5);
+// Local keyword prescreen. Kept deliberately low: it only exists to spare API calls on
+// obviously off-topic items, and a high bar here silently drops good articles before the
+// AI filter ever sees them. Set WIKI_PRESCREEN_MIN=0 to send every candidate to the model.
+const PRESCREEN_MIN_SCORE = Number(process.env.WIKI_PRESCREEN_MIN ?? 2);
 const KEEP_STALE_ENTRIES = process.env.WIKI_KEEP_STALE === '1';
 
 function loadDotEnv(file) {
@@ -43,10 +47,22 @@ function loadDotEnv(file) {
 }
 
 const taKeywords = [
-  'render', 'rendering', 'shader', 'material', 'pbr', 'texture', 'gpu', 'graphics',
-  'unreal', 'unity', 'directx', 'vulkan', 'gltf', 'mesh', 'asset', 'pipeline',
-  'performance', 'optimization', 'ray tracing', 'lighting', 'normal', 'roughness',
-  'opengl', 'webgpu', 'wgsl', 'hlsl', 'glsl', 'brdf', 'fresnel', 'ibl', 'shading'
+  'render', 'rendering', 'renderer', 'shader', 'shading', 'material', 'pbr', 'brdf', 'bsdf',
+  'texture', 'gpu', 'graphics', 'unreal', 'unity', 'godot', 'directx', 'd3d12', 'vulkan',
+  'metal api', 'opengl', 'webgpu', 'wgsl', 'hlsl', 'glsl', 'spir-v', 'gltf', 'mesh', 'meshlet',
+  'asset', 'pipeline', 'performance', 'profiling', 'optimization', 'ray tracing', 'raytracing',
+  'path tracing', 'global illumination', 'illumination', 'lighting', 'lightmap', 'shadow',
+  'ambient occlusion', 'reflection', 'refraction', 'normal', 'roughness', 'metallic', 'albedo',
+  'fresnel', 'ibl', 'lod', 'nanite', 'lumen', 'tessellation', 'subdivision', 'displacement',
+  'skinning', 'hair', 'cloth', 'foliage', 'vfx', 'particle', 'niagara', 'volumetric', 'decal',
+  'upscaling', 'dlss', 'fsr', 'taa', 'anti-aliasing', 'denoising', 'denoiser', 'post-processing',
+  'tone mapping', 'color grading', 'hdr', 'g-buffer', 'deferred', 'compute shader', 'occupancy',
+  'bandwidth', 'overdraw', 'draw call', 'renderdoc', 'nsight', 'profiler', 'toolchain',
+  'technical artist', 'technical art', 'dcc', 'blender', 'maya', 'houdini', 'substance',
+  'neural rendering', 'gaussian splatting', 'nerf', 'diffusion model', 'virtual texture',
+  'terrain', 'water rendering', 'fog', 'bloom', 'ssao', 'ssr', 'mipmap', 'texel', 'uv mapping',
+  'texture compression', 'astc', 'bc7', 'ktx2', 'render graph', 'frame graph', 'async compute',
+  'descriptor', 'bindless', 'shader graph', 'material editor', 'render target', 'gbuffer'
 ];
 
 const weightedKeywords = new Map([
@@ -54,31 +70,107 @@ const weightedKeywords = new Map([
   ['hlsl', 4],
   ['glsl', 4],
   ['wgsl', 4],
+  ['spir-v', 3],
   ['pbr', 4],
   ['brdf', 4],
+  ['bsdf', 3],
   ['fresnel', 3],
   ['ibl', 3],
   ['rendering', 3],
+  ['renderer', 3],
   ['render pipeline', 4],
+  ['render graph', 4],
+  ['frame graph', 3],
   ['gpu performance', 4],
+  ['gpu profiler', 4],
+  ['profiling', 3],
   ['optimization', 2],
+  ['occupancy', 3],
   ['texture compression', 4],
   ['normal map', 4],
   ['roughness', 3],
   ['metallic', 3],
   ['material', 2],
+  ['material editor', 3],
+  ['shader graph', 3],
   ['mesh', 2],
+  ['meshlet', 4],
+  ['mesh shader', 4],
+  ['nanite', 3],
+  ['lod', 2],
+  ['tessellation', 3],
+  ['subdivision', 3],
   ['gltf', 3],
   ['directx', 3],
+  ['d3d12', 3],
   ['vulkan', 3],
   ['webgpu', 3],
   ['opengl', 3],
+  ['metal api', 3],
   ['unreal', 2],
   ['unity', 2],
-  ['lod', 2],
+  ['godot', 2],
   ['ray tracing', 3],
+  ['raytracing', 3],
+  ['path tracing', 4],
+  ['global illumination', 4],
+  ['illumination', 3],
+  ['indirect lighting', 3],
   ['lighting', 2],
-  ['shading', 3]
+  ['lightmap', 3],
+  ['shadow map', 3],
+  ['shadow', 2],
+  ['ambient occlusion', 3],
+  ['ssao', 3],
+  ['ssr', 3],
+  ['reflection probe', 3],
+  ['volumetric', 3],
+  ['shading', 3],
+  ['compute shader', 4],
+  ['wave intrinsics', 4],
+  ['divergence', 3],
+  ['bindless', 4],
+  ['descriptor', 3],
+  ['upscaling', 3],
+  ['dlss', 4],
+  ['fsr', 4],
+  ['taa', 3],
+  ['anti-aliasing', 3],
+  ['denoising', 3],
+  ['denoiser', 3],
+  ['post-processing', 3],
+  ['tone mapping', 3],
+  ['color grading', 2],
+  ['hdr', 2],
+  ['g-buffer', 4],
+  ['gbuffer', 4],
+  ['deferred', 3],
+  ['bandwidth', 3],
+  ['overdraw', 3],
+  ['draw call', 3],
+  ['renderdoc', 4],
+  ['nsight', 4],
+  ['neural rendering', 4],
+  ['gaussian splatting', 4],
+  ['nerf', 3],
+  ['diffusion model', 2],
+  ['virtual texture', 3],
+  ['terrain', 2],
+  ['vfx', 2],
+  ['particle', 2],
+  ['niagara', 3],
+  ['technical artist', 4],
+  ['technical art', 4],
+  ['dcc', 3],
+  ['blender', 2],
+  ['maya', 2],
+  ['houdini', 2],
+  ['substance', 2],
+  ['toolchain', 2],
+  ['asset pipeline', 4],
+  ['texture', 2],
+  ['gpu', 2],
+  ['graphics', 2]
 ]);
 
 const noisePatterns = [
@@ -621,7 +713,7 @@ async function classifyCandidateWithAi({ title, summary, text, source, memory })
   }
 
   const localScore = relevanceScore([title, summary, text].join(' '));
-  if (localScore < Math.max(3, MIN_RELEVANCE_SCORE - 2)) {
+  if (localScore < PRESCREEN_MIN_SCORE) {
     return {
       include: false,
       category: source.category || '自动采集',
@@ -640,6 +732,8 @@ async function classifyCandidateWithAi({ title, summary, text, source, memory })
       '只收录和实时渲染、图形学、Shader、材质、贴图、GPU 性能、引擎渲染管线、资产管线、DCC 到引擎流程、TA 工具链有关的内容。',
       '必须满足：有可复用知识点，能沉淀成规范/排查方法/实现经验/性能结论；只提到产品发布、版本新闻、营销介绍、招聘、普通编程文章都不要收录。',
       '如果只是仓库说明、新闻摘要、下载页、首页导航、会议预告，include 必须为 false。',
+      '论文/算法类内容（全局光照、光线追踪、神经渲染、几何处理、贴图压缩、性能分析等）只要讲清方法、适用边界或性能取舍，就应当收录，不要因为是研究内容而排除。',
+      '厂商技术博客、引擎官方渲染文档、TA 工具链教程属于目标内容；版本发布说明只有在完全没有技术细节时才排除，若包含 shader 调试、性能指标或管线变更等可复用信息应当收录。',
       '输出 JSON：include:boolean, score:number, confidence:number, category:string, tags:string[], contentType:string, reason:string。',
       'score 0-10，低于 7 不应收录；confidence 0-1，低于 0.65 不应收录。',
       'contentType 可选：教程、技术文章、规范、论文笔记、工具文档、性能分析、其它。',
@@ -688,13 +782,28 @@ function parseRssItems(xml) {
 async function collectRss(source) {
   const xml = await fetchText(source.url);
   const entries = [];
-  const candidates = parseRssItems(xml).slice(0, MAX_PER_SOURCE * 3);
+  const perSource = Number(source.maxEntries || MAX_PER_SOURCE);
+  const maxCandidates = Number(source.maxCandidates || Math.max(perSource * 3, 15));
+  const candidates = parseRssItems(xml).slice(0, maxCandidates);
   for (const item of candidates) {
-    if (!AI_FILTER_ENABLED && !prefilterRelevant([item.title, item.summary, item.content].join(' '))) continue;
+    let text = item.content || item.summary || item.title;
+    let image = item.image || extractImage(item.content || item.summary || '', item.link);
+    // Feed excerpts are often a single sentence, which makes keyword scoring and the AI
+    // verdict unreliable. Read the article itself when the feed does not carry full text.
+    if (source.fetchFullText !== false && item.link) {
+      try {
+        const html = await fetchText(item.link, {}, 15000);
+        text = extractReadableText(html) || text;
+        image = extractImage(html, item.link) || image;
+      } catch (err) {
+        // keep the feed excerpt when the page cannot be read
+      }
+    }
+    if (!AI_FILTER_ENABLED && !prefilterRelevant([item.title, item.summary, text].join(' '))) continue;
     const verdict = await classifyCandidateWithAi({
       title: item.title,
-      summary: item.summary,
-      text: item.content || item.summary,
+      summary: item.summary || textSlice(text),
+      text,
       source,
       memory: source.memory
     });
@@ -707,11 +816,11 @@ async function collectRss(source) {
         category: verdict.category || source.category || '自动采集',
         tags,
         summary: textSlice(item.summary || item.title),
-        image: item.image || extractImage(item.content || item.summary || '', item.link),
+        image,
         content: buildContent({
           title: item.title,
           summary: textSlice(item.summary || item.title, 420),
-          originalText: item.content || item.summary || item.title,
+          originalText: text,
           sourceUrl: item.link,
           sourceTitle: source.title,
           category: verdict.category || source.category || '自动采集',
@@ -728,7 +837,7 @@ async function collectRss(source) {
         filterConfidence: verdict.confidence,
         contentType: verdict.contentType
     });
-    if (entries.length >= MAX_PER_SOURCE) break;
+    if (entries.length >= perSource) break;
   }
   return entries;
 }

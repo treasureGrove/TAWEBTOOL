@@ -2,7 +2,7 @@
   "project": "TAWEBTOOL TA知识库",
   "goals": [
     "知识库优先服务技术美术、图形程序、渲染TA和技术向美术同学。",
-    "内容宁缺毋滥，必须能沉淀成规范、排查方法、实现经验、性能结论或工具链建议。",
+    "内容要能沉淀成规范、排查方法、实现经验、性能结论或工具链建议；在保证相关性的前提下优先扩大收录量，不要因为偏研究、偏工具或偏冷门就排除。",
     "前台应像 wiki/documentation 阅读器，而不是后台表单、搜索结果页或信息流。",
     "服务器自动更新，用户不通过后台维护 HTML。"
   ],
@@ -15,7 +15,10 @@
     "Unity/Unreal/自研引擎渲染管线",
     "资产管线、LOD、DCC到引擎流程",
     "RenderDoc/PIX/Nsight等TA工具链",
-    "WebGPU/DirectX/Vulkan/OpenGL图形API中和TA相关的实践内容"
+    "WebGPU/DirectX/Vulkan/OpenGL图形API中和TA相关的实践内容",
+    "论文与算法方法类内容（全局光照、光线追踪、神经渲染、几何处理、贴图压缩、升采样）",
+    "厂商技术博客与引擎官方渲染文档（GPUOpen、NVIDIA、Unity、Unreal、Intel、Khronos）",
+    "TA 工具链、DCC 到引擎流程、调试与性能排查方法"
   ],
   "exclude": [
     "纯产品新闻",
