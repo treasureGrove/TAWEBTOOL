@@ -100,6 +100,118 @@
       "tags": ["Unity", "URP", "VFX", "Shader", "RendererFeature"]
     },
     {
+      "id": "msft-directx-blog",
+      "type": "rss",
+      "title": "Microsoft DirectX Blog",
+      "url": "https://devblogs.microsoft.com/directx/feed/",
+      "category": "图形 API",
+      "tags": ["DirectX", "D3D12", "AgilitySDK", "GPU", "工具链"],
+      "maxEntries": 5
+    },
+    {
+      "id": "msft-pix-blog",
+      "type": "rss",
+      "title": "Microsoft PIX Blog",
+      "url": "https://devblogs.microsoft.com/pix/feed/",
+      "category": "GPU 调试工具",
+      "tags": ["PIX", "GPU调试", "D3D12", "性能分析"],
+      "maxEntries": 4
+    },
+    {
+      "id": "epic-unreal-blog",
+      "type": "rss",
+      "title": "Epic Games / Unreal Engine Blog",
+      "url": "https://www.unrealengine.com/en-US/rss",
+      "category": "引擎实践",
+      "tags": ["Unreal", "渲染", "Lumen", "Nanite", "材质"],
+      "maxEntries": 5
+    },
+    {
+      "id": "godot-blog",
+      "type": "rss",
+      "title": "Godot Engine Blog",
+      "url": "https://godotengine.org/rss.xml",
+      "category": "引擎实践",
+      "tags": ["Godot", "渲染器", "Vulkan", "性能"],
+      "maxEntries": 4
+    },
+    {
+      "id": "selfshadow-blog",
+      "type": "rss",
+      "title": "Self Shadow (Ian McAuley)",
+      "url": "https://blog.selfshadow.com/feed/",
+      "category": "材质与光照",
+      "tags": ["PBR", "Shading", "材质", "LookDev"],
+      "maxEntries": 4
+    },
+    {
+      "id": "graphics-weekly",
+      "type": "rss",
+      "title": "Graphics Programming Weekly (Jendrik Illner)",
+      "url": "https://www.jendrikillner.com/post/index.xml",
+      "category": "渲染技术周报",
+      "tags": ["Rendering", "GPU", "Shader", "论文", "周报"],
+      "maxEntries": 3,
+      "maxCandidates": 15
+    },
+    {
+      "id": "webgpu-fundamentals-feed",
+      "type": "rss",
+      "title": "WebGPU Fundamentals (updates)",
+      "url": "https://webgpufundamentals.org/atom.xml",
+      "category": "图形 API",
+      "tags": ["WebGPU", "WGSL", "Shader", "渲染"],
+      "maxEntries": 4
+    },
+    {
+      "id": "khronos-blog",
+      "type": "rss",
+      "title": "Khronos Blog",
+      "url": "https://www.khronos.org/feeds/blog_feed",
+      "category": "图形标准",
+      "tags": ["Vulkan", "glTF", "WebGPU", "Khronos", "标准"],
+      "maxEntries": 4
+    },
+    {
+      "id": "asawicki-blog",
+      "type": "rss",
+      "title": "Adam Sawicki (GPU memory / D3D12)",
+      "url": "https://asawicki.info/news_rss.php",
+      "category": "GPU 资源管理",
+      "tags": ["D3D12", "Vulkan", "显存", "分配器", "工具"],
+      "maxEntries": 3
+    },
+    {
+      "id": "realtimevfx-forum",
+      "type": "rss",
+      "title": "Real-Time VFX Forum",
+      "url": "https://realtimevfx.com/latest.rss",
+      "category": "VFX 与特效",
+      "tags": ["VFX", "粒子", "材质", "Niagara", "特效"],
+      "maxEntries": 3,
+      "maxCandidates": 15
+    },
+    {
+      "id": "unreal-rendering-forum",
+      "type": "rss",
+      "title": "Unreal Engine Rendering Forum",
+      "url": "https://forums.unrealengine.com/c/development-discussion/rendering/37.rss",
+      "category": "引擎实践",
+      "tags": ["Unreal", "Rendering", "排查", "渲染管线"],
+      "maxEntries": 3,
+      "maxCandidates": 15
+    },
+    {
+      "id": "reddit-graphicsprogramming",
+      "type": "rss",
+      "title": "r/GraphicsProgramming",
+      "url": "https://www.reddit.com/r/GraphicsProgramming/.rss",
+      "category": "图形学社区",
+      "tags": ["Graphics", "Shader", "GLSL", "WebGPU", "论文"],
+      "maxEntries": 3,
+      "maxCandidates": 15
+    },
+    {
       "id": "ta-conference-search",
       "type": "search",
       "title": "TA Conference / Engine Tech Search",
