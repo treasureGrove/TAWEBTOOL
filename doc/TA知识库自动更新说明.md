@@ -68,6 +68,33 @@ export WIKI_AI_API_KEY="$DEEPSEEK_API_KEY"
 
 没有配置 token 时，脚本会回退到本地关键词筛选和规则阐述，但默认规则更严格：需要达到 `WIKI_MIN_RELEVANCE_SCORE`，默认值为 `5`。
 
+### 收录量与成本开关
+
+| 环境变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `WIKI_MAX_PER_SOURCE` | `8` | 单个采集源每次最多收录条数；源配置里的 `maxEntries` 可单独覆盖 |
+| `WIKI_AI_MAX_ENTRIES` | `40` | 单次运行最多做多少次 AI 整理（摘要/阐述/TA 视角） |
+| `WIKI_AI_MAX_FILTER_CALLS` | `0`（不限） | 单次运行送往 AI 筛选的候选上限，用于补采时控制成本与时长 |
+| `WIKI_PRESCREEN_MIN` | `2` | 本地关键词预筛阈值；设为 `0` 表示所有候选都交给 AI 判断 |
+| `WIKI_MIN_RELEVANCE_SCORE` | `5` | 仅在未启用 AI 筛选（`WIKI_AI_FILTER=0`）时使用的本地相关性阈值 |
+| `WIKI_KEEP_STALE` | 未设置 | 设为 `1` 时保留已下线来源的历史条目 |
+
+**本地预筛阈值不要调高。** 它是 AI 之前的第一道关，阈值偏高时相关文章会在 AI 看到之前就被丢弃，
+表现为“任务每天在跑但条目数长期不增长”。预筛只负责挡掉明显无关项，相关性判断交给 AI 筛选器。
+
+### 大规模补采
+
+需要一次性回补历史文章时，临时放宽限额再跑一次即可（结果按链接去重合并，重复运行安全）：
+
+```bash
+WIKI_MAX_PER_SOURCE=10 WIKI_AI_MAX_ENTRIES=70 WIKI_AI_MAX_FILTER_CALLS=250 \
+  node scripts/wiki_collect.mjs
+```
+
+采集源配置里每个源可单独设置 `maxEntries`（收录上限）和 `maxCandidates`（送入筛选的候选上限），
+论坛、社区一类噪声较大的源建议保持 `maxEntries` 为 3 左右；源也可用 `fetchFullText: false`
+关闭“抓取原文全文”行为。
+
 ## 是否需要 AI Agent
 
 当前不需要常驻 AI Agent。默认方案是“定时任务 + 采集脚本 + DeepSeek API”：
@@ -115,3 +142,11 @@ WIKI_AI_API_KEY="$DEEPSEEK_API_KEY" WIKI_AI_MODEL="deepseek-flash" WIKI_AI_FILTE
 - `rss`：技术博客或官方更新源。
 - `page`：固定图形学知识页面。
 - `github_repo`：脚本仍支持，但默认不启用，避免知识库混入普通仓库说明。
+
+2026-09-16 完成过一次源扩充（12 个新源，合计 23 个源），候选地址的逐个抓取结论见
+`doc/TA知识库采集源验证报告.md`，其中记录了大量被 Cloudflare JS 挑战挡住的优质博客
+（`realtimerendering.com`、`demofox.org`、`interplayoflight`、`vulkan.org` 等），
+这些源当前采集器取不到，不要重复尝试同样的地址。
+
+新增来源前应先用 `fetch` 实测该地址能返回真实 RSS/Atom（含 `<item>`/`<entry>`），
+再把验证结果补进上述报告。
