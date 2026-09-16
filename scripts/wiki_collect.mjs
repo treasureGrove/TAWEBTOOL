@@ -212,10 +212,26 @@ function idFor(value) {
   return slug(value) + '-' + hash;
 }
 
-function stripTags(value) {
+function decodeEntities(value) {
   return String(value || '')
     .replace(/<!\[CDATA\[/g, '')
     .replace(/\]\]>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
+    .replace(/&#0*39;/g, "'")
+    .replace(/&#(\d+);/g, (match, code) => (Number(code) < 0x10ffff ? String.fromCharCode(Number(code)) : ''))
+    .replace(/&#x([0-9a-f]+);/gi, (match, code) => (parseInt(code, 16) < 0x10ffff ? String.fromCharCode(parseInt(code, 16)) : ''))
+    .replace(/&amp;/g, '&');
+}
+
+// Decode entities *before* dropping tags: Atom feeds routinely escape markup
+// (e.g. "&lt;p&gt;Title&lt;/p&gt;"), and stripping tags first would leave literal
+// "<p>...</p>" and "&#45;" artifacts in stored titles and summaries.
+function stripTags(value) {
+  return decodeEntities(decodeEntities(value))
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/<nav[\s\S]*?<\/nav>/gi, ' ')
@@ -224,12 +240,6 @@ function stripTags(value) {
     .replace(/<aside[\s\S]*?<\/aside>/gi, ' ')
     .replace(/<form[\s\S]*?<\/form>/gi, ' ')
     .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
     .replace(/\s+/g, ' ')
     .trim();
 }
