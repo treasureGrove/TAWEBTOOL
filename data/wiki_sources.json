@@ -202,16 +202,6 @@
       "maxCandidates": 15
     },
     {
-      "id": "reddit-graphicsprogramming",
-      "type": "rss",
-      "title": "r/GraphicsProgramming",
-      "url": "https://www.reddit.com/r/GraphicsProgramming/.rss",
-      "category": "图形学社区",
-      "tags": ["Graphics", "Shader", "GLSL", "WebGPU", "论文"],
-      "maxEntries": 3,
-      "maxCandidates": 15
-    },
-    {
       "id": "ta-conference-search",
       "type": "search",
       "title": "TA Conference / Engine Tech Search",
