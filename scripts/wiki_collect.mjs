@@ -24,6 +24,9 @@ const MIN_RELEVANCE_SCORE = Number(process.env.WIKI_MIN_RELEVANCE_SCORE || 5);
 // obviously off-topic items, and a high bar here silently drops good articles before the
 // AI filter ever sees them. Set WIKI_PRESCREEN_MIN=0 to send every candidate to the model.
 const PRESCREEN_MIN_SCORE = Number(process.env.WIKI_PRESCREEN_MIN ?? 2);
+// Optional hard cap on how many candidates one run may send to the AI filter (0 = unlimited).
+// Guards against a runaway backfill when limits are raised for a catch-up run.
+const AI_MAX_FILTER_CALLS = Number(process.env.WIKI_AI_MAX_FILTER_CALLS || 0);
 const KEEP_STALE_ENTRIES = process.env.WIKI_KEEP_STALE === '1';
 
 function loadDotEnv(file) {
@@ -697,6 +700,7 @@ async function enrichEntriesWithAi(entries, memory) {
 }
 
 let filterSession = null;
+let aiFilterCalls = 0;
 
 async function classifyCandidateWithAi({ title, summary, text, source, memory }) {
   if (!AI_FILTER_ENABLED) {
@@ -723,6 +727,18 @@ async function classifyCandidateWithAi({ title, summary, text, source, memory })
       confidence: 0
     };
   }
+
+  if (AI_MAX_FILTER_CALLS > 0 && aiFilterCalls >= AI_MAX_FILTER_CALLS) {
+    return {
+      include: false,
+      category: source.category || '自动采集',
+      tags: [],
+      reason: `filter-budget-exhausted:${aiFilterCalls}`,
+      score: 0,
+      confidence: 0
+    };
+  }
+  aiFilterCalls += 1;
 
   if (!filterSession) {
     filterSession = createAiSession([
@@ -786,6 +802,8 @@ async function collectRss(source) {
   const maxCandidates = Number(source.maxCandidates || Math.max(perSource * 3, 15));
   const candidates = parseRssItems(xml).slice(0, maxCandidates);
   for (const item of candidates) {
+    // Cheap signal check on the feed excerpt before spending a page fetch on the article.
+    if (relevanceScore([item.title, item.summary].join(' ')) <= 0) continue;
     let text = item.content || item.summary || item.title;
     let image = item.image || extractImage(item.content || item.summary || '', item.link);
     // Feed excerpts are often a single sentence, which makes keyword scoring and the AI
