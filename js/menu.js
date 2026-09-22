@@ -26,8 +26,10 @@ var MENU_DATA = [
         { label: '视频剪辑', href: 'video_cut.html', keywords: ['裁剪', '截取', 'mp4', 'cut', 'trim', 'video editor', '切割', '剪辑', 'mov', '片段', '时间轴'] },
         { label: '视频格式转换', href: 'video_format_cover.html', keywords: ['转码', '格式', 'mp4', 'webm', 'avi', 'mov', 'mkv', 'gif', 'convert', '转格式', 'ffmpeg', '编码'] },
     ]},
-    { name: '游戏工具', icon: 'icon-game', items: [
+    { name: '游戏', icon: 'icon-game', items: [
         { label: '小树林尸潮', href: 'grove_range.html', keywords: ['FPS', '射击', '僵尸', '尸潮', '小游戏', 'game', 'shooter', '波次', '排行', '最高分', 'three', '3D射击', '爆头', '小树林'] },
+    ]},
+    { name: '游戏工具', icon: 'icon-ta', items: [
         { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集', 'spritesheet', 'pack', '贴图集', '合并', 'sprite sheet', '帧动画'] },
         { label: '雪碧图拆分工具', href: 'sprite_sheet_splitter.html', keywords: ['雪碧图', '拆分', 'sprite', '切图', '序列帧拆分', '图集拆分', '切分', '帧动画切图', '自动切图', 'spritesheet拆分'] },
     ]},

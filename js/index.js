@@ -32,7 +32,8 @@
         '图片处理': 'cat-image',
         '3D工具': 'cat-3d',
         '视频处理': 'cat-video',
-        '游戏工具': 'cat-game',
+        '游戏': 'cat-game',
+        '游戏工具': 'cat-ta',
         'TA工具': 'cat-ta',
         '和我一起听': 'cat-music',
         '关于': 'cat-about'
