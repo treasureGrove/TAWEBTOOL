@@ -1,0 +1,63 @@
+{
+  "url": "http://127.0.0.1:8080/tools_html/grove_range.html",
+  "runId": "pass-2",
+  "metrics": {
+    "menu": {
+      "width": 1026,
+      "height": 702,
+      "meanLuma": 97.82,
+      "lumaContrast": 80.41,
+      "colorEntropy": 1.809,
+      "edgeDensity": 0.0146,
+      "uniqueBins": 8,
+      "nonBlank": true
+    },
+    "activePlay": {
+      "width": 1026,
+      "height": 702,
+      "meanLuma": 157.7,
+      "lumaContrast": 59.96,
+      "colorEntropy": 2.221,
+      "edgeDensity": 0.0228,
+      "uniqueBins": 8,
+      "nonBlank": true
+    }
+  },
+  "diagnostics": {
+    "state": "playing",
+    "wave": 1,
+    "enemies": 4,
+    "facing": {
+      "yaw": 0,
+      "forward": {
+        "x": 0,
+        "z": -1
+      },
+      "pos": {
+        "x": 0,
+        "y": 1.55,
+        "z": 11.5
+      }
+    },
+    "nearestEnemy": {
+      "type": "walker",
+      "pos": {
+        "x": 1.617660030722618,
+        "y": 0,
+        "z": 1.9136755280196667
+      },
+      "dist": 9.844640209631153
+    },
+    "renderer": {
+      "calls": 222,
+      "triangles": 7234,
+      "geometries": 224,
+      "textures": 4
+    },
+    "shots": 0,
+    "hp": 100
+  },
+  "facingOk": true,
+  "errors": [],
+  "ok": true
+}

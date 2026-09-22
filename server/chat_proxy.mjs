@@ -2,6 +2,14 @@ import { createServer } from 'node:http';
 import { request as httpsRequest } from 'node:https';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
+import {
+  ALLOWED_GAMES,
+  applyScoreCors,
+  clampInt,
+  insertScoreEntry,
+  leaderboard,
+  parseScoreBody,
+} from './game_scores.mjs';
 
 const PORT = process.env.CHAT_PROXY_PORT || 8799;
 const HOST = '127.0.0.1';
@@ -210,7 +218,7 @@ async function tryProviderModels(provider, startIndex, payload) {
 }
 
 const server = createServer(async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://tools.treasuregrove.art');
+  applyScoreCors(req, res);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -492,6 +500,69 @@ const server = createServer(async (req, res) => {
         console.error('[feedback] error:', err.message);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: { message: '请求格式错误' } }));
+      }
+    });
+    return;
+  }
+
+  // ── Game scores ──
+  if (req.method === 'GET' && req.url && req.url.startsWith('/api/scores')) {
+    try {
+      const url = new URL(req.url, 'http://127.0.0.1');
+      const game = url.searchParams.get('game') || 'grove_range';
+      const limit = clampInt(url.searchParams.get('limit'), 1, 50, 10);
+      if (!ALLOWED_GAMES.has(game)) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: { message: '未知游戏' } }));
+        return;
+      }
+      const scores = leaderboard(game, limit);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ ok: true, game, scores }));
+    } catch (err) {
+      console.error('[scores] read error:', err.message);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: { message: '排行榜读取失败' } }));
+    }
+    return;
+  }
+
+  if (req.method === 'POST' && req.url === '/api/scores') {
+    const chunks = [];
+    let total = 0;
+    let aborted = false;
+    req.on('data', (c) => {
+      total += c.length;
+      if (total > 16 * 1024) {
+        aborted = true;
+        req.destroy();
+        return;
+      }
+      chunks.push(c);
+    });
+    req.on('end', () => {
+      if (aborted) return;
+      try {
+        const parsed = parseScoreBody(Buffer.concat(chunks));
+        if (parsed.error) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: parsed.error } }));
+          return;
+        }
+        const forwarded = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '');
+        const entry = { ...parsed.entry, ip: forwarded.split(',')[0].trim() };
+        const result = insertScoreEntry(entry);
+        if (!result.ok) {
+          res.writeHead(429, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: result.error } }));
+          return;
+        }
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(result));
+      } catch (err) {
+        console.error('[scores] write error:', err.message);
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: { message: '成绩保存失败' } }));
       }
     });
     return;

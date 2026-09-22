@@ -1,0 +1,182 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="小树林尸潮 —— TA工具箱内置的 Three.js 第一人称射击小游戏。在林间清理僵尸潮，爆头连击冲击高分榜。">
+    <meta name="keywords" content="FPS,射击小游戏,僵尸,尸潮,小树林尸潮,Three.js,波次,排行榜,TA工具箱,爆头">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/grove_range.html">
+
+    <meta property="og:title" content="小树林尸潮 - TA工具箱">
+    <meta property="og:description" content="Three.js 第一人称尸潮生存：连击、波次、爆头，服务器记录最高分。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/grove_range.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/icon/icon.png">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="小树林尸潮 - TA工具箱">
+    <meta name="twitter:description" content="Three.js 第一人称尸潮生存：连击、波次、爆头。">
+
+    <title>小树林尸潮 - FPS 射击小游戏 | TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/grove_range.css">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="48x48" href="../assets/images/icon/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="../assets/images/icon/favicon-144x144.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+    <script src="../js/menu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel" class="gr-panel">
+        <div class="gr-shell" id="grShell">
+            <canvas id="grCanvas"></canvas>
+
+            <!-- HUD -->
+            <div class="gr-hud" id="grHud" hidden>
+                <div class="gr-hud-top">
+                    <div class="gr-stat">
+                        <span class="gr-label">波次</span>
+                        <span class="gr-value" id="hudWave">1</span>
+                    </div>
+                    <div class="gr-stat">
+                        <span class="gr-label">目标</span>
+                        <span class="gr-value" id="hudTargets">0</span>
+                    </div>
+                    <div class="gr-stat gr-stat-score">
+                        <span class="gr-label">得分</span>
+                        <span class="gr-value" id="hudScore">0</span>
+                    </div>
+                    <div class="gr-stat">
+                        <span class="gr-label">连击</span>
+                        <span class="gr-value gr-combo" id="hudCombo">x1</span>
+                    </div>
+                </div>
+
+                <div class="gr-crosshair" id="grCross">
+                    <span class="gr-cross-h"></span>
+                    <span class="gr-cross-v"></span>
+                    <span class="gr-cross-dot"></span>
+                </div>
+                <div class="gr-hitmarker" id="grHit" hidden></div>
+                <div class="gr-damage-flash" id="grDmg"></div>
+
+                <div class="gr-hud-bottom">
+                    <div class="gr-vitals">
+                        <div class="gr-bar-wrap">
+                            <div class="gr-bar gr-bar-hp"><i id="hudHpBar"></i></div>
+                            <span class="gr-label">HP <b id="hudHp">100</b></span>
+                        </div>
+                        <div class="gr-bar-wrap">
+                            <div class="gr-bar gr-bar-ammo"><i id="hudAmmoBar"></i></div>
+                            <span class="gr-label">弹药 <b id="hudAmmo">30</b> / <span id="hudReserve">90</span></span>
+                        </div>
+                    </div>
+                    <div class="gr-feedback" id="hudFeed"></div>
+                </div>
+
+                <div class="gr-toast" id="hudToast" hidden></div>
+            </div>
+
+            <!-- Menu -->
+            <div class="gr-overlay gr-menu" id="grMenu">
+                <div class="gr-card">
+                    <p class="gr-kicker">GROVE HORDE // 防线协议 01</p>
+                    <h1>小树林尸潮</h1>
+                    <p class="gr-lead">林间尸潮来袭。爆头更快，保持连击，活过每一波。</p>
+                    <ul class="gr-controls">
+                        <li><kbd>WASD</kbd> 移动</li>
+                        <li><kbd>鼠标</kbd> 瞄准 · <kbd>左键</kbd> 射击</li>
+                        <li><kbd>Q</kbd> / <kbd>Ctrl</kbd> 机瞄 · <kbd>Shift</kbd> 冲刺</li>
+                        <li><kbd>R</kbd> 换弹 · <kbd>Space</kbd> 闪避 · <kbd>Esc</kbd> 暂停</li>
+                    </ul>
+                    <div class="gr-menu-actions">
+                        <button class="gr-btn gr-btn-primary" id="btnStart">开始演练</button>
+                        <button class="gr-btn" id="btnBoard">查看排行</button>
+                    </div>
+                    <p class="gr-note">推荐桌面 Chrome / Edge · 指针锁定后开始战斗</p>
+                </div>
+            </div>
+
+            <!-- Pause -->
+            <div class="gr-overlay gr-pause" id="grPause" hidden>
+                <div class="gr-card">
+                    <h2>演练暂停</h2>
+                    <p class="gr-lead">僵尸暂时迟缓。继续时点击下方按钮重新锁定指针。</p>
+                    <div class="gr-menu-actions">
+                        <button class="gr-btn gr-btn-primary" id="btnResume">继续</button>
+                        <button class="gr-btn" id="btnRestartPause">重新开始</button>
+                        <button class="gr-btn gr-btn-ghost" id="btnQuit">结束演练</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game over -->
+            <div class="gr-overlay gr-over" id="grOver" hidden>
+                <div class="gr-card">
+                    <p class="gr-kicker">AFTER ACTION REPORT</p>
+                    <h2>演练结束</h2>
+                    <div class="gr-report" id="grReport"></div>
+                    <label class="gr-name-row">
+                        <span>代号</span>
+                        <input id="inpName" maxlength="16" placeholder="输入 1-16 字代号" autocomplete="off">
+                    </label>
+                    <div class="gr-menu-actions">
+                        <button class="gr-btn gr-btn-primary" id="btnSubmit">上传成绩</button>
+                        <button class="gr-btn" id="btnRetry">再来一局</button>
+                        <button class="gr-btn gr-btn-ghost" id="btnBoardOver">排行榜</button>
+                    </div>
+                    <p class="gr-note" id="submitNote"></p>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="gr-overlay gr-board" id="grBoard" hidden>
+                <div class="gr-card gr-card-wide">
+                    <h2>尸潮排行榜</h2>
+                    <p class="gr-lead" id="boardSource">服务器记录</p>
+                    <ol class="gr-rank-list" id="rankList"></ol>
+                    <div class="gr-menu-actions">
+                        <button class="gr-btn" id="btnBoardClose">返回</button>
+                        <button class="gr-btn gr-btn-ghost" id="btnBoardRefresh">刷新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+          }
+        }
+    </script>
+    <script type="module" src="../js/grove_range.js"></script>
+</body>
+
+</html>

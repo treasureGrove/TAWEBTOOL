@@ -15,6 +15,7 @@
         'model_previewer.html': 'GLB / FBX / OBJ 在线预览',
         'video_cut.html': '在线视频剪辑截取',
         'video_format_cover.html': '视频转码格式转换',
+        'grove_range.html': '小树林尸潮 FPS',
         'sprite_sheet_packer.html': '序列帧图集打包',
         'shader_library.html': '常用 Shader 函数速查',
         'glsl_hlsl_converter.html': '着色器语言互转',

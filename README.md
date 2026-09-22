@@ -51,9 +51,10 @@
 | [贴图信息查看器](https://tools.treasuregrove.art/tools_html/image_metadata_inspector.html) | 分辨率 / 显存占用 / 直方图查看 |
 | [TA 知识库](https://tools.treasuregrove.art/tools_html/TA_wiki.html) | 每日自动更新的 TA 知识百科 |
 
-### 其他
+### 游戏工具 / 其他
 | 工具 | 说明 |
 |------|------|
+| [小树林尸潮](https://tools.treasuregrove.art/tools_html/grove_range.html) | Three.js FPS 僵尸波次生存小游戏，服务器排行榜 |
 | [图集打包工具](https://tools.treasuregrove.art/tools_html/sprite_sheet_packer.html) | 序列帧 Sprite Sheet 打包 |
 | [网易云音乐](https://tools.treasuregrove.art/tools_html/cloud_music.html) | 网易云歌单一起听 |
 

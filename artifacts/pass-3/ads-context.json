@@ -1,0 +1,31 @@
+{
+  "afterDown": {
+    "state": "playing",
+    "ads": true,
+    "rightHeld": true
+  },
+  "afterUp": {
+    "state": "playing",
+    "ads": false,
+    "rightHeld": false
+  },
+  "duringHold": {
+    "state": "playing",
+    "ads": true,
+    "rightHeld": true
+  },
+  "afterBlur": {
+    "state": "playing",
+    "ads": false,
+    "rightHeld": false
+  },
+  "afterMask": {
+    "state": "playing",
+    "ads": false,
+    "rightHeld": false
+  },
+  "contextMenuPrevented": true,
+  "rightMousedownPrevented": true,
+  "errors": [],
+  "ok": true
+}

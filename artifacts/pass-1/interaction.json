@@ -1,0 +1,50 @@
+{
+  "afterShots": {
+    "state": "playing",
+    "score": 0,
+    "wave": 1,
+    "enemies": 4,
+    "shots": 12,
+    "hits": 0,
+    "kills": 0,
+    "hp": 100,
+    "combo": 1,
+    "renderer": {
+      "calls": 16,
+      "triangles": 640,
+      "geometries": 48,
+      "textures": 1
+    }
+  },
+  "submitNote": "已上榜 · 当前第 2 名 · 个人最佳 0",
+  "local": {
+    "best": null,
+    "board": 1
+  },
+  "apiTop": [
+    {
+      "rank": 1,
+      "id": "sc-1790053834553-r7td9e",
+      "name": "????",
+      "score": 1280,
+      "wave": 3,
+      "kills": 12,
+      "accuracy": 0.775,
+      "durationMs": 95000,
+      "createdAt": "2026-09-22T05:10:34.553Z"
+    },
+    {
+      "rank": 2,
+      "id": "sc-1790054030205-ssmeku",
+      "name": "QA教官",
+      "score": 0,
+      "wave": 1,
+      "kills": 0,
+      "accuracy": 0,
+      "durationMs": 1716,
+      "createdAt": "2026-09-22T05:13:50.205Z"
+    }
+  ],
+  "errors": [],
+  "ok": true
+}

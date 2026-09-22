@@ -1,0 +1,39 @@
+{
+  "url": "http://127.0.0.1:8080/tools_html/grove_range.html",
+  "runId": "pass-1",
+  "hooks": "object",
+  "metrics": {
+    "menu": {
+      "width": 1026,
+      "height": 702,
+      "meanLuma": 68.18,
+      "colorEntropy": 1.002,
+      "edgeDensity": 0.0154,
+      "uniqueBins": 8,
+      "nonBlank": true
+    },
+    "activePlay": {
+      "width": 1026,
+      "height": 702,
+      "meanLuma": 22.27,
+      "colorEntropy": 1.017,
+      "edgeDensity": 0.0077,
+      "uniqueBins": 8,
+      "nonBlank": true
+    }
+  },
+  "diagnostics": {
+    "state": "playing",
+    "score": 0,
+    "wave": 1,
+    "enemies": 4,
+    "renderer": {
+      "calls": 20,
+      "triangles": 936,
+      "geometries": 39,
+      "textures": 1
+    }
+  },
+  "errors": [],
+  "ok": true
+}
