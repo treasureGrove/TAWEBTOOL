@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#242a24"><meta name="description" content="在废土当铺里，用有限的工具分辨遗物，将它交给你选择的人。三日 3D 经营体验。">
+<title>铅之圣咏 · 遗物鉴定所</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232a3e33'/%3E%3Ctext x='32' y='45' font-size='40' text-anchor='middle' fill='%23dac692'%3E铅%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main id="app">
+ <div class="world"><canvas id="world" aria-label="实时 3D 当铺，拖动可旋转桌上商品"></canvas><div class="world-shade"></div><div id="render-status" role="status">正在点亮柜台…</div></div>
+ <header class="topbar">
+  <div class="brand"><span class="brand-seal">铅</span><div><h1>铅之圣咏</h1><span>铅口遗物鉴定所 <i>·</i> 柜台 37</span></div></div>
+  <div class="dayline"><span id="day-label">第一日</span><span class="phase-tag" id="phase-label">开门前</span><span id="date-label">旱季 · 第四十一日</span></div>
+  <div class="header-actions"><button class="wallet" id="account-btn" title="查看账本"><span>铁币</span><b id="money">70</b><small>¢</small></button><button id="sound-btn" class="icon-btn" aria-label="开启声音" title="开启声音">♪</button><button id="help-btn" class="icon-btn" aria-label="玩法说明" title="玩法说明">?</button><button id="journal-btn" class="icon-btn" aria-label="查看手记" title="查看手记">☷</button></div>
+ </header>
+ <aside class="left-panel panel">
+  <div class="panel-top"><span class="eyebrow" id="left-eyebrow">今日告示</span><span class="tiny" id="visitor-count">OPEN 08:00</span></div>
+  <h2 id="item-title">值钱的过去</h2>
+  <div id="item-meta"></div>
+  <div class="rule"></div>
+  <div id="left-body"></div>
+  <div class="quiet-note" id="left-foot">我们只鉴定物品。<br>不鉴定物主。</div>
+ </aside>
+ <aside class="right-panel paper">
+  <div class="clip"></div><div class="paper-head"><span>鉴 定 记 录</span><b>№ <span id="record-number">001</span></b></div>
+  <h2 id="evidence-title">证据不替你签字。</h2>
+  <div id="evidence-list"></div>
+  <div class="paper-footer">铅口遗物鉴定所 <span>存根留存</span></div>
+ </aside>
+ <div class="scene-caption"><span class="scene-line"></span><span>桥墩三号 · 南窗口</span><span class="scene-line"></span></div>
+ <div class="object-controls" id="object-controls" hidden><button id="turn-left" aria-label="向左旋转物品">↶</button><span>拖动桌面转动物品</span><button id="turn-right" aria-label="向右旋转物品">↷</button></div>
+ <section class="dialogue" aria-live="polite"><div class="dialogue-person"><span id="guest-name">提奥 · 鉴定师</span><span id="guest-role">开门前</span></div><p id="dialogue-text">工具装进包里，就不能临时拿出来。今天，你愿意相信哪一部分证据？</p></section>
+ <section class="workbench">
+  <div class="cabinet"><div class="section-title"><h2>随身工具</h2><span id="cabinet-state">点击装卸</span></div><div id="tool-rack"></div><p class="micro" id="rack-hint">开门后上锁，工具始终占格。</p></div>
+  <div class="inventory"><div class="section-title"><h2>共用背包</h2><span><b id="bag-used">05</b> / 12 格</span></div><div id="bag" role="group" aria-label="共用背包，4 列 3 行"></div><div class="bag-controls"><span>拖放整理 · 点选后按 R 旋转</span><button id="rotate-btn" title="旋转选中物品" aria-label="旋转选中物品">↻</button></div></div>
+  <div class="action-panel" id="action-panel"></div>
+ </section>
+ <footer class="statusbar"><span id="status-message" role="status">带齐工具占 8 格，只剩 4 格收货。留一些空位给今天的生意。</span><div><span id="health-label">身体 100</span><span id="rent-label">3 夜后缴租 75 ¢</span><span class="saved" id="save-status">本机自动保存</span></div></footer>
+</main>
+<dialog id="modal"><button class="modal-close" id="modal-close" aria-label="关闭">×</button><div id="modal-content"></div></dialog>
+<div id="toast" role="alert"></div>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
