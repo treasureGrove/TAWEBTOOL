@@ -626,6 +626,7 @@ function buildWeapon() {
   const mag = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.09, 0.06), gripMat);
   mag.position.set(0, -0.08, -0.02);
   mag.rotation.x = 0.12;
+  mag.name = 'mag';
 
   const grip = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.09, 0.055), gripMat);
   grip.position.set(0, -0.08, 0.08);
@@ -1310,8 +1311,23 @@ function updateFx(dt) {
   }
   weapon.kick = Math.max(0, weapon.kick - dt * 10);
   const kickZ = -weapon.kick * 0.03;
-  weapon.group.position.set(S.ads ? 0.02 : 0.22, S.ads ? -0.1 : -0.18, -0.55 + kickZ + (S.ads ? 0.08 : 0));
+  // Reload pose: tilt the carbine down and roll it, ease in/out over reloadTime.
+  let relT = 0;
+  if (S.reloading) {
+    const p = 1 - Math.max(0, S.reloadT) / TUNE.reloadTime;
+    // 0→0.35 dip, 0.35→0.75 hold, 0.75→1 rise
+    relT = p < 0.35 ? p / 0.35 : p < 0.75 ? 1 : 1 - (p - 0.75) / 0.25;
+    relT = Math.max(0, Math.min(1, relT));
+  }
+  const baseX = S.ads ? 0.02 : 0.22;
+  const baseY = S.ads ? -0.1 : -0.18;
+  const baseZ = -0.55 + kickZ + (S.ads ? 0.08 : 0);
+  weapon.group.position.set(baseX + relT * 0.04, baseY - relT * 0.12, baseZ - relT * 0.02);
+  weapon.group.rotation.set(relT * 0.55, relT * -0.15, relT * 0.25);
   weapon.group.visible = !S.ads || S.reloading;
+  // Magazine dip during reload (named mag mesh if present)
+  const mag = weapon.group.getObjectByName('mag');
+  if (mag) mag.position.y = -0.08 - relT * 0.12;
 
   if (world.holo) {
     world.holo.rotation.y += dt * 0.8;
@@ -1399,7 +1415,9 @@ function updateHud() {
   el.combo.textContent = `x${S.combo}`;
   el.hp.textContent = String(Math.ceil(S.hp));
   el.hpBar.style.transform = `scaleX(${Math.max(0, S.hp / TUNE.hpMax)})`;
-  el.ammo.textContent = S.reloading ? '…' : String(S.ammo);
+  el.ammo.textContent = S.reloading
+    ? '换弹 ' + Math.ceil(S.reloadT * 10) / 10 + 's'
+    : String(S.ammo);
   el.ammoBar.style.transform = `scaleX(${S.ammo / TUNE.magSize})`;
   el.reserve.textContent = String(S.reserve);
 }
@@ -1693,6 +1711,9 @@ function tick(dt) {
       S.ammo += take;
       S.reserve -= take;
       S.reloading = false;
+      updateHud();
+    } else {
+      updateHud();
     }
   }
   if (mouse.down) shoot();
