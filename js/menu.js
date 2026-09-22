@@ -28,6 +28,7 @@ var MENU_DATA = [
         { label: '视频格式转换', href: 'video_format_cover.html', keywords: ['转码', '格式', 'mp4', 'webm', 'avi', 'mov', 'mkv', 'gif', 'convert', '转格式', 'ffmpeg', '编码'] },
     ]},
     { name: '游戏', icon: 'icon-game', items: [
+        { label: '铅之圣咏', href: 'lead_canticle.html', keywords: ['废土', '鉴定', '当铺', '背包', '经营', '多结局', '3D', '游戏', 'lead', 'canticle'] },
         { label: '小树林尸潮', href: 'grove_range.html', keywords: ['FPS', '射击', '僵尸', '尸潮', '小游戏', 'game', 'shooter', '波次', '排行', '最高分', 'three', '3D射击', '爆头', '小树林'] },
         { label: '单目幸存者', href: 'grove_survivor.html', keywords: ['幸存者', '弹幕', '生存', '自动射击', 'roguelike', 'vampire', '俯视角', '小游戏', '升级', '排行'] },
     ]},
