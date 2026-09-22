@@ -4,6 +4,10 @@
 
 当前可玩内容为三天、九位来客，包含背包拖放与旋转、五种鉴定工具、经营结算、不同买家和多种结局。正常实时 3D 光照和材质，无 PS1 滤镜。
 
+## 在线试玩
+
+[进入铅之圣咏](https://tools.treasuregrove.art/tools_html/lead_canticle.html)。也可从工具站首页的「游戏」分类进入，建议使用桌面浏览器。
+
 ## 本地试玩
 
 需要 Node.js 18 或更新版本，无需安装 npm 依赖。
@@ -19,7 +23,7 @@ node server.mjs
 
 `web/dist/` 是完整的静态游戏，无服务端业务依赖。Three.js 和许可证已经包含在内，不依赖外部 CDN。
 
-如果将仓库部署到现有网站，访问 `/games/lead-canticle/` 会跳转到游戏入口 `/games/lead-canticle/web/dist/`。上传 GitHub 本身不等于已同步部署到线上服务器。
+网站入口 `/tools_html/lead_canticle.html` 和 `/games/lead-canticle/` 均跳转到 `/games/lead-canticle/web/dist/`。部署时需同时同步入口和完整的 `web/dist/` 目录，无需重启后端服务。
 
 ## 文件
 
