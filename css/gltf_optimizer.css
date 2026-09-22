@@ -1,0 +1,183 @@
+/* glTF 压缩与 LOD */
+.go-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.go-head h1 {
+    margin: 0 0 6px;
+    font-size: 22px;
+    color: var(--app-text-heading);
+}
+
+.go-head p {
+    margin: 0;
+    color: var(--app-muted);
+    font-size: 13px;
+}
+
+.go-layout {
+    display: grid;
+    grid-template-columns: minmax(240px, 300px) 1fr;
+    gap: 14px;
+    min-height: 520px;
+}
+
+.go-side {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.go-drop {
+    border: 1.5px dashed var(--app-line-strong);
+    border-radius: var(--app-radius-md);
+    background: rgba(38, 168, 132, 0.06);
+    padding: 22px 14px;
+    text-align: center;
+    cursor: pointer;
+    display: grid;
+    gap: 4px;
+    color: var(--app-text);
+}
+
+.go-drop strong { font-size: 15px; }
+.go-drop span { font-size: 12px; color: var(--app-muted); }
+.go-drop.dragover {
+    border-color: var(--app-accent);
+    background: rgba(38, 168, 132, 0.14);
+}
+
+.go-block {
+    background: var(--app-card);
+    border: 1px solid var(--app-line-subtle);
+    border-radius: var(--app-radius-md);
+    padding: 12px 14px;
+}
+
+.go-block h3 {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: var(--app-text-heading);
+}
+
+.go-block label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 10px;
+    color: var(--app-text);
+}
+
+.go-block select {
+    min-width: 120px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--app-line);
+    background: var(--app-surface-input);
+    color: var(--app-text);
+    padding: 0 8px;
+}
+
+.go-btn {
+    width: 100%;
+    margin-top: 6px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--app-line-strong);
+    background: #fff;
+    color: var(--app-text);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.go-btn.primary {
+    background: linear-gradient(135deg, #26a884, #147a63);
+    border: none;
+    color: #f3fffb;
+    font-weight: 650;
+}
+
+.go-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.go-note {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: var(--app-muted);
+    line-height: 1.45;
+    word-break: break-all;
+}
+
+.go-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.go-table th,
+.go-table td {
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--app-line-subtle);
+    text-align: left;
+}
+
+.go-table th { color: var(--app-muted); font-weight: 600; }
+.go-table td:not(:first-child) { font-family: var(--app-font-mono); }
+
+.go-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 520px;
+}
+
+#cv {
+    flex: 1;
+    width: 100%;
+    min-height: 360px;
+    border-radius: var(--app-radius-md);
+    background: #0b1714;
+    border: 1px solid var(--app-line-subtle);
+    display: block;
+}
+
+.go-stats {
+    font-family: var(--app-font-mono);
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--app-text);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid var(--app-line-subtle);
+    border-radius: var(--app-radius-md);
+    padding: 10px 12px;
+    white-space: pre-wrap;
+}
+
+.go-tex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.go-tex .chip {
+    font-family: var(--app-font-mono);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(38, 168, 132, 0.1);
+    border: 1px solid var(--app-line);
+    color: var(--app-text);
+}
+
+@media (max-width: 900px) {
+    .go-layout { grid-template-columns: 1fr; }
+    #cv { min-height: 280px; }
+}

@@ -5,7 +5,7 @@ export const SCORE_DIR = join(import.meta.dirname, '..', 'data', 'game_scores');
 export const SCORE_ENTRIES = join(SCORE_DIR, 'entries.json');
 const SCORE_MAX_ENTRIES = 200;
 const SCORE_MAX_PER_DAY = 30;
-export const ALLOWED_GAMES = new Set(['grove_range']);
+export const ALLOWED_GAMES = new Set(['grove_range', 'grove_survivor']);
 export const ALLOWED_ORIGINS = new Set([
   'https://tools.treasuregrove.art',
   'http://127.0.0.1:5173',

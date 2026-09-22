@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="glTF / GLB 压缩与 LOD 工具 —— 查看三角面、贴图体积、显存占用，一键减面与缩小贴图并导出优化模型。">
+    <meta name="keywords" content="glTF,GLB,压缩,LOD,减面,贴图优化,VRAM,三角面,模型优化,TA工具箱">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/gltf_optimizer.html">
+    <title>glTF 压缩与 LOD | TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/gltf_optimizer.css">
+    <link rel="icon" type="image/png" sizes="48x48" href="../assets/images/icon/favicon-48x48.png">
+</head>
+<body>
+    <script src="../js/menu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel" class="go-panel">
+        <header class="go-head">
+            <h1>glTF 压缩与 LOD</h1>
+            <p>查看面数 / 贴图 / 显存，减面 + 缩贴图后导出优化 GLB。全部在浏览器本地完成。</p>
+        </header>
+
+        <div class="go-layout">
+            <aside class="go-side">
+                <div class="go-drop" id="drop">
+                    <strong>拖入 .glb / .gltf</strong>
+                    <span>或点击选择文件</span>
+                    <input type="file" id="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json" hidden>
+                </div>
+
+                <div class="go-block">
+                    <h3>优化参数</h3>
+                    <label>贴图上限
+                        <select id="texMax">
+                            <option value="0">不缩放</option>
+                            <option value="1024">1024</option>
+                            <option value="512" selected>512</option>
+                            <option value="256">256</option>
+                            <option value="128">128</option>
+                        </select>
+                    </label>
+                    <label>减面强度
+                        <select id="decimate">
+                            <option value="0">不减面</option>
+                            <option value="0.25">轻（约 25%）</option>
+                            <option value="0.5" selected>中（约 50%）</option>
+                            <option value="0.75">重（约 75%）</option>
+                        </select>
+                    </label>
+                    <button class="go-btn primary" id="btnOptimize" disabled>生成优化版</button>
+                    <button class="go-btn" id="btnExport" disabled>导出优化 GLB</button>
+                    <p class="go-note" id="status">等待导入模型…</p>
+                </div>
+
+                <div class="go-block">
+                    <h3>对比</h3>
+                    <table class="go-table" id="compare">
+                        <thead><tr><th></th><th>原始</th><th>优化</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </aside>
+
+            <section class="go-main">
+                <canvas id="cv"></canvas>
+                <div class="go-stats" id="stats"></div>
+                <div class="go-tex" id="texList"></div>
+            </section>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+    </script>
+    <script type="module" src="../js/gltf_optimizer.js"></script>
+</body>
+</html>

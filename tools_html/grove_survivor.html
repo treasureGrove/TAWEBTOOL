@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="单目幸存者 —— 俯视角自动射击生存小游戏。走位躲潮，拾取经验升级技能，冲击服务器排行榜。">
+    <meta name="keywords" content="单目幸存者,幸存者,弹幕,生存游戏,小游戏,FPS,排行榜,TA工具箱,vampire survivors">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/grove_survivor.html">
+    <title>单目幸存者 - 生存小游戏 | TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/grove_survivor.css">
+    <link rel="icon" type="image/png" sizes="48x48" href="../assets/images/icon/favicon-48x48.png">
+</head>
+<body>
+    <script src="../js/menu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel" class="gs-panel">
+        <div class="gs-shell" id="gsShell">
+            <canvas id="gsCanvas"></canvas>
+
+            <div class="gs-hud" id="gsHud" hidden>
+                <div class="gs-top">
+                    <div class="gs-stat"><span>时间</span><b id="hudTime">0:00</b></div>
+                    <div class="gs-stat"><span>击杀</span><b id="hudKills">0</b></div>
+                    <div class="gs-stat"><span>等级</span><b id="hudLv">1</b></div>
+                    <div class="gs-stat score"><span>得分</span><b id="hudScore">0</b></div>
+                </div>
+                <div class="gs-xp"><i id="hudXp"></i></div>
+                <div class="gs-hp"><i id="hudHp"></i></div>
+                <div class="gs-toast" id="hudToast" hidden></div>
+            </div>
+
+            <div class="gs-overlay" id="gsMenu">
+                <div class="gs-card">
+                    <p class="gs-kicker">MONOCLE SURVIVOR // 单目协议</p>
+                    <h1>单目幸存者</h1>
+                    <p class="gs-lead">尸潮无尽。自动开火，走位拾取光球升级，活得越久分越高。</p>
+                    <ul class="gs-controls">
+                        <li><kbd>WASD</kbd> / 方向键 移动</li>
+                        <li>自动射击最近敌人</li>
+                        <li>升级时点选 1/2/3 或点击技能</li>
+                        <li><kbd>Esc</kbd> 暂停</li>
+                    </ul>
+                    <div class="gs-actions">
+                        <button class="gs-btn primary" id="btnStart">开始生存</button>
+                        <button class="gs-btn" id="btnBoard">排行榜</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gs-overlay" id="gsLevelup" hidden>
+                <div class="gs-card">
+                    <h2>升级！选择强化</h2>
+                    <div class="gs-picks" id="picks"></div>
+                </div>
+            </div>
+
+            <div class="gs-overlay" id="gsPause" hidden>
+                <div class="gs-card">
+                    <h2>暂停</h2>
+                    <div class="gs-actions">
+                        <button class="gs-btn primary" id="btnResume">继续</button>
+                        <button class="gs-btn" id="btnRestart">重开</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gs-overlay" id="gsOver" hidden>
+                <div class="gs-card">
+                    <p class="gs-kicker">RUN REPORT</p>
+                    <h2>你倒下了</h2>
+                    <div class="gs-report" id="gsReport"></div>
+                    <label class="gs-name"><span>代号</span><input id="inpName" maxlength="16" placeholder="1-16 字"></label>
+                    <div class="gs-actions">
+                        <button class="gs-btn primary" id="btnSubmit">上传成绩</button>
+                        <button class="gs-btn" id="btnRetry">再来一局</button>
+                        <button class="gs-btn ghost" id="btnBoardOver">排行榜</button>
+                    </div>
+                    <p class="gs-note" id="submitNote"></p>
+                </div>
+            </div>
+
+            <div class="gs-overlay" id="gsBoard" hidden>
+                <div class="gs-card wide">
+                    <h2>幸存者排行榜</h2>
+                    <ol class="gs-rank" id="rankList"></ol>
+                    <div class="gs-actions">
+                        <button class="gs-btn" id="btnBoardClose">返回</button>
+                        <button class="gs-btn ghost" id="btnBoardRefresh">刷新</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../js/grove_survivor.js"></script>
+</body>
+</html>

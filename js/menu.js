@@ -21,6 +21,7 @@ var MENU_DATA = [
     ]},
     { name: '3D工具', icon: 'icon-3d', items: [
         { label: '模型预览器', href: 'model_previewer.html', keywords: ['3D模型', 'glb', 'gltf', 'fbx', 'obj', 'model viewer', '预览', '3d', '三维', 'mesh', '模型查看', 'usdz'] },
+        { label: 'glTF压缩与LOD', href: 'gltf_optimizer.html', keywords: ['glTF', 'GLB', '压缩', 'LOD', '减面', '贴图优化', 'VRAM', '模型优化', '导出', 'decimate'] },
     ]},
     { name: '视频处理', icon: 'icon-video', items: [
         { label: '视频剪辑', href: 'video_cut.html', keywords: ['裁剪', '截取', 'mp4', 'cut', 'trim', 'video editor', '切割', '剪辑', 'mov', '片段', '时间轴'] },
@@ -28,6 +29,7 @@ var MENU_DATA = [
     ]},
     { name: '游戏', icon: 'icon-game', items: [
         { label: '小树林尸潮', href: 'grove_range.html', keywords: ['FPS', '射击', '僵尸', '尸潮', '小游戏', 'game', 'shooter', '波次', '排行', '最高分', 'three', '3D射击', '爆头', '小树林'] },
+        { label: '单目幸存者', href: 'grove_survivor.html', keywords: ['幸存者', '弹幕', '生存', '自动射击', 'roguelike', 'vampire', '俯视角', '小游戏', '升级', '排行'] },
     ]},
     { name: '游戏工具', icon: 'icon-ta', items: [
         { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集', 'spritesheet', 'pack', '贴图集', '合并', 'sprite sheet', '帧动画'] },
