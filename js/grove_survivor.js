@@ -186,7 +186,7 @@ function updateHud() {
   el.lv.textContent = String(S.level);
   el.score.textContent = String(S.score);
   el.xp.style.transform = `scaleX(${Math.min(1, S.xp / S.xpNeed)})`;
-  el.hp.style.transform = `scaleX(${Math.max(0, S.hp / S.hpMax)})`;
+  el.hp.style.transform = `scaleX(${Math.max(0, Math.min(1, S.hp / (P.hpMax || 100)))})`;
 }
 
 function toast(t) {
