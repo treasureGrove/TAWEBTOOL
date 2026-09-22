@@ -57,10 +57,14 @@ function loadKeys() {
     if (auth.deepseek?.key) keys.deepseek = auth.deepseek.key.trim();
   } catch {}
   try {
-    for (const cfgPath of [
+    const cfgPaths = [
       join(process.env.HOME || '/root', '.config/tools/chat_keys.json'),
       join(import.meta.dirname, 'chat_keys.json'),
-    ]) {
+    ];
+    if (process.env.CREDENTIALS_DIRECTORY) {
+      cfgPaths.push(join(process.env.CREDENTIALS_DIRECTORY, 'chat_keys'));
+    }
+    for (const cfgPath of cfgPaths) {
       try {
         const cfg = JSON.parse(readFileSync(cfgPath, 'utf8'));
         for (const [k, v] of Object.entries(cfg)) {
