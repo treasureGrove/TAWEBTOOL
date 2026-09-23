@@ -21,6 +21,7 @@
 | 工具 | 说明 |
 |------|------|
 | [图片压缩转换](https://tools.treasuregrove.art/tools_html/compress_image.html) | 批量压缩与格式转换 (JPG/PNG/WebP/DDS/TGA/BMP/HEIC/AVIF) |
+| [图片与Base64互转](https://tools.treasuregrove.art/tools_html/base64_image.html) | 图片转 Base64 / Base64 还原图片 |
 | [GIF 压缩器](https://tools.treasuregrove.art/tools_html/gif_compress.html) | GIF 动图压缩优化 |
 | [贴图通道合成](https://tools.treasuregrove.art/tools_html/combine_rgba.html) | RGBA 通道打包合成 (ORM 贴图) |
 | [贴图通道分离](https://tools.treasuregrove.art/tools_html/texture_channel_splitter.html) | 拆分查看各通道及直方图 |
@@ -34,6 +35,7 @@
 | 工具 | 说明 |
 |------|------|
 | [3D 模型预览器](https://tools.treasuregrove.art/tools_html/model_previewer.html) | GLB / GLTF / FBX / OBJ 在线预览 |
+| [glTF 压缩与 LOD](https://tools.treasuregrove.art/tools_html/gltf_optimizer.html) | GLB 压缩、减面、贴图优化 |
 
 ### 视频处理
 | 工具 | 说明 |
@@ -50,13 +52,16 @@
 | [色彩空间转换器](https://tools.treasuregrove.art/tools_html/color_space_converter.html) | Linear / sRGB / ACES / Rec.709 转换 |
 | [贴图信息查看器](https://tools.treasuregrove.art/tools_html/image_metadata_inspector.html) | 分辨率 / 显存占用 / 直方图查看 |
 | [TA 知识库](https://tools.treasuregrove.art/tools_html/TA_wiki.html) | 每日自动更新的 TA 知识百科 |
+| [TA 资源导航](https://tools.treasuregrove.art/tools_html/resources.html) | 图形学/引擎/资产站点导航 |
 
 ### 游戏工具 / 其他
 | 工具 | 说明 |
 |------|------|
 | [小树林尸潮](https://tools.treasuregrove.art/tools_html/grove_range.html) | Three.js FPS 僵尸波次生存小游戏，服务器排行榜 |
-| [铅之圣咏](games/lead-canticle/) | Three.js 3D 废土鉴定当铺原型：背包管理、鉴定交易与多结局，含本地试玩说明 |
+| [单目幸存者](https://tools.treasuregrove.art/tools_html/grove_survivor.html) | 俯视角弹幕生存小游戏，服务器排行榜 |
+| [铅之圣咏](https://tools.treasuregrove.art/tools_html/lead_canticle.html) | Three.js 3D 废土鉴定当铺原型：背包管理、鉴定交易与多结局 |
 | [图集打包工具](https://tools.treasuregrove.art/tools_html/sprite_sheet_packer.html) | 序列帧 Sprite Sheet 打包 |
+| [雪碧图拆分工具](https://tools.treasuregrove.art/tools_html/sprite_sheet_splitter.html) | Sprite Sheet 自动切帧拆分 |
 | [网易云音乐](https://tools.treasuregrove.art/tools_html/cloud_music.html) | 网易云歌单一起听 |
 
 ---

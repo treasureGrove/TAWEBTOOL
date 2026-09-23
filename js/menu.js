@@ -418,10 +418,226 @@ function loadFeedbackWidget() {
     document.head.appendChild(script);
 }
 
+// ─── 工具页闭环：最近使用 + 页脚（相关工具 / 分享收藏 / 关注渠道） ───
+var TOOL_LOOP_EXCLUDE = {
+    'grove_range.html': 1,      // 全屏游戏，不注入页脚
+    'grove_survivor.html': 1,
+    'lead_canticle.html': 1,
+    'ps_online.html': 1
+};
+var RECENT_KEY = 'ta_recent_tools';
+var HOT_FALLBACK = ['ai_upscale.html', 'pbr_texture_generator.html', 'compress_image.html', 'combine_rgba.html', 'TA_wiki.html', 'shader_library.html'];
+
+function isToolPage() {
+    return window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
+}
+
+function getCurrentToolFile() {
+    return window.location.pathname.replace(/\\/g, '/').split('/').pop() || '';
+}
+
+function findToolEntryByHref(href) {
+    for (var i = 0; i < MENU_DATA.length; i++) {
+        var cat = MENU_DATA[i];
+        for (var j = 0; j < cat.items.length; j++) {
+            if (cat.items[j].href === href) return { category: cat, item: cat.items[j] };
+        }
+    }
+    return null;
+}
+
+function recordRecentTool(href, entry) {
+    if (!entry) return;
+    try {
+        var list;
+        try { list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (e) { list = []; }
+        if (!Array.isArray(list)) list = [];
+        list = list.filter(function (x) { return x && x.href && x.href !== href; });
+        list.unshift({ href: href, label: entry.item.label });
+        localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 6)));
+    } catch (e) { /* 隐私模式下忽略 */ }
+}
+
+function injectRecentGroup() {
+    var root = document.querySelector('.left_menu .menu_root');
+    if (!root) return;
+    var old = root.querySelector('.ta-recent-group');
+    if (old && old.parentNode) old.parentNode.removeChild(old);
+    var list;
+    try { list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (e) { list = []; }
+    if (!Array.isArray(list) || list.length === 0) return;
+    var prefix = getMenuPathPrefix();
+    var links = '';
+    for (var i = 0; i < list.length; i++) {
+        if (!list[i] || !list[i].href) continue;
+        links += '<li><a href="' + prefix + escapeHTML(list[i].href) + '">' + escapeHTML(list[i].label || list[i].href) + '</a></li>';
+    }
+    if (!links) return;
+    var li = document.createElement('li');
+    li.className = 'left_item ta-recent-group open';
+    li.innerHTML = '<div class="left_icon icon-ai"></div><div class="item_context">最近使用</div><ul class="sub_menu">' + links + '</ul>';
+    root.insertBefore(li, root.firstChild);
+}
+
+function computeRelatedTools(file, entry) {
+    var related = [];
+    var seen = {};
+    seen[file] = 1;
+    function push(cat, item) {
+        if (seen[item.href]) return;
+        seen[item.href] = 1;
+        related.push({ label: item.label, category: cat.name, href: item.href });
+    }
+    if (entry) {
+        var siblings = entry.category.items;
+        for (var i = 0; i < siblings.length && related.length < 4; i++) push(entry.category, siblings[i]);
+        var myKw = (entry.item.keywords || []).map(normalizeSearchText);
+        for (var c = 0; c < MENU_DATA.length && related.length < 7; c++) {
+            var cat = MENU_DATA[c];
+            if (cat === entry.category) continue;
+            var it, j, a, b;
+            for (j = 0; j < cat.items.length; j++) {
+                it = cat.items[j];
+                var itKw = (it.keywords || []).map(normalizeSearchText);
+                for (a = 0; a < myKw.length; a++) {
+                    for (b = 0; b < itKw.length; b++) {
+                        if (myKw[a] && myKw[a] === itKw[b]) { push(cat, it); break; }
+                    }
+                }
+            }
+        }
+    }
+    if (related.length === 0) {
+        for (var h = 0; h < HOT_FALLBACK.length; h++) {
+            var e2 = findToolEntryByHref(HOT_FALLBACK[h]);
+            if (e2) push(e2.category, e2.item);
+        }
+    }
+    return related.slice(0, 7);
+}
+
+function showToolLoopToast(text) {
+    var toast = document.querySelector('.tl-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.className = 'tl-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = text;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
+}
+
+function injectToolLoopStyles() {
+    var style = document.createElement('style');
+    style.textContent = [
+        '.tl-footer{max-width:1080px;margin:48px auto 0;padding:0 8px 24px;font-family:inherit;color:var(--app-text);flex-shrink:0}',
+        '.tl-footer-inner{border:1px solid var(--app-line);border-radius:var(--app-radius-lg);padding:22px 24px;background:var(--app-card);backdrop-filter:blur(12px)}',
+        '.tl-title{font-size:15px;font-weight:600;margin:0 0 14px;letter-spacing:.02em}',
+        '.tl-tools{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}',
+        '.tl-tool{display:flex;flex-direction:column;gap:3px;padding:9px 14px;border:1px solid var(--app-line-subtle);border-radius:var(--app-radius-md);background:var(--app-glass);text-decoration:none;color:var(--app-text);transition:all .18s ease;min-width:120px}',
+        '.tl-tool:hover{border-color:var(--app-line-strong);background:var(--app-card-hover);transform:translateY(-2px)}',
+        '.tl-tool-name{font-size:14px;font-weight:600}',
+        '.tl-tool-cat{font-size:11px;opacity:.62}',
+        '.tl-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:16px;border-top:1px solid var(--app-line-subtle)}',
+        '.tl-btn{padding:8px 16px;border-radius:var(--app-radius-sm);border:1px solid var(--app-line);background:var(--app-glass-strong);color:var(--app-text);font-size:13px;cursor:pointer;text-decoration:none;line-height:1.4}',
+        '.tl-btn:hover{background:var(--app-card-hover)}',
+        '.tl-meta{margin:14px 0 0;font-size:12px;opacity:.62;display:flex;flex-wrap:wrap;gap:6px 14px}',
+        '.tl-meta a{color:inherit}',
+        '.tl-toast{position:fixed;left:50%;bottom:48px;transform:translate(-50%,16px);padding:10px 22px;border-radius:999px;background:var(--app-overlay-dark);color:#fff;font-size:13px;opacity:0;pointer-events:none;transition:all .25s ease;z-index:9999}',
+        '.tl-toast.show{opacity:1;transform:translate(-50%,0)}',
+        '@media (max-width:640px){.tl-footer-inner{padding:18px 16px}.tl-tool{min-width:104px;flex:1 1 30%}}'
+    ].join('\n');
+    document.head.appendChild(style);
+}
+
+function injectToolLoopFooter(file, entry) {
+    if (document.querySelector('.tl-footer')) return;
+    var related = computeRelatedTools(file, entry);
+    if (related.length === 0) return;
+    var panel = document.getElementById('panel');
+    if (!panel) return;
+    var name = entry ? entry.item.label : (document.title || '').replace(/\s*[-–|].*$/, '');
+    injectToolLoopStyles();
+    var footer = document.createElement('div');
+    footer.className = 'tl-footer';
+    var links = related.map(function (r) {
+        return '<a class="tl-tool" href="' + escapeHTML(r.href) + '"><span class="tl-tool-name">' + escapeHTML(r.label) + '</span><span class="tl-tool-cat">' + escapeHTML(r.category) + '</span></a>';
+    }).join('');
+    footer.innerHTML =
+        '<div class="tl-footer-inner">' +
+        '<h2 class="tl-title">用完「' + escapeHTML(name) + '」，继续探索：</h2>' +
+        '<div class="tl-tools">' + links + '</div>' +
+        '<div class="tl-actions">' +
+        '<button type="button" class="tl-btn" data-tl-act="copy">复制本页链接</button>' +
+        '<button type="button" class="tl-btn" data-tl-act="fav">收藏本站</button>' +
+        '<button type="button" class="tl-btn" data-tl-act="share">分享</button>' +
+        '<a class="tl-btn" href="https://space.bilibili.com/277780873" target="_blank" rel="noopener noreferrer">哔哩哔哩 @宝藏小树林</a>' +
+        '<a class="tl-btn" href="../feed.xml" target="_blank" rel="noopener noreferrer">RSS 订阅更新</a>' +
+        '</div>' +
+        '<p class="tl-meta"><span>TA工具箱 · 全部工具浏览器本地运行，不上传服务器</span>' +
+        '<a href="about.html">关于作者</a>' +
+        '<a href="TA_wiki.html">TA知识库（每日更新）</a></p>' +
+        '</div>';
+    panel.appendChild(footer);
+
+    footer.addEventListener('click', function (event) {
+        var btn = event.target.closest('[data-tl-act]');
+        if (!btn) return;
+        var act = btn.getAttribute('data-tl-act');
+        if (act === 'copy') {
+            copyCurrentLink();
+        } else if (act === 'share') {
+            if (navigator.share) {
+                navigator.share({ title: document.title, text: name + ' - 免费在线工具，浏览器打开即用', url: window.location.href }).catch(function () {});
+            } else {
+                copyCurrentLink();
+            }
+        } else if (act === 'fav') {
+            var isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+            showToolLoopToast(isMac ? '按 ⌘ + D 收藏本站，下次直接使用' : '按 Ctrl + D 收藏本站，下次直接使用');
+        }
+    });
+
+    function copyCurrentLink() {
+        var url = window.location.href;
+        function done() { showToolLoopToast('链接已复制，去分享给朋友吧！'); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done, function () { legacyCopy(url, done); });
+        } else {
+            legacyCopy(url, done);
+        }
+    }
+    function legacyCopy(text, done) {
+        var input = document.createElement('textarea');
+        input.value = text;
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(input);
+    }
+}
+
+function initToolLoop() {
+    if (!isToolPage()) {
+        injectRecentGroup();
+        return;
+    }
+    var file = getCurrentToolFile();
+    var entry = findToolEntryByHref(file);
+    recordRecentTool(file, entry);
+    injectRecentGroup();
+    if (!TOOL_LOOP_EXCLUDE[file]) injectToolLoopFooter(file, entry);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     injectMenu();
     markCurrentMenuItem();
     initLeftMenu();
     initTopSearch();
     loadFeedbackWidget();
+    initToolLoop();
 });
