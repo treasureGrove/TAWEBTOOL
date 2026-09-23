@@ -2,3 +2,5 @@ logs/
 data/feedback/
 data/game_scores/entries.json
 tmp/
+.playwright-mcp/
+footer-flex-page.png
