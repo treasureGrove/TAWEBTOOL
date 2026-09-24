@@ -1807,6 +1807,42 @@ $('btnQuit').addEventListener('click', () => {
 $('btnSubmit').addEventListener('click', () => submitScore());
 $('btnRetry').addEventListener('click', () => startGame());
 $('btnBoardOver').addEventListener('click', () => { showOverlay('board'); loadLeaderboard(); });
+$('btnShareOver').addEventListener('click', () => {
+  const acc = Math.round(S.accuracy() * 100);
+  const text = `【小树林尸潮】打到第${S.wave}波 · ${S.score}分 · 击杀${S.kills} · 爆头${S.cores} · 命中率${acc}%，你能打几分？在线免安装直玩：${location.origin}/tools_html/grove_range.html`;
+  shareGameResult($('btnShareOver'), text);
+});
+
+function shareGameResult(btn, text) {
+  const restore = () => {
+    const old = btn.textContent;
+    btn.textContent = '已复制，去挑战吧！';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2000);
+  };
+  const copy = () => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(restore, () => legacyCopyText(text, restore));
+    } else {
+      legacyCopyText(text, restore);
+    }
+  };
+  if (navigator.share) {
+    navigator.share({ title: document.title, text }).then(restore, copy);
+  } else {
+    copy();
+  }
+}
+
+function legacyCopyText(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } catch { /* ignore */ }
+  ta.remove();
+}
 
 // ─── Test hooks ───
 window.__THREE_GAME_DIAGNOSTICS__ = {

@@ -53,20 +53,27 @@ var MENU_DATA = [
     ]},
 ];
 
+// 静态资源前缀：首页 ''、/tools_html/ 与 /seo/ 为 '../'、/en/seo/ 为 '../../'
+function assetPrefix() {
+    var p = window.location.pathname.replace(/\\/g, '/');
+    if (p.indexOf('/en/seo/') === 0) return '../../';
+    if (p.indexOf('/seo/') === 0 || p.indexOf('/tools_html/') >= 0) return '../';
+    return '';
+}
+
 // ─── Inject favicon ───
 (function() {
     var link = document.createElement('link');
     link.rel = 'icon';
     link.type = 'image/png';
     link.sizes = '32x32';
-    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
-    link.href = isRoot ? 'assets/images/icon/favicon-32x32.png' : '../assets/images/icon/favicon-32x32.png';
+    link.href = assetPrefix() + 'assets/images/icon/favicon-32x32.png';
     document.head.appendChild(link);
 
     var apple = document.createElement('link');
     apple.rel = 'apple-touch-icon';
     apple.sizes = '180x180';
-    apple.href = isRoot ? 'assets/images/icon/apple-touch-icon.png' : '../assets/images/icon/apple-touch-icon.png';
+    apple.href = assetPrefix() + 'assets/images/icon/apple-touch-icon.png';
     document.head.appendChild(apple);
 })();
 
@@ -167,9 +174,8 @@ function ensureResourcesData(onReady) {
         if (onReady) onReady();
         return;
     }
-    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
     var script = document.createElement('script');
-    script.src = (isRoot ? '' : '../') + 'js/resources_data.js';
+    script.src = assetPrefix() + 'js/resources_data.js';
     script.onload = function () { if (onReady) onReady(); };
     script.onerror = function () { if (onReady) onReady(); }; // 容错：失败也继续
     document.head.appendChild(script);
@@ -410,9 +416,8 @@ function initTopSearch() {
 })();
 
 function loadFeedbackWidget() {
-    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
     var script = document.createElement('script');
-    script.src = (isRoot ? '' : '../') + 'js/feedback.js';
+    script.src = assetPrefix() + 'js/feedback.js';
     script.async = true;
     script.onerror = function () { /* 反馈入口加载失败不影响主功能 */ };
     document.head.appendChild(script);

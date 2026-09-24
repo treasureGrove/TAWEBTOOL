@@ -578,6 +578,43 @@ $('btnRetry').addEventListener('click', startGame);
 $('btnSubmit').addEventListener('click', submitScore);
 $('btnBoard').addEventListener('click', () => { showOverlay('board'); loadBoard(); });
 $('btnBoardOver').addEventListener('click', () => { showOverlay('board'); loadBoard(); });
+$('btnShareOver').addEventListener('click', () => {
+  const mm = Math.floor(S.t / 60);
+  const ss = String(Math.floor(S.t % 60)).padStart(2, '0');
+  const text = `【单目幸存者】存活 ${mm}:${ss} · ${S.score}分 · 击杀${S.kills} · Lv.${S.level}，来比比谁活得久：${location.origin}/tools_html/grove_survivor.html`;
+  shareGameResult($('btnShareOver'), text);
+});
+
+function shareGameResult(btn, text) {
+  const restore = () => {
+    const old = btn.textContent;
+    btn.textContent = '已复制，去挑战吧！';
+    btn.disabled = true;
+    setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2000);
+  };
+  const copy = () => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(restore, () => legacyCopyText(text, restore));
+    } else {
+      legacyCopyText(text, restore);
+    }
+  };
+  if (navigator.share) {
+    navigator.share({ title: document.title, text }).then(restore, copy);
+  } else {
+    copy();
+  }
+}
+
+function legacyCopyText(text, done) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); done(); } catch { /* ignore */ }
+  ta.remove();
+}
 $('btnBoardClose').addEventListener('click', () => showOverlay(S.state === 'over' ? 'over' : 'menu'));
 $('btnBoardRefresh').addEventListener('click', loadBoard);
 
