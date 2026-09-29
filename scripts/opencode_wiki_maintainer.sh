@@ -47,20 +47,19 @@ sync_git_after_update() {
     }
   fi
 
-  git add \
-    .gitignore \
-    css/TA_wiki.css \
-    data/ta_wiki_entries.json \
-    data/wiki_sources.json \
-    data/wiki_memory.json \
-    js/ta_wiki.js \
-    js/ta_wiki_data.js \
-    assets/images/wiki \
-    scripts/wiki_collect.mjs \
-    scripts/wiki_email_digest.mjs \
-    scripts/run_wiki_collect.sh \
-    scripts/opencode_wiki_maintainer.sh \
-    tools_html/TA_wiki.html
+  # 只提交采集流水线自己产出的文件，这里必须保持最小集合。
+  # 2026-07-05 的布局回归就是因为旧版把 css/js/tools_html 也一起 git add，
+  # 把当时工作区里尚未提交的前端改版（flex -> grid）混进了「自动更新」提交(8e12425)，
+  # 来源被提交信息掩盖，近三个月无人复核。前端与配置改动必须人工确认后单独提交。
+  git add -- data/ta_wiki_entries.json 2>/dev/null || true
+  git add -- assets/images/wiki 2>/dev/null || true
+
+  dirty="$(git status --porcelain -- css js tools_html scripts doc AGENTS.md .gitignore data/wiki_sources.json data/wiki_memory.json 2>/dev/null || true)"
+  if [ -n "$dirty" ]; then
+    echo "- Git sync: 检测到采集流水线之外的未提交改动，本次不提交："
+    printf '%s\n' "$dirty" | sed 's/^/    /'
+    echo "    请人工复核后单独提交这些前端/脚本/配置改动。"
+  fi
 
   if git diff --cached --quiet; then
     echo "- Git sync: no changes"
@@ -114,7 +113,7 @@ digest_status=0
 
 opencode_status=0
 if command -v opencode >/dev/null 2>&1; then
-  prompt="You are maintaining the TA Wiki in this project. Read data/ta_wiki_entries.json, data/wiki_sources.json, data/wiki_memory.json if present, and the latest collector log at logs/wiki_collect.last.log. Do not edit files in this scheduled run. Output only a concise maintenance note in Simplified Chinese Markdown covering: 1) newly collected useful graphics knowledge, 2) rejected or weak content patterns if visible, 3) whether the wiki page needs UI/framework improvements later, 4) next actions. Keep it practical for a technical artist."
+  prompt="You are maintaining the TA Wiki in this project. Read data/ta_wiki_entries.json, data/wiki_sources.json, data/wiki_memory.json if present, and the latest collector log at logs/wiki_collect.last.log. Do not edit files in this scheduled run: never modify css/, js/, tools_html/, scripts/, AGENTS.md, data/wiki_sources.json or data/wiki_memory.json, because this daily job only commits data/ta_wiki_entries.json and any frontend or config change must be requested by the user and committed separately. Output only a concise maintenance note in Simplified Chinese Markdown covering: 1) newly collected useful graphics knowledge, 2) rejected or weak content patterns if visible, 3) whether the wiki page needs UI/framework improvements later, 4) next actions. Keep it practical for a technical artist."
   if command -v script >/dev/null 2>&1; then
     timeout 180s script -q -e -c "opencode run \"$prompt\" --auto -m deepseek/deepseek-flash --dir \"$SITE\"" "$OPEN_CODE_LOG" >/dev/null 2>&1 || opencode_status=$?
   else
