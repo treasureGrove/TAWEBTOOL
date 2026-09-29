@@ -54,7 +54,10 @@
 /* �T�T??Panel Layout �T�T??*/
 .wiki-panel {
     display: grid;
-    grid-template-rows: auto auto auto minmax(0, 1fr);
+    /* 必须与 #panel 的子元素一一对应：
+       header / stats / topics / toolbar / modes 为内容高度，最后的 wiki-layout 吃剩余空间并内部滚动。
+       行数写少会让 1fr 落到 toolbar 上（被压成 0px，与 modes 重叠）。 */
+    grid-template-rows: auto auto auto auto auto minmax(0, 1fr);
     gap: 10px;
     overflow: hidden;
     padding: 12px !important;
@@ -71,8 +74,8 @@
     justify-content: space-between;
     align-items: center;
     gap: 18px;
-    min-height: 48px;
-    padding: 12px 18px;
+    min-height: 44px;
+    padding: 9px 16px;
     border: 1px solid var(--wiki-line);
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.92);
@@ -87,8 +90,8 @@
 }
 
 .wiki-title h1 {
-    margin: 0 0 3px;
-    font-size: 22px;
+    margin: 0 0 2px;
+    font-size: 20px;
     font-weight: 750;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -149,7 +152,7 @@
 }
 
 .wiki-stat {
-    padding: 12px 14px;
+    padding: 7px 12px;
     border: 1px solid var(--wiki-line);
     border-radius: 10px;
     background: rgba(255, 255, 255, 0.92);
@@ -168,7 +171,7 @@
 
 .wiki-stat strong {
     color: var(--wiki-accent);
-    font-size: 26px;
+    font-size: 21px;
     font-weight: 800;
     line-height: 1;
 }
@@ -190,7 +193,7 @@
 
 .wiki-topic-block {
     min-width: 0;
-    padding: 12px 14px;
+    padding: 8px 12px;
     border: 1px solid var(--wiki-line);
     border-radius: 11px;
     background: rgba(255, 255, 255, 0.92);
@@ -204,7 +207,7 @@
 
 .wiki-topic-block strong {
     display: block;
-    margin-bottom: 9px;
+    margin-bottom: 6px;
     color: var(--wiki-text);
     font-size: 13px;
     font-weight: 650;
@@ -252,7 +255,7 @@
     grid-template-columns: minmax(280px, 1fr) 160px 150px 56px;
     gap: 8px;
     align-items: center;
-    padding: 10px;
+    padding: 7px;
     border: 1px solid var(--wiki-line);
     border-radius: 11px;
     background: rgba(255, 255, 255, 0.92);
@@ -263,7 +266,7 @@
 .wiki-toolbar input,
 .wiki-toolbar select {
     min-width: 0;
-    height: 34px;
+    height: 32px;
     border: 1px solid var(--wiki-line);
     border-radius: 8px;
     padding: 0 11px;
@@ -557,7 +560,7 @@
 
 .wiki-doc-main {
     min-width: 0;
-    padding: 26px 32px 36px;
+    padding: 18px 24px 26px;
     animation: wikiFadeSlideIn .35s var(--wiki-ease-bounce) both;
 }
 
@@ -575,9 +578,9 @@
 }
 
 .wiki-article-head h1 {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     color: var(--wiki-text);
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 750;
     line-height: 1.22;
     letter-spacing: -0.01em;
@@ -592,13 +595,13 @@
 }
 
 .wiki-article-cover {
-    margin: 14px 0 6px;
+    margin: 10px 0 4px;
 }
 
 .wiki-article-cover img {
     display: block;
     max-width: 100%;
-    max-height: 340px;
+    max-height: 190px;
     width: auto;
     border-radius: 10px;
     border: 1px solid var(--wiki-line);
@@ -862,6 +865,18 @@
         border-left: 0;
         border-top: 1px solid var(--wiki-line);
         padding: 16px 18px;
+    }
+    /* 窄屏下列表与正文改为上下堆叠，网格 + 固定高度会把正文行压成 0 高：
+       改为正常文档流，由面板整体滚动，正文自然展开。 */
+    #panel.wiki-panel {
+        display: block;
+    }
+    .wiki-panel > * + * {
+        margin-top: 10px;
+    }
+    .wiki-layout,
+    .wiki-content {
+        overflow: visible;
     }
 }
 

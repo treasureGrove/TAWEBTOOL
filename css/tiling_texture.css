@@ -184,6 +184,7 @@
 
 .tl-btn:disabled {
     background: var(--app-line);
+    color: var(--app-muted);
     cursor: not-allowed;
     transform: none;
 }
