@@ -17,6 +17,21 @@ const SEO_DIR = path.join(ROOT, 'seo');
 const EN_SEO_DIR = path.join(ROOT, 'en', 'seo');
 const SITEMAP_FILE = path.join(ROOT, 'sitemap-seo.xml');
 
+// 站点统一分享缩略图（1200x630），由 scripts/gen_site_cover.* 生成，
+// 与 scripts/apply_og_cover.mjs 的输出保持一致（改这里记得同步跑一次那个脚本）。
+const OG_COVER = `${BASE}/assets/images/og/site-cover-1200x630.jpg`;
+const OG_ALT_ZH = 'TA工具箱 · 技术美术在线工具箱';
+const OG_ALT_EN = 'TA Toolbox - free online technical artist tools';
+const ogCoverBlock = (en) => [
+  `    <meta property="og:image" content="${OG_COVER}">`,
+  '    <meta property="og:image:type" content="image/jpeg">',
+  '    <meta property="og:image:width" content="1200">',
+  '    <meta property="og:image:height" content="630">',
+  `    <meta property="og:image:alt" content="${en ? OG_ALT_EN : OG_ALT_ZH}">`,
+  '    <meta name="twitter:card" content="summary_large_image">',
+  `    <meta name="twitter:image" content="${OG_COVER}">`
+].join('\n');
+
 loadDotEnv(path.join(ROOT, '.env'));
 // 回退到 opencode auth.json（与 run_wiki_collect.sh 一致）
 if (!process.env.WIKI_AI_API_KEY && !process.env.DEEPSEEK_API_KEY && !process.env.OPENCODE_DEEPSEEK_API_KEY) {
@@ -265,6 +280,7 @@ function renderPage({ lang, slug, type, title, summary, contentHtml, faq, relate
 <link rel="canonical" href="${url}">
 ${en ? `<link rel="alternate" hreflang="zh-CN" href="${BASE}/seo/${slug}.html">` : `<link rel="alternate" hreflang="en" href="${BASE}/en/seo/${slug}.html">`}
 <link rel="alternate" hreflang="x-default" href="${BASE}/seo/${slug}.html">
+${ogCoverBlock(en)}
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icon/favicon-96x96.png">
 <link rel="stylesheet" href="/css/seo.css">
@@ -396,6 +412,7 @@ async function writeIndexPages(slugs) {
 <title>${en ? 'TA Glossary & Tutorials' : 'TA 术语百科与工具教程'} - ${home}</title>
 <meta name="description" content="${en ? 'Technical artist glossary and tool tutorials' : '技术美术术语百科与工具使用教程合集'}">
 <link rel="canonical" href="${BASE}${prefix}/seo/">
+${ogCoverBlock(en)}
 <link rel="stylesheet" href="/css/seo.css">
 <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?44913dba4cac18ed4047e7273adfaab7";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();</script>
 </head>
