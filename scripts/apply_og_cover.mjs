@@ -6,8 +6,9 @@
  * 社交/搜索结果里会被裁成方块；seo/ 与 en/seo/ 的词条页则完全没有 og:image。
  * 本脚本把 1200x630 的站点缩略图补齐到首页、工具页、词条页，幂等可重跑。
  *
- * 用法：node scripts/apply_og_cover.mjs [--check]
+ * 用法：node scripts/apply_og_cover.mjs [--check] [--exclude=相对路径 ...]
  *   --check 只报告差异，不写文件（有文件需要更新时退出码 1）
+ *   --exclude 排除指定页面，可重复使用，适合保留尚未提交的页面改动
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,8 +16,11 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CHECK = process.argv.includes('--check');
+const EXCLUDED = new Set(process.argv.slice(2)
+  .filter((arg) => arg.startsWith('--exclude='))
+  .map((arg) => arg.slice('--exclude='.length).replace(/\\/g, '/').replace(/^\.\//, '')));
 
-const COVER = 'https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg';
+const COVER = 'https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand';
 const LEGACY_IMAGES = [
   'https://tools.treasuregrove.art/assets/images/icon/icon.png',
   'https://tools.treasuregrove.art/assets/images/icon/icon.jpg'
@@ -34,7 +38,7 @@ function targetFiles() {
       if (name.endsWith('.html')) files.push(`${dir}/${name}`);
     }
   }
-  return files;
+  return files.filter((rel) => !EXCLUDED.has(rel));
 }
 
 const isEn = (text) => /<html[^>]+lang=["']en["']/i.test(text);

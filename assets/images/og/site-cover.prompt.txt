@@ -1,0 +1,20 @@
+TA Toolbox official website cover
+Generated with the built-in image_gen tool on 2026-09-30.
+Reference: assets/images/icon/icon.png (existing brand mark).
+Delivery: site-cover-1200x630.jpg, 1200 x 630, JPEG.
+The generated raster was resized and encoded with ImageMagick; the artwork was not composited or retouched separately.
+
+Use case: ads-marketing.
+Asset type: official website Open Graph cover and search/share preview for TA工具箱, at 1200×630, landscape ratio 1.90476:1.
+Primary request: Create one polished premium brand cover for an established free technical artist / game development web toolkit. It should feel like the official homepage of a carefully designed creative software product, with excellent small-thumbnail legibility.
+Input image: the provided teal twin-tail silhouette app icon is a reference for the existing brand mark. Preserve that mark recognizably, reproduce it cleanly and flat in a small white rounded-square tile near the top left. Do not redesign it or add a character face.
+Art direction: sophisticated midnight navy background, restrained teal/cyan lighting, large areas of uncluttered negative space, subtle precise grid. Crisp editorial layout. On the right half, a premium rendered 3D arrangement: one sculptural translucent teal glass cube with a neat metallic frame, a small satin ceramic material sphere, an elegant chrome sphere, and a restrained wireframe plane. This visual represents PBR materials, shader tools and 3D previews. Realistic refined materials, coherent soft studio lighting, precise edges and soft contact shadows. Avoid noisy neon, cartoon game art, stock-photo look, tiny UI cards and excessive glow.
+Typography and composition: clear left-aligned hierarchy within safe margins of 70px. The upper-left small brand icon with small English brand name alongside it. Main Chinese title large, exceptionally crisp, balanced spacing. Concise smaller subtitle. A compact feature line near the bottom left. Domain lower-left. Main copy must stay visually separate from 3D objects and background details. Use clean geometric sans serif and high contrast white. No fabricated badges, certification, user counts or awards.
+Text (verbatim), render exactly once:
+"TA Toolbox"
+"TA工具箱"
+"技术美术在线工具箱"
+"PBR 贴图 · Shader 转换 · 3D 预览"
+"免费使用 · 无需安装"
+"tools.treasuregrove.art"
+Constraints: preserve spelling, clean Chinese characters, all text fully visible; no extra words, no watermarks, no browser chrome, no screenshot blur, no people. The hero is the brand name and the tangible material/rendering motif. Target a calm confident official software website identity. Output an opaque finished cover, precisely 1200×630 if possible.

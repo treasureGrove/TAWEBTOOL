@@ -17,9 +17,9 @@ const SEO_DIR = path.join(ROOT, 'seo');
 const EN_SEO_DIR = path.join(ROOT, 'en', 'seo');
 const SITEMAP_FILE = path.join(ROOT, 'sitemap-seo.xml');
 
-// 站点统一分享缩略图（1200x630），由 scripts/gen_site_cover.* 生成，
+// 站点统一品牌封面（1200x630），生成规格见 assets/images/og/site-cover.prompt.txt，
 // 与 scripts/apply_og_cover.mjs 的输出保持一致（改这里记得同步跑一次那个脚本）。
-const OG_COVER = `${BASE}/assets/images/og/site-cover-1200x630.jpg`;
+const OG_COVER = `${BASE}/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand`;
 const OG_ALT_ZH = 'TA工具箱 · 技术美术在线工具箱';
 const OG_ALT_EN = 'TA Toolbox - free online technical artist tools';
 const ogCoverBlock = (en) => [
@@ -381,7 +381,7 @@ async function main() {
   const allSlugs = (await fs.readdir(SEO_DIR)).filter((f) => f.endsWith('.html') && f !== 'index.html').map((f) => f.replace(/\.html$/, ''));
   await writeIndexPages(allSlugs);
   await writeSitemap(allSlugs);
-  const urls = [];
+  const urls = [`${BASE}/seo/`, `${BASE}/en/seo/`];
   for (const slug of allSlugs) {
     urls.push(`${BASE}/seo/${slug}.html`);
     if (fsSync.existsSync(path.join(EN_SEO_DIR, `${slug}.html`))) urls.push(`${BASE}/en/seo/${slug}.html`);
@@ -431,6 +431,9 @@ async function writeSitemap(slugs) {
   const date = new Date().toISOString().slice(0, 10);
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
   let n = 0;
+  for (const url of [`${BASE}/seo/`, `${BASE}/en/seo/`]) {
+    xml += `  <url><loc>${esc(url)}</loc><lastmod>${date}</lastmod><changefreq>weekly</changefreq><priority>0.7</priority></url>\n`; n++;
+  }
   for (const slug of slugs) {
     xml += `  <url><loc>${esc(`${BASE}/seo/${slug}.html`)}</loc><lastmod>${date}</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>\n`; n++;
     if (fsSync.existsSync(path.join(EN_SEO_DIR, `${slug}.html`))) {
