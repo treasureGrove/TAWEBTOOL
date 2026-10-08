@@ -71,41 +71,24 @@
   //   padding = 相邻两帧之间的间隔（间距）
   //   cellW/cellH = 按原图等比自动计算的每帧宽高
   function getGrid() {
-    const cols = clampInt($('ssCols').value, 1, 256, 1);
-    const rows = clampInt($('ssRows').value, 1, 256, 1);
-    const padding = clampInt($('ssPadding').value, 0, 128, 0);
-    const offset = clampInt($('ssOffset').value, 0, 128, 0);
-
-    const base = { cols, rows, padding, offset };
-
-    if (!sourceImg) return Object.assign({ valid: false, reason: 'no-image' }, base);
-
-    const imgW = sourceImg.width;
-    const imgH = sourceImg.height;
-    const availW = imgW - 2 * offset - (cols - 1) * padding;
-    const availH = imgH - 2 * offset - (rows - 1) * padding;
-
-    if (availW <= 0 || availH <= 0) {
-      return Object.assign({ valid: false, reason: 'too-small' }, base);
+    if (!sourceImg) return { valid: false, reason: 'no-image' };
+    try {
+      const plan = window.SpriteExport.createPlan({
+        width: sourceImg.width, height: sourceImg.height,
+        cols: $('ssCols').value, rows: $('ssRows').value,
+        padding: $('ssPadding').value, offset: $('ssOffset').value,
+        prefix: $('ssPrefix').value, startIndex: $('ssStartIndex').value,
+        digits: $('ssDigits').value, format: $('ssFormat').value, order: $('ssOrder').value
+      });
+      return Object.assign({}, plan.settings, {valid: true, plan: plan, cellW: plan.frames[0].width, cellH: plan.frames[0].height});
+    } catch (error) {
+      return {valid: false, reason: error.message};
     }
-
-    return Object.assign({
-      valid: true,
-      cellW: availW / cols,
-      cellH: availH / rows,
-    }, base);
   }
 
-  // 由帧下标得到它在原图中的裁切矩形（像素坐标）
   function getFrameRect(index, grid) {
-    const c = index % grid.cols;
-    const r = Math.floor(index / grid.cols);
-    return {
-      x: grid.offset + c * (grid.cellW + grid.padding),
-      y: grid.offset + r * (grid.cellH + grid.padding),
-      w: grid.cellW,
-      h: grid.cellH,
-    };
+    const rect = grid.plan.frames[index].rect;
+    return {x: rect.x, y: rect.y, w: rect.width, h: rect.height};
   }
 
   // ─── 预览绘制 ───
@@ -192,6 +175,7 @@
       infoEl.textContent = '-';
       totalEl.textContent = '-';
       $('ssExportBtn').disabled = true;
+      $('ssExportFrameBtn').disabled = true;
       return;
     }
 
@@ -199,7 +183,8 @@
       infoEl.textContent = '参数超出范围';
       totalEl.textContent = '-';
       $('ssExportBtn').disabled = true;
-      setStatus('网格参数不合理：请检查列数 / 行数 / 间距 / 边框，保证剩余区域大于 0。');
+      $('ssExportFrameBtn').disabled = true;
+      setStatus(grid.reason);
       return;
     }
 
@@ -208,6 +193,7 @@
     infoEl.textContent = round(grid.cellW) + ' × ' + round(grid.cellH);
     totalEl.textContent = String(total);
     $('ssExportBtn').disabled = false;
+    $('ssExportFrameBtn').disabled = false;
 
     // 同步帧序号输入框范围
     if (selectedIndex >= total) selectedIndex = 0;
@@ -227,6 +213,7 @@
   // ─── 上传处理 ───
   function handleFile(file) {
     if (!file) return;
+    if (file.size > 20 * 1024 * 1024) { setStatus('图片文件最多 20 MB，请先压缩或分批处理。'); return; }
     if (!file.type || file.type.indexOf('image/') !== 0) {
       setStatus('请选择图片文件（JPG / PNG / WEBP 等）。');
       return;
@@ -249,6 +236,7 @@
       // 用原图名作为导出前缀
       const baseName = file.name.replace(/\.[^.]+$/, '').replace(/[^\w\u4e00-\u9fa5-]+/g, '_') || 'sprite';
       dropzone.dataset.baseName = baseName;
+      $('ssPrefix').value = baseName.substring(0, 64);
 
       refreshGridInfo();
       layoutCanvas();
@@ -295,14 +283,18 @@
     const total = grid.cols * grid.rows;
     const format = $('ssFormat').value;
     const ext = format === 'jpeg' ? 'jpg' : format;
-    const baseName = ($('ssDropZone').dataset.baseName || 'sprite');
+    const baseName = grid.plan.prefix;
     const useZip = hasJSZip;
 
     let zip = null;
     if (useZip) zip = new window.JSZip();
+    let summary = '';
 
     const btn = $('ssExportBtn');
     btn.disabled = true;
+    $('ssExportFrameBtn').disabled = true;
+    const controls = ['ssCols','ssRows','ssPadding','ssOffset','ssPrefix','ssStartIndex','ssDigits','ssOrder','ssFormat','ssFileInput','ssPrevBtn','ssNextBtn','ssFrameIndex'];
+    controls.forEach(function (id) { $(id).disabled = true; });
 
     try {
       for (let i = 0; i < total; i++) {
@@ -315,7 +307,7 @@
         cctx.imageSmoothingQuality = 'high';
         cctx.drawImage(sourceImg, rect.x, rect.y, rect.w, rect.h, 0, 0, c.width, c.height);
 
-        const name = baseName + '_' + String(i).padStart(3, '0') + '.' + ext;
+        const name = grid.plan.frames[i].file;
         const blob = await canvasToBlob(c, format);
 
         if (useZip) {
@@ -329,25 +321,28 @@
       }
 
       if (useZip) {
+        zip.file('frames.json', JSON.stringify(grid.plan, null, 2));
+        zip.file('README.md', window.SpriteExport.engineGuide(grid.plan));
         setStatus('正在压缩打包...');
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         triggerDownload(baseName + '_frames.zip', zipBlob);
-        setStatus('已导出 ' + total + ' 帧 → ' + baseName + '_frames.zip');
+        summary = '已导出 ' + total + ' 帧 → ' + baseName + '_frames.zip';
       } else {
-        setStatus('已逐个下载 ' + total + ' 帧（未加载 JSZip，使用逐个下载方案）。');
+        summary = '已逐个下载 ' + total + ' 帧（未加载 JSZip，使用逐个下载方案）。';
       }
     } catch (e) {
-      setStatus('导出失败：' + (e && e.message ? e.message : '未知错误'));
+      summary = '导出失败：' + (e && e.message ? e.message : '未知错误');
     } finally {
-      btn.disabled = false;
+      controls.forEach(function (id) { $(id).disabled = false; });
       refreshGridInfo();
+      if (summary) setStatus(summary);
     }
   }
 
   // ─── 事件绑定 ───
   function bindControls() {
     // 网格参数变化时重新计算与重绘
-    ['ssCols', 'ssRows', 'ssPadding', 'ssOffset'].forEach(function (id) {
+    ['ssCols', 'ssRows', 'ssPadding', 'ssOffset', 'ssPrefix', 'ssStartIndex', 'ssDigits', 'ssOrder', 'ssFormat'].forEach(function (id) {
       const el = $(id);
       el.addEventListener('input', function () {
         refreshGridInfo();
@@ -381,12 +376,24 @@
       const c = Math.floor((imgX - grid.offset) / (grid.cellW + grid.padding));
       const r = Math.floor((imgY - grid.offset) / (grid.cellH + grid.padding));
       if (c >= 0 && c < grid.cols && r >= 0 && r < grid.rows) {
-        selectFrame(r * grid.cols + c, grid);
+        selectFrame(grid.order === 'column' ? c * grid.rows + r : r * grid.cols + c, grid);
       }
     });
 
     // 导出
     $('ssExportBtn').addEventListener('click', exportAll);
+    $('ssExportFrameBtn').addEventListener('click', async function () {
+      const grid = getGrid();
+      if (!sourceImg || !grid.valid) return;
+      const frame = grid.plan.frames[selectedIndex];
+      const out = document.createElement('canvas');
+      out.width = frame.width; out.height = frame.height;
+      out.getContext('2d').drawImage(sourceImg, frame.rect.x, frame.rect.y, frame.width, frame.height, 0, 0, frame.width, frame.height);
+      try {
+        triggerDownload(frame.file, await canvasToBlob(out, grid.format));
+        setStatus('已下载当前帧：' + frame.file);
+      } catch (error) { setStatus('下载失败：' + error.message); }
+    });
 
     // 窗口尺寸变化时重排画布
     window.addEventListener('resize', function () {

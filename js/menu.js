@@ -49,6 +49,7 @@ var MENU_DATA = [
         { label: '网易云音乐', href: 'cloud_music.html', keywords: ['音乐', '歌曲', '歌单', 'music', 'netease', '播放器', '听歌', 'mp3', 'player', '电台', 'fm'] },
     ]},
     { name: '关于', icon: 'icon-about', items: [
+        { label: 'TA服务需求讨论', href: 'services.html', keywords: ['服务', '定制', '需求', '反馈', '批量', '工作流', 'ta', 'service'] },
         { label: '关于作者', href: 'about.html', keywords: ['关于', '作者', 'about', 'author', '宝藏小树林', 'treasuregrove', 'bilibili', 'b站', '联系', 'contact', '主页', '个人'] },
     ]},
 ];
@@ -81,8 +82,7 @@ function assetPrefix() {
 
 // ─── Build sidebar HTML ───
 function buildMenuHTML() {
-    var isRoot = !window.location.pathname.replace(/\\/g, '/').includes('/tools_html/');
-    var prefix = isRoot ? 'tools_html/' : '';
+    var prefix = '/tools_html/';
 
     var html = '<ul class="menu_root">';
     for (var i = 0; i < MENU_DATA.length; i++) {

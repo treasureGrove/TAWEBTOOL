@@ -83,6 +83,15 @@ var _hmt = _hmt || [];
                     </select></label>
                 </div>
 
+                <div class="ss-section-title">批量导出命名</div>
+                <div class="ss-control-grid3">
+                    <label>文件名前缀<input type="text" id="ssPrefix" maxlength="64" value="sprite" autocomplete="off"></label>
+                    <label>起始编号<input type="number" id="ssStartIndex" min="0" max="999999" value="0"></label>
+                    <label>补零位数<input type="number" id="ssDigits" min="1" max="6" value="3"></label>
+                    <label>顺序<select id="ssOrder"><option value="row">从左到右，逐行</option><option value="column">从上到下，逐列</option></select></label>
+                </div>
+                <p class="ss-tip">ZIP 内含图片、frames.json 通用元数据及 Unity / UE 导入说明。元数据不是引擎可直接导入配置。图片仅在本地处理，不上传；最多 2048 帧，单帧须为整像素。跨引擎优先 PNG（JPG 无透明通道）。</p>
+
                 <div class="ss-section-title">逐帧预览</div>
                 <div class="ss-frame-row">
                     <button type="button" class="ss-btn-ghost" id="ssPrevBtn">上一帧</button>
@@ -92,7 +101,8 @@ var _hmt = _hmt || [];
                 <p class="ss-tip">提示：也可以直接点击右侧预览图中的任意一帧，即可高亮预览该帧。</p>
 
                 <div class="ss-action-row">
-                    <button type="button" class="ss-btn" id="ssExportBtn" disabled>全部导出</button>
+                    <button type="button" class="ss-btn" id="ssExportBtn" disabled>打包导出 + 导入说明</button>
+                    <button type="button" class="ss-btn-ghost" id="ssExportFrameBtn" disabled>下载当前帧</button>
                     <span class="ss-status" id="ssStatus">请先上传一张雪碧图</span>
                 </div>
             </section>
@@ -108,8 +118,9 @@ var _hmt = _hmt || [];
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-    <script src="../js/sprite_sheet_splitter.js" defer></script>
+    <script src="../js/vendor/jszip-3.10.1.min.js"></script>
+    <script src="../js/sprite_export.js?v=20261008-workflow"></script>
+    <script src="../js/sprite_sheet_splitter.js?v=20261008-workflow" defer></script>
 
 </body>
 

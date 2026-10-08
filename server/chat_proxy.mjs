@@ -1,5 +1,7 @@
 import { createServer } from 'node:http';
-import { request as httpsRequest } from 'node:https';
+import { createAiHandler } from './ai_router.mjs';
+import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -95,131 +97,9 @@ const PROVIDERS = [
   },
 ];
 
-const KEYS = loadKeys();
-
-function mapModelToProvider(id) {
-  for (const p of PROVIDERS) {
-    if (p.models.includes(id)) return { provider: p, index: p.models.indexOf(id) };
-  }
-  return { provider: PROVIDERS[0], index: 0 };
-}
-
-function buildUrl(provider, model) {
-  let url = provider.url;
-  if (provider.type === 'cloudflare') {
-    const account = KEYS.cloudflare_account || '';
-    url = url.replace('{account}', account).replace('{model}', model);
-  }
-  return url;
-}
-
-async function proxyRequest(provider, model, body) {
-  const apiKey = KEYS[provider.name];
-  if (!apiKey) throw new Error(`No key for ${provider.name}`);
-
-  const targetUrl = buildUrl(provider, model);
-  const url = new URL(targetUrl);
-
-  const reqBody = provider.type === 'cloudflare'
-    ? JSON.stringify({ messages: body.messages, temperature: body.temperature ?? 0.7, max_tokens: body.max_tokens ?? 4096 })
-    : JSON.stringify({ model, messages: body.messages, temperature: body.temperature ?? 0.7, max_tokens: body.max_tokens ?? 4096, stream: false });
-
-  return new Promise((resolve, reject) => {
-    const opts = {
-      hostname: url.hostname,
-      port: 443,
-      path: url.pathname + url.search,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(reqBody),
-        Authorization: `Bearer ${apiKey}`,
-        Host: url.hostname,
-      },
-      timeout: 120000,
-    };
-
-    const req = httpsRequest(opts, (upstreamRes) => {
-      const chunks = [];
-      upstreamRes.on('data', (c) => chunks.push(c));
-      upstreamRes.on('end', () => {
-        let body = Buffer.concat(chunks);
-        if (provider.type === 'cloudflare') {
-          try {
-            const d = JSON.parse(body.toString());
-            if (d.success && d.result) {
-              const r = d.result;
-              delete r.response;
-              if (r.choices?.[0]?.message) {
-                const msg = r.choices[0].message;
-                let content = msg.content || msg.reasoning_content || msg.reasoning || '';
-                r.choices[0].message = {
-                  role: msg.role,
-                  content,
-                };
-              }
-              body = Buffer.from(JSON.stringify(r));
-            }
-          } catch {}
-        }
-        resolve({ status: upstreamRes.statusCode, body });
-      });
-    });
-
-    req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
-    req.write(reqBody);
-    req.end();
-  });
-}
-
-function extractError(status, body) {
-  try {
-    const d = JSON.parse(body.toString());
-    return d?.error?.message || d?.message || d?.errors?.[0]?.message || `HTTP ${status}`;
-  } catch {}
-  return `HTTP ${status}`;
-}
-
-function isRateLimited(status, body) {
-  if (status === 429) return true;
-  try {
-    const d = JSON.parse(body.toString());
-    const msg = (d?.error?.message || '').toLowerCase();
-    return msg.includes('rate limit') || msg.includes('速率限制');
-  } catch {}
-  return false;
-}
-
-function addMeta(body, wasFallback, requestedModel) {
-  try {
-    const d = JSON.parse(body.toString());
-    d._fallback = wasFallback;
-    d._requested = requestedModel;
-    return Buffer.from(JSON.stringify(d));
-  } catch {}
-  return body;
-}
-
-async function tryProviderModels(provider, startIndex, payload) {
-  for (let i = startIndex; i < provider.models.length; i++) {
-    try {
-      const upstream = await proxyRequest(provider, provider.models[i], payload);
-      if (isRateLimited(upstream.status, upstream.body)) {
-        console.warn(`[chat-proxy] ${provider.name}/${provider.models[i]} rate limited`);
-        continue;
-      }
-      if (upstream.status >= 400) {
-        console.warn(`[chat-proxy] ${provider.name}/${provider.models[i]} HTTP ${upstream.status}: ${extractError(upstream.status, upstream.body)}`);
-        continue;
-      }
-      return upstream;
-    } catch (err) {
-      console.error(`[chat-proxy] ${provider.name}/${provider.models[i]} error:`, err.message);
-    }
-  }
-  return null;
-}
+export function createProxyServer({keys, aiOptions = {}} = {}) {
+const KEYS = keys || loadKeys();
+const handleAi = createAiHandler({...aiOptions, keys: KEYS, providers: PROVIDERS});
 
 const server = createServer(async (req, res) => {
   applyScoreCors(req, res);
@@ -240,204 +120,7 @@ const server = createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === 'POST' && req.url === '/api/chat') {
-    const chunks = [];
-    req.on('data', (c) => chunks.push(c));
-    req.on('end', async () => {
-      try {
-        const payload = JSON.parse(Buffer.concat(chunks).toString());
-        const requestedModel = payload.model || PROVIDERS[0].models[0];
-        const { provider, index } = mapModelToProvider(requestedModel);
-
-        const result = await tryProviderModels(provider, index, payload);
-        if (result) {
-          res.writeHead(result.status, { 'Content-Type': 'application/json' });
-          res.end(addMeta(result.body, false, requestedModel));
-          return;
-        }
-
-        if (provider.fallback) {
-          for (const fb of PROVIDERS) {
-            if (!KEYS[fb.name]) continue;
-            if (fb.name === provider.name) continue;
-            const fbResult = await tryProviderModels(fb, 0, payload);
-            if (fbResult) {
-              res.writeHead(fbResult.status, { 'Content-Type': 'application/json' });
-              res.end(addMeta(fbResult.body, true, requestedModel));
-              return;
-            }
-          }
-        }
-
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: '当前模型暂不可用，请尝试其他模型' } }));
-      } catch (err) {
-        console.error('[chat-proxy] Parse error:', err.message);
-        res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: '请求格式错误' } }));
-      }
-    });
-    return;
-  }
-
-  if (req.method === 'POST' && req.url === '/api/image') {
-    const chunks = [];
-    req.on('data', (c) => chunks.push(c));
-    req.on('end', async () => {
-      try {
-        const payload = JSON.parse(Buffer.concat(chunks).toString());
-        const prompt = payload.prompt || '';
-        if (!prompt) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: { message: '请输入描述文字' } }));
-          return;
-        }
-
-        const apiKey = KEYS.zhipu;
-        if (!apiKey) {
-          res.writeHead(502, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: { message: '服务暂不可用' } }));
-          return;
-        }
-
-        const postData = JSON.stringify({ model: 'cogview-3-flash', prompt });
-        const url = new URL('https://open.bigmodel.cn/api/paas/v4/images/generations');
-
-        const upstream = await new Promise((resolve, reject) => {
-          const opts = {
-            hostname: url.hostname, port: 443, path: url.pathname,
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Content-Length': Buffer.byteLength(postData),
-              Authorization: `Bearer ${apiKey}`,
-              Host: url.hostname,
-            },
-            timeout: 120000,
-          };
-          const req = httpsRequest(opts, (upRes) => {
-            const chunks = [];
-            upRes.on('data', (c) => chunks.push(c));
-            upRes.on('end', () => resolve({ status: upRes.statusCode, body: Buffer.concat(chunks).toString() }));
-          });
-          req.on('error', reject);
-          req.on('timeout', () => { req.destroy(); reject(new Error('timeout')); });
-          req.write(postData);
-          req.end();
-        });
-
-        if (upstream.status >= 400) {
-          console.warn(`[chat-proxy] image gen error: ${upstream.body}`);
-          res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
-          res.end(upstream.body);
-          return;
-        }
-
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(upstream.body);
-      } catch (err) {
-        console.error('[chat-proxy] image error:', err.message);
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: err.message } }));
-      }
-    });
-    return;
-  }
-
-  if (req.method === 'POST' && req.url === '/api/video') {
-    const chunks = [];
-    req.on('data', (c) => chunks.push(c));
-    req.on('end', async () => {
-      try {
-        const payload = JSON.parse(Buffer.concat(chunks).toString());
-        const prompt = payload.prompt || '';
-        if (!prompt) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: { message: '请输入描述文字' } }));
-          return;
-        }
-
-        const apiKey = KEYS.zhipu;
-        if (!apiKey) {
-          res.writeHead(502, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: { message: '服务暂不可用' } }));
-          return;
-        }
-
-        const url = new URL('https://open.bigmodel.cn/api/paas/v4/videos/generations');
-        const postData = JSON.stringify({ model: 'cogvideox-flash', prompt });
-
-        const upstream = await new Promise((resolve, reject) => {
-          const opts = {
-            hostname: url.hostname, port: 443, path: url.pathname,
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Content-Length': Buffer.byteLength(postData),
-              Authorization: `Bearer ${apiKey}`, Host: url.hostname,
-            },
-            timeout: 60000,
-          };
-          const r = httpsRequest(opts, (upRes) => {
-            const chunks = [];
-            upRes.on('data', (c) => chunks.push(c));
-            upRes.on('end', () => resolve({ status: upRes.statusCode, body: Buffer.concat(chunks).toString() }));
-          });
-          r.on('error', reject);
-          r.on('timeout', () => { r.destroy(); reject(new Error('timeout')); });
-          r.write(postData); r.end();
-        });
-
-        if (upstream.status >= 400) {
-          res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
-          res.end(upstream.body);
-          return;
-        }
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(upstream.body);
-      } catch (err) {
-        console.error('[chat-proxy] video error:', err.message);
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: err.message } }));
-      }
-    });
-    return;
-  }
-
-  if (req.method === 'GET' && req.url && req.url.startsWith('/api/video/status/')) {
-    const taskId = req.url.split('/api/video/status/')[1];
-    if (!taskId) { res.writeHead(400); res.end('missing task id'); return; }
-
-    try {
-      const apiKey = KEYS.zhipu;
-      if (!apiKey) { res.writeHead(502, { 'Content-Type': 'application/json' }); res.end(JSON.stringify({ error: { message: '服务暂不可用' } })); return; }
-
-      const url = new URL(`https://open.bigmodel.cn/api/paas/v4/async-result/${taskId}`);
-      const upstream = await new Promise((resolve, reject) => {
-        const opts = {
-          hostname: url.hostname, port: 443, path: url.pathname, method: 'GET',
-          headers: { Authorization: `Bearer ${apiKey}`, Host: url.hostname },
-          timeout: 30000,
-        };
-        const r = httpsRequest(opts, (upRes) => {
-          const chunks = [];
-          upRes.on('data', (c) => chunks.push(c));
-          upRes.on('end', () => resolve({ status: upRes.statusCode, body: Buffer.concat(chunks).toString() }));
-        });
-        r.on('error', reject);
-        r.on('timeout', () => { r.destroy(); reject(new Error('timeout')); });
-        r.end();
-      });
-
-      res.writeHead(upstream.status, { 'Content-Type': 'application/json' });
-      res.end(upstream.body);
-    } catch (err) {
-      console.error('[chat-proxy] video status error:', err.message);
-      res.writeHead(502, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: { message: err.message } }));
-    }
-    return;
-  }
+  if (await handleAi(req, res)) return;
 
   if (req.method === 'POST' && req.url === '/api/feedback') {
     const chunks = [];
@@ -576,13 +259,11 @@ const server = createServer(async (req, res) => {
   res.end('Not Found');
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`[chat-proxy] ${HOST}:${PORT}`);
-  for (const p of PROVIDERS) {
-    if (p.name === 'cloudflare' && !KEYS.cloudflare_account) {
-      console.log(`[chat-proxy] ${p.name}: skipping (no account)`);
-      continue;
-    }
-    console.log(`[chat-proxy] ${p.name}: ${KEYS[p.name] ? 'ready' : 'no key'} [${p.models.join(', ')}]`);
-  }
-});
+server.requestTimeout = 15000;
+return server;
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const server = createProxyServer();
+  server.listen(PORT, HOST, () => console.log(`[chat-proxy] ${HOST}:${PORT}`));
+}

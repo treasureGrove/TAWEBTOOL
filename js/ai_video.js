@@ -102,7 +102,7 @@
         </div>
       `;
     }
-    function showError(msg) { resultArea.innerHTML = `<div class="ai-image-error">${msg}</div>`; }
+    function showError(msg) { const div = document.createElement('div'); div.className = 'ai-image-error'; div.textContent = msg; resultArea.replaceChildren(div); }
     function showLoading(msg) { resultArea.innerHTML = `<div class="ai-image-loading"><span class="typing-dot">●</span><span class="typing-dot">●</span><span class="typing-dot">●</span><p>${msg}</p></div>`; }
     function updateButtonState() { generateBtn.disabled = pending || !promptInput.value.trim(); }
 
@@ -115,7 +115,9 @@
     async function pollTask(taskId, prompt) {
       let polled = tasks.find(t => t.id === taskId)?.elapsed || 0;
       return new Promise((resolve, reject) => {
+        let querying = false;
         const timer = setInterval(async () => {
+          if (querying) return;
           polled++;
           tasks = tasks.map(t => t.id === taskId ? { ...t, elapsed: polled } : t);
           saveTasks(tasks);
@@ -123,9 +125,11 @@
 
           if (polled > MAX_POLLS) { clearInterval(timer); delete pollTimers[taskId]; reject(new Error('超时')); return; }
 
+          querying = true;
           try {
-            const res = await fetch(`/api/video/status/${taskId}`);
+            const res = await fetch(`/api/video/status/${encodeURIComponent(taskId)}`);
             const data = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(data.error?.message || `HTTP ${res.status}`);
             if (data.task_status === 'SUCCESS') {
               clearInterval(timer); delete pollTimers[taskId];
               const url = data.video_result?.[0]?.url;
@@ -139,8 +143,10 @@
             }
           } catch (err) {
             clearInterval(timer); delete pollTimers[taskId];
-            reject(new Error('查询失败'));
-          }
+            tasks = tasks.filter(t => t.id !== taskId);
+            saveTasks(tasks); renderTasks();
+            reject(err instanceof Error ? err : new Error('查询失败'));
+          } finally { querying = false; }
         }, POLL_INTERVAL);
         pollTimers[taskId] = timer;
       });

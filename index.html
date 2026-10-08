@@ -127,7 +127,7 @@
                 "name": "如何把GLSL转换成HLSL？",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "打开TA工具箱中的GLSL/HLSL转换器，粘贴GLSL着色器代码，点击执行转换即可得到HLSL代码，支持双向转换，适配Unity和Unreal Engine的Shader语法。"
+                    "text": "打开GLSL/HLSL转换器可获得基于规则的转换草稿；这不是完整Unity或Unreal Shader迁移，需人工核对采样、语义和矩阵，并在目标项目编译验证。"
                 }
             }
         ]
@@ -157,7 +157,7 @@ var _hmt = _hmt || [];
 </head>
 
 <body>
-    <script src="js/menu.js?v=20260922-lead-canticle"></script>
+    <script src="js/menu.js?v=20261008"></script>
     <script src="js/waifu.js"></script>
     <div id="main_bg"></div>
     <div class="left_menu"></div>
@@ -170,12 +170,23 @@ var _hmt = _hmt || [];
             <div class="home-hero-blob home-hero-blob-a"></div>
             <div class="home-hero-blob home-hero-blob-b"></div>
             <h1>TA工具箱 - 技术美术在线工具箱</h1>
-            <p class="home-hero-sub">宝藏小树林出品的免费在线技术美术(TA)工具箱，收录 28 款游戏开发与美术创作工具</p>
+            <p class="home-hero-sub">宝藏小树林出品的免费在线技术美术(TA)工具箱，先解决序列帧、贴图与模型等具体任务</p>
+        </section>
+
+        <section class="home-section home-tasks" aria-labelledby="task-title">
+            <h2 class="home-section-title" id="task-title">从要完成的任务开始</h2>
+            <p>先完成免费工具任务；需要批量流程或项目适配，再讨论具体交付。</p>
+            <div class="home-grid">
+                <a class="home-card" href="tools_html/sprite_sheet_splitter.html"><span class="home-card-body"><span class="home-card-title">导出序列帧</span><span class="home-card-desc">安全命名 · ZIP · 导入步骤</span></span><span class="home-card-arrow">→</span></a>
+                <a class="home-card" href="tools_html/combine_rgba.html"><span class="home-card-body"><span class="home-card-title">打包贴图通道</span><span class="home-card-desc">组合 RGBA，核对项目约定</span></span><span class="home-card-arrow">→</span></a>
+                <a class="home-card" href="tools_html/model_previewer.html"><span class="home-card-body"><span class="home-card-title">检查模型表现</span><span class="home-card-desc">预览模型与材质，定位问题</span></span><span class="home-card-arrow">→</span></a>
+                <a class="home-card" href="tools_html/services.html"><span class="home-card-body"><span class="home-card-title">讨论 TA 定制服务</span><span class="home-card-desc">说明范围 · 生成需求 · 论坛反馈</span></span><span class="home-card-arrow">→</span></a>
+            </div>
         </section>
 
         <section class="home-about">
             <h2>免费在线技术美术(TA)工具箱，游戏开发者的效率工具集</h2>
-            <p>TA工具箱由宝藏小树林出品，专为技术美术(TA)、游戏开发者与数字美术师打造。无论你是要处理贴图、转换着色器、生成PBR材质，还是压缩图片视频，这里都有对应的免费在线工具。所有工具无需安装、即开即用，保护隐私的同时提升开发效率。</p>
+            <p>TA工具箱由宝藏小树林出品，专为技术美术(TA)、游戏开发者与数字美术师打造。无论你是要处理贴图、转换着色器、生成PBR材质，还是压缩图片视频，这里都有对应的免费在线工具。本地图片工具无需上传素材；AI 工具会向上游提交输入，并受公共额度限制。请勿提交私有代码、凭据或未授权内容。</p>
             <p>常用功能包括：<a href="tools_html/glsl_hlsl_converter.html">GLSL/HLSL着色器转换</a>、<a href="tools_html/pbr_texture_generator.html">PBR贴图生成</a>、<a href="tools_html/ai_upscale.html">AI高清放大</a>、<a href="tools_html/compress_image.html">图片压缩转换</a>、<a href="tools_html/model_previewer.html">3D模型在线预览</a>、<a href="tools_html/hdr_editor.html">HDR编辑器</a>，以及每日更新的<a href="tools_html/TA_wiki.html">TA知识库</a>。适合Unity、Unreal引擎开发者，也适合独立游戏开发者与数字艺术创作者。</p>
         </section>
 
@@ -275,7 +286,7 @@ var _hmt = _hmt || [];
             </details>
             <details>
                 <summary>如何把GLSL转换成HLSL？</summary>
-                <p>打开TA工具箱中的GLSL/HLSL转换器，粘贴GLSL着色器代码，点击执行转换即可得到HLSL代码，支持双向转换，适配Unity和Unreal Engine的Shader语法。</p>
+                <p>打开GLSL/HLSL转换器可获得基于规则的转换草稿；这不是完整Unity或Unreal Shader迁移，需人工核对采样、语义和矩阵，并在目标项目编译验证。</p>
             </details>
         </section>
 
