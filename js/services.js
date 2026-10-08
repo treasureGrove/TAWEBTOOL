@@ -21,17 +21,52 @@
         var g = function (id) { var el = doc.getElementById(id); return el ? el.value : ''; };
         return { task: g('svc-task'), engine: g('svc-engine'), scale: g('svc-scale'), expected: g('svc-expected'), sample: g('svc-sample') };
     }
+    function setStatus(tip, text, state) {
+        if (!tip) return;
+        tip.textContent = text;
+        if (state && typeof tip.setAttribute === 'function') tip.setAttribute('data-state', state);
+    }
     function init(doc) {
         var btn = doc.getElementById('svc-generate'), out = doc.getElementById('svc-output'), tip = doc.getElementById('svc-tip');
         if (!btn || !out) return;
-        btn.addEventListener('click', function () {
-            out.value = buildTemplate(readForm(doc));
-            var done = function () { if (tip) tip.textContent = '已复制到剪贴板。请自行登录 ' + FORUM + ' 发帖，本页不会代为提交。'; };
-            var fail = function () { if (tip) tip.textContent = '复制失败，请手动全选下方文本框复制后，自行登录 ' + FORUM + ' 发帖。'; out.focus(); out.select(); };
+        var result = doc.getElementById('svc-result');
+        var copyBtn = doc.getElementById('svc-copy');
+
+        function copy() {
+            var done = function () { setStatus(tip, '已复制到剪贴板。请到论坛 TA 区发帖，本页不会代为提交。', 'ok'); };
+            var fail = function () {
+                setStatus(tip, '复制失败，请手动全选下方文本框复制后，自行登录 ' + FORUM + ' 发帖。', 'error');
+                if (typeof out.focus === 'function') out.focus();
+                if (typeof out.select === 'function') out.select();
+            };
             try {
-                if (root.navigator && root.navigator.clipboard && root.navigator.clipboard.writeText) Promise.resolve(root.navigator.clipboard.writeText(out.value)).then(done, fail); else fail();
+                var clip = root.navigator && root.navigator.clipboard;
+                if (clip && typeof clip.writeText === 'function') Promise.resolve(clip.writeText(out.value)).then(done, fail);
+                else fail();
             } catch (_) { fail(); }
+        }
+
+        function reveal() {
+            if (result) result.hidden = false;
+            if (result && typeof result.scrollIntoView === 'function') {
+                try { result.scrollIntoView({ block: 'nearest' }); } catch (_) {}
+            }
+        }
+
+        btn.addEventListener('click', function () {
+            var form = readForm(doc);
+            if (!form.task.trim()) {
+                setStatus(tip, '请先填写「任务类型」，再生成需求文本。', 'error');
+                var first = doc.getElementById('svc-task');
+                if (first && typeof first.focus === 'function') first.focus();
+                return;
+            }
+            out.value = buildTemplate(form);
+            reveal();
+            copy();
         });
+
+        if (copyBtn && typeof copyBtn.addEventListener === 'function') copyBtn.addEventListener('click', function () { if (!out.value) out.value = buildTemplate(readForm(doc)); copy(); });
     }
     root.ServicesIntent = { buildTemplate: buildTemplate, readForm: readForm, init: init, FORUM: FORUM };
     if (typeof document !== 'undefined') document.addEventListener('DOMContentLoaded', function () { init(document); });

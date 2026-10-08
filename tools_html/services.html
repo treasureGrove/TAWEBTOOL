@@ -5,30 +5,80 @@
 <title>TA 服务需求讨论 - TA工具箱</title>
 <meta name="description" content="讨论序列帧、贴图批处理与项目工具适配需求，明确范围与验收。免费工具保持开放；产品尚未开售，本页不收费、不承诺接单。">
 <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/services.html">
-<link rel="stylesheet" href="../css/common.css"><link rel="stylesheet" href="../css/services.css?v=20261008">
+<link rel="stylesheet" href="../css/common.css"><link rel="stylesheet" href="../css/services.css?v=20261008b">
 <link rel="icon" href="/favicon.ico">
 </head>
 <body>
 <div id="main_bg"></div><div class="left_menu"></div>
 <div class="top_search"><input type="text" placeholder="搜索工具..." aria-label="搜索工具"></div>
 <div id="panel">
-<main class="services-shell">
-<header><p class="svc-kicker">免费工具 → 具体需求 → 确认可交付范围</p><h1>TA 服务需求讨论</h1><p>先把问题说清楚，再判断是否需要项目适配。已有免费工具继续开放。</p></header>
-<aside class="svc-notice"><strong>当前阶段</strong><p>本页只做需求讨论；产品尚未开售，此阶段不收费、不承诺接单。若后续双方确认可行，交付范围、费用与时间另行确认；这里不会自动建立服务约定。</p></aside>
-<section aria-labelledby="scope-title"><h2 id="scope-title">可以从这些方向讨论</h2><div class="svc-cards">
-<article><h3>序列帧与导入流程</h3><p>先用免费拆分工具完成命名、ZIP 和通用元数据导出。批量规范、工程脚本与特定引擎适配，可另行评估。</p><a href="sprite_sheet_splitter.html">打开免费序列帧工具 →</a></article>
-<article><h3>贴图批处理</h3><p>通道打包、命名规则与重复检查。需要说明原始格式、目标约定和处理规模，不能只说“优化一下”。</p><a href="combine_rgba.html">打开免费通道合成 →</a></article>
-<article><h3>项目工具与检查报告</h3><p>围绕可复现的问题评估小工具、检查脚本或报告；引擎版本、资产权限、样例和验收方法必须先明确。</p><a href="model_previewer.html">打开免费模型预览 →</a></article>
-</div></section>
-<section><h2>交付前要明确什么</h2><ul><li><strong>范围：</strong>输入、输出、版本、规模以及可复现样例。</li><li><strong>验收：</strong>以双方确认的样例和目标项目结果验证，不以“代码跑通”替代可用。</li><li><strong>排除：</strong>未确认的功能、第三方素材授权、完整引擎 Shader 迁移、永久维护，不默认包含。</li></ul><p>不展示未经核实的成交、收益或交付成果；需要真实样例与验收记录。</p></section>
-<section class="svc-form-section" aria-labelledby="form-title"><h2 id="form-title">整理需求，自己选择是否发帖</h2><p>以下字段仅在本页生成文本，不上传到服务器，也不采集邮箱、手机号。不要公开私有代码、凭据、未授权资产；论坛帖子可能对公众可见。</p>
-<div class="svc-fields"><label for="svc-task">任务类型<input id="svc-task" maxlength="160" placeholder="例如：批量序列帧命名与导入"></label><label for="svc-engine">引擎 / 版本<input id="svc-engine" maxlength="160" placeholder="例如：Unity 版本、目标平台"></label><label for="svc-scale">规模 / 频率<input id="svc-scale" maxlength="160" placeholder="文件数量、是否经常重复"></label><label for="svc-expected">期望结果<input id="svc-expected" maxlength="400" placeholder="怎样判断完成"></label><label for="svc-sample">可公开样例<input id="svc-sample" maxlength="400" placeholder="可公开描述；不要填写秘密"></label></div>
-<button id="svc-generate" type="button">生成并复制需求文本</button>
-<p id="svc-tip" role="status" aria-live="polite">生成后请自行登录论坛发帖，本页不会代为提交。剪贴板不可用时可手动复制下方文本。</p>
-<label for="svc-output">需求文本<textarea id="svc-output" rows="12" readonly></textarea></label>
-<p><a class="svc-forum-link" href="https://lolicode.com/t/ta" target="_blank" rel="noopener noreferrer">前往论坛 TA 知识区：反馈、案例与需求讨论 →</a></p></section>
-<footer><a href="../index.html">返回工具箱</a> · <a href="https://lolicode.com/" target="_blank" rel="noopener noreferrer">LoliCode 论坛</a></footer>
+<main class="svc">
+
+  <header class="svc-head">
+    <p class="svc-kicker">免费工具 <span>→</span> <strong>具体需求</strong> <span>→</span> 确认范围</p>
+    <h1>TA 服务需求讨论</h1>
+    <p class="svc-lead">先用免费工具把问题跑通。需要批量流程或项目适配时，在这里把需求写清楚，再决定要不要发到论坛。</p>
+    <p class="svc-cta-row"><a class="svc-primary" href="#svc-form">开始填写需求</a><span>或先看下面的方向与交付边界</span></p>
+  </header>
+
+  <aside class="svc-stage">
+    <strong>当前阶段</strong>
+    <p>本页只做需求讨论。产品尚未开售，此阶段不收费、不承诺接单；后续如确认可行，范围、费用与时间另行约定。</p>
+  </aside>
+
+  <ol class="svc-steps">
+    <li><span class="svc-step-no">1</span><div><h3>填写需求</h3><p>任务、引擎版本、规模与验收标准。</p></div></li>
+    <li><span class="svc-step-no">2</span><div><h3>生成文本</h3><p>在浏览器本地生成，不上传服务器。</p></div></li>
+    <li><span class="svc-step-no">3</span><div><h3>自行发帖</h3><p>复制后到论坛 TA 区发帖，本页不代发。</p></div></li>
+  </ol>
+
+  <section class="svc-block">
+    <h2>可以从这些方向讨论</h2>
+    <ul class="svc-links">
+      <li><a href="sprite_sheet_splitter.html">序列帧与导入流程</a><span>先用免费拆分工具完成命名、ZIP 与通用元数据；批量规范与引擎适配可另行评估。</span></li>
+      <li><a href="combine_rgba.html">贴图批处理</a><span>通道打包、命名规则与重复检查；需说明原始格式、目标约定与处理规模。</span></li>
+      <li><a href="model_previewer.html">项目工具与检查报告</a><span>围绕可复现的问题评估小工具或检查脚本；引擎版本、资产权限与样例须先明确。</span></li>
+    </ul>
+  </section>
+
+  <section class="svc-block">
+    <h2>交付前要明确什么</h2>
+    <dl class="svc-terms">
+      <dt>范围</dt><dd>输入、输出、版本、规模，以及可复现的样例。</dd>
+      <dt>验收</dt><dd>以双方确认的样例和目标项目结果验证，不以「代码跑通」替代可用。</dd>
+      <dt>排除</dt><dd>未确认的功能、第三方素材授权、完整引擎 Shader 迁移、永久维护，均不默认包含。</dd>
+    </dl>
+    <p class="svc-note">不展示未经核实的成交、收益或交付成果；需要真实样例与验收记录。</p>
+  </section>
+
+  <section class="svc-form" id="svc-form" aria-labelledby="form-title">
+    <h2 id="form-title">整理需求</h2>
+    <p class="svc-privacy">这些字段只在本页生成文本，不上传服务器，也不采集邮箱或手机号。不要公开私有代码、凭据与未授权资产。</p>
+    <div class="svc-fields">
+      <label for="svc-task">任务类型<span class="svc-hint">必填，例如「批量序列帧命名与导入」</span><input id="svc-task" maxlength="160" placeholder="批量序列帧命名与导入"></label>
+      <label for="svc-engine">引擎 / 版本<span class="svc-hint">例如 Unity 2022 URP、UE 5.4</span><input id="svc-engine" maxlength="160" placeholder="Unity 2022 URP"></label>
+      <label for="svc-scale">规模 / 频率<span class="svc-hint">文件数量、多久重复一次</span><input id="svc-scale" maxlength="160" placeholder="约 300 个文件，每周一次"></label>
+      <label for="svc-expected">期望结果<span class="svc-hint">怎样算完成</span><input id="svc-expected" maxlength="400" placeholder="导入后命名与尺寸自动符合规范"></label>
+      <label for="svc-sample" class="svc-field-wide">可公开样例<span class="svc-hint">可公开描述即可，不要填写秘密</span><input id="svc-sample" maxlength="400" placeholder="自生成测试图，或公开示例链接"></label>
+    </div>
+    <div class="svc-actions">
+      <button id="svc-generate" type="button" class="svc-primary">生成需求文本</button>
+      <span id="svc-tip" class="svc-status" role="status" aria-live="polite">生成后可复制到论坛发帖；剪贴板不可用时请手动复制。</span>
+    </div>
+  </section>
+
+  <section class="svc-result" id="svc-result" hidden aria-labelledby="result-title">
+    <h2 id="result-title">需求文本</h2>
+    <textarea id="svc-output" rows="10" readonly aria-labelledby="result-title"></textarea>
+    <div class="svc-actions">
+      <button id="svc-copy" type="button" class="svc-secondary">再次复制</button>
+      <a class="svc-primary svc-cta" href="https://lolicode.com/t/ta" target="_blank" rel="noopener noreferrer">去论坛 TA 区发帖 →</a>
+    </div>
+    <p class="svc-note">把上面的文本粘贴到论坛新帖即可。请勿公开代码、凭据或未授权资产；论坛帖子对公众可见。</p>
+  </section>
+
+  <footer class="svc-foot"><a href="../index.html">返回工具箱</a><span>·</span><a href="https://lolicode.com/" target="_blank" rel="noopener noreferrer">LoliCode 论坛</a></footer>
 </main>
 </div>
-<script src="../js/menu.js?v=20261008"></script><script src="../js/services.js?v=20261008"></script>
+<script src="../js/menu.js?v=20261008"></script><script src="../js/services.js?v=20261008b"></script>
 </body></html>
