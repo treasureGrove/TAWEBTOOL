@@ -60,6 +60,7 @@
 | [小树林尸潮](https://tools.treasuregrove.art/tools_html/grove_range.html) | Three.js FPS 僵尸波次生存小游戏，服务器排行榜 |
 | [单目幸存者](https://tools.treasuregrove.art/tools_html/grove_survivor.html) | 俯视角弹幕生存小游戏，服务器排行榜 |
 | [铅之圣咏](https://tools.treasuregrove.art/tools_html/lead_canticle.html) | Three.js 3D 废土鉴定当铺原型：背包管理、鉴定交易与多结局 |
+| [鹈鹕骑行](https://tools.treasuregrove.art/tools_html/pelican.html) | 纯程序化 3D 海岸骑行场景（零外部模型/贴图），由 Claude Sonnet 5.5 制作 |
 | [图集打包工具](https://tools.treasuregrove.art/tools_html/sprite_sheet_packer.html) | 序列帧 Sprite Sheet 打包 |
 | [雪碧图拆分工具](https://tools.treasuregrove.art/tools_html/sprite_sheet_splitter.html) | Sprite Sheet 自动切帧拆分 |
 | [网易云音乐](https://tools.treasuregrove.art/tools_html/cloud_music.html) | 网易云歌单一起听 |

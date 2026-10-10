@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f1c4a2" />
+  <meta name="description" content="一只优雅的鹈鹕，骑着复古自行车，沿着海岸公路驶过黄金时刻。纯程序化生成的 3D 场景，无需任何外部资源。由 Claude Sonnet 5.5 制作，TA工具箱游戏页收录。" />
+  <meta name="keywords" content="鹈鹕骑行,鹈鹕骑自行车,骑自行车,鹈鹕,pelican on a bicycle,pelican,bicycle,3D 网页小游戏,three.js,程序化生成,海岸,黄金时刻,治愈,TA工具箱,游戏,Claude Sonnet 5.5,Claude Sonnet5.5,claude sonnet 5.5,sonnet 5.5,Claude 制作,AI 制作" />
+  <meta name="author" content="宝藏小树林" />
+  <meta name="generator" content="Claude Sonnet 5.5" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://tools.treasuregrove.art/games/pelican/" />
+  <meta property="og:title" content="鹈鹕骑行 - 3D 海岸骑行小游戏 | TA工具箱" />
+  <meta property="og:description" content="纯程序化生成的黄金时刻海岸 3D 场景，由 Claude Sonnet 5.5 制作。" />
+  <meta property="og:url" content="https://tools.treasuregrove.art/games/pelican/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TA工具箱" />
+  <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="TA工具箱 · 技术美术在线工具箱" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand" />
+  <title>鹈鹕骑行 · A Pelican on a Bicycle | TA工具箱</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23ffd9a8'/%3E%3Cstop offset='1' stop-color='%23ff8f78'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%234a2216' stroke-width='3.5'/%3E%3Cpath d='M32 15v34M15 32h34M20 20l24 24M44 20 20 44' stroke='%234a2216' stroke-width='1.6'/%3E%3Ccircle cx='32' cy='32' r='3.6' fill='%234a2216'/%3E%3C/svg%3E" />
+  <style>
+    @property --a1 { syntax: '<color>'; inherits: true; initial-value: #ffdcae; }
+    @property --a2 { syntax: '<color>'; inherits: true; initial-value: #ff9a74; }
+    @property --on-accent { syntax: '<color>'; inherits: true; initial-value: #4a2216; }
+
+    :root {
+      --ink: #fff6ec;
+      --ink-2: rgba(255, 244, 232, .72);
+      --ink-3: rgba(255, 244, 232, .48);
+      --glass: rgba(38, 22, 32, .42);
+      --glass-2: rgba(38, 22, 32, .62);
+      --line: rgba(255, 255, 255, .15);
+      --shadow: 0 18px 50px -14px rgba(30, 10, 20, .5), inset 0 1px 0 rgba(255, 255, 255, .12);
+      --ease: cubic-bezier(.22, .8, .24, 1);
+      --dock-h: 72px;
+      --font-ui: "Microsoft YaHei UI", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Source Han Sans SC", system-ui, -apple-system, "Segoe UI", sans-serif;
+      --font-title: "STKaiti", "Kaiti SC", "KaiTi", "楷体", "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC", "SimSun", serif;
+    }
+    body { --a1: #ffdcae; --a2: #ff9a74; --on-accent: #4a2216; transition: --a1 .9s ease, --a2 .9s ease, --on-accent .9s ease; }
+    body[data-atmos="morning"] { --a1: #ffe9cf; --a2: #f6a9b8; --on-accent: #4d2a33; }
+    body[data-atmos="noon"] { --a1: #dcf0ff; --a2: #79bff0; --on-accent: #12354f; }
+    body[data-atmos="dusk"] { --a1: #ffb79d; --a2: #c47ba6; --on-accent: #3b1630; }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #f1c4a2; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font-ui); color: var(--ink); -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none; }
+    button { font: inherit; color: inherit; }
+    :focus-visible { outline: 2px solid var(--a1); outline-offset: 2px; }
+    #app { position: fixed; inset: 0; }
+    #app canvas { display: block; touch-action: none; cursor: grab; outline: none; }
+    body.dragging #app canvas { cursor: grabbing; }
+
+    /* ------------------------------------------------------------------ loading */
+    #loading {
+      position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; color: #4b2a35;
+      background:
+        radial-gradient(120% 80% at 50% 112%, #ffd2a1 0%, rgba(255, 210, 161, 0) 62%),
+        linear-gradient(180deg, #93b2dc 0%, #e8bab8 48%, #f6c9a2 100%);
+      transition: opacity 1.1s var(--ease), visibility 0s linear 1.1s;
+    }
+    #loading.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    #loading .box { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 24px; }
+    #loading .wheel { width: 84px; height: 84px; color: #5a2f3a; opacity: .9; animation: spin 3.2s linear infinite; }
+    #loading .wheel * { vector-effect: non-scaling-stroke; }
+    #loading h2 { margin: 24px 0 0; padding-left: .34em; font: 400 34px/1.1 var(--font-title); letter-spacing: .34em; }
+    #loading .en { margin: 11px 0 0; padding-left: .46em; font: 500 10.5px/1 var(--font-ui); letter-spacing: .46em; opacity: .62; }
+    #loading .bar { margin-top: 30px; width: min(240px, 60vw); height: 2px; border-radius: 2px; background: rgba(75, 42, 53, .16); overflow: hidden; }
+    #loading .bar i { display: block; width: 100%; height: 100%; border-radius: 2px; transform-origin: 0 50%; transform: scaleX(.04); background: linear-gradient(90deg, #ff9d78, #ff6f7d); transition: transform .6s var(--ease); }
+    #loading .msg { margin: 14px 0 0; padding-left: .2em; min-height: 1.3em; font-size: 12.5px; letter-spacing: .2em; opacity: .72; }
+    #loading.failed .wheel { animation: none; opacity: .3; }
+    #loading.failed .bar { display: none; }
+    #loading.failed .msg { max-width: 460px; color: #8a2630; opacity: 1; line-height: 1.9; letter-spacing: .06em; white-space: pre-line; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ------------------------------------------------------------------ brand */
+    #brand {
+      position: fixed; z-index: 10; left: max(30px, env(safe-area-inset-left)); top: max(26px, env(safe-area-inset-top));
+      pointer-events: none; color: var(--ink);
+      text-shadow: 0 1px 2px rgba(70, 25, 25, .35), 0 4px 30px rgba(90, 35, 30, .5);
+      transition: opacity 1.2s var(--ease), transform 1.2s var(--ease);
+    }
+    #brand h1 { margin: 0; font: 400 clamp(28px, 3.4vw, 46px)/1.1 var(--font-title); letter-spacing: .3em; }
+    #brand .en { margin: 9px 0 0 2px; font: 500 10.5px/1 var(--font-ui); letter-spacing: .46em; opacity: .82; }
+    #brand .rule { width: 46px; height: 1px; margin: 15px 0 12px; background: linear-gradient(90deg, rgba(255, 246, 236, .95), rgba(255, 246, 236, 0)); }
+    #brand .meta { margin: 0; display: flex; align-items: center; gap: 10px; font-size: 12.5px; letter-spacing: .16em; opacity: .9; }
+    #brand .meta i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; opacity: .7; }
+    #brand .meta b { font-weight: 500; font-variant-numeric: tabular-nums; }
+    body.is-loading #brand { opacity: 0; transform: translateY(-10px); }
+    body.reveal #brand { transition-delay: .5s; }
+
+    /* ------------------------------------------------------------------ glass bits */
+    .glass {
+      background: var(--glass); border: 1px solid var(--line); box-shadow: var(--shadow);
+      -webkit-backdrop-filter: blur(22px) saturate(1.5); backdrop-filter: blur(22px) saturate(1.5);
+    }
+    #dock, #corner { transition: opacity .7s var(--ease), transform .7s var(--ease), visibility 0s; }
+    body.is-loading #dock, body.is-loading #corner,
+    body.idle #dock, body.idle #corner,
+    body.ui-off #dock, body.ui-off #corner { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .7s var(--ease), transform .7s var(--ease), visibility 0s linear .7s; }
+    body.reveal #dock { transition-delay: .9s; }
+    body.reveal #corner { transition-delay: 1.1s; }
+    body.ui-off #brand, body.is-loading.ui-off #brand { opacity: 0; transform: translateY(-8px); }
+
+    /* ------------------------------------------------------------------ dock */
+    #dock {
+      position: fixed; z-index: 10; left: 50%; bottom: max(20px, env(safe-area-inset-bottom));
+      transform: translateX(-50%); width: max-content; max-width: calc(100vw - 20px);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 4px;
+      padding: 7px; border-radius: 24px; font-size: 13px; line-height: 1;
+    }
+    body.is-loading #dock, body.idle #dock, body.ui-off #dock { transform: translate(-50%, 16px); }
+    .grp { position: relative; display: flex; align-items: center; gap: 4px; padding: 0 5px; }
+    .grp + .grp::before { content: ""; position: absolute; left: -3px; top: 9px; bottom: 9px; width: 1px; background: var(--line); }
+
+    .seg { position: relative; display: flex; padding: 3px; border-radius: 16px; background: rgba(255, 255, 255, .07); }
+    .seg button {
+      position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px;
+      border: 0; border-radius: 13px; background: none; color: var(--ink-2); cursor: pointer; white-space: nowrap;
+      letter-spacing: .1em; transition: color .3s;
+    }
+    .seg button:hover { color: var(--ink); }
+    .seg button.active { color: var(--on-accent); font-weight: 600; }
+    .seg .thumb {
+      position: absolute; z-index: 0; top: 3px; bottom: 3px; left: 0; width: 0; border-radius: 13px; pointer-events: none;
+      background: linear-gradient(135deg, var(--a1), var(--a2));
+      box-shadow: 0 8px 18px -6px var(--a2), inset 0 1px 0 rgba(255, 255, 255, .55);
+      transition: transform .5s var(--ease), width .5s var(--ease), opacity .3s;
+    }
+    .seg.nt .thumb { transition: none; }
+    .seg.none .thumb { opacity: 0; }
+    .seg .sw { width: 14px; height: 14px; flex: none; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45), 0 1px 3px rgba(0, 0, 0, .25); }
+
+    .ib {
+      position: relative; flex: none; width: 38px; height: 38px; display: grid; place-items: center; padding: 0;
+      border: 0; border-radius: 14px; background: transparent; color: var(--ink-2); cursor: pointer;
+      transition: background .25s, color .25s, transform .3s var(--ease), box-shadow .3s;
+    }
+    .ib svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+    .ib svg .f { fill: currentColor; stroke: none; }
+    .ib:hover { background: rgba(255, 255, 255, .11); color: var(--ink); }
+    .ib:active { transform: scale(.9); }
+    .ib[aria-pressed="true"] { background: linear-gradient(135deg, var(--a1), var(--a2)); color: var(--on-accent); box-shadow: 0 8px 18px -6px var(--a2), inset 0 1px 0 rgba(255, 255, 255, .55); }
+    .ib.round { width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, .09); color: var(--ink); }
+    .ib.round:hover { background: rgba(255, 255, 255, .17); }
+    .ib .on-state { display: none; }
+    .ib[aria-pressed="true"] .off-state { display: none; }
+    .ib[aria-pressed="true"] .on-state { display: inline; }
+    #btnPlay[aria-pressed="true"] { background: rgba(255, 255, 255, .09); color: var(--ink); box-shadow: none; }
+    #btnPlay[aria-pressed="true"]:hover { background: rgba(255, 255, 255, .17); }
+
+    .slider { display: flex; align-items: center; gap: 11px; padding: 0 6px 0 4px; }
+    .slider .lab { color: var(--ink-3); font-size: 12px; letter-spacing: .14em; }
+    .slider output { min-width: 62px; text-align: right; color: var(--ink-2); font-size: 12px; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+    input[type=range] {
+      --pf: .5; -webkit-appearance: none; appearance: none; width: 118px; height: 24px; margin: 0; background: transparent; cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 4px; border-radius: 4px;
+      background: linear-gradient(90deg, var(--a1), var(--a2)) 0 / calc(8px + (100% - 16px) * var(--pf)) 100% no-repeat, rgba(255, 255, 255, .22);
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px; margin-top: -6px; border-radius: 50%; border: 0;
+      background: #fff8ef; box-shadow: 0 0 0 4px rgba(255, 205, 160, .22), 0 2px 8px rgba(0, 0, 0, .4); transition: box-shadow .25s;
+    }
+    input[type=range]:hover::-webkit-slider-thumb, input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 7px rgba(255, 205, 160, .28), 0 2px 8px rgba(0, 0, 0, .4); }
+    input[type=range]::-moz-range-track { height: 4px; border-radius: 4px; background: rgba(255, 255, 255, .22); }
+    input[type=range]::-moz-range-progress { height: 4px; border-radius: 4px; background: linear-gradient(90deg, var(--a1), var(--a2)); }
+    input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #fff8ef; box-shadow: 0 0 0 4px rgba(255, 205, 160, .22), 0 2px 8px rgba(0, 0, 0, .4); }
+    input[type=range]:focus-visible { outline-offset: 0; border-radius: 12px; }
+
+    /* ------------------------------------------------------------------ corner */
+    #corner {
+      position: fixed; z-index: 10; right: max(22px, env(safe-area-inset-right)); top: max(22px, env(safe-area-inset-top));
+      display: flex; gap: 2px; padding: 5px; border-radius: 19px;
+    }
+    body.is-loading #corner, body.idle #corner, body.ui-off #corner { transform: translateY(-10px); }
+    #unhide {
+      position: fixed; z-index: 10; right: max(22px, env(safe-area-inset-right)); top: max(22px, env(safe-area-inset-top));
+      width: 42px; height: 42px; border-radius: 50%; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .6s var(--ease), visibility 0s linear .6s;
+    }
+    body.ui-off #unhide { opacity: .5; visibility: visible; pointer-events: auto; transition-delay: .4s, .4s; }
+    body.ui-off #unhide:hover { opacity: 1; }
+
+    /* tooltips */
+    [data-tip]::after {
+      content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 13px); transform: translate(-50%, 5px);
+      padding: 8px 12px; border-radius: 11px; white-space: nowrap; font-size: 12px; letter-spacing: .08em; font-weight: 400; color: var(--ink);
+      background: rgba(30, 16, 24, .86); box-shadow: 0 8px 24px -8px rgba(0, 0, 0, .5);
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .3s var(--ease); z-index: 5;
+    }
+    [data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+    #corner [data-tip]::after { left: auto; right: 0; bottom: auto; top: calc(100% + 13px); transform: translateY(-5px); }
+    #corner [data-tip]:hover::after, #corner [data-tip]:focus-visible::after { transform: none; }
+    @media (hover: none) { [data-tip]::after { display: none; } }
+
+    /* ------------------------------------------------------------------ toast, flash, hint */
+    #toast, #hint {
+      position: fixed; z-index: 20; left: 50%; bottom: calc(var(--dock-h) + max(20px, env(safe-area-inset-bottom)) + 16px);
+      transform: translate(-50%, 8px); padding: 11px 20px; border-radius: 999px; white-space: nowrap; max-width: calc(100vw - 24px);
+      font-size: 13px; line-height: 1; letter-spacing: .12em; color: var(--ink); background: var(--glass-2); border: 1px solid var(--line);
+      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: var(--shadow);
+      opacity: 0; pointer-events: none; transition: opacity .4s, transform .6s var(--ease), bottom .5s var(--ease);
+    }
+    #toast.show, #hint.show { opacity: 1; transform: translate(-50%, 0); }
+    body.idle #hint, body.ui-off #hint { opacity: 0; }
+    body.ui-off #toast, body.ui-off #hint { bottom: max(28px, env(safe-area-inset-bottom)); }
+    #hint { color: var(--ink-2); background: var(--glass); }
+    #hint b { color: var(--ink); font-weight: 500; }
+    #hint i { display: inline-block; width: 3px; height: 3px; margin: 0 11px; border-radius: 50%; background: currentColor; opacity: .55; vertical-align: middle; }
+    #flash { position: fixed; inset: 0; z-index: 40; background: #fff; opacity: 0; pointer-events: none; }
+    #flash.go { animation: flash .55s ease-out; }
+    @keyframes flash { 0% { opacity: .8; } 100% { opacity: 0; } }
+
+    /* ------------------------------------------------------------------ help */
+    #help {
+      position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px; background: rgba(28, 14, 22, .46);
+      -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px);
+      opacity: 0; visibility: hidden; transition: opacity .35s, visibility 0s linear .35s;
+    }
+    #help.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+    #help .card {
+      position: relative; width: min(760px, 100%); max-height: calc(100vh - 40px); overflow: auto; padding: 34px 38px 30px; border-radius: 28px;
+      background: linear-gradient(180deg, rgba(64, 36, 48, .86), rgba(40, 22, 32, .9)); border: 1px solid var(--line);
+      box-shadow: 0 44px 100px -24px rgba(10, 0, 10, .7), inset 0 1px 0 rgba(255, 255, 255, .1);
+      transform: translateY(14px) scale(.98); transition: transform .55s var(--ease);
+    }
+    #help.open .card { transform: none; }
+    #help h2 { margin: 0; font: 400 28px/1.2 var(--font-title); letter-spacing: .3em; }
+    #help .sub { margin: 10px 0 0; font-size: 13px; letter-spacing: .1em; color: var(--ink-3); }
+    #help .x { position: absolute; top: 18px; right: 18px; }
+    #help .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px 34px; margin-top: 26px; }
+    #help h3 { margin: 0 0 12px; font-size: 12px; font-weight: 500; letter-spacing: .3em; color: var(--a1); }
+    #help ul { margin: 0 0 18px; padding: 0; list-style: none; }
+    #help li { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; font-size: 13px; letter-spacing: .06em; color: var(--ink-2); }
+    #help .k { display: inline-flex; flex: none; gap: 4px; }
+    kbd {
+      display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 8px; color: var(--ink);
+      font: 600 12px/1 var(--font-ui); background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .2); box-shadow: 0 2px 0 rgba(0, 0, 0, .28);
+    }
+    #help .foot { margin: 6px 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; letter-spacing: .1em; color: var(--ink-3); }
+
+    /* ------------------------------------------------------------------ responsive */
+    @media (max-width: 1060px) {
+      .grp + .grp::before { display: none; }
+      #dock { border-radius: 26px; }
+    }
+    @media (max-width: 760px) {
+      #help .cols { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      #brand { left: max(20px, env(safe-area-inset-left)); top: max(18px, env(safe-area-inset-top)); }
+      #brand .en { font-size: 9px; letter-spacing: .38em; }
+      #brand .rule { margin: 11px 0 9px; }
+      #brand .meta { font-size: 11.5px; letter-spacing: .12em; }
+      #dock { bottom: max(12px, env(safe-area-inset-bottom)); padding: 6px; gap: 5px 0; }
+      .seg button { height: 34px; padding: 0 10px; font-size: 12.5px; gap: 5px; letter-spacing: .04em; }
+      .seg .sw { width: 12px; height: 12px; }
+      .slider { gap: 8px; }
+      .slider .lab { display: none; }
+      .slider output { min-width: 56px; }
+      input[type=range] { width: 98px; }
+      #corner { right: max(14px, env(safe-area-inset-right)); top: max(14px, env(safe-area-inset-top)); }
+      #unhide { right: max(14px, env(safe-area-inset-right)); top: max(14px, env(safe-area-inset-top)); }
+      #help .card { padding: 26px 22px 22px; }
+      #help .cols { grid-template-columns: 1fr; }
+      #hint { font-size: 12px; padding: 10px 16px; }
+    }
+    @media (max-height: 520px) {
+      #brand .en, #brand .rule { display: none; }
+      #brand h1 { font-size: 24px; }
+      #brand .meta { margin-top: 8px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #loading .wheel { animation-duration: 12s; }
+      *, *::before, *::after { transition-duration: .01s !important; transition-delay: 0s !important; }
+    }
+    body.no-anim *, body.no-anim *::before, body.no-anim *::after { transition: none !important; animation: none !important; }
+    body.shot #brand, body.shot #dock, body.shot #corner, body.shot #unhide, body.shot #toast, body.shot #hint, body.shot #flash, body.shot #loading { display: none !important; }
+  </style>
+</head>
+<body class="is-loading" data-atmos="golden">
+  <div id="app"></div>
+
+  <header id="brand">
+    <h1>鹈鹕骑行</h1>
+    <p class="en">A PELICAN ON A BICYCLE</p>
+    <div class="rule"></div>
+    <p class="meta"><span>海岸公路</span><i></i><span><span id="metaLabel">黄金时刻</span> <b id="metaClock">17:40</b></span></p>
+  </header>
+
+  <div id="corner" class="glass" role="toolbar" aria-label="视窗">
+    <button class="ib" id="btnFull" type="button" aria-pressed="false" aria-label="全屏" data-tip="全屏（F）">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <g class="off-state"><path d="M4 9V5.5A1.5 1.5 0 0 1 5.5 4H9M15 4h3.5A1.5 1.5 0 0 1 20 5.5V9M20 15v3.5a1.5 1.5 0 0 1-1.5 1.5H15M9 20H5.5A1.5 1.5 0 0 1 4 18.5V15"/></g>
+        <g class="on-state"><path d="M9 4v3.5A1.5 1.5 0 0 1 7.5 9H4M20 9h-3.5A1.5 1.5 0 0 1 15 7.5V4M15 20v-3.5a1.5 1.5 0 0 1 1.5-1.5H20M4 15h3.5A1.5 1.5 0 0 1 9 16.5V20"/></g>
+      </svg>
+    </button>
+    <button class="ib" id="btnHide" type="button" aria-label="隐藏界面" data-tip="隐藏界面（H）">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6.5 9-6.5S21 12 21 12s-3.5 6.5-9 6.5S3 12 3 12z"/><circle cx="12" cy="12" r="2.8"/><path d="M4.5 4.5l15 15"/></svg>
+    </button>
+    <button class="ib" id="btnHelp" type="button" aria-label="操作指南" data-tip="操作指南（?）">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.5 2.4c-.7.3-1 .8-1 1.6"/><circle class="f" cx="12" cy="16.7" r=".9"/></svg>
+    </button>
+  </div>
+
+  <button class="ib glass" id="unhide" type="button" aria-label="显示界面" title="显示界面（H）">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6.5 9-6.5S21 12 21 12s-3.5 6.5-9 6.5S3 12 3 12z"/><circle cx="12" cy="12" r="2.8"/></svg>
+  </button>
+
+  <nav id="dock" class="glass" aria-label="控制面板">
+    <div class="grp" role="group" aria-label="视角">
+      <div class="seg" id="segView">
+        <i class="thumb"></i>
+        <button type="button" data-view="hero" aria-pressed="false" data-tip="经典视角（1）">经典</button>
+        <button type="button" data-view="side" aria-pressed="false" data-tip="侧面视角（2）">侧面</button>
+        <button type="button" data-view="front" aria-pressed="false" data-tip="正面视角（3）">正面</button>
+        <button type="button" data-view="chase" aria-pressed="false" data-tip="追随视角（4）">追随</button>
+        <button type="button" data-view="face" aria-pressed="false" data-tip="面部特写（5）">特写</button>
+      </div>
+    </div>
+
+    <div class="grp" role="group" aria-label="时刻">
+      <div class="seg" id="segAtmos">
+        <i class="thumb"></i>
+        <button type="button" data-atmos="golden" aria-pressed="true" data-tip="黄金时刻（Q）"><i class="sw"></i>黄金时刻</button>
+        <button type="button" data-atmos="morning" aria-pressed="false" data-tip="清晨（W）"><i class="sw"></i>清晨</button>
+        <button type="button" data-atmos="noon" aria-pressed="false" data-tip="正午（E）"><i class="sw"></i>正午</button>
+        <button type="button" data-atmos="dusk" aria-pressed="false" data-tip="暮色（R）"><i class="sw"></i>暮色</button>
+      </div>
+    </div>
+
+    <div class="grp" role="group" aria-label="车速">
+      <button class="ib round" id="btnPlay" type="button" aria-pressed="false" aria-label="暂停" data-tip="暂停 / 继续（空格）">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <g class="off-state"><rect class="f" x="6.6" y="5" width="3.7" height="14" rx="1.2"/><rect class="f" x="13.7" y="5" width="3.7" height="14" rx="1.2"/></g>
+          <g class="on-state"><path class="f" d="M8.2 5.6v12.8a.9.9 0 0 0 1.4.8l10-6.4a.9.9 0 0 0 0-1.6l-10-6.4a.9.9 0 0 0-1.4.8z"/></g>
+        </svg>
+      </button>
+      <label class="slider">
+        <span class="lab">车速</span>
+        <input id="speed" type="range" min="0.25" max="2" step="0.05" value="1" aria-label="车速" />
+        <output id="speedOut" for="speed">16 km/h</output>
+      </label>
+    </div>
+
+    <div class="grp" role="group" aria-label="工具">
+      <button class="ib" id="btnOrbit" type="button" aria-pressed="false" aria-label="自动环绕" data-tip="自动环绕（O）">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9.2" ry="4.3" transform="rotate(-24 12 12)"/><circle class="f" cx="12" cy="12" r="2.1"/><path d="M18.6 6.2l1.7-.2-.4 1.7"/></svg>
+      </button>
+      <button class="ib" id="btnShot" type="button" aria-label="拍照" data-tip="保存截图（P）">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8.8A2.8 2.8 0 0 1 6.8 6h1l1.1-1.6A1.6 1.6 0 0 1 10.2 3.7h3.6a1.6 1.6 0 0 1 1.3.7L16.2 6h1A2.8 2.8 0 0 1 20 8.8v7.4a2.8 2.8 0 0 1-2.8 2.8H6.8A2.8 2.8 0 0 1 4 16.2z"/><circle cx="12" cy="12.4" r="3.3"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div id="hint" role="note"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="flash"></div>
+
+  <div id="help" aria-hidden="true">
+    <div class="card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <button class="ib x" type="button" data-close aria-label="关闭"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+      <h2 id="helpTitle">操作指南</h2>
+      <p class="sub">鼠标、触摸、键盘都可以。慢慢看，这趟路很长。</p>
+      <div class="cols">
+        <section>
+          <h3>镜头</h3>
+          <ul>
+            <li><span>旋转视角</span><span class="k"><kbd>拖动</kbd></span></li>
+            <li><span>缩放</span><span class="k"><kbd>滚轮</kbd><kbd>双指</kbd></span></li>
+            <li><span>回到经典</span><span class="k"><kbd>双击</kbd></span></li>
+            <li><span>转动</span><span class="k"><kbd>←</kbd><kbd>→</kbd></span></li>
+            <li><span>推近 / 拉远</span><span class="k"><kbd>↑</kbd><kbd>↓</kbd></span></li>
+            <li><span>切换视角</span><span class="k"><kbd>1</kbd><kbd>…</kbd><kbd>5</kbd></span></li>
+          </ul>
+        </section>
+        <section>
+          <h3>时刻</h3>
+          <ul>
+            <li><span>黄金 · 清晨</span><span class="k"><kbd>Q</kbd><kbd>W</kbd></span></li>
+            <li><span>正午 · 暮色</span><span class="k"><kbd>E</kbd><kbd>R</kbd></span></li>
+            <li><span>下一个时刻</span><span class="k"><kbd>T</kbd></span></li>
+          </ul>
+          <h3>骑行</h3>
+          <ul>
+            <li><span>暂停 / 继续</span><span class="k"><kbd>空格</kbd></span></li>
+            <li><span>加速 / 减速</span><span class="k"><kbd>+</kbd><kbd>−</kbd></span></li>
+            <li><span>自动环绕</span><span class="k"><kbd>O</kbd></span></li>
+          </ul>
+        </section>
+        <section>
+          <h3>其他</h3>
+          <ul>
+            <li><span>保存截图</span><span class="k"><kbd>P</kbd></span></li>
+            <li><span>全屏</span><span class="k"><kbd>F</kbd></span></li>
+            <li><span>隐藏 / 显示界面</span><span class="k"><kbd>H</kbd></span></li>
+            <li><span>本指南</span><span class="k"><kbd>?</kbd></span></li>
+            <li><span>关闭</span><span class="k"><kbd>Esc</kbd></span></li>
+          </ul>
+        </section>
+      </div>
+      <p class="foot">全部由代码即时生成：羽毛、车架、海浪、云，没有用到任何外部模型或贴图。本作由 <b>Claude Sonnet 5.5</b> 制作。</p>
+    </div>
+  </div>
+
+  <div id="loading" role="status" aria-live="polite">
+    <div class="box">
+      <svg class="wheel" viewBox="0 0 100 100" fill="none" stroke="currentColor" aria-hidden="true">
+        <circle cx="50" cy="50" r="46" stroke-width="3.2"/>
+        <circle cx="50" cy="50" r="41" stroke-width="1" opacity=".55"/>
+        <g stroke-width="1.1" stroke-linecap="round">
+          <path d="M50 9v82M9 50h82M21 21l58 58M79 21 21 79"/>
+          <path d="M50 9v82M9 50h82M21 21l58 58M79 21 21 79" transform="rotate(22.5 50 50)"/>
+        </g>
+        <circle cx="50" cy="50" r="5.5" stroke-width="2.6" fill="currentColor" fill-opacity=".15"/>
+      </svg>
+      <h2>鹈鹕骑行</h2>
+      <p class="en">A PELICAN ON A BICYCLE</p>
+      <div class="bar"><i></i></div>
+      <p class="msg">正在启程…</p>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="position:fixed;inset:0;z-index:99;display:grid;place-items:center;background:#f1c4a2;color:#4b2a35;font:16px/1.8 sans-serif;text-align:center">需要启用 JavaScript 才能看到这位骑行的鹈鹕。</div>
+  </noscript>
+
+  <script>
+    // Let the loading screen paint first; the bundle then builds the whole scene procedurally.
+    (function () {
+      var started = false;
+      function start() {
+        if (started) return;
+        started = true;
+        var s = document.createElement('script');
+        s.src = 'dist/pelican.js';
+        s.onerror = function () {
+          var l = document.getElementById('loading');
+          var m = l && l.querySelector('.msg');
+          if (l) l.classList.add('failed');
+          if (m) m.textContent = '没有找到 dist/pelican.js。\n请先在项目目录运行：npm install && npm run build';
+        };
+        document.body.appendChild(s);
+      }
+      requestAnimationFrame(function () { setTimeout(start, 40); });
+      setTimeout(start, 500);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+/* 鹈鹕骑行（pelican）：游戏作为 panel 窗口内的内嵌页面呈现。
+   panel 本身去掉内边距与滚动条，整体让给 iframe；游戏内部的 UI 与拖拽缩放全部保持原样。 */
+.pelican-panel {
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #10161f !important;
+    border: 1px solid rgba(255, 159, 118, 0.28) !important;
+    box-shadow: 0 18px 46px -18px rgba(24, 12, 20, 0.55) !important;
+}
+
+.pelican-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    margin: 0;
+    border: 0;
+    border-radius: calc(var(--app-radius-lg) - 1px);
+    background: #f1c4a2;
+    color-scheme: normal;
+}
+
+/* 面板占满可视区域，游戏画布按 iframe 尺寸自适应 */
+#panel.pelican-panel {
+    opacity: 1;
+    transform: none;
+}
+
+/* 屏幕阅读器/爬虫可见的作者标注：不占布局、不遮挡游戏 UI */
+.pelican-credit {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* 无 WebGL 时的兜底提示（此时 iframe 已被移除） */
+.pelican-fallback {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    height: 100%;
+    padding: clamp(20px, 6vw, 64px);
+    color: #fff6ec;
+    background: linear-gradient(160deg, #2a1b24 0%, #10161f 100%);
+    line-height: 1.9;
+}
+
+/* 上面的 display 会盖过 UA 的 [hidden] 规则，这里显式还原：有 WebGL 时绝不显示 */
+.pelican-fallback[hidden] {
+    display: none;
+}
+
+.pelican-fallback h1 {
+    margin: 0 0 6px;
+    font-size: clamp(20px, 3vw, 30px);
+}
+
+.pelican-fallback p {
+    margin: 0;
+    max-width: 62ch;
+    color: rgba(255, 246, 236, 0.82);
+}
+
+.pelican-home-link {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: #4a2216 !important;
+    background: #ffdcae;
+    text-decoration: none;
+}
+
+@media (max-width: 640px) {
+    .pelican-frame { min-height: 420px; }
+}

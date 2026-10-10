@@ -1,0 +1,19 @@
+{
+  "name": "pelican-on-a-bicycle",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A fully procedural 3D pelican riding a bicycle along a golden-hour coast. three.js, zero external assets.",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "shot": "node tools/shot.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "puppeteer-core": "^25.13.0"
+  }
+}

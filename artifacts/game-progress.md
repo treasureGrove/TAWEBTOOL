@@ -95,3 +95,19 @@ input → player → weapon(hitscan) → enemies/waves → vfx/audio → ui/hud
 - [x] AI：扑向玩家近战；疾行尸冲刺；吐酸尸风筝喷吐
 - [x] 爆头判定（头名 `core`），文案/菜单改「小树林尸潮」
 - [x] 右键机瞄释放 + 屏蔽浏览器右键手势（另见 pass-3 ads-context）
+
+## Integration（鹈鹕骑行 pelican：作为游戏页一环接入）
+
+- [x] 收录 `games/pelican/`（`index.html` + `dist/pelican.js` 原样落地，另附 `src/`、`build.mjs`、
+      `tools/shot.mjs` 便于在本站迭代）
+- [x] 入口页 `tools_html/pelican.html`：站点标准工具页（左侧导航 + 顶部搜索保留），游戏本体在
+      `#panel` 窗口内以 iframe 内嵌（`css/pelican.css`），不跳离工具箱框架；无 WebGL 时自动移除
+      iframe 并给出「暂不可用」提示
+- [x] 首页「游戏」分类 + 侧边导航登记：`js/menu.js`（`MENU_DATA`）、`js/index.js`（`TOOL_DESC`）、
+      `index.html`（静态兜底卡片，计数 3 → 4）
+- [x] 搜索关键词标注作者：关键词含 `Claude Sonnet 5.5` / `Claude Sonnet5.5` / `claude sonnet 5.5` /
+      `sonnet 5.5` / `claude`（`js/menu.js`、`tools_html/pelican.html`、`games/pelican/index.html`
+      的 meta keywords）；首页卡片、游戏内帮助卡也注明「由 Claude Sonnet 5.5 制作」
+- [x] 验证：Playwright 实测（桌面 1440×960 / iPhone 13）首页 4 张游戏卡片 + 侧边导航 + 6 组搜索
+      关键词（鹈鹕 / pelican / claude sonnet 5.5 / claude sonnet5.5 / sonnet / claude）全部命中；
+      panel 内 iframe 画布真实渲染非空白、0 报错；无 WebGL 时移除 iframe 并显示兜底提示

@@ -1,0 +1,78 @@
+<!-- 由 Claude Sonnet 5.5 制作的《鹈鹕骑行》游戏页；游戏本体在 panel 窗口内嵌呈现 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="鹈鹕骑行（A Pelican on a Bicycle）—— 一只鹈鹕骑着复古自行车驶过黄金时刻海岸的纯程序化 3D 场景，零外部模型与贴图。在 TA工具箱游戏页直接开玩，由 Claude Sonnet 5.5 制作。">
+    <meta name="keywords" content="鹈鹕骑行,鹈鹕骑自行车,骑自行车,鹈鹕,pelican on a bicycle,pelican,bicycle,3D 小游戏,three.js,程序化生成,海岸,黄金时刻,治愈,小游戏,TA工具箱,游戏,Claude Sonnet 5.5,Claude Sonnet5.5,claude sonnet 5.5,sonnet 5.5,claude,Claude 制作,AI 制作,AI 生成">
+    <meta name="author" content="宝藏小树林">
+    <meta name="generator" content="Claude Sonnet 5.5">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/pelican.html">
+
+    <meta property="og:title" content="鹈鹕骑行 - 3D 海岸骑行小游戏 | TA工具箱">
+    <meta property="og:description" content="纯程序化生成的黄金时刻海岸 3D 场景，鼠标或触屏即可环视，由 Claude Sonnet 5.5 制作。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/pelican.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="TA工具箱 · 技术美术在线工具箱">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand">
+    <meta name="twitter:title" content="鹈鹕骑行 - 3D 海岸骑行小游戏 | TA工具箱">
+    <meta name="twitter:description" content="纯程序化海岸骑行 3D 场景，由 Claude Sonnet 5.5 制作。">
+
+    <title>鹈鹕骑行 - 3D 海岸骑行小游戏 | TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/pelican.css">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="48x48" href="../assets/images/icon/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="../assets/images/icon/favicon-144x144.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+</head>
+
+<body>
+    <script src="../js/menu.js"></script>
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel" class="pelican-panel">
+        <iframe class="pelican-frame" src="../games/pelican/" title="鹈鹕骑行 · A Pelican on a Bicycle（由 Claude Sonnet 5.5 制作）" allow="fullscreen; autoplay" allowfullscreen loading="eager"></iframe>
+        <div class="pelican-fallback" id="pelicanFallback" hidden>
+            <h1>鹈鹕骑行暂不可用</h1>
+            <p>当前浏览器没有可用的 WebGL，无法运行这个程序化 3D 场景。请换用支持 WebGL 的浏览器（桌面 Chrome / Edge / Firefox / Safari 均可），或回到工具箱选择其它工具。</p>
+            <p><a class="pelican-home-link" href="../index.html">← 返回 TA工具箱</a></p>
+        </div>
+        <p class="pelican-credit">本作《鹈鹕骑行 · A Pelican on a Bicycle》由 Claude Sonnet 5.5 制作，纯程序化 3D，零外部模型与贴图，收录于 TA工具箱游戏页。</p>
+    </div>
+
+    <script>
+        // 没有 WebGL 时移除 iframe：避免无谓地下载并初始化整包 3D 场景，改为给出明确提示。
+        (function () {
+            function webglSupported() {
+                try {
+                    var canvas = document.createElement('canvas');
+                    return Boolean(window.WebGLRenderingContext && (canvas.getContext('webgl2') || canvas.getContext('webgl')));
+                } catch (error) { return false; }
+            }
+            if (webglSupported()) return;
+            var frame = document.querySelector('.pelican-frame');
+            if (frame && frame.parentNode) frame.parentNode.removeChild(frame);
+            var fallback = document.getElementById('pelicanFallback');
+            if (fallback) fallback.hidden = false;
+        })();
+    </script>
+</body>
+
+</html>

@@ -31,6 +31,7 @@ var MENU_DATA = [
         { label: '铅之圣咏', href: 'lead_canticle.html', keywords: ['废土', '鉴定', '当铺', '背包', '经营', '多结局', '3D', '游戏', 'lead', 'canticle'] },
         { label: '小树林尸潮', href: 'grove_range.html', keywords: ['FPS', '射击', '僵尸', '尸潮', '小游戏', 'game', 'shooter', '波次', '排行', '最高分', 'three', '3D射击', '爆头', '小树林'] },
         { label: '单目幸存者', href: 'grove_survivor.html', keywords: ['幸存者', '弹幕', '生存', '自动射击', 'roguelike', 'vampire', '俯视角', '小游戏', '升级', '排行'] },
+        { label: '鹈鹕骑行', href: 'pelican.html', keywords: ['鹈鹕', '鹈鹕骑自行车', '骑自行车', 'pelican', 'on a bicycle', 'bicycle', '自行车', '海岸', '黄金时刻', '程序化生成', 'three.js', '3D', '风景', '治愈', '小游戏', '游戏', 'Claude Sonnet 5.5', 'Claude Sonnet5.5', 'claude sonnet 5.5', 'sonnet 5.5', 'claude', 'sonnet', 'AI制作', 'AI生成'] },
     ]},
     { name: '游戏工具', icon: 'icon-ta', items: [
         { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集', 'spritesheet', 'pack', '贴图集', '合并', 'sprite sheet', '帧动画'] },
