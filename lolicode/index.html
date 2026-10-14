@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="LoliCode 桌面编程工作台：统一渠道与模型，选择项目，用聊天完成代码工作。下载与软件更新入口。" />
+    <title>LoliCode · 下载与更新</title>
+    <link rel="canonical" href="https://tools.treasuregrove.art/lolicode/" />
+    <link rel="icon" href="./assets/logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./assets/site.css?v=4.0.13" />
+    <script src="./assets/downloads.js?v=4.0.13" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <a class="brand" href="./"><img src="./assets/logo.svg" alt="" width="40" height="40" /><span>LoliCode</span></a>
+      <a href="/">返回 TA 工具箱 ↗</a>
+    </header>
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <div class="intro">
+          <p class="eyebrow">你的桌面编程工作台</p>
+          <h1 id="title">从一个项目开始，<br />让想法变成代码。</h1>
+          <p class="description">统一管理渠道与模型，选择项目后直接聊天。随时查看代码改动、切换模型和管理操作权限。</p>
+          <div class="features"><span>渠道与模型</span><span>项目与会话</span><span>技能与插件</span><span>Auto 模式</span></div>
+          <div class="download-card">
+            <div class="release"><span id="version">正在读取版本…</span><span>Windows · x64</span></div>
+            <p id="status" role="status" aria-live="polite">正在连接发布服务。</p>
+            <div class="downloads">
+              <a id="installer" class="button primary" aria-disabled="true">下载安装版</a>
+              <a id="portable" class="button secondary" aria-disabled="true">下载便携版</a>
+              <button id="retry" type="button" hidden>重新读取</button>
+            </div>
+            <p class="hint">推荐安装版，后续可在应用内更新。首次从旧版升级时，请先从托盘退出旧版。</p>
+          </div>
+        </div>
+        <div class="mascot"><img src="./assets/maid.png" alt="LoliCode 女仆吉祥物" width="300" height="450" /></div>
+      </section>
+      <section class="notes" aria-labelledby="notes-title">
+        <div><p class="eyebrow">软件更新</p><h2 id="notes-title">这次更新了什么</h2></div>
+        <p id="notes">发布说明加载中。</p>
+        <p class="hint">更新包通过应用内签名校验。首次安装支持自动更新的版本后，在左侧“软件更新”查看新版本、下载进度与安装结果。</p>
+      </section>
+    </main>
+    <footer><span>LoliCode · Based on CC Switch / OpenCode</span><a href="https://github.com/treasureGrove/TAI-Switch">查看源码 ↗</a></footer>
+  </body>
+</html>
