@@ -76,7 +76,7 @@ test("missing source markers stop a build instead of silently producing a broken
 test("builder emits only the homepage assets and can refresh its own directory", async () => {
   await tempDirectory(async (directory) => {
     const result = await buildHome({ outDirectory: directory });
-    assert.equal(result.files.length, 6);
+    assert.equal(result.files.length, 7);
     assert.deepEqual((await readdir(directory)).sort(), [
       ".lolicode-home-build.json",
       "desktop-assets",
@@ -84,7 +84,7 @@ test("builder emits only the homepage assets and can refresh its own directory",
     ]);
     assert.deepEqual(
       (await readdir(path.join(directory, "desktop-assets"))).sort(),
-      ["downloads.js", "logo.svg", "maid.png", "site.css", "workbench.jpg"],
+      ["downloads.js", "logo.svg", "maid.png", "motion.js", "site.css", "workbench.jpg"],
     );
     await buildHome({ outDirectory: directory, forumPath: "/community" });
     assert.match(

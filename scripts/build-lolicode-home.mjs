@@ -17,6 +17,7 @@ const sourceDirectory = path.join(repository, "lolicode");
 const assetNames = [
   "site.css",
   "downloads.js",
+  "motion.js",
   "logo.svg",
   "maid.png",
   "workbench.jpg",

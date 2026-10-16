@@ -37,3 +37,21 @@ python3 /root/lolicode-home-20261016-v3/deploy.py restore-production
 
 后续发布必须先上传对应 GitHub Release 并验证匿名下载及 SHA256，再切最新清单。
 Windows 签名仍由原 LoliCode 更新公钥验证；不要修改现有用户的更新源或覆盖版本附件。
+
+## 2026-10-17 动效迭代
+
+`deploy-motion.py` 是独立的静态资源批次，不修改更新清单、论坛、API 或数据库。
+根域静态文件现为 `/var/www/lolicode-site/releases/20261017-motion-v1`；原 Nginx 主配置 SHA256 不变，
+原有首页 snippet 中的两个静态目录切到此版本，snippet SHA256 为
+`28c6fff3bed475ccd3f9ce016cdafd9634a6ca75aeeff1083e7f8829da43f95f`。
+切换前通过 payload 哈希和配置基线校验，切换后 `nginx -t`、reload 通过；原 snippet 保存在
+`/root/lolicode-20261017-motion-v1/production-snippet.before`。回退前必须核对当前 snippet 哈希，
+只恢复此文件并检查、reload，不恢复整个旧站配置。
+
+工具站同步了 HTML、样式和新增的 `motion.js`，原文件私有备份为同批次的 `tools-before/`。
+入口、下载脚本和签名源保持兼容。线上首页、社区 `/all`、API `/api`、更新清单均返回 200。
+
+动效使用渐进入场、轻量悬停与区段导航提示；没有循环背景动画或自动播放。
+首屏始终直接显示，脚本/IntersectionObserver 不可用时内容保持可读，键盘焦点会立即显示目标，
+开启系统减少动态效果后停止所有动画。浏览器实测桌面及 390px 宽无横向溢出、控制台无错误，
+安装按钮仍直连已发布的 GitHub 附件。Node 验收 47/47 通过。
