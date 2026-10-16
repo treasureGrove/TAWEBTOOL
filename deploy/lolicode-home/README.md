@@ -5,7 +5,7 @@
 社区入口为 `/all`，账户 API 与 Flarum 其它路由保持原配置。
 
 服务器只新增精确 `/`、`/desktop-assets/` 和 `/downloads/` 路由。
-图片与样式在 `/var/www/lolicode-site/releases/20261016-home-v3`。
+图片与样式现为 `/var/www/lolicode-site/releases/20261017-release18-v1`。
 安装器/便携包直连公开的 `treasureGrove/LoliCode-Releases`；兼容下载路径返回
 302，不代理大文件。只有不足 2KB 的公开版本清单经固定上游网关读取。
 网关不转发 Cookie、Authorization 或请求体，且启用上游 TLS 证书校验。
@@ -55,3 +55,43 @@ Windows 签名仍由原 LoliCode 更新公钥验证；不要修改现有用户�
 首屏始终直接显示，脚本/IntersectionObserver 不可用时内容保持可读，键盘焦点会立即显示目标，
 开启系统减少动态效果后停止所有动画。浏览器实测桌面及 390px 宽无横向溢出、控制台无错误，
 安装按钮仍直连已发布的 GitHub 附件。Node 验收 47/47 通过。
+
+## 4.0.18 官网文案批次（已发布）
+
+`deploy-release18.py` 是独立批次 `20261017-release18-v1`。它沿用上面的当前生产
+主配置、首页 snippet 和工具站首页 SHA256 作为基线，只更新自有静态首页。
+不会写入 `updates/latest.json`、二进制、论坛、API、数据库或定时任务。
+运行前只读检查固定工具站 feed 已公开签名的 4.0.18 安装包；检查失败时不写入。
+已在桌面端 4.0.18 正式发布及签名验证通过后执行本批次。
+
+本轮文案区分已实现的本机基础记忆与规划中的高级记忆，说明带参数工作流、
+执行历史、停止任务和 Windows 闲时执行，以及八类按需添加的 CLI 技能。
+外部应用配置覆盖 WorkBuddy、DeepSeek Harness、ZCode 与 MiMo；用量来自已有记录，
+不将缺失费用当作零，也不宣称完整官方账单或 Hermes 插件兼容。
+保留原动效、模型选择、GitHub 直链下载和社区入口；macOS / Linux 仍标为准备中。
+
+本地验收命令：
+
+```powershell
+node scripts/build-lolicode-home.mjs --out-dir tmp/lolicode-release18-v1/home --forum-path /all
+node --test scripts/tests/lolicode-downloads.test.mjs scripts/tests/lolicode-home-build.test.mjs scripts/tests/lolicode-motion.test.mjs scripts/tests/lolicode-product-copy.test.mjs
+```
+
+Node 验收 50/50 通过，部署脚本 Python 语法检查通过。部署 payload 在
+`tmp/lolicode-release18-v1/`，包含固定文件清单与 SHA256；不上传构建器的本地归属标记。
+根域生产静态目录为 `/var/www/lolicode-site/releases/20261017-release18-v1`，
+首页 SHA256 为 `04420f8a2fd630ac306493f2dbe47fbe71fa376f657a887f9bd2c65489429be8`。
+主 Nginx 配置 SHA256 仍为 `819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75`，
+首页 snippet SHA256 更新为 `876705197648cf6fc56eac72af8590ff10b1979a2391bb9458f60bf5d048e876`；
+`nginx -t` 与 reload 通过。原 snippet 私有备份为
+`/root/lolicode-20261017-release18-v1/production-snippet.before`，其 SHA256 为上轮
+`28c6fff3bed475ccd3f9ce016cdafd9634a6ca75aeeff1083e7f8829da43f95f`。
+回退前核对当前主配置和 snippet 哈希，只恢复这份 snippet，再检查配置及 reload。
+
+工具站只替换 `index.html`，SHA256 为
+`6904047cd8e39c08f535c576802e3a4ba5079f88cb95458ff16af6c80c91ce96`，
+原文件在工具服务器 `/root/lolicode-20261017-release18-v1/tools-index.before`。
+根域首页、社区 `/all`、API `/api`、动效脚本及两个站点的更新清单均匿名返回 200；
+更新清单依旧为 4.0.18，SHA256 `d5cbb1a497a9008bdb361458a53046d30840ba2d4a1373b6a7a6ecc243636ff7`，
+本批次前后未变。首页线上字节与本地准备产物一致。
+不能直接重跑本批次覆盖后续改动；下一次部署需新的批次与当前基线。
