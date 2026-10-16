@@ -1,56 +1,125 @@
 (() => {
-  const allowedOrigin = 'https://tools.treasuregrove.art';
-  const version = document.getElementById('version');
-  const status = document.getElementById('status');
-  const installer = document.getElementById('installer');
-  const portable = document.getElementById('portable');
-  const notes = document.getElementById('notes');
-  const retry = document.getElementById('retry');
+  "use strict";
+  const allowedOrigin = "https://tools.treasuregrove.art";
+  const version = document.getElementById("version");
+  const status = document.getElementById("status");
+  const installer = document.getElementById("installer");
+  const portable = document.getElementById("portable");
+  const notes = document.getElementById("notes");
+  const retry = document.getElementById("retry");
+  const releaseVersion = document.getElementById("release-version");
+  const releaseDate = document.getElementById("release-date");
   let loading = false;
-  const disable = () => {
+
+  function disable() {
     for (const link of [installer, portable]) {
-      link.removeAttribute('href');
-      link.setAttribute('aria-disabled', 'true');
+      link.removeAttribute("href");
+      link.setAttribute("aria-disabled", "true");
+      link.setAttribute("tabindex", "-1");
     }
-  };
+    portable.hidden = true;
+  }
+
+  function enable(link, url) {
+    link.href = url;
+    link.setAttribute("aria-disabled", "false");
+    link.removeAttribute("tabindex");
+    link.hidden = false;
+  }
+
+  function downloadUrl(value, prefix, portableArchive = false) {
+    if (typeof value !== "string") throw new Error("invalid download URL");
+    const url = new URL(value);
+    const expectedPath = portableArchive
+      ? url.pathname === `${prefix}LoliCode-Portable.zip`
+      : url.pathname.startsWith(prefix) && url.pathname.endsWith(".exe");
+    if (
+      url.origin !== allowedOrigin ||
+      !expectedPath ||
+      url.search ||
+      url.hash ||
+      url.username ||
+      url.password
+    ) {
+      throw new Error("invalid download URL");
+    }
+    return url.href;
+  }
+
   async function load() {
     if (loading) return;
     loading = true;
     retry.hidden = true;
     disable();
-    status.textContent = '正在连接发布服务。';
+    status.dataset.state = "loading";
+    status.textContent = "正在连接发布服务…";
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
     try {
-      const response = await fetch('./updates/latest.json', { cache: 'no-store' });
-      if (!response.ok) throw new Error('release unavailable');
+      const response = await fetch("./updates/latest.json", {
+        cache: "no-store",
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error("release unavailable");
       const release = await response.json();
-      const platform = release.platforms?.['windows-x86_64'];
-      if (!/^\d+\.\d+\.\d+$/.test(release.version) || !platform?.signature) throw new Error('invalid release');
-      const url = new URL(platform.url);
-      const prefix = `/lolicode/releases/${release.version}/`;
-      if (url.origin !== allowedOrigin || !url.pathname.startsWith(prefix) || !url.pathname.endsWith('.exe') || url.search || url.hash || url.username || url.password) throw new Error('invalid download URL');
-      installer.href = url.href;
-      installer.setAttribute('aria-disabled', 'false');
-      const portableInfo = release.downloads?.['windows-x86_64-portable'];
-      portable.hidden = !portableInfo;
-      if (portableInfo) {
-        const portableUrl = new URL(portableInfo.url);
-        if (portableUrl.origin !== allowedOrigin || portableUrl.pathname !== `${prefix}LoliCode-Portable.zip` || portableUrl.search || portableUrl.hash || portableUrl.username || portableUrl.password) throw new Error('invalid portable URL');
-        portable.href = portableUrl.href;
-        portable.setAttribute('aria-disabled', 'false');
+      const platform = release?.platforms?.["windows-x86_64"];
+      if (
+        !/^\d+\.\d+\.\d+$/.test(release?.version) ||
+        typeof platform?.signature !== "string" ||
+        !platform.signature.trim()
+      ) {
+        throw new Error("invalid release");
       }
+      const prefix = `/lolicode/releases/${release.version}/`;
+      const installerUrl = downloadUrl(platform.url, prefix);
+      const portableInfo = release.downloads?.["windows-x86_64-portable"];
+      const portableUrl = portableInfo
+        ? downloadUrl(portableInfo.url, prefix, true)
+        : null;
+
+      // Activate links only after the complete manifest has passed validation.
+      enable(installer, installerUrl);
+      if (portableUrl) enable(portable, portableUrl);
       version.textContent = `LoliCode ${release.version}`;
-      status.textContent = '正式版已发布，可以下载。';
-      notes.textContent = typeof release.notes === 'string' && release.notes.trim() ? release.notes : '此版本包含功能改进与问题修复。';
+      releaseVersion.textContent = `v${release.version}`;
+      status.dataset.state = "ready";
+      status.textContent = "正式版已发布 · 推荐安装版，支持应用内更新。";
+      notes.textContent =
+        typeof release.notes === "string" && release.notes.trim()
+          ? release.notes
+          : "此版本包含功能改进与问题修复。";
+      const date =
+        typeof release.pub_date === "string"
+          ? new Date(release.pub_date)
+          : null;
+      if (date && Number.isFinite(date.getTime())) {
+        releaseDate.dateTime = date.toISOString();
+        releaseDate.textContent = new Intl.DateTimeFormat("zh-CN", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          timeZone: "Asia/Singapore",
+        }).format(date);
+        releaseDate.hidden = false;
+      } else {
+        releaseDate.hidden = true;
+      }
     } catch {
       disable();
-      version.textContent = '版本暂未读取成功';
-      status.textContent = '暂时无法获取下载信息，请稍后重试。';
-      notes.textContent = '发布说明暂不可用。';
+      version.textContent = "暂时无法读取版本";
+      releaseVersion.textContent = "版本信息暂不可用";
+      releaseDate.hidden = true;
+      status.dataset.state = "error";
+      status.textContent = "暂时无法获取下载信息，请重试，或稍后回来。";
+      notes.textContent =
+        "发布说明暂不可用，可通过「全部更新」查看项目发布记录。";
       retry.hidden = false;
     } finally {
+      clearTimeout(timeout);
       loading = false;
     }
   }
-  retry.addEventListener('click', () => void load());
+
+  retry.addEventListener("click", () => void load());
   void load();
 })();
