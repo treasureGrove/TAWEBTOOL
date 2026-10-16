@@ -1,6 +1,21 @@
 (() => {
   "use strict";
-  const allowedOrigin = "https://tools.treasuregrove.art";
+  // Page metadata selects a named profile, never an arbitrary feed or host.
+  const profiles = {
+    tools: { feed: "./updates/latest.json" },
+    home: { feed: "/downloads/updates/latest.json" },
+  };
+  const profileName =
+    document.querySelector('meta[name="lolicode-download-profile"]')?.content ||
+    "tools";
+  const profile = Object.hasOwn(profiles, profileName)
+    ? profiles[profileName]
+    : null;
+  const downloadRoots = new Map([
+    ["https://tools.treasuregrove.art", "/lolicode/releases/"],
+    ["https://lolicode.com", "/downloads/releases/"],
+    ["https://github.com", "/treasureGrove/LoliCode-Releases/releases/download/lolicode-v"],
+  ]);
   const version = document.getElementById("version");
   const status = document.getElementById("status");
   const installer = document.getElementById("installer");
@@ -27,14 +42,18 @@
     link.hidden = false;
   }
 
-  function downloadUrl(value, prefix, portableArchive = false) {
+  function downloadUrl(value, releaseVersion, portableArchive = false) {
     if (typeof value !== "string") throw new Error("invalid download URL");
     const url = new URL(value);
+    const root = downloadRoots.get(url.origin);
+    if (!root) throw new Error("invalid download origin");
+    const prefix = `${root}${releaseVersion}/`;
+    const filename = url.pathname.slice(prefix.length);
     const expectedPath = portableArchive
       ? url.pathname === `${prefix}LoliCode-Portable.zip`
-      : url.pathname.startsWith(prefix) && url.pathname.endsWith(".exe");
+      : url.pathname.startsWith(prefix) && url.pathname.endsWith(".exe") &&
+        (url.origin !== "https://github.com" || /^[A-Za-z0-9][A-Za-z0-9._-]*\.exe$/.test(filename));
     if (
-      url.origin !== allowedOrigin ||
       !expectedPath ||
       url.search ||
       url.hash ||
@@ -56,7 +75,8 @@
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
     try {
-      const response = await fetch("./updates/latest.json", {
+      if (!profile) throw new Error("invalid download profile");
+      const response = await fetch(profile.feed, {
         cache: "no-store",
         signal: controller.signal,
       });
@@ -70,11 +90,10 @@
       ) {
         throw new Error("invalid release");
       }
-      const prefix = `/lolicode/releases/${release.version}/`;
-      const installerUrl = downloadUrl(platform.url, prefix);
+      const installerUrl = downloadUrl(platform.url, release.version);
       const portableInfo = release.downloads?.["windows-x86_64-portable"];
       const portableUrl = portableInfo
-        ? downloadUrl(portableInfo.url, prefix, true)
+        ? downloadUrl(portableInfo.url, release.version, true)
         : null;
 
       // Activate links only after the complete manifest has passed validation.

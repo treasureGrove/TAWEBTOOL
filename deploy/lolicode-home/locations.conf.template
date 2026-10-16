@@ -1,0 +1,43 @@
+# Included inside the existing HTTPS server. Forum/PHP routes stay in place.
+location = / {
+    root @SITE_ROOT@;
+    try_files /index.html =404;
+    default_type text/html;
+    add_header Cache-Control "no-cache" always;
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy same-origin always;
+    add_header Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'" always;
+    @NOINDEX@
+}
+
+location ^~ /desktop-assets/ {
+    alias @SITE_ROOT@/desktop-assets/;
+    autoindex off;
+    add_header Cache-Control "public, max-age=3600";
+    add_header X-Content-Type-Options nosniff always;
+    @NOINDEX@
+}
+
+# Public, fixed upstream only. Never forward forum cookies or credentials.
+location = /downloads/updates/latest.json {
+    proxy_pass https://tools.treasuregrove.art/lolicode/updates/latest.json;
+    include /etc/nginx/snippets/lolicode-download-transport.conf;
+    proxy_hide_header Cache-Control;
+    proxy_hide_header Expires;
+    proxy_hide_header ETag;
+    proxy_hide_header Last-Modified;
+    sub_filter_types application/json;
+    sub_filter_once off;
+    sub_filter 'https://tools.treasuregrove.art/lolicode/releases/' '@DOWNLOAD_ROOT@';
+    add_header Cache-Control "no-store" always;
+    add_header X-Content-Type-Options nosniff always;
+    @NOINDEX@
+}
+
+location ^~ /downloads/releases/ {
+    # Compatibility entry only: send large downloads directly to GitHub.
+    rewrite ^/downloads/releases/([0-9]+\.[0-9]+\.[0-9]+)/([A-Za-z0-9_.-]+)$ https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v$1/$2 redirect;
+    return 404;
+    add_header X-Content-Type-Options nosniff always;
+    @NOINDEX@
+}
