@@ -815,8 +815,43 @@ h2 {
   color: #d6c5cd;
   font-size: 12px;
   line-height: 1.95;
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
+}
+#notes > ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+#notes li + li {
+  margin-top: 0.6em;
+}
+#notes h3 {
+  margin: 1.3em 0 0.6em;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gold);
+}
+#notes p + p {
+  margin-top: 0.9em;
+}
+.release-notes-extra {
+  margin-top: 1.3em;
+  padding-top: 0.8em;
+  border-top: 1px solid var(--line-soft);
+  color: var(--muted);
+}
+.release-notes-extra summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 11px;
+}
+.release-notes-extra summary:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+.release-notes-extra[open] summary {
+  margin-bottom: 1em;
 }
 .release-help {
   margin-top: 22px;

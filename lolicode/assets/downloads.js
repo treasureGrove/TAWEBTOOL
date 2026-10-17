@@ -30,6 +30,51 @@
   const releaseDate = document.getElementById("release-date");
   let loading = false;
 
+  function renderNotes(value, currentVersion) {
+    // A deliberately small text-only renderer: release metadata never becomes
+    // HTML, links, styles or executable Markdown. Keep long details out of the
+    // primary reading path while retaining them behind a keyboard-native control.
+    const text = typeof value === "string" && value.trim()
+      ? value.slice(0, 32000).trim()
+      : "此版本包含功能改进与问题修复。";
+    const blocks = [];
+    let paragraph = [];
+    let list = null;
+    const node = (tag, content) => {
+      const element = document.createElement(tag);
+      element.textContent = content;
+      return element;
+    };
+    const flush = () => {
+      if (paragraph.length) blocks.push(node("p", paragraph.join(" ")));
+      paragraph = [];
+      list = null;
+    };
+    for (const line of text.split(/\r?\n/)) {
+      const trimmed = line.trim();
+      const heading = /^#{1,6}\s+(.+)$/.exec(trimmed);
+      const bullet = /^[-*]\s+(.+)$/.exec(trimmed);
+      if (!trimmed) { flush(); continue; }
+      if (heading) {
+        flush();
+        if (heading[1] !== `LoliCode ${currentVersion}`) blocks.push(node("h3", heading[1]));
+      } else if (bullet) {
+        if (paragraph.length) flush();
+        if (!list) { list = document.createElement("ul"); blocks.push(list); }
+        list.append(node("li", bullet[1]));
+      } else {
+        list = null;
+        paragraph.push(trimmed);
+      }
+    }
+    flush();
+    if (blocks.length <= 1) { notes.replaceChildren(...blocks); return; }
+    const extra = document.createElement("details");
+    extra.className = "release-notes-extra";
+    extra.append(node("summary", "完整更新说明"), ...blocks.slice(1));
+    notes.replaceChildren(blocks[0], extra);
+  }
+
   function disable() {
     for (const link of [installer, portable, githubBackup, tencentInstaller, tencentPortable]) {
       if (!link) continue;
@@ -163,10 +208,7 @@
       releaseVersion.textContent = `v${release.version}`;
       status.dataset.state = "ready";
       status.textContent = "正式版已发布 · 推荐安装版，支持应用内更新。";
-      notes.textContent =
-        typeof release.notes === "string" && release.notes.trim()
-          ? release.notes
-          : "此版本包含功能改进与问题修复。";
+      renderNotes(release.notes, release.version);
       const date =
         typeof release.pub_date === "string"
           ? new Date(release.pub_date)

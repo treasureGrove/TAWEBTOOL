@@ -157,3 +157,13 @@ snippet 只替换两处原静态目录，已有三个 R2 exact location 字节�
 原 snippet、工具站三个旧文件均留在各服务器私有
 `/root/lolicode-20261017-tencent-options-v1/`。回退前必须核对最新 snippet，
 不得覆盖随后单独添加的 Tencent 服务路由。
+
+## 2026-10-18 更新说明展示（已发布）
+
+`deploy-release-notes.py` 是独立静态批次 `20261018-release-notes-v1`，只更新两站自有首页与样式、下载展示脚本。版本摘要变为真实列表，长说明默认折叠，保留原生键盘展开控件。发布文字只通过 `textContent` 创建节点，不解析外部 HTML 或自动生成链接；下载验证及渠道选项逻辑保持原样。
+
+本地网站回归 145/145 通过；实际浏览器验证本地与生产的默认折叠、展开内容和原稳定下载链接，桌面没有横向溢出。尝试的 390px 视口覆盖未实际生效（页面仍报告 1280px），因此不宣称本轮完成手机宽度实测。生产截图保存在桌面工程本地 `release/acceptance/website-release-notes-live.jpg`。
+
+上线前核对两台服务器现有文件和 Nginx 基线，payload 归档 SHA256 为 `f83990bd5133609ae48571014b85924e4a366e41d324e3ee5139cdc8222078b9`。根域静态目录切到 `/var/www/lolicode-site/releases/20261018-release-notes-v1`；snippet 只替换两处静态目录，现有下载路由保留，当前 SHA256 为 `d19eb29f4cf38bd9c2ab95c1c7b147182e637f3140acea9a1ecd1bfc9a985a8b`。主 Nginx 配置 SHA256 仍为 `819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75`，检查和 reload 通过。工具站三个小文件在既有发布锁内原子替换，旧文件与原 snippet 备份留在各服务器 `/root/lolicode-20261018-release-notes-v1/`。
+
+线上 HTML、JavaScript、CSS 均完整下载核对字节哈希；首页、社区 `/all`、API `/api` 可访问。两个稳定更新清单仍是 4.0.20 / `4691d49885f5a2d9ceaf2962d2a9fe78368cc56ada5942d5f674ee1280190936`，本次不上传二进制、不调整腾讯服务、不发布候选版到稳定渠道。回退时先检查当前 snippet 和文件哈希，不能直接覆盖随后运维变更。

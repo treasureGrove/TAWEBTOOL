@@ -44,6 +44,15 @@ async function run({
   backupElement = true,
   tencentElements = true,
 } = {}) {
+  const makeNode = (tag) => ({
+    tagName: tag,
+    children: [],
+    value: "",
+    get textContent() { return this.value + this.children.map((child) => child.textContent).join(""); },
+    set textContent(value) { this.value = value; this.children = []; },
+    append(...children) { this.children.push(...children); },
+    replaceChildren(...children) { this.value = ""; this.children = children; },
+  });
   const ids = [
     "version",
     "status",
@@ -62,10 +71,10 @@ async function run({
     ids.map((id) => [
       id,
       {
+        ...makeNode("div"),
         hidden: false,
         dataset: {},
         attrs: {},
-        textContent: "",
         listeners: {},
         setAttribute(key, value) {
           this.attrs[key] = value;
@@ -80,9 +89,17 @@ async function run({
       },
     ]),
   );
+  // Object spread copies accessor values; retain the DOM-like text semantics.
+  for (const element of Object.values(elements)) {
+    Object.defineProperty(element, "textContent", {
+      get() { return this.value + this.children.map((child) => child.textContent).join(""); },
+      set(value) { this.value = value; this.children = []; },
+    });
+  }
   const requests = [];
   vm.runInNewContext(source, {
     document: {
+      createElement: makeNode,
       getElementById(id) {
         if (id === "github-backup" && !backupElement) return null;
         if (id.startsWith("tencent-") && !tencentElements) return null;
@@ -209,6 +226,25 @@ test("release notes are assigned as text", async () => {
   const { elements: e } = await run({ manifest });
   assert.equal(e.notes.textContent, manifest.notes);
   assert.equal(e.notes.innerHTML, undefined);
+});
+
+test("release notes show a semantic summary and retain complete details without HTML execution", async () => {
+  const manifest = release();
+  manifest.notes = "# LoliCode 4.0.16\r\n\r\n- First improvement\r\n- <img src=x onerror=alert(1)>\r\n\r\nLonger upgrade details.\r\nA continued paragraph.\r\n\r\n## Compatibility\r\n\r\nMore information.";
+  const { elements: e } = await run({ manifest });
+  assert.equal(e.notes.children[0].tagName, "ul");
+  assert.equal(e.notes.children[0].children.length, 2);
+  assert.equal(e.notes.children[0].children[1].textContent, "<img src=x onerror=alert(1)>");
+  const extra = e.notes.children[1];
+  assert.equal(extra.tagName, "details");
+  assert.equal(extra.open, undefined);
+  assert.equal(extra.children[0].tagName, "summary");
+  assert.equal(extra.children[0].textContent, "完整更新说明");
+  assert.equal(extra.children[1].textContent, "Longer upgrade details. A continued paragraph.");
+  assert.equal(extra.children[2].tagName, "h3");
+  assert.equal(extra.children[3].textContent, "More information.");
+  assert.equal(e.notes.innerHTML, undefined);
+  assert.equal(e.status.dataset.state, "ready");
 });
 test("home profile uses the root-domain feed and mirrored downloads", async () => {
   const { elements: e, requests } = await run({
