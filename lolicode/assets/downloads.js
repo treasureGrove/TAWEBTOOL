@@ -21,6 +21,9 @@
   const installer = document.getElementById("installer");
   const portable = document.getElementById("portable");
   const githubBackup = document.getElementById("github-backup");
+  const tencentDownloads = document.getElementById("tencent-downloads");
+  const tencentInstaller = document.getElementById("tencent-installer");
+  const tencentPortable = document.getElementById("tencent-portable");
   const notes = document.getElementById("notes");
   const retry = document.getElementById("retry");
   const releaseVersion = document.getElementById("release-version");
@@ -28,14 +31,17 @@
   let loading = false;
 
   function disable() {
-    for (const link of [installer, portable, githubBackup]) {
+    for (const link of [installer, portable, githubBackup, tencentInstaller, tencentPortable]) {
       if (!link) continue;
       link.removeAttribute("href");
       link.setAttribute("aria-disabled", "true");
       link.setAttribute("tabindex", "-1");
     }
     portable.hidden = true;
-    if (githubBackup) githubBackup.hidden = true;
+    for (const link of [githubBackup, tencentInstaller, tencentPortable]) {
+      if (link) link.hidden = true;
+    }
+    if (tencentDownloads) tencentDownloads.hidden = true;
   }
 
   function enable(link, url) {
@@ -68,21 +74,34 @@
     return url.href;
   }
 
+  function artifactMetadata(info, filename) {
+    return info !== null && typeof info === "object" && !Array.isArray(info)
+      && info.name === filename && Number.isSafeInteger(info.bytes) && info.bytes > 0
+      && typeof info.sha256 === "string" && /^[a-fA-F0-9]{64}$/.test(info.sha256);
+  }
+
   function githubInstallerUrl(info, releaseVersion) {
     const filename = `LoliCode-${releaseVersion}-Windows-x64-Setup.exe`;
     const expected = `https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v${releaseVersion}/${filename}`;
-    if (
-      !info ||
-      typeof info !== "object" ||
-      Array.isArray(info) ||
-      info.name !== filename ||
-      info.url !== expected ||
-      !Number.isSafeInteger(info.bytes) ||
-      info.bytes <= 0 ||
-      typeof info.sha256 !== "string" ||
-      !/^[a-fA-F0-9]{64}$/.test(info.sha256)
-    ) {
+    if (!artifactMetadata(info, filename) || info.url !== expected) {
       throw new Error("invalid GitHub backup");
+    }
+    return info.url;
+  }
+
+  function tencentDownloadUrl(info, primaryArtifact, primaryUrl, releaseVersion, portableArchive = false) {
+    const filename = portableArchive ? "LoliCode-Portable.zip"
+      : `LoliCode-${releaseVersion}-Windows-x64-Setup.exe`;
+    const expected = `https://lolicode.com/downloads/tencent/${releaseVersion}/${filename}`;
+    if (!artifactMetadata(info, filename) || !artifactMetadata(primaryArtifact, filename)
+      || info.url !== expected || info.bytes !== primaryArtifact.bytes
+      || info.sha256.toLowerCase() !== primaryArtifact.sha256.toLowerCase()) {
+      throw new Error("invalid Tencent download");
+    }
+    const primary = new URL(primaryUrl);
+    const primaryRoot = downloadRoots.get(primary.origin);
+    if (!primaryRoot || primary.pathname !== `${primaryRoot}${releaseVersion}/${filename}`) {
+      throw new Error("Tencent artifact does not match the primary download");
     }
     return info.url;
   }
@@ -121,11 +140,25 @@
       const githubUrl = githubInfo === undefined
         ? null
         : githubInstallerUrl(githubInfo, release.version);
+      const tencentInstallerInfo = release.downloads?.["windows-x86_64-installer-tencent"];
+      const tencentInstallerUrl = tencentInstallerInfo === undefined
+        ? null
+        : tencentDownloadUrl(tencentInstallerInfo, githubInfo, installerUrl, release.version);
+      const tencentPortableInfo = release.downloads?.["windows-x86_64-portable-tencent"];
+      const tencentPortableUrl = tencentPortableInfo === undefined
+        ? null
+        : tencentDownloadUrl(tencentPortableInfo, portableInfo, portableUrl, release.version, true);
 
       // Activate links only after the complete manifest has passed validation.
       enable(installer, installerUrl);
       if (portableUrl) enable(portable, portableUrl);
       if (githubUrl && githubBackup) enable(githubBackup, githubUrl);
+      if (tencentInstallerUrl && tencentInstaller) enable(tencentInstaller, tencentInstallerUrl);
+      if (tencentPortableUrl && tencentPortable) enable(tencentPortable, tencentPortableUrl);
+      if (tencentDownloads) {
+        tencentDownloads.hidden = !((tencentInstallerUrl && tencentInstaller)
+          || (tencentPortableUrl && tencentPortable));
+      }
       version.textContent = `LoliCode ${release.version}`;
       releaseVersion.textContent = `v${release.version}`;
       status.dataset.state = "ready";

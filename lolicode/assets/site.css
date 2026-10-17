@@ -232,6 +232,15 @@ h1 {
   flex-wrap: wrap;
   gap: 10px;
 }
+.download-alternatives {
+  margin-top: 10px;
+}
+.download-alternatives .button {
+  min-height: 36px;
+  padding: 7px 12px;
+  gap: 8px;
+  font-size: 12px;
+}
 .button {
   display: inline-flex;
   align-items: center;

@@ -42,6 +42,7 @@ async function run({
   profile = "tools",
   fetchError = false,
   backupElement = true,
+  tencentElements = true,
 } = {}) {
   const ids = [
     "version",
@@ -49,6 +50,9 @@ async function run({
     "installer",
     "portable",
     "github-backup",
+    "tencent-downloads",
+    "tencent-installer",
+    "tencent-portable",
     "notes",
     "retry",
     "release-version",
@@ -81,6 +85,7 @@ async function run({
     document: {
       getElementById(id) {
         if (id === "github-backup" && !backupElement) return null;
+        if (id.startsWith("tencent-") && !tencentElements) return null;
         assert.ok(elements[id], id);
         return elements[id];
       },
@@ -124,6 +129,12 @@ function assertBlocked(elements) {
   assert.equal(elements["github-backup"].href, undefined);
   assert.equal(elements["github-backup"].hidden, true);
   assert.equal(elements["github-backup"].attrs.tabindex, "-1");
+  for (const id of ["tencent-installer", "tencent-portable"]) {
+    assert.equal(elements[id].hidden, true);
+    assert.equal(elements[id].href, undefined);
+    assert.equal(elements[id].attrs.tabindex, "-1");
+  }
+  assert.equal(elements["tencent-downloads"].hidden, true);
   assert.equal(elements.installer.attrs.tabindex, "-1");
   assert.equal(elements.retry.hidden, false);
 }
@@ -139,6 +150,9 @@ test("tools feed enables both signed Windows downloads", async () => {
   assert.equal(e["release-date"].hidden, false);
   assert.equal(e["github-backup"].hidden, true);
   assert.equal(e["github-backup"].href, undefined);
+  assert.equal(e["tencent-downloads"].hidden, true);
+  assert.equal(e["tencent-installer"].hidden, true);
+  assert.equal(e["tencent-portable"].hidden, true);
 });
 test("a valid installer remains usable without a portable archive", async () => {
   const manifest = release();
@@ -391,6 +405,157 @@ test("new script tolerates old HTML without a GitHub backup element", async () =
   const manifest = release();
   manifest.downloads["windows-x86_64-installer-github"] = githubBackup();
   const { elements: e } = await run({ manifest, backupElement: false });
+  assert.equal(e.status.dataset.state, "ready");
+  assert.ok(e.installer.href);
+});
+
+function tencentRelease(version = "4.0.16") {
+  const manifest = release();
+  manifest.version = version;
+  const primaryRoot = `https://lolicode.com/downloads/releases/${version}/`;
+  const github = githubBackup(version);
+  manifest.platforms["windows-x86_64"].url = primaryRoot + github.name;
+  manifest.downloads["windows-x86_64-installer-github"] = github;
+  const portable = {
+    name: "LoliCode-Portable.zip", bytes: 26186973,
+    sha256: "1abc2bf82e9295e270486d200d64408ac102ad7468a8484ed2c1c48b3dec3e45",
+    url: primaryRoot + "LoliCode-Portable.zip",
+  };
+  manifest.downloads["windows-x86_64-portable"] = portable;
+  for (const [kind, entry] of [["installer", github], ["portable", portable]]) {
+    manifest.downloads[`windows-x86_64-${kind}-tencent`] = {
+      ...entry, url: `https://lolicode.com/downloads/tencent/${version}/${entry.name}`,
+    };
+  }
+  return manifest;
+}
+
+for (const profile of ["home", "tools"]) {
+  test(`${profile} offers explicit Tencent choices without replacing auto or GitHub`, async () => {
+    const manifest = tencentRelease("4.0.20");
+    const { elements: e } = await run({ profile, manifest });
+    assert.equal(e.status.dataset.state, "ready");
+    assert.equal(e.installer.href, manifest.platforms["windows-x86_64"].url);
+    assert.equal(e.portable.href, manifest.downloads["windows-x86_64-portable"].url);
+    assert.equal(e["github-backup"].href, manifest.downloads["windows-x86_64-installer-github"].url);
+    assert.equal(e["tencent-downloads"].hidden, false);
+    for (const kind of ["installer", "portable"]) {
+      assert.equal(e[`tencent-${kind}`].href, manifest.downloads[`windows-x86_64-${kind}-tencent`].url);
+      assert.equal(e[`tencent-${kind}`].hidden, false);
+      assert.equal(e[`tencent-${kind}`].attrs.tabindex, undefined);
+    }
+  });
+}
+
+for (const kind of ["installer", "portable"]) {
+  test(`Tencent ${kind} may be offered independently`, async () => {
+    const manifest = tencentRelease();
+    const other = kind === "installer" ? "portable" : "installer";
+    delete manifest.downloads[`windows-x86_64-${other}-tencent`];
+    const { elements: e } = await run({ manifest });
+    assert.equal(e.status.dataset.state, "ready");
+    assert.equal(e["tencent-downloads"].hidden, false);
+    assert.equal(e[`tencent-${kind}`].hidden, false);
+    assert.equal(e[`tencent-${other}`].hidden, true);
+  });
+
+  for (const [label, mutate] of [
+    ["missing byte count", (entry) => { delete entry.bytes; }],
+    ["zero byte count", (entry) => { entry.bytes = 0; }],
+    ["different byte count", (entry) => { entry.bytes += 1; }],
+    ["missing SHA256", (entry) => { delete entry.sha256; }],
+    ["invalid SHA256", (entry) => { entry.sha256 = "z".repeat(64); }],
+    ["different SHA256", (entry) => { entry.sha256 = "0".repeat(64); }],
+    ["wrong filename", (entry) => { entry.name = "another.exe"; }],
+    ["wrong root path", (entry) => { entry.url = entry.url.replace("/downloads/tencent/", "/downloads/releases/"); }],
+    ["wrong version", (entry) => { entry.url = entry.url.replace("4.0.16", "4.0.15"); }],
+    ["wrong URL filename", (entry) => { entry.url = entry.url.replace(entry.name, "another.exe"); }],
+    ["direct COS origin", (entry) => { entry.url = entry.url.replace("https://lolicode.com", "https://unapproved.cos.example"); }],
+    ["spoofed origin", (entry) => { entry.url = entry.url.replace("lolicode.com", "lolicode.com.evil.example"); }],
+    ["userinfo", (entry) => { entry.url = entry.url.replace("https://", "https://user:pass@"); }],
+    ["explicit port", (entry) => { entry.url = entry.url.replace("lolicode.com/", "lolicode.com:443/"); }],
+    ["plain HTTP", (entry) => { entry.url = entry.url.replace("https://", "http://"); }],
+    ["query string", (entry) => { entry.url += "?url=https://example.com"; }],
+    ["fragment", (entry) => { entry.url += "#download"; }],
+  ]) {
+    test(`Tencent ${kind} ${label} fails the whole manifest closed`, async () => {
+      const manifest = tencentRelease();
+      mutate(manifest.downloads[`windows-x86_64-${kind}-tencent`]);
+      assertBlocked((await run({ manifest })).elements);
+    });
+  }
+
+  for (const malformed of [null, false, 0, "", []]) {
+    test(`present malformed Tencent ${kind} ${JSON.stringify(malformed)} is rejected`, async () => {
+      const manifest = tencentRelease();
+      manifest.downloads[`windows-x86_64-${kind}-tencent`] = malformed;
+      assertBlocked((await run({ manifest })).elements);
+    });
+  }
+}
+
+test("Tencent installer needs the verified GitHub identity anchor", async () => {
+  const manifest = tencentRelease();
+  delete manifest.downloads["windows-x86_64-installer-github"];
+  assertBlocked((await run({ manifest })).elements);
+});
+
+test("Tencent installer cannot accompany a differently named primary executable", async () => {
+  const manifest = tencentRelease();
+  manifest.platforms["windows-x86_64"].url = `${homeRoot}different.exe`;
+  assertBlocked((await run({ manifest })).elements);
+});
+
+for (const field of ["name", "bytes", "sha256"]) {
+  test(`Tencent portable needs complete original portable ${field}`, async () => {
+    const manifest = tencentRelease();
+    delete manifest.downloads["windows-x86_64-portable"][field];
+    assertBlocked((await run({ manifest })).elements);
+  });
+}
+
+test("Tencent portable cannot exist without a primary portable artifact", async () => {
+  const manifest = tencentRelease();
+  delete manifest.downloads["windows-x86_64-portable"];
+  assertBlocked((await run({ manifest })).elements);
+});
+
+test("Tencent identity comparison treats uppercase SHA256 as the same digest", async () => {
+  const manifest = tencentRelease();
+  manifest.downloads["windows-x86_64-installer-tencent"].sha256 =
+    manifest.downloads["windows-x86_64-installer-tencent"].sha256.toUpperCase();
+  assert.equal((await run({ manifest })).elements.status.dataset.state, "ready");
+});
+
+test("omitting Tencent fields on refresh clears their previous URLs and hides the row", async () => {
+  const manifest = tencentRelease();
+  const { elements: e } = await run({ manifest });
+  assert.equal(e["tencent-downloads"].hidden, false);
+  delete manifest.downloads["windows-x86_64-installer-tencent"];
+  delete manifest.downloads["windows-x86_64-portable-tencent"];
+  e.retry.listeners.click();
+  await new Promise(setImmediate);
+  assert.equal(e.status.dataset.state, "ready");
+  assert.equal(e["tencent-downloads"].hidden, true);
+  for (const id of ["tencent-installer", "tencent-portable"]) {
+    assert.equal(e[id].hidden, true);
+    assert.equal(e[id].href, undefined);
+  }
+  assert.ok(e.installer.href);
+  assert.ok(e["github-backup"].href);
+});
+
+test("bad Tencent metadata on refresh clears all previously usable downloads", async () => {
+  const manifest = tencentRelease();
+  const { elements: e } = await run({ manifest });
+  manifest.downloads["windows-x86_64-portable-tencent"].bytes += 1;
+  e.retry.listeners.click();
+  await new Promise(setImmediate);
+  assertBlocked(e);
+});
+
+test("new script tolerates old HTML without the optional Tencent controls", async () => {
+  const { elements: e } = await run({ manifest: tencentRelease(), tencentElements: false });
   assert.equal(e.status.dataset.state, "ready");
   assert.ok(e.installer.href);
 });

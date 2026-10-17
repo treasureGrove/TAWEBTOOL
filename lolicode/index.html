@@ -26,8 +26,8 @@
       href="./assets/logo.svg?v=atelier-20261016"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="./assets/site.css?v=atelier-motion-20261017" />
-    <script src="./assets/downloads.js?v=github-backup-20261017" defer></script>
+    <link rel="stylesheet" href="./assets/site.css?v=download-options-20261017" />
+    <script src="./assets/downloads.js?v=optional-tencent-20261017" defer></script>
     <script src="./assets/motion.js?v=atelier-motion-20261017" defer></script>
   </head>
   <body>
@@ -112,6 +112,29 @@
               >
                 重新读取
               </button>
+            </div>
+            <div
+              id="tencent-downloads"
+              class="download-actions download-alternatives"
+              aria-label="手动选择腾讯下载线路"
+              hidden
+            >
+              <a
+                id="tencent-installer"
+                class="button button-secondary"
+                aria-disabled="true"
+                tabindex="-1"
+                hidden
+                >腾讯线路 · 安装版 <span aria-hidden="true">↗</span></a
+              >
+              <a
+                id="tencent-portable"
+                class="button button-secondary"
+                aria-disabled="true"
+                tabindex="-1"
+                hidden
+                >腾讯线路 · 便携版 <span aria-hidden="true">↗</span></a
+              >
             </div>
             <p
               id="status"
