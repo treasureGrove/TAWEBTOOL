@@ -58,7 +58,7 @@ python3 /root/lolicode-download-router-20261017-v1/deploy.py install
 ## 发布与回退验收
 
 放行后，先检查三个公开固定 URL 的 GET 和 HEAD：302、`Cache-Control: no-store`、Location 是匹配同附件的 R2 或 GitHub。
-服务临时停止后的 GitHub 兜底应在短窗口内单独验收，结束立即恢复；本轮尚未停生产服务做故障模拟。
+服务临时停止后的 GitHub 兜底已在受控短窗口内单独验收，结果见下方；结束由 finally 立即恢复。
 确认 `/`、`/all`、`/api`、原版本下载路由保持可用；两端 `latest.json` 哈希不变。然后才允许独立发布流程切新的 feed。
 
 若需回退，必须先确认 receipt 与当前 snippet / unit / config / release 都一致：
@@ -95,3 +95,18 @@ loopback GET / HEAD / 拒绝边界验收、追加三个 exact location，`nginx 
 4.0.16 / `13a7972b79ee0ea67deb582de2314602a472aa9b9a453c7a578b1ec8f07a59cc`，
 此脚本没有写入任何 feed。最终更新器验收和 latest 切换由独立发布流程完成。
 原 snippet 与机器验收 receipt 位于 `/root/lolicode-download-router-20261017-v1/`。
+
+## 生产服务故障兜底验收
+
+2026-10-17 05:43:22 UTC，经确认专用 unit 原为 active 后，受控脚本只停止
+`lolicode-download-router.service`。三个公开附件 HEAD 全部返回精确匹配的
+GitHub 4.0.20 同名附件 302，且带 `Cache-Control: no-store`。
+无论检查成功或失败，脚本均在 finally 启动服务；实际停服到恢复 active 的窗口为
+0.141 秒。恢复后三个公开入口均正常 302：安装器、签名当次走 GitHub，便携包走 R2。
+这项验收没有修改 Nginx、论坛、API 或任何 feed，也没有切换来源配置。
+
+私有 0600 回执：
+`/root/lolicode-download-router-20261017-v1/failure-acceptance-20261017T054322Z.json`。
+独立发布流程另已完成 4.0.20 官方更新器完整下载验签、路由三附件完整哈希与
+默认更新源检查，最后切换 latest；上述安装批次中的 latest=4.0.16 是其当时基线，
+不要将其恢复到线上。
