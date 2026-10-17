@@ -5,7 +5,7 @@
 社区入口为 `/all`，账户 API 与 Flarum 其它路由保持原配置。
 
 服务器只新增精确 `/`、`/desktop-assets/` 和 `/downloads/` 路由。
-图片与样式现为 `/var/www/lolicode-site/releases/20261017-release20-v2`。
+图片与样式现为 `/var/www/lolicode-site/releases/20261017-tencent-options-v1`。
 安装器/便携包直连公开的 `treasureGrove/LoliCode-Releases`；兼容下载路径返回
 302，不代理大文件。只有不足 2KB 的公开版本清单经固定上游网关读取。
 网关不转发 Cookie、Authorization 或请求体，且启用上游 TLS 证书校验。
@@ -128,3 +128,32 @@ Node 验收 50/50 通过，部署脚本 Python 语法检查通过。部署 paylo
 首页、下载脚本、社区、API 均匿名 200；本批次结束时两端 latest 仍为
 4.0.16 / `13a7972b79ee0ea67deb582de2314602a472aa9b9a453c7a578b1ec8f07a59cc`，
 由独立发布验收流程最后切换。不要直接恢复静态批次备份覆盖后加的下载路由。
+
+## 腾讯可选控件静态批次（已发布，入口仍隐藏）
+
+`deploy-tencent-options.py` 发布已提交 `1a842285d0243da54607175f912b22e9e45649d6`
+的可选腾讯控件。本轮只写两站静态文件，没有修改任何 feed、Tencent 后端、论坛或 API。
+写入前核对公开固定 `updates/4.0.20-router.json` 的 SHA256
+`4691d49885f5a2d9ceaf2962d2a9fe78368cc56ada5942d5f674ee1280190936`、冻结源提交及标准主安装器路由。
+新批次为 `20261017-tencent-options-v1`，私有归档 SHA256
+`3b6f6672b361426c96cb39ed4651a09acc97c754a39e39df9b874815d50628d7`。
+
+根域新静态目录 `/var/www/lolicode-site/releases/20261017-tencent-options-v1`；
+snippet 只替换两处原静态目录，已有三个 R2 exact location 字节完全保留。
+更新前 snippet SHA256 为 `4b8afdcf35a65f1a42393f865bbabf9dbe11d51046bc8305b3ccdd23d70b6c9c`，
+更新后为 `bf6b52f52564cbaf6bd7463235081ff20af5fb8771fb199fed70171b4af971c0`，
+已通知独立 Tencent 后端部署流程重新核对该基线。主 Nginx 配置未变，`nginx -t` / reload 通过。
+工具站在既有发布锁内依次更换 CSS、JavaScript、HTML，保留原文件的私有备份和条件回退。
+
+线上根域 HTML SHA256：`9e7668d899e67970b43e72813575dcf29e84d5b79f21f2d89e1369511124022f`；
+工具站 HTML：`0a5ea250704e6cc9070e2e43653963094793162aa45b1ef04c2139040bfd11d2`；
+两站下载脚本：`c172ebb9f5a84e47083d73e945e6817525505f63b9f49fb5114192af6ef86c24`；
+两站 CSS：`38e5ddb5d2950dc34431bcb8df87e97a7c7081e443e7d6edf9151e1fe00b505d`。
+
+既有 144 项网站验收通过；本批次 5 项离线门槛 / 三文件回退检查、根域构建通过。
+随后从两站实际线上 HTML / JS / CSS 和真实 feed 执行检查：Tencent 行与按钮隐藏、
+无 href，自动与 GitHub URL 未变。主页资源、社区 `/all`、API `/api` 均返回 200；
+两端 latest 仍为 4.0.20 / `4691d498...0190936`，本批次前后未改。
+原 snippet、工具站三个旧文件均留在各服务器私有
+`/root/lolicode-20261017-tencent-options-v1/`。回退前必须核对最新 snippet，
+不得覆盖随后单独添加的 Tencent 服务路由。
