@@ -1,0 +1,14 @@
+{
+  "version": "4.0.20",
+  "enabled": false,
+  "cdn_origin": "https://downloads.treasuregrove.art",
+  "key_file": "/run/credentials/lolicode-tencent-router.service/cdn-key",
+  "auth_ttl_seconds": 300,
+  "gates": { "cos_private": false, "cdn_cap": false, "type_a": false, "real_ip": false },
+  "limits": { "window_seconds": 60, "max_requests": 10, "block_seconds": 600, "max_clients": 4096, "ipv6_prefix": 64 },
+  "assets": {
+    "LoliCode-4.0.20-Windows-x64-Setup.exe": { "bytes": 23121161, "sha256": "e54945269861d68b2abe5d2cd03571af9c420d6a414682879cbce7ed63cc7af5" },
+    "LoliCode-4.0.20-Windows-x64-Setup.exe.sig": { "bytes": 420, "sha256": "5489a48a18feb97d4d1b403070c1108eea000c500c33a2d14cd0c0b10624cc96" },
+    "LoliCode-Portable.zip": { "bytes": 27864792, "sha256": "7dcdfe7ffb5e7daea3d71654992789961bd6514bcb53538efcdfad7dea71f270" }
+  }
+}
