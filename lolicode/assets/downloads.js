@@ -20,6 +20,7 @@
   const status = document.getElementById("status");
   const installer = document.getElementById("installer");
   const portable = document.getElementById("portable");
+  const githubBackup = document.getElementById("github-backup");
   const notes = document.getElementById("notes");
   const retry = document.getElementById("retry");
   const releaseVersion = document.getElementById("release-version");
@@ -27,12 +28,14 @@
   let loading = false;
 
   function disable() {
-    for (const link of [installer, portable]) {
+    for (const link of [installer, portable, githubBackup]) {
+      if (!link) continue;
       link.removeAttribute("href");
       link.setAttribute("aria-disabled", "true");
       link.setAttribute("tabindex", "-1");
     }
     portable.hidden = true;
+    if (githubBackup) githubBackup.hidden = true;
   }
 
   function enable(link, url) {
@@ -65,6 +68,25 @@
     return url.href;
   }
 
+  function githubInstallerUrl(info, releaseVersion) {
+    const filename = `LoliCode-${releaseVersion}-Windows-x64-Setup.exe`;
+    const expected = `https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v${releaseVersion}/${filename}`;
+    if (
+      !info ||
+      typeof info !== "object" ||
+      Array.isArray(info) ||
+      info.name !== filename ||
+      info.url !== expected ||
+      !Number.isSafeInteger(info.bytes) ||
+      info.bytes <= 0 ||
+      typeof info.sha256 !== "string" ||
+      !/^[a-fA-F0-9]{64}$/.test(info.sha256)
+    ) {
+      throw new Error("invalid GitHub backup");
+    }
+    return info.url;
+  }
+
   async function load() {
     if (loading) return;
     loading = true;
@@ -95,10 +117,15 @@
       const portableUrl = portableInfo
         ? downloadUrl(portableInfo.url, release.version, true)
         : null;
+      const githubInfo = release.downloads?.["windows-x86_64-installer-github"];
+      const githubUrl = githubInfo === undefined
+        ? null
+        : githubInstallerUrl(githubInfo, release.version);
 
       // Activate links only after the complete manifest has passed validation.
       enable(installer, installerUrl);
       if (portableUrl) enable(portable, portableUrl);
+      if (githubUrl && githubBackup) enable(githubBackup, githubUrl);
       version.textContent = `LoliCode ${release.version}`;
       releaseVersion.textContent = `v${release.version}`;
       status.dataset.state = "ready";
