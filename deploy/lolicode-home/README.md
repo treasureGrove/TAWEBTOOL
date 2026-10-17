@@ -5,7 +5,7 @@
 社区入口为 `/all`，账户 API 与 Flarum 其它路由保持原配置。
 
 服务器只新增精确 `/`、`/desktop-assets/` 和 `/downloads/` 路由。
-图片与样式现为 `/var/www/lolicode-site/releases/20261017-release18-v1`。
+图片与样式现为 `/var/www/lolicode-site/releases/20261017-release20-v2`。
 安装器/便携包直连公开的 `treasureGrove/LoliCode-Releases`；兼容下载路径返回
 302，不代理大文件。只有不足 2KB 的公开版本清单经固定上游网关读取。
 网关不转发 Cookie、Authorization 或请求体，且启用上游 TLS 证书校验。
@@ -95,3 +95,36 @@ Node 验收 50/50 通过，部署脚本 Python 语法检查通过。部署 paylo
 更新清单依旧为 4.0.18，SHA256 `d5cbb1a497a9008bdb361458a53046d30840ba2d4a1373b6a7a6ecc243636ff7`，
 本批次前后未变。首页线上字节与本地准备产物一致。
 不能直接重跑本批次覆盖后续改动；下一次部署需新的批次与当前基线。
+
+## 4.0.20 GitHub 备用入口批次（已发布）
+
+`deploy-release20.py` 是独立静态批次 `20261017-release20-v2`，从上面的实际生产
+目录与配置哈希建立基线。仅发布已经提交的 GitHub 备用入口、对应下载脚本与根域
+静态构建，不添加尚未确认的 R2 / COS 来源，不写版本清单。
+
+写入前只读检查已公开的不可变 `updates/4.0.20.json`，精确核对 SHA256
+`7ec40f2b4553f8acd208a27464142a6cbe249769dfbb38fb5ce36531d226a23d`、
+冻结源提交 `cbad951e112055ca13a9970353e664e8974f968f` 与签名字段。安装器 URL 必须为
+`https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe`。
+包下载和签名验收由发布流程先完成，获确认后才运行本批次。
+根域切换采用新不可变目录及 `nginx -t` / reload；工具站在现有发布锁内先更新
+兼容旧 HTML 的下载脚本，再原子替换 HTML。失败时只在写入内容仍匹配本批次时回退，
+不覆盖并发修改。原文件保存在各服务器 `/root/lolicode-20261017-release20-v2/`。
+
+准备目录 `tmp/lolicode-release20-v2/` 包含 7 个根域静态文件、工具站 HTML 和
+下载脚本，以及按文件 SHA256 的清单；打包排除构建器本地归属标记。
+下载脚本相关 86 项既有验收已通过；本批次 Python 语法、根域构建和发布门槛 /
+双文件成功替换 / 写入失败回退 / 基线冲突保留的 8 项离线检查通过，均在临时目录执行，
+没有访问或写入生产。放行后再核对线上 HTML / JS、首页 / 社区 / API / feed。
+
+在不可变 4.0.20 发布物验收后已完成两站静态部署。根域新首页 SHA256 为
+`4e9c067b29da6713f5e5cbc2805a6a5f4c68b25906a9eeb4cf0d15f76bfd5010`；工具站 HTML 为
+`513a5f958c2b2a46b2bd73d5f35bc99e6fd9cde63b1954e72ddba4ddec295368`，两站下载脚本均为
+`77fd52fbe4fc016f55735424c4cd2693e1ef3007c23d200f4cf3bb93ad7456ae`。
+静态切换后的 snippet SHA256 是 `d40f1245515531566354ba2c6dda0a5a9edfb073c8e3dbe48b6951fa74cbd4c4`。
+此后独立下载路由批次追加三个 exact location，变为
+`4b8afdcf35a65f1a42393f865bbabf9dbe11d51046bc8305b3ccdd23d70b6c9c`，见
+`deploy/download-router/README.md`。主 Nginx 配置未变。
+首页、下载脚本、社区、API 均匿名 200；本批次结束时两端 latest 仍为
+4.0.16 / `13a7972b79ee0ea67deb582de2314602a472aa9b9a453c7a578b1ec8f07a59cc`，
+由独立发布验收流程最后切换。不要直接恢复静态批次备份覆盖后加的下载路由。

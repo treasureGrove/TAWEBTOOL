@@ -1,0 +1,92 @@
+# BEGIN LoliCode download router 20261017-v1
+# Three fixed assets only. No client headers or bodies are forwarded to the CDN.
+location = /downloads/releases/4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe {
+    if ($request_uri != "/downloads/releases/4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe") { return 404; }
+    limit_except GET HEAD { deny all; }
+    proxy_pass http://127.0.0.1:18781;
+    proxy_http_version 1.1;
+    proxy_pass_request_headers off;
+    proxy_pass_request_body off;
+    proxy_set_header Host lolicode-download-router;
+    proxy_set_header Connection "";
+    proxy_set_header Content-Length "";
+    proxy_set_header Transfer-Encoding "";
+    proxy_set_header Cookie "";
+    proxy_set_header Authorization "";
+    proxy_set_header Forwarded "";
+    proxy_set_header X-Real-IP "";
+    proxy_set_header X-Forwarded-For "";
+    proxy_set_header X-Forwarded-Host "";
+    proxy_hide_header Set-Cookie;
+    proxy_hide_header Cache-Control;
+    proxy_redirect off;
+    proxy_connect_timeout 300ms;
+    proxy_send_timeout 2s;
+    proxy_read_timeout 2s;
+    proxy_intercept_errors on;
+    error_page 502 503 504 =302 https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe;
+    add_header Cache-Control "no-store" always;
+    add_header X-Content-Type-Options nosniff always;
+    access_log off;
+}
+
+location = /downloads/releases/4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe.sig {
+    if ($request_uri != "/downloads/releases/4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe.sig") { return 404; }
+    limit_except GET HEAD { deny all; }
+    proxy_pass http://127.0.0.1:18781;
+    proxy_http_version 1.1;
+    proxy_pass_request_headers off;
+    proxy_pass_request_body off;
+    proxy_set_header Host lolicode-download-router;
+    proxy_set_header Connection "";
+    proxy_set_header Content-Length "";
+    proxy_set_header Transfer-Encoding "";
+    proxy_set_header Cookie "";
+    proxy_set_header Authorization "";
+    proxy_set_header Forwarded "";
+    proxy_set_header X-Real-IP "";
+    proxy_set_header X-Forwarded-For "";
+    proxy_set_header X-Forwarded-Host "";
+    proxy_hide_header Set-Cookie;
+    proxy_hide_header Cache-Control;
+    proxy_redirect off;
+    proxy_connect_timeout 300ms;
+    proxy_send_timeout 2s;
+    proxy_read_timeout 2s;
+    proxy_intercept_errors on;
+    error_page 502 503 504 =302 https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe.sig;
+    add_header Cache-Control "no-store" always;
+    add_header X-Content-Type-Options nosniff always;
+    access_log off;
+}
+
+location = /downloads/releases/4.0.20/LoliCode-Portable.zip {
+    if ($request_uri != "/downloads/releases/4.0.20/LoliCode-Portable.zip") { return 404; }
+    limit_except GET HEAD { deny all; }
+    proxy_pass http://127.0.0.1:18781;
+    proxy_http_version 1.1;
+    proxy_pass_request_headers off;
+    proxy_pass_request_body off;
+    proxy_set_header Host lolicode-download-router;
+    proxy_set_header Connection "";
+    proxy_set_header Content-Length "";
+    proxy_set_header Transfer-Encoding "";
+    proxy_set_header Cookie "";
+    proxy_set_header Authorization "";
+    proxy_set_header Forwarded "";
+    proxy_set_header X-Real-IP "";
+    proxy_set_header X-Forwarded-For "";
+    proxy_set_header X-Forwarded-Host "";
+    proxy_hide_header Set-Cookie;
+    proxy_hide_header Cache-Control;
+    proxy_redirect off;
+    proxy_connect_timeout 300ms;
+    proxy_send_timeout 2s;
+    proxy_read_timeout 2s;
+    proxy_intercept_errors on;
+    error_page 502 503 504 =302 https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v4.0.20/LoliCode-Portable.zip;
+    add_header Cache-Control "no-store" always;
+    add_header X-Content-Type-Options nosniff always;
+    access_log off;
+}
+# END LoliCode download router 20261017-v1
