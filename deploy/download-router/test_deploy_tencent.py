@@ -385,6 +385,27 @@ class Response(io.BytesIO):
 
 
 class CloudflareVerificationTests(unittest.TestCase):
+    def api_opener(self, *, changed=False, redirected=False):
+        class Opener:
+            def open(self, request, timeout):
+                if request.full_url.startswith('https://www.cloudflare.com/'):
+                    raise HTTPError(request.full_url,403,'Forbidden',{},io.BytesIO())
+                assert request.full_url == 'https://api.cloudflare.com/client/v4/ips'
+                assert not request.headers.get('Authorization') and not request.headers.get('Cookie')
+                ranges = list(EXPECTED_CF[:15])
+                if changed: ranges[0] = '0.0.0.0/0'
+                data={'success':True,'result':{'etag':'fixture','ipv4_cidrs':ranges,'ipv6_cidrs':EXPECTED_CF[15:]}}
+                return Response(json.dumps(data).encode(), 'https://evil.invalid/' if redirected else request.full_url)
+        return Opener()
+
+    def test_text_list_403_uses_only_credential_free_official_api_and_exact_reviewed_ranges(self):
+        self.assertEqual(deploy.verify_cloudflare(self.api_opener()),EXPECTED_CF)
+
+    def test_api_fallback_rejects_expanded_trust_and_redirects(self):
+        for options in [{'changed':True},{'redirected':True}]:
+            with self.subTest(options=options), self.assertRaises(RuntimeError):
+                deploy.verify_cloudflare(self.api_opener(**options))
+
     def make_opener(self, *, mutation=None, status=200, redirected=False):
         test = self
 
@@ -525,7 +546,7 @@ class CDNVerificationTests(unittest.TestCase):
 
 class ServiceContractTests(unittest.TestCase):
     def test_secret_is_systemd_credential_not_env_arg_or_payload_file(self):
-        self.assertEqual(deploy.BATCH, '20261017-tencent-v1')
+        self.assertEqual(deploy.BATCH, '20261018-tencent-v2')
         self.assertEqual(deploy.CONFIG_NAME, 'tencent-router.production.json')
         self.assertEqual(deploy.CREDENTIAL, Path('/etc/lolicode-tencent-cdn.key'))
         self.assertNotIn('lolicode-tencent-cdn.key', deploy.FILES)

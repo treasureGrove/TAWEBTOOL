@@ -304,6 +304,22 @@ class ConfigurationTests(unittest.TestCase):
 
 
 class IdentityAndRateLimitTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == 'posix' and hasattr(os,'geteuid') and os.geteuid()==0, 'Exact systemd credential ownership requires root POSIX fixture')
+    def test_systemd_acl_mask_is_accepted_only_in_exact_root_owned_runtime_slot(self):
+        with tempfile.TemporaryDirectory(prefix='lolicode-credential-slot-') as directory:
+            path=Path(directory)/'cdn-key'
+            path.write_text(SYNTHETIC_KEY,encoding='ascii');path.chmod(0o440)
+            with self.assertRaises(ValueError): router.read_secret(path)
+            with mock.patch.object(router,'KEY_PATH',str(path)), mock.patch.dict(os.environ,{'CREDENTIALS_DIRECTORY':directory}):
+                self.assertEqual(router.read_secret(path),SYNTHETIC_KEY)
+                path.chmod(0o444)
+                with self.assertRaises(ValueError): router.read_secret(path)
+                path.chmod(0o640)
+                with self.assertRaises(ValueError): router.read_secret(path)
+                path.chmod(0o440)
+                with mock.patch.dict(os.environ,{'CREDENTIALS_DIRECTORY':directory+'/wrong'}):
+                    with self.assertRaises(ValueError): router.read_secret(path)
+
     def test_normalized_ipv4_mapped_ipv4_and_ipv6_network(self):
         self.assertEqual(router.client_identity('198.51.100.7'), '198.51.100.7')
         self.assertEqual(router.client_identity('::ffff:198.51.100.7'), '198.51.100.7')

@@ -118,7 +118,15 @@ def read_secret(path):
     descriptor = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0))
     try:
         metadata = os.fstat(descriptor)
-        if (not stat.S_ISREG(metadata.st_mode) or stat.S_IMODE(metadata.st_mode) & 0o077
+        # systemd's read-only credentials mount may expose an ACL mask as 0440
+        # while retaining root:root ownership. Permit that exact runtime slot;
+        # ordinary private key files still require zero group/other bits.
+        runtime_credential = (os.fspath(path) == KEY_PATH
+                              and os.environ.get('CREDENTIALS_DIRECTORY') == str(Path(KEY_PATH).parent)
+                              and metadata.st_uid == 0 and metadata.st_gid == 0
+                              and stat.S_IMODE(metadata.st_mode) == 0o440)
+        if (not stat.S_ISREG(metadata.st_mode)
+                or (stat.S_IMODE(metadata.st_mode) & 0o077 and not runtime_credential)
                 or metadata.st_uid not in {0, os.geteuid()}):
             raise ValueError('Credential file must be private and owned by the service or root')
         data = os.read(descriptor, 129)

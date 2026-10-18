@@ -1,4 +1,4 @@
-# BEGIN LoliCode Tencent 20261017-tencent-v1
+# BEGIN LoliCode Tencent 20261018-tencent-v2
 # UNDEPLOYED: only three optional Tencent locations, no global/server changes.
 # CF sources checked 2026-10-17 against https://www.cloudflare.com/ips-v4
 # and https://www.cloudflare.com/ips-v6; deployment rechecks the exact lists.
@@ -170,4 +170,4 @@ location = /downloads/tencent/4.0.20/LoliCode-Portable.zip {
     access_log off;
     error_log /dev/null;
 }
-# END LoliCode Tencent 20261017-tencent-v1
+# END LoliCode Tencent 20261018-tencent-v2

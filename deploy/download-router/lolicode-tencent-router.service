@@ -9,8 +9,8 @@ StartLimitBurst=5
 Type=simple
 DynamicUser=yes
 LoadCredential=cdn-key:/etc/lolicode-tencent-cdn.key
-ExecStart=/usr/bin/python3 /opt/lolicode-tencent-router/releases/20261017-tencent-v1/tencent_router.py --config /etc/lolicode-tencent-router.json
-WorkingDirectory=/opt/lolicode-tencent-router/releases/20261017-tencent-v1
+ExecStart=/usr/bin/python3 /opt/lolicode-tencent-router/releases/20261018-tencent-v2/tencent_router.py --config /etc/lolicode-tencent-router.json
+WorkingDirectory=/opt/lolicode-tencent-router/releases/20261018-tencent-v2
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PYTHONUNBUFFERED=1
 Restart=on-failure

@@ -1,114 +1,51 @@
-# Tencent 可选下载入口：准备完成，尚未部署
+# Tencent 可选下载入口
 
-本批次 `20261017-tencent-v1` 只追加 4.0.20 三个固定 `/downloads/tencent/4.0.20/<文件名>` 路径。
-既有 R2／GitHub 路由、官网、社区、账户 API 和更新 feed 不由本程序修改。
-DNS／TLS 仍待本人验证；当前不得运行 `install`，也不得向 feed 添加腾讯字段。
-`tencent-router.example.json` 保持 `enabled=false`、四个门禁全为 `false`。
+2026-10-18 已部署批次 `20261018-tencent-v2`，仅开放稳定版 4.0.20 三个精确路径：
 
-当前实际基线：
+- `/downloads/tencent/4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe`
+- `/downloads/tencent/4.0.20/LoliCode-4.0.20-Windows-x64-Setup.exe.sig`
+- `/downloads/tencent/4.0.20/LoliCode-Portable.zip`
 
-- main：`819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75`。
-- 官网可选按钮静态批次后的 snippet：`bf6b52f52564cbaf6bd7463235081ff20af5fb8771fb199fed70171b4af971c0`。
-- 网站静态代码已经上线，但 feed 没有腾讯字段，按钮保持隐藏。
-- COS 私有回源、CDN 日 2 GB／月 20 GB 封顶、IP 5 QPS、Type A／300 秒已由操作方回读；公开 DNS、证书和最终下载仍须实际验收。
+官网已显示腾讯安装版/便携版选项。R2/GitHub 原路由保留；稳定 feed 只追加两个可选下载字段，版本、platforms、原默认地址和签名不变。既有 4.0.21-rc.1 候选不在此线路中。
 
-## 文件与边界
+## 已验收的生产边界
 
-七个后端准备文件为 `tencent_router.py`、`test_tencent_router.py`、
-`tencent-router.example.json`、`tencent-nginx-locations.conf.template`、
-`deploy_tencent.py`、`test_deploy_tencent.py`、`lolicode-tencent-router.service`。
-不要打包 `__pycache__`、真实密钥或其它网站文件。
+CDN 为 `downloads.treasuregrove.art`，证书已绑定并通过正常 TLS 验证；当前证书到期时间 2027-01-15，需按到期计划续签。COS 保持私有回源，匿名对象访问拒绝。腾讯控制台回读日 2GB、月 20GB、月 HTTPS 100 万请求封顶，80% 告警；IP 每节点 5QPS，Type A 签名参数 sign、有效期 300 秒。平台封顶有延迟，不能保证绝对不产生额外费用。
 
-服务只监听 `127.0.0.1:18782`，仅接受 GET／HEAD 和三个精确路径。
-三个 Nginx location 各自使用 [Cloudflare IPv4](https://www.cloudflare.com/ips-v4)／
-[IPv6](https://www.cloudflare.com/ips-v6) 的审核网段恢复 `CF-Connecting-IP`，
-再覆写专用身份头；非 Cloudflare 来源不能用该请求头改变自己的 IP。
-部署前重新读取官方网段，变化即拒绝，不自动扩大信任范围。
-这些规则不写入全站或原 R2 location。
+独立服务只监听 `127.0.0.1:18782`，只接受 GET/HEAD 和上述路径，返回 no-store/no-referrer 的短期签名重定向。每 IPv4/IPv6 /64 每分钟最多签发 10 次，超限封禁 600 秒；签名链接在有效期内可复用，因此字节费用仍须由 CDN 封顶控制。
 
-[腾讯 Type A](https://cloud.tencent.com/document/product/228/41623) 使用
-`MD5(uri-timestamp-rand-0-key)`，只签发固定 CDN 的对应对象地址。
-源密钥由操作方另行存放于 `/etc/lolicode-tencent-cdn.key`，root 私有 0600；
-unit 通过 `LoadCredential` 交给服务。本程序不创建、改写或删除该文件，
-不得打印、截图、放入命令参数、环境变量、JSON、payload manifest 或仓库。
+Nginx 仅在三个新 location 中从审核的 Cloudflare 网段恢复客户端 IP，覆写专用身份头，不向后端传 Cookie/Authorization/请求体。普通来源不能靠伪造身份头指定限流桶。不记录签名 URL 或客户端 IP 访问日志；内存限流身份使用进程随机盐散列。未修改社区、账户 API 或已有 R2 location。
 
-默认每 IPv4／IPv6 `/64` 在 60 秒内签发至多 10 次，超限封禁 600 秒；阈值可配置。
-限频约束签名发放，已签 300 秒 URL 可复用，实际字节封顶由 CDN 配置执行。
-请求不记 IP 日志，内存限频身份使用进程随机盐哈希。
+Cloudflare 网段预检先读取官方文本列表；仅遇 HTTP 403 时使用官方公开 `https://api.cloudflare.com/client/v4/ips`。结果仍须与审核列表精确一致，否则停止。禁止绕过 TLS、放宽网段或关闭哈希检查。
 
-## 本地与 Linux 隔离测试
+## 凭据与文件
+
+生产配置为 `/etc/lolicode-tencent-router.json`，代码目录为 `/opt/lolicode-tencent-router/releases/20261018-tencent-v2/`。示例配置继续保持 disabled/门禁 false，不包含生产凭据。不要打包 `__pycache__` 或真实配置密钥。
+
+源密钥为 `/etc/lolicode-tencent-cdn.key`，root 私有 0600，由 systemd LoadCredential 提供给 DynamicUser 服务。程序不创建、改写或删除该源文件，不输出密钥或签名 URL，不允许放入参数、环境变量、JSON 或仓库。运行时只对准确的 systemd credential 路径和 CREDENTIALS_DIRECTORY 接受 root:root 0440 挂载；普通文件仍禁止组/其他权限，拒绝 symlink。
+
+## 验证与历史失败
 
 ```sh
 python3 -B -m unittest discover -s deploy/download-router -p 'test_*tencent*.py' -v
 ```
 
-所有网络和安装命令均使用 fake 测试对象，写入仅在测试临时目录。
-HTTP 测试最多监听 `127.0.0.1:0`，不会公开监听或启动 systemd 服务。
-Linux unit 语法验证必须用私有测试目录里的副本，把 `LoadCredential`
-替换为同目录的已知合成测试内容；不要让测试接触真实凭据。
+测试使用合成凭据和隔离文件；Linux Python 3.12.3 全部 68 项通过，无跳过。Windows 本地 68 项中 2 项 POSIX 专用检查按平台跳过。
 
-2026-10-17 已在服务器独立私有 staging、Python 3.12.3 下执行 **65／65** 项，
-无跳过；补齐私有文件权限、所有者与拒绝 symlink 的 POSIX 验证。
-测试护栏记录真实凭据访问、外部网络、公开端口、服务命令及目录外写入均为 0；
-仅放行一条已禁用配置的 Python 子进程退出检查。
-`systemd-analyze verify --man=no` 对合成凭据的临时 unit 副本返回 0，未启动 unit。
-回执和日志保留在操作方私有测试目录，不把测试材料当作生产上线回执。
+真实公开入口完整下载安装器、签名及便携包，字节数和 SHA256 均符合 deploy_tencent.py 的固定 ASSETS。过期/错误签名返回 403，11 次/分钟签发测试返回 429，身份伪造不能选择已阻断的其他 IP 桶。正式 Tauri updater SDK 通过隔离清单覆盖包地址后，实际下载腾讯安装器 23,121,161 字节并验签通过；没有运行安装器，不证明覆盖安装或默认稳定线路切换。
 
-## 下一轮生产门禁与具体命令
+首批 20261017-tencent-v1 因 systemd 凭据挂载权限启动失败，部署脚本自动撤回；保留不可变记录后以新批次修复。辅助过期签名用例曾使用不合格式的随机串，修正后另存成功回执，未把失败日志覆盖成成功。
 
-以下仅供操作方在所有条件完成并重新审核后执行，本次准备未执行。
+## 部署与回退
 
-1. 完成本人 DNS／证书验证，确认 `https://downloads.treasuregrove.art` TLS 生效；
-   回读私有 COS、日／月封顶、Type A 参数 `sign`／300 秒及告警配置。
-2. 在私有目录 `/root/lolicode-tencent-router-20261017-tencent-v1/` 放入审核版本的
-   `tencent_router.py`、`deploy_tencent.py`、unit、Nginx template 和 example。
-   将 example 复制为 `tencent-router.production.json`；逐项真实验证后才设置
-   `enabled` 与四个 `gates` 为 `true`，保留 TTL 300、固定附件身份和密钥路径。
-   不要通过关闭哈希检查、改旧基线或盲目勾选门禁来绕过失败。
-3. 在该私有目录生成 manifest 并检查配置，命令不会读取密钥：
+脚本是固定版本、固定哈希的单次部署批次，不是可反复覆盖生产的通用发布命令。再次变更须新建批次、检查实际 Nginx 差异、更新审核基线和独立 manifest；不得直接重跑 install。
+
+本批次 main 基线/部署后 SHA256 均为 `819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75`；snippet 部署前为 `d19eb29f4cf38bd9c2ab95c1c7b147182e637f3140acea9a1ecd1bfc9a985a8b`，追加三个 location 后为 `674ae8a40535de782a0718001ee514abfeb1c98d426f7e838975df6af3668b89`。安装/回退均用 CAS 检测并发变更，不覆盖其他批次。
+
+精确回退前先移除并验证 feed 的两个可选腾讯字段，避免留下失效按钮；保留 R2/GitHub 默认下载。随后核对当前 receipt 和文件哈希，再执行本批次 rollback。回退不会删除凭据或已有 R2 服务；如果当前文件已变化，停止并保留现场。
 
 ```sh
-cd /root/lolicode-tencent-router-20261017-tencent-v1
-python3 -B - <<'PY'
-import hashlib, json, os
-from pathlib import Path
-import deploy_tencent as deploy
-config = deploy.signer.load_configuration(deploy.CONFIG_NAME)
-assert deploy.signer.ready(config) and config.auth_ttl_seconds == 300
-manifest = {
-    'batch': deploy.BATCH, 'version': deploy.VERSION,
-    'files': {name: hashlib.sha256(Path(name).read_bytes()).hexdigest()
-              for name in sorted(deploy.FILES)},
-}
-with Path('manifest.json').open('x', encoding='utf-8') as stream:
-    json.dump(manifest, stream, indent=2)
-    stream.write('\n')
-os.chmod('manifest.json', 0o600)
-print('Fixed configuration gates and five-file manifest ready')
-PY
+python3 -B /root/lolicode-tencent-router-20261018-tencent-v2/deploy_tencent.py rollback
 ```
 
-4. 只读预检：检查两份 Nginx CAS、目标未存在、unit、官方 CF 网段、
-   无签名三附件均 403，以及有签名三附件的真实完整下载字节与 SHA256。
-   此步骤会按审核用途读取密钥签发测试 URL，但不会打印密钥或签名 URL。
-
-```sh
-python3 -B /root/lolicode-tencent-router-20261017-tencent-v1/deploy_tencent.py preflight
-```
-
-5. 全部预检通过、操作方再次放行后，才执行实际部署：
-
-```sh
-python3 -B /root/lolicode-tencent-router-20261017-tencent-v1/deploy_tencent.py install
-```
-
-程序再次预检，创建独立 unit／config／不可变代码目录，检查 loopback 响应，
-最后只追加三个 location 并测试／重载 Nginx。任一步失败只回退仍匹配本批次的文件；
-检测到并发变更则保留现场，绝不覆盖其它静态或路由批次。
-公开三个入口完整下载、签名、限频及其它站点边界验收后，另行批准 feed 字段发布。
-
-精确回退也要求 receipt 与当前文件匹配；不会删除密钥或已有 R2 服务：
-
-```sh
-python3 -B /root/lolicode-tencent-router-20261017-tencent-v1/deploy_tencent.py rollback
-```
+公开稳定 feed 在追加腾讯字段后 SHA256 为 `3dffe99d58afb1a4b6ddc2350a8db21548974ad24a0cc4a3666b9d98698e28f0`，原清单备份在 tools 服务器私有路径 `/root/lolicode-stable-feed-before-tencent-20261018.json`。不要据此将网站发布等同于新应用二进制发布。

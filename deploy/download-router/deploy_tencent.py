@@ -22,7 +22,7 @@ from urllib.error import HTTPError
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tencent_router as signer
 
-BATCH = '20261017-tencent-v1'
+BATCH = '20261018-tencent-v2'
 VERSION = '4.0.20'
 PORT = 18782
 PAYLOAD = Path('/root/lolicode-tencent-router-' + BATCH)
@@ -30,8 +30,8 @@ RELEASE = Path('/opt/lolicode-tencent-router/releases') / BATCH
 MAIN = Path('/etc/nginx/sites-available/lolicode.conf')
 MAIN_SHA = '819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75'
 SNIPPET = Path('/etc/nginx/snippets/lolicode-home-production-20261016-home-v3.conf')
-# Reviewed baseline after Tencent optional static controls; existing R2 routes retained.
-SNIPPET_SHA = 'bf6b52f52564cbaf6bd7463235081ff20af5fb8771fb199fed70171b4af971c0'
+# Reviewed 2026-10-18 release-notes change: only two static-directory references changed; existing R2 routes retained.
+SNIPPET_SHA = 'd19eb29f4cf38bd9c2ab95c1c7b147182e637f3140acea9a1ecd1bfc9a985a8b'
 UNIT = Path('/etc/systemd/system/lolicode-tencent-router.service')
 CONFIG = Path('/etc/lolicode-tencent-router.json')
 SERVICE = UNIT.name
@@ -161,23 +161,57 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def cloudflare_api_ranges(opener):
+    # The public, credential-free API publishes the same standard CF ranges.
+    # https://developers.cloudflare.com/api/resources/ips/methods/list/
+    url = 'https://api.cloudflare.com/client/v4/ips'
+    with opener.open(Request(url), timeout=15) as response:
+        raw = response.read(16385)
+        if response.status != 200 or response.geturl() != url or len(raw) > 16384:
+            raise RuntimeError('Cloudflare public IP API unavailable')
+    envelope = json.loads(raw)
+    result = envelope.get('result') if isinstance(envelope, dict) else None
+    if (not isinstance(envelope, dict) or envelope.get('success') is not True or not isinstance(result, dict)
+            or set(result) - {'etag', 'ipv4_cidrs', 'ipv6_cidrs'}):
+        raise RuntimeError('Unexpected Cloudflare public IP API response')
+    ranges = []
+    for version, field in [(4, 'ipv4_cidrs'), (6, 'ipv6_cidrs')]:
+        values = result.get(field)
+        if not isinstance(values, list) or len(values) > 100:
+            raise RuntimeError('Invalid Cloudflare IP API list')
+        for value in values:
+            if not isinstance(value, str):
+                raise RuntimeError('Invalid Cloudflare network value')
+            network = ipaddress.ip_network(value, strict=True)
+            if network.version != version or str(network) != value:
+                raise RuntimeError('Noncanonical Cloudflare network')
+        ranges.extend(values)
+    return ranges
+
+
 def verify_cloudflare(opener=None):
     # Official lists are re-read only; a changed list requires a new review, not
     # an automatic expansion of trusted clients in the live Nginx config.
     opener = opener or build_opener(ProxyHandler({}), NoRedirect())
     result = []
-    for version in [4, 6]:
-        url = 'https://www.cloudflare.com/ips-v' + str(version)
-        with opener.open(Request(url), timeout=15) as response:
-            raw = response.read(8193)
-            if response.status != 200 or response.geturl() != url or len(raw) > 8192:
-                raise RuntimeError('Cloudflare official IP list unavailable')
-        networks = raw.decode('ascii').splitlines()
-        for value in networks:
-            network = ipaddress.ip_network(value, strict=True)
-            if network.version != version or str(network) != value:
-                raise RuntimeError('Noncanonical Cloudflare network')
-        result.extend(networks)
+    try:
+        for version in [4, 6]:
+            url = 'https://www.cloudflare.com/ips-v' + str(version)
+            with opener.open(Request(url), timeout=15) as response:
+                raw = response.read(8193)
+                if response.status != 200 or response.geturl() != url or len(raw) > 8192:
+                    raise RuntimeError('Cloudflare official IP list unavailable')
+            networks = raw.decode('ascii').splitlines()
+            for value in networks:
+                network = ipaddress.ip_network(value, strict=True)
+                if network.version != version or str(network) != value:
+                    raise RuntimeError('Noncanonical Cloudflare network')
+            result.extend(networks)
+    except HTTPError as error:
+        if error.code != 403:
+            raise
+        error.close()
+        result = cloudflare_api_ranges(opener)
     if result != CF_NETWORKS:
         raise RuntimeError('Cloudflare official ranges changed; review before deployment')
     return result
