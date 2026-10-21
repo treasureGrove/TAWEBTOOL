@@ -150,7 +150,7 @@ async function checkEngines() {
         const { status, text } = await fetchText(`https://www.baidu.com/s?wd=${q}`);
         const m = text.match(/找到相关结果[数]?约?\s*([\d,，]+)\s*个/) || text.match(/百度为您找到相关结果约?\s*([\d,，]+)\s*个/);
         const blocked = /安全验证|请开启JavaScript|网络不给力/.test(text);
-        return { status, count: m ? m[1].replace(/[，,]/g, '') : null, note: blocked ? '被反爬拦截' : '' };
+        return { status, count: !blocked && m ? m[1].replace(/[，,]/g, '') : null, note: blocked ? '被反爬拦截' : '粗略结果估计，非实际收录总量' };
       }
     },
     {
@@ -204,9 +204,9 @@ function buildReport({ logResult, engines }) {
   L.push('');
   L.push(`站点：${SITE_BASE}　·　数据源：${LOG_PATH}（已剔除爬虫/扫描器、4xx/5xx）`);
   L.push('');
-  L.push('## 一、搜索引擎收录（site: 查询，反爬时仅供参考）');
+  L.push('## 一、site: 查询观测（非官方收录总量）');
   L.push('');
-  L.push('| 引擎 | 收录数 | HTTP | 说明 |');
+  L.push('| 引擎 | 查询观测值 | HTTP | 说明 |');
   L.push('| --- | --- | --- | --- |');
   for (const e of engines) {
     L.push(`| ${e.name} | ${e.count ?? '未取得'} | ${e.status || '-'} | ${e.note || ''} |`);
@@ -246,15 +246,16 @@ function buildReport({ logResult, engines }) {
   L.push('| --- | --- |');
   for (const [k, v] of [...pages].sort((a, b) => b[1] - a[1]).slice(0, 10)) L.push(`| ${k} | ${v} |`);
   L.push('');
-  L.push('## 三、搜索引擎抓取（nginx 日志里的爬虫请求，判断「有没有真被抓」）');
+  L.push('## 三、搜索引擎爬虫 UA 请求（未经来源验证）');
+  L.push('仅统计当前 access log，未合并轮转日志；图片、JS、CSS 在当前 Nginx 配置中不记录。UA 可伪造，请求数不等于页面数或收录数。');
   L.push('');
   const crawlerTotals = new Map();
-  for (const d of [yesterday, ...days]) {
+  for (const d of days) {
     const c = logResult.crawlers.get(d);
     if (!c) continue;
     for (const [k, v] of c) crawlerTotals.set(k, (crawlerTotals.get(k) || 0) + v);
   }
-  L.push(`| 引擎 | 昨日 ${yesterday} | 近 ${days.length + 1} 天 |`);
+  L.push(`| 引擎 | 昨日 ${yesterday} | 近 ${days.length} 天 |`);
   L.push('| --- | --- | --- |');
   if (crawlerTotals.size) {
     for (const engine of CRAWLERS.map((c) => c[0])) {
@@ -295,7 +296,7 @@ async function main() {
     const yStat = logResult.stats.get(y) || { pv: 0, uv: new Set() };
     const bing = engines.find((e) => e.name === 'Bing');
     const baidu = engines.find((e) => e.name === '百度');
-    const subject = `[TA工具箱日报] ${y} PV ${yStat.pv}/UV ${yStat.uv.size}｜Bing收录 ${bing?.count ?? '?'}｜百度 ${baidu?.count ?? '?'}`;
+    const subject = `[TA工具箱日报] ${y} PV ${yStat.pv}/UV ${yStat.uv.size}｜Bing查询 ${bing?.count ?? '?'}｜百度 ${baidu?.count ?? '?'}`;
     const r = spawnSync('mail', ['-s', subject, NOTIFY_EMAIL], { input: report, encoding: 'utf8' });
     if (r.error || r.status !== 0) {
       console.error(`[report] 邮件发送失败: ${r.error ? r.error.message : `exit ${r.status}`}`);

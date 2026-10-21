@@ -388,6 +388,8 @@ async function main() {
   }
   await fs.writeFile(path.join(ROOT, 'scripts', 'seo_urls.txt'), urls.join('\n') + '\n', 'utf8');
 
+  (await import('node:child_process')).execFileSync('python3', [path.join(ROOT, 'scripts/check_search_index.py'), '--sync'], { stdio: 'inherit' });
+
   console.log(`[seo] done. 本次生成 ${ok}/${topics.length}，全站共 ${allSlugs.length} 词条 / ${urls.length} URL`);
 }
 

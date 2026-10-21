@@ -191,3 +191,7 @@ https://tools.treasuregrove.art/tools_html/texture_channel_splitter.html
 https://tools.treasuregrove.art/tools_html/tiling_texture.html
 https://tools.treasuregrove.art/tools_html/video_cut.html
 https://tools.treasuregrove.art/tools_html/video_format_cover.html
+https://tools.treasuregrove.art/en/
+https://tools.treasuregrove.art/tools_html/resources.html
+https://tools.treasuregrove.art/seo/
+https://tools.treasuregrove.art/en/seo/

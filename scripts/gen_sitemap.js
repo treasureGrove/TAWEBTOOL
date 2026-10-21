@@ -64,6 +64,9 @@ xml += '        <changefreq>weekly</changefreq>\n';
 xml += '        <priority>1.0</priority>\n';
 xml += '    </url>\n';
 
+// English homepage is a self-canonical, indexable entry point.
+xml += `    <url><loc>${BASE}/en/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+
 // Tool pages
 for (const file of actual) {
     const p = PRIORITIES[file] || { freq: 'monthly', pri: 0.7 };
@@ -79,3 +82,5 @@ xml += '</urlset>\n';
 fs.writeFileSync('sitemap.xml', xml, 'utf8');
 console.log('Generated sitemap.xml with', actual.length + 1, 'URLs');
 console.log('  homepage +', actual.length, 'tool/about pages');
+
+require('child_process').execFileSync('python3', [path.join(__dirname, 'check_search_index.py'), '--sync'], { stdio: 'inherit' });
