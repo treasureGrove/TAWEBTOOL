@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="在线图片元数据查看工具，查看贴图分辨率、显存占用、POT检测、直方图和DPI等详细信息。">
-    <meta name="keywords" content="贴图信息,显存,VRAM,POT,直方图,分辨率,DPI,纹理信息,TA工具箱,技术美术工具箱,技术美术工具,TA工具,在线TA工具">
+    <meta name="description" content="批量检查贴图尺寸与透明度，对比 BC、ETC2、ASTC 显存及完整 Mipmap 预算，导出 CSV 报告。图片在浏览器本地处理。">
+    <meta name="keywords" content="贴图信息,批量检查,显存预算,VRAM,Mipmap,ASTC,BC7,CSV,POT,直方图,分辨率,TA工具箱,技术美术工具">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/image_metadata_inspector.html">
 
-    <meta property="og:title" content="贴图信息查看器">
-    <meta property="og:description" content="在线图片元数据查看工具，查看贴图分辨率、显存占用、POT检测、直方图和DPI等详细信息。">
+    <meta property="og:title" content="贴图信息查看器 · 批量显存预算">
+    <meta property="og:description" content="批量检查贴图尺寸与透明度，对比 BC、ETC2、ASTC 显存及完整 Mipmap 预算，导出 CSV 报告。图片在浏览器本地处理。">
     <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/image_metadata_inspector.html">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="TA工具箱">
@@ -22,13 +22,13 @@
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand">
-    <meta name="twitter:title" content="贴图信息查看器">
-    <meta name="twitter:description" content="在线图片元数据查看工具，查看贴图分辨率、显存占用、POT检测、直方图和DPI等详细信息。">
-    <title>贴图信息查看器 - TA工具箱</title>
+    <meta name="twitter:title" content="贴图信息查看器 · 批量显存预算">
+    <meta name="twitter:description" content="批量检查贴图尺寸与透明度，对比 BC、ETC2、ASTC 显存及完整 Mipmap 预算，导出 CSV 报告。图片在浏览器本地处理。">
+    <title>贴图信息查看器 · 批量显存预算 - TA工具箱</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css">
     <link rel="stylesheet" href="../css/common.css">
-    <link rel="stylesheet" href="../css/image_metadata_inspector.css">
+    <link rel="stylesheet" href="../css/image_metadata_inspector.css?v=20261021-budget1">
 
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -57,23 +57,48 @@ var _hmt = _hmt || [];
     <div id="panel">
         <div class="mi-head">
             <h1>贴图信息查看器</h1>
-            <p>快速查看贴图元数据：尺寸、POT/NPOT、宽高比、通道信息、显存占用估算、直方图分析、像素取色。</p>
+            <p>从单张检查到整组预算：批量查看尺寸、透明度和显存，定位占用大的贴图，导出报告用于项目评审。</p>
+            <span class="mi-local-note">图片在浏览器本地处理，不上传文件 · 无需登录</span>
         </div>
+
+        <section class="mi-section mi-budget-section" aria-labelledby="miBudgetTitle">
+            <div class="mi-section-heading">
+                <h2 id="miBudgetTitle">贴图显存预算</h2>
+                <button type="button" id="miDemo" class="mi-button">载入示例</button>
+            </div>
+            <label class="mi-drop-zone" id="miDropZone" for="miFileInput" tabindex="0" role="button">
+                <p>拖入一组贴图，或点击选择</p>
+                <small>支持 PNG / JPG / WebP / BMP / GIF / AVIF，可多次追加</small>
+            </label>
+            <input type="file" id="miFileInput" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif,image/avif" multiple hidden>
+            <div class="mi-controls">
+                <label>目标格式<select id="miFormat"></select></label>
+                <label class="mi-checkbox"><input type="checkbox" id="miMipmaps" checked>包含完整 Mipmap 链</label>
+                <label>整组预算（MiB）<input type="number" id="miBudget" value="64" min="0.01" max="65536" step="0.01" inputmode="decimal"></label>
+            </div>
+            <div class="mi-summary" id="miSummary" aria-live="polite"></div>
+            <p class="mi-help" id="miBudgetNote">按所选格式模拟同一组 2D 贴图的纹理数据量；不是源文件体积，也不执行压缩。每级 Mip 按完整压缩块计数；未计驱动对齐、引擎副本、流送驻留与容器开销，不能替代引擎实测。MiB = 1,048,576 字节。</p>
+            <div class="mi-list-toolbar">
+                <label>列表排序<select id="miSort"><option value="memory">显存从大到小</option><option value="name">文件名</option></select></label>
+                <div class="mi-actions">
+                    <button type="button" id="miExport" class="mi-button primary" disabled>导出 CSV 报告</button>
+                    <button type="button" id="miClear" class="mi-button" disabled>清空</button>
+                </div>
+            </div>
+            <div class="mi-table-scroll" role="region" aria-label="批量贴图检查结果，可横向滚动" tabindex="0">
+                <table class="mi-table">
+                    <thead><tr><th scope="col">贴图 / 点击预览</th><th scope="col">尺寸</th><th scope="col">文件体积</th><th scope="col">预计显存</th><th scope="col">检查结果</th></tr></thead>
+                    <tbody id="miBatchRows"><tr><td colspan="5">拖入一组贴图，或载入示例试试看。</td></tr></tbody>
+                </table>
+            </div>
+            <p id="miStatus" class="mi-status" role="status" aria-live="polite">支持多选和追加，每组最多 50 张；单张最多 32 MiB、16,777,216 像素。GIF 只分析静态帧。</p>
+        </section>
 
         <div class="mi-layout">
             <!-- Left: Input & Preview -->
             <div class="mi-col">
                 <section class="mi-section">
-                    <h2>输入贴图</h2>
-                    <label class="mi-drop-zone" id="miDropZone">
-                        <p>拖拽或点击上传图像</p>
-                        <small>支持 JPG / PNG / BMP / WEBP / GIF</small>
-                    </label>
-                    <input type="file" id="miFileInput" accept="image/*" style="display:none">
-                </section>
-
-                <section class="mi-section">
-                    <h2>预览（鼠标取色）</h2>
+                    <h2 id="miPreviewTitle">预览（鼠标或触摸取色）</h2>
                     <div class="mi-preview-wrap">
                         <canvas id="miPreviewCanvas" width="256" height="256"></canvas>
                     </div>
@@ -101,13 +126,22 @@ var _hmt = _hmt || [];
                 </section>
 
                 <section class="mi-section">
-                    <h2>显存占用估算（VRAM）</h2>
+                    <h2>当前贴图 · 格式对比</h2>
+                    <p class="mi-help" id="miMemoryNote">沿用上方 Mipmap 设置；可切换目标格式比较整组预算。</p>
                     <div class="mi-info-grid" id="miMemoryGrid">
                         <div class="mi-info-item full">
                             <div class="label">提示</div>
                             <div class="value" style="font-size:13px">请上传图像以查看显存占用</div>
                         </div>
                     </div>
+                </section>
+
+                <section class="mi-section mi-related">
+                    <h2>继续处理</h2>
+                    <a href="compress_image.html">图片压缩与格式转换 →</a>
+                    <a href="combine_rgba.html">ORM / RGBA 通道合成 →</a>
+                    <a href="texture_channel_splitter.html">通道分离与检查 →</a>
+                    <details><summary>计算依据</summary><p>BC 每个 4×4 块为 8 或 16 字节；ASTC 每块固定 16 字节。完整 Mipmap 链逐级取整直到 1×1。</p><a href="https://learn.microsoft.com/en-us/windows/win32/direct3d11/texture-block-compression-in-direct3d-11" target="_blank" rel="noopener noreferrer">Microsoft：BC 压缩格式</a><a href="https://registry.khronos.org/DataFormat/specs/1.4/dataformat.1.4.html" target="_blank" rel="noopener noreferrer">Khronos：ASTC / sRGB 规范</a></details>
                 </section>
 
                 <section class="mi-section">
@@ -118,7 +152,7 @@ var _hmt = _hmt || [];
                             <span><span class="dot" style="background:#ef4444"></span>R</span>
                             <span><span class="dot" style="background:#22c55e"></span>G</span>
                             <span><span class="dot" style="background:#3b82f6"></span>B</span>
-                            <span><span class="dot" style="background:#e2e8f0"></span>Luminance</span>
+                            <span><span class="dot" style="background:#e2e8f0"></span>亮度近似（sRGB）</span>
                         </div>
                     </div>
                 </section>
@@ -126,7 +160,8 @@ var _hmt = _hmt || [];
         </div>
     </div>
 
-    <script src="../js/image_metadata_inspector.js"></script>
+    <script src="../js/texture_budget.js?v=20261021-budget1"></script>
+    <script src="../js/image_metadata_inspector.js?v=20261021-budget1"></script>
 </body>
 
 </html>

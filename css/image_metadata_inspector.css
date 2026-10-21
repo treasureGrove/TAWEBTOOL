@@ -247,3 +247,54 @@
     border-color: var(--accent);
     font-weight: 600;
 }
+
+.mi-head { margin-bottom: 16px; }
+.mi-head p { margin-bottom: 8px; line-height: 1.7; }
+.mi-local-note { display: inline-block; font-size: 12px; color: var(--accent-strong); }
+.mi-budget-section { margin-bottom: var(--gap); }
+.mi-budget-section .mi-drop-zone { margin-top: 14px; padding: 20px 14px; }
+.mi-preview-wrap, #miPreviewTitle { overflow-wrap: anywhere; }
+.mi-section-heading, .mi-list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mi-section-heading h2 { flex: 1; margin: 0; border: 0; }
+.mi-controls { display: flex; gap: 16px; align-items: end; flex-wrap: wrap; margin: 16px 0; }
+.mi-controls label, .mi-list-toolbar label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--text-sub); }
+.mi-controls .mi-checkbox { flex-direction: row; align-items: center; align-self: center; color: var(--text-main); }
+.mi-controls input[type="number"], .mi-controls select, .mi-list-toolbar select { background: var(--app-surface-input); color: var(--text-main); border: 1px solid var(--line-soft); border-radius: 8px; padding: 9px; font-size: 13px; max-width: 100%; box-sizing: border-box; min-height: 40px; }
+.mi-controls input[type="number"] { width: 145px; }
+.mi-checkbox input { accent-color: var(--accent-strong); width: 18px; height: 18px; }
+.mi-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.mi-summary .value { font-size: 20px; }
+.mi-summary .over { border-color: var(--app-error); background: var(--app-error-bg); }
+.mi-summary .over .value { color: var(--app-error); }
+.mi-help { font-size: 12px; color: var(--text-sub); line-height: 1.8; margin: 8px 0 12px; }
+.mi-list-toolbar { margin: 16px 0 10px; }
+.mi-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.mi-button { border: 1px solid var(--app-line-strong); background: var(--app-glass-strong); color: var(--accent-strong); border-radius: 8px; padding: 9px 13px; cursor: pointer; font-size: 13px; min-height: 40px; }
+.mi-button.primary { background: var(--accent-strong); border-color: var(--accent-strong); color: white; }
+.mi-button:disabled { opacity: .5; cursor: default; }
+.mi-button:focus-visible, .mi-drop-zone:focus-visible, .mi-table button:focus-visible, .mi-table-scroll:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 3px; }
+.mi-table-scroll { overflow-x: auto; border: 1px solid var(--line-soft); border-radius: 9px; }
+.mi-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 650px; text-align: left; }
+.mi-table th, .mi-table td { padding: 10px 12px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.mi-table th { color: var(--text-sub); background: var(--app-glass-strong); font-weight: normal; white-space: nowrap; }
+.mi-table td:first-child { max-width: 250px; overflow-wrap: anywhere; }
+.mi-table td:last-child { min-width: 160px; max-width: 300px; line-height: 1.6; }
+.mi-table tr[aria-selected="true"] { background: var(--app-accent-hover); }
+.mi-table button { border: 0; background: transparent; color: var(--accent-strong); cursor: pointer; text-align: left; font: inherit; overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 3px; }
+.mi-table .mi-warning, .mi-status.error { color: var(--app-error); }
+.mi-status { font-size: 12px; line-height: 1.8; color: var(--text-sub); margin-top: 10px; overflow-wrap: anywhere; }
+.mi-col, .mi-layout, .mi-section { min-width: 0; }
+.mi-memory-selected { border-color: var(--accent-strong); background: var(--app-accent-hover); }
+.mi-related a { display: block; font-size: 13px; color: var(--accent-strong); padding: 7px 0; }
+.mi-related details { font-size: 12px; line-height: 1.8; margin-top: 10px; }
+.mi-related summary { cursor: pointer; color: var(--text-sub); }
+.mi-color-values { white-space: pre-line; overflow-wrap: anywhere; }
+.mi-preview-wrap canvas { touch-action: pan-y; }
+@media (max-width: 600px) {
+    .mi-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mi-controls { gap: 12px; }
+    .mi-summary .mi-info-item { padding: 8px; }
+    .mi-summary .value { font-size: 14px; word-break: normal; }
+    .mi-controls > label:first-child { width: 100%; }
+    .mi-list-toolbar { align-items: flex-end; }
+}
