@@ -195,3 +195,7 @@ https://tools.treasuregrove.art/en/
 https://tools.treasuregrove.art/tools_html/resources.html
 https://tools.treasuregrove.art/seo/
 https://tools.treasuregrove.art/en/seo/
+https://tools.treasuregrove.art/tools_html/gltf_optimizer.html
+https://tools.treasuregrove.art/tools_html/grove_range.html
+https://tools.treasuregrove.art/tools_html/grove_survivor.html
+https://tools.treasuregrove.art/tools_html/services.html
