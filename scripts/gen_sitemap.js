@@ -1,5 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const { execFileSync } = require('child_process');
+const ROOT = path.resolve(__dirname, '..');
+const PYTHON = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+const CHECKER = path.join(__dirname, 'check_search_index.py');
+function check(args) {
+    return execFileSync(PYTHON, [CHECKER, ...args], { cwd: ROOT, encoding: 'utf8' });
+}
 
 const BASE = 'https://tools.treasuregrove.art';
 const TOOLS = 'tools_html';
@@ -36,10 +43,8 @@ const PRIORITIES = {
     'about.html':              { freq: 'monthly', pri: 0.4 },
 };
 
-// Build list from actual files on disk, cross-referenced with priority table
-const actual = fs.readdirSync(TOOLS)
-    .filter(f => f.endsWith('.html'))
-    .sort();
+// Reuse the checker's canonical, robots and redirect policy before generating.
+const actual = JSON.parse(check(['--list-tool-pages']));
 
 const missingInTable = actual.filter(f => !PRIORITIES[f]);
 const deadInSitemap = Object.keys(PRIORITIES).filter(f => !actual.includes(f));
@@ -48,7 +53,7 @@ if (missingInTable.length) {
     console.warn('WARNING: new files need priority entry:', missingInTable.join(', '));
 }
 if (deadInSitemap.length) {
-    console.warn('WARNING: dead sitemap entries (file deleted):', deadInSitemap.join(', '));
+    console.warn('WARNING: priority entries omitted (deleted or not indexable):', deadInSitemap.join(', '));
     deadInSitemap.forEach(f => delete PRIORITIES[f]);
 }
 
@@ -64,6 +69,9 @@ xml += '        <changefreq>weekly</changefreq>\n';
 xml += '        <priority>1.0</priority>\n';
 xml += '    </url>\n';
 
+// English homepage is a self-canonical, indexable entry point.
+xml += `    <url><loc>${BASE}/en/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>\n`;
+
 // Tool pages
 for (const file of actual) {
     const p = PRIORITIES[file] || { freq: 'monthly', pri: 0.7 };
@@ -76,6 +84,13 @@ for (const file of actual) {
 
 xml += '</urlset>\n';
 
-fs.writeFileSync('sitemap.xml', xml, 'utf8');
-console.log('Generated sitemap.xml with', actual.length + 1, 'URLs');
-console.log('  homepage +', actual.length, 'tool/about pages');
+const temporary = fs.mkdtempSync(path.join(ROOT, '.sitemap-'));
+try {
+    const candidate = path.join(temporary, 'sitemap.xml');
+    fs.writeFileSync(candidate, xml, 'utf8');
+    process.stdout.write(check(['--sync', '--sitemap-candidate', candidate]));
+    console.log('Generated sitemap.xml with', actual.length + 2, 'URLs');
+    console.log('  2 homepages +', actual.length, 'tool/about pages');
+} finally {
+    fs.rmSync(temporary, { recursive: true, force: true });
+}

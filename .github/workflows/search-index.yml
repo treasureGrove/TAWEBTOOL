@@ -1,0 +1,17 @@
+name: Search index consistency
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: bash -n scripts/baidu_push.sh
+      - run: node --check scripts/gen_sitemap.js
+      - run: python3 scripts/check_search_index.py
+      - run: python3 -m unittest discover -s scripts/tests -p 'test_search_index.py'
