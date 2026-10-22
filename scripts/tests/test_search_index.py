@@ -122,12 +122,19 @@ class SearchIndexTest(unittest.TestCase):
         curl.chmod(0o755)
         state = self.root / 'logs/baidu_push.state'
         state.parent.mkdir()
-        state.write_text('190')
+        urls = (self.root / 'scripts/baidu_urls.txt').read_text().splitlines()
+        state.write_text(str(len(urls) - 7))
         env = dict(os.environ, PATH=str(mock) + ':' + os.environ['PATH'], BAIDU_NO_MAIL='1', BAIDU_MAX_PUSH='50', BAIDU_PUSH_ENDPOINT='http://baidu.invalid/test')
         for _ in range(2):
             subprocess.run([str(self.root / 'scripts/baidu_push.sh')], env=env, check=True, capture_output=True)
         self.assertEqual(state.read_text().strip(), '3')
         self.assertEqual(len((state.parent / 'baidu_push.last.log').read_text().splitlines()), 2)
+        pushed = [line.strip() for line in (state.parent / 'baidu_push_email.last.txt').read_text().splitlines()
+                  if line.startswith('  https://')]
+        self.assertEqual(pushed, urls[-7:] + urls[:3])
+        budgets = list(state.parent.glob('baidu_push.*.attempted'))
+        self.assertEqual(len(budgets), 1)
+        self.assertEqual(budgets[0].read_text().strip(), '10')
     @unittest.skipUnless(os.name == 'posix', 'Direct script execution requires POSIX; covered by Ubuntu CI')
     def test_partial_response_keeps_cursor(self):
         mock = self.root / 'bin'
