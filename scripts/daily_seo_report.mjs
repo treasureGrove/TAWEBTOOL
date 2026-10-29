@@ -10,7 +10,9 @@
  * 用法：
  *   node scripts/daily_seo_report.mjs [--no-mail] [--days=7]
  * 环境变量：
- *   NGINX_LOG          access log 路径（默认 /www/wwwlogs/tools.treasuregrove.art.log）
+ *   NGINX_LOG          access log 路径（自动发现同名轮转文件）（默认 /www/wwwlogs/tools.treasuregrove.art.log）
+ *   NGINX_LOG_FILES   明确列出的日志路径 JSON 数组（覆盖 NGINX_LOG，支持 .gz）
+ *   SEO_REPORT_TZ     统计时区（默认 Asia/Shanghai）
  *   SEO_REPORT_EMAIL   收件人（默认与百度推送一致）
  *   SITE_BASE          站点根 URL
  * 输出：logs/daily_seo_report.last.md（同时作为邮件正文）
@@ -19,6 +21,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { analyzeLog, discoverLogPaths, CRAWLERS, dayKey as zonedDayKey, reportDays, emptyDay, dataState } from './seo_log_analysis.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE_BASE = process.env.SITE_BASE || 'https://tools.treasuregrove.art';
@@ -26,99 +29,14 @@ const HOST = new URL(SITE_BASE).host;
 const LOG_PATH = process.env.NGINX_LOG || '/www/wwwlogs/tools.treasuregrove.art.log';
 const NOTIFY_EMAIL = process.env.SEO_REPORT_EMAIL || '1324236706@qq.com';
 const NO_MAIL = process.argv.includes('--no-mail');
-const DAYS = Number((process.argv.find((a) => a.startsWith('--days=')) || '--days=7').split('=')[1]) || 7;
+const DAYS = Number((process.argv.find((a) => a.startsWith('--days=')) || '--days=7').split('=')[1]);
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const BOT_RE = /bot|spider|crawler|slurp|python-requests|python-urllib|curl|wget|monitor|scan|scanner|headless|lighthouse|ahrefs|semrush|mj12|dotbot|petalbot|yandex|bytespider|facebookexternalhit|go-http-client|axios|okhttp|zgrab|masscan|nmap/i;
-/** 搜索引擎爬虫 UA 归类（用于判断「每天有没有真被搜索引擎抓」） */
-const CRAWLERS = [
-  ['Baiduspider', /baiduspider/i],
-  ['Bingbot', /bingbot|bingpreview/i],
-  ['Googlebot', /googlebot/i],
-  ['Sogou', /sogou (web )?spider/i],
-  ['360Spider', /360spider|haosou/i],
-  ['YandexBot', /yandexbot/i],
-  ['Bytespider', /bytespider/i],
-  ['PetalBot', /petalbot/i],
-  ['Applebot', /applebot/i]
-];
-
-const pad = (n) => String(n).padStart(2, '0');
-const dayKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-
-function logDayKey(stamp) {
-  // stamp 形如 30/Sep/2026:15:59:35 +0800
-  const m = /^(\d{2})\/(\w{3})\/(\d{4})/.exec(stamp);
-  if (!m) return null;
-  const mi = MONTHS.indexOf(m[2]);
-  if (mi === -1) return null;
-  return `${m[3]}-${pad(mi + 1)}-${m[1]}`;
-}
-
-const isPage = (p) => p === '/' || p.endsWith('/') || /\.html?$/i.test(p);
-
-function analyzeLog() {
-  const stats = new Map(); // day -> {pv, uv:Set, requests, refs:Map, pages:Map}
-  const crawlers = new Map(); // day -> Map(engine -> count)
-  const ensure = (day) => {
-    if (!stats.has(day)) stats.set(day, { pv: 0, uv: new Set(), requests: 0, refs: new Map(), pages: new Map() });
-    return stats.get(day);
-  };
-
-  let raw = '';
-  try {
-    raw = fs.readFileSync(LOG_PATH, 'utf8');
-  } catch (err) {
-    return { error: `无法读取 ${LOG_PATH}: ${err.message}`, stats, crawlers };
-  }
-
-  const RE = /^(\S+) \S+ \S+ \[([^\]]+)\] "([^"]*)" (\d{3}) (\S+) "([^"]*)" "([^"]*)"/;
-  for (const line of raw.split('\n')) {
-    if (!line) continue;
-    const m = RE.exec(line);
-    if (!m) continue;
-    const [, ip, stamp, request, status, , referer, ua] = m;
-    const day = logDayKey(stamp);
-    if (!day) continue;
-
-    // 爬虫抓取统计（不计入人类浏览量）
-    const crawler = CRAWLERS.find(([, re]) => re.test(ua));
-    if (crawler) {
-      if (!crawlers.has(day)) crawlers.set(day, new Map());
-      const c = crawlers.get(day);
-      c.set(crawler[0], (c.get(crawler[0]) || 0) + 1);
-    }
-    if (BOT_RE.test(ua) || !ua || ua === '-') continue;
-    if (status.startsWith('4') || status.startsWith('5')) continue;
-    const s = ensure(day);
-    s.requests += 1;
-    const target = request.split(' ')[1] || '';
-    const clean = target.split('?')[0];
-    if (!isPage(clean)) continue;
-    s.pv += 1;
-    s.uv.add(ip);
-    if (referer && referer !== '-') {
-      try {
-        const h = new URL(referer).host.toLowerCase();
-        if (h !== HOST) {
-          const engine = /(^|\.)baidu\.com$/.test(h) ? '百度'
-            : h.endsWith('bing.com') ? 'Bing'
-            : h === 'www.google.com' || h.endsWith('.google.com') ? 'Google'
-            : /sogou\.com$/.test(h) ? '搜狗'
-            : /so\.com$/.test(h) ? '360搜索'
-            : /sm\.cn$/.test(h) ? '神马'
-            : /duckduckgo\.com$/.test(h) ? 'DuckDuckGo'
-            : /yandex\./.test(h) ? 'Yandex'
-            : null;
-          if (engine) s.refs.set(engine, (s.refs.get(engine) || 0) + 1);
-        }
-      } catch {}
-    }
-    s.pages.set(clean, (s.pages.get(clean) || 0) + 1);
-  }
-  return { error: null, stats, crawlers };
-}
+const TIME_ZONE = process.env.SEO_REPORT_TZ || 'Asia/Shanghai';
+const dayKey = d => zonedDayKey(d, TIME_ZONE);
+const LOG_PATHS = process.env.NGINX_LOG_FILES ? JSON.parse(process.env.NGINX_LOG_FILES) : discoverLogPaths(LOG_PATH);
+if (!Array.isArray(LOG_PATHS) || !LOG_PATHS.length || LOG_PATHS.some(p => typeof p !== 'string') || new Set(LOG_PATHS).size !== LOG_PATHS.length) throw new Error('NGINX_LOG_FILES 必须为不重复的日志路径 JSON 数组');
+reportDays(new Date(), DAYS, TIME_ZONE);
 
 async function fetchText(url) {
   const res = await fetch(url, {
@@ -192,17 +110,16 @@ function sitemapCount() {
   return n;
 }
 
-function buildReport({ logResult, engines }) {
-  const now = new Date();
+export function buildReport({ logResult, engines, now = new Date() }) {
   const today = dayKey(now);
-  const yesterday = dayKey(new Date(now.getTime() - 86400000));
-  const days = [...Array(DAYS)].map((_, i) => dayKey(new Date(now.getTime() - (i + 1) * 86400000)));
+  const days = reportDays(now, DAYS, TIME_ZONE);
+  const yesterday = days[0];
   const L = [];
-  const s = (day) => logResult.stats.get(day) || { pv: 0, uv: new Set(), refs: new Map(), pages: new Map(), requests: 0 };
+  const s = (day) => logResult.stats.get(day) || emptyDay();
 
   L.push(`# TA工具箱 每日日报 ${today}`);
   L.push('');
-  L.push(`站点：${SITE_BASE}　·　数据源：${LOG_PATH}（已剔除爬虫/扫描器、4xx/5xx）`);
+  L.push(`站点：${SITE_BASE}　·　统计时区：${TIME_ZONE}；日志范围见诊断表。PV 仅计 GET 页面请求，UV 为其 IP 去重；机器人和 4xx/5xx 不计入 PV/UV。`);
   L.push('');
   L.push('## 一、site: 查询观测（非官方收录总量）');
   L.push('');
@@ -217,13 +134,26 @@ function buildReport({ logResult, engines }) {
   L.push('## 二、浏览量');
   L.push('');
   const y = s(yesterday);
-  L.push(`**昨日 ${yesterday}：PV ${y.pv}　UV ${y.uv.size}　全部请求 ${y.requests}**`);
+  const usable = d => logResult.stats.has(d);
+  L.push(`**昨日 ${yesterday}：PV ${usable(yesterday) ? y.pv : '—'}　UV ${usable(yesterday) ? y.uv.size : '—'}　已解析原始请求 ${y.requests}**`);
+  L.push(`数据状态：${dataState(logResult, yesterday)}。缺失日期不能证明真实零流量；解析失败无法可靠归属日期。`);
+  const diag = logResult.diagnostics;
+  L.push(`原始非空日志行 ${diag.rawLines}；成功解析 ${diag.parsed}；解析失败 ${diag.failed}（格式 ${diag.failures.format}，日期 ${diag.failures.timestamp}）。`);
+  L.push(`已解析时间范围（UTC）：${diag.first || '无'} 至 ${diag.last || '无'}。格式：${JSON.stringify(diag.formats)}。`);
+  L.push('| 日志文件 | 字节数 | 修改时间 UTC | 原始行 | 成功 | 失败 | 读取状态 |');
+  L.push('| --- | --- | --- | --- | --- | --- | --- |');
+  for (const f of diag.files) L.push(`| ${f.path.replaceAll('|', '\uFF5C')} | ${f.bytes ?? '—'} | ${f.modified || '—'} | ${f.rawLines} | ${f.parsed} | ${f.failed} | ${f.error ? '读取失败（详情见警告）' : '成功'} |`);
+  L.push('过滤原因按顺序互斥归类；common 格式缺少 UA，不能判别人类/爬虫。acceptedRequests 为过滤机器人、缺失 UA、错误状态和无效请求后保留的请求，仍包含非页面/非 GET。');
+  L.push('| 日期 | 原始已解析请求 | 保留请求 | 搜索爬虫 UA | 其他机器人 | 缺失 UA | 4xx/5xx | 无效请求 | 非 GET | 非页面 | 状态 |');
+  L.push('| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |');
+  for (const d of days) { const v=s(d); const f=v.filtered; L.push(`| ${d} | ${v.requests} | ${v.acceptedRequests} | ${f.crawler} | ${f.bot} | ${f.missingUa} | ${f.httpError} | ${f.invalidRequest} | ${f.nonGet} | ${f.nonPage} | ${dataState(logResult,d)} |`); }
+  L.push('覆盖限制：默认读取活动日志及同名日期/数字轮转文件（含 .gz），显式 NGINX_LOG_FILES 覆盖自动发现；未记录的请求、CDN 缓存命中和 access_log off 无法从这些日志恢复。');
   L.push('');
   L.push('| 日期 | PV | UV |');
   L.push('| --- | --- | --- |');
   for (const d of days) {
     const v = s(d);
-    L.push(`| ${d} | ${v.pv} | ${v.uv.size} |`);
+    L.push(`| ${d} | ${usable(d) ? v.pv : '—'} | ${usable(d) ? v.uv.size : '—'} |`);
   }
   L.push('');
   const refs = new Map();
@@ -235,7 +165,7 @@ function buildReport({ logResult, engines }) {
     L.push('| --- | --- |');
     for (const [k, v] of [...refs].sort((a, b) => b[1] - a[1])) L.push(`| ${k} | ${v} |`);
   } else {
-    L.push('（近 7 天没有来自搜索引擎的明确 referer）');
+    L.push(`（近 ${DAYS} 天的可解析记录中未识别到明确搜索 referer；不代表没有搜索点击）`);
   }
   L.push('');
   const pages = new Map();
@@ -247,7 +177,7 @@ function buildReport({ logResult, engines }) {
   for (const [k, v] of [...pages].sort((a, b) => b[1] - a[1]).slice(0, 10)) L.push(`| ${k} | ${v} |`);
   L.push('');
   L.push('## 三、搜索引擎爬虫 UA 请求（未经来源验证）');
-  L.push('仅统计当前 access log，未合并轮转日志；图片、JS、CSS 在当前 Nginx 配置中不记录。UA 可伪造，请求数不等于页面数或收录数。');
+  L.push('仅按 UA 识别；图片、JS、CSS 在当前 Nginx 配置中不记录。UA 可伪造，请求数不等于页面数或收录数。');
   L.push('');
   const crawlerTotals = new Map();
   for (const d of days) {
@@ -265,7 +195,7 @@ function buildReport({ logResult, engines }) {
       L.push(`| ${engine} | ${yv} | ${tv} |`);
     }
   } else {
-    L.push('| （无） | 0 | 0 |');
+    L.push('| 可解析日志中未识别到爬虫 UA（数据缺失时不能推断未抓取） | — | — |');
   }
   L.push('');
   L.push('## 四、推送状态');
@@ -280,7 +210,7 @@ function buildReport({ logResult, engines }) {
 }
 
 async function main() {
-  const logResult = analyzeLog();
+  const logResult = analyzeLog({ paths: LOG_PATHS, timeZone: TIME_ZONE });
   const engines = await checkEngines();
   const report = buildReport({ logResult, engines });
 
@@ -292,11 +222,11 @@ async function main() {
   console.log(`\n[report] 已写入 ${path.relative(ROOT, outFile)}`);
 
   if (!NO_MAIL) {
-    const y = dayKey(new Date(Date.now() - 86400000));
+    const y = reportDays(new Date(), DAYS, TIME_ZONE)[0];
     const yStat = logResult.stats.get(y) || { pv: 0, uv: new Set() };
     const bing = engines.find((e) => e.name === 'Bing');
     const baidu = engines.find((e) => e.name === '百度');
-    const subject = `[TA工具箱日报] ${y} PV ${yStat.pv}/UV ${yStat.uv.size}｜Bing查询 ${bing?.count ?? '?'}｜百度 ${baidu?.count ?? '?'}`;
+    const subject = `[TA工具箱日报] ${y} ${dataState(logResult,y)} PV ${logResult.stats.has(y) ? yStat.pv : '—'}/UV ${logResult.stats.has(y) ? yStat.uv.size : '—'}｜Bing查询 ${bing?.count ?? '?'}｜百度 ${baidu?.count ?? '?'}`;
     const r = spawnSync('mail', ['-s', subject, NOTIFY_EMAIL], { input: report, encoding: 'utf8' });
     if (r.error || r.status !== 0) {
       console.error(`[report] 邮件发送失败: ${r.error ? r.error.message : `exit ${r.status}`}`);
@@ -306,7 +236,7 @@ async function main() {
   }
 }
 
-main().catch((err) => {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main().catch((err) => {
   console.error('[report] 失败:', err);
   process.exit(1);
 });

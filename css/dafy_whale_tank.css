@@ -1,0 +1,198 @@
+/* 大肥鱼开坦克（dafy_whale_tank）：游戏作为 panel 窗口内的内嵌页面呈现。
+   panel 本身去掉内边距与滚动条，整体让给 iframe；游戏内部的 UI 与开始页全部保持原样。
+
+   2026-10-27：窄屏/触屏改成「沉浸模式」——
+   站点左侧图标栏（<=980px 时只剩 76px 图标、点不到也看不清）、顶部搜索、反馈浮钮全部让开，
+   只留一条 44px 的顶部返回栏 + 占满其余空间的游戏面板。桌面端保持原布局。 */
+
+.dafy-panel {
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #060c22 !important;
+    border: 1px solid rgba(243, 200, 121, 0.32) !important;
+    box-shadow: 0 18px 46px -18px rgba(4, 8, 24, 0.62) !important;
+}
+
+.dafy-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    border: 0;
+    border-radius: calc(var(--app-radius-lg) - 1px);
+    background: #060c22;
+    color-scheme: normal;
+}
+
+/* 面板占满可视区域，游戏画布按 iframe 尺寸自适应 */
+#panel.dafy-panel {
+    opacity: 1;
+    transform: none;
+}
+
+/* 屏幕阅读器/爬虫可见的作者标注：不占布局、不遮挡游戏 UI */
+.dafy-credit {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* 无 WebGL 时的兜底提示（此时 iframe 已被移除） */
+.dafy-fallback {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    height: 100%;
+    padding: clamp(20px, 6vw, 64px);
+    color: #fff8e8;
+    background: linear-gradient(160deg, #12204a 0%, #060c22 100%);
+    line-height: 1.9;
+}
+
+/* 上面的 display 会盖过 UA 的 [hidden] 规则，这里显式还原：有 WebGL 时绝不显示 */
+.dafy-fallback[hidden] {
+    display: none;
+}
+
+.dafy-fallback h1 {
+    margin: 0 0 6px;
+    font-size: clamp(20px, 3vw, 30px);
+    color: #f3c879;
+}
+
+.dafy-fallback p {
+    margin: 0;
+    max-width: 62ch;
+    color: rgba(255, 248, 232, 0.82);
+}
+
+.dafy-home-link {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    color: #2a1c05 !important;
+    background: linear-gradient(180deg, #ffe9b0, #f6c667 45%, #e0a341);
+    text-decoration: none;
+}
+
+/* =========================================================
+   沉浸模式顶栏（窄屏 / 触屏）
+   ========================================================= */
+.dafy-bar {
+    display: none;
+}
+
+html.dafy-immersive {
+    --dafy-bar-h: calc(44px + env(safe-area-inset-top, 0px));
+}
+
+@media (max-width: 980px), (pointer: coarse) {
+    html.dafy-immersive .dafy-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--dafy-bar-h);
+        padding: env(safe-area-inset-top, 0px) max(10px, env(safe-area-inset-right, 0px)) 0 max(10px, env(safe-area-inset-left, 0px));
+        box-sizing: border-box;
+        background: linear-gradient(180deg, #0d1a3e 0%, #090f28 100%);
+        border-bottom: 1px solid rgba(243, 200, 121, 0.22);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+        z-index: 9100;
+    }
+
+    /* 站点外壳（左菜单 / 搜索 / 背景 / 反馈浮钮…）全部让开，只留面板和顶栏 */
+    html.dafy-immersive body > *:not(#panel):not(#dafyBar) {
+        display: none !important;
+    }
+
+    html.dafy-immersive #panel.dafy-panel {
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: var(--dafy-bar-h) !important;
+        width: auto !important;
+        height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+        animation: none !important;
+        overflow: hidden !important;
+        z-index: 9000 !important;
+    }
+
+    html.dafy-immersive .dafy-frame {
+        border-radius: 0 !important;
+    }
+}
+
+@media (max-width: 980px) and (orientation: landscape) {
+    html.dafy-immersive {
+        --dafy-bar-h: calc(36px + env(safe-area-inset-top, 0px));
+    }
+}
+
+.dafy-bar-back {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    font-size: 17px;
+    line-height: 1;
+    color: #ffe9bd;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(243, 200, 121, 0.28);
+}
+
+.dafy-bar-back:active {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.dafy-bar-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #ffe9bd;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dafy-bar-exit {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font: 800 11px/1 inherit;
+    color: #ffe9bd;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(243, 200, 121, 0.28);
+    cursor: pointer;
+}
+
+.dafy-bar-exit:active {
+    background: rgba(255, 255, 255, 0.18);
+}

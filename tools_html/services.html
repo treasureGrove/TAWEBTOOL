@@ -1,84 +1,104 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TA 服务需求讨论 - TA工具箱</title>
-<meta name="description" content="讨论序列帧、贴图批处理与项目工具适配需求，明确范围与验收。免费工具保持开放；产品尚未开售，本页不收费、不承诺接单。">
-<link rel="canonical" href="https://tools.treasuregrove.art/tools_html/services.html">
-<link rel="stylesheet" href="../css/common.css"><link rel="stylesheet" href="../css/services.css?v=20261008b">
-<link rel="icon" href="/favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具需求与定制咨询 - TA工具箱</title>
+    <meta name="description" content="提出工具改进需求，或讨论贴图批处理、序列帧与项目流程定制。选择方向、整理需求稿，再到 LoliCode 论坛继续讨论。">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/services.html">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/services.css?v=20261011-services">
+    <link rel="icon" href="/favicon.ico">
+    <script src="../js/menu.js?v=20261011-services" defer></script>
+    <script src="../js/services.js?v=20261011-services" defer></script>
 </head>
 <body>
 <div id="main_bg"></div><div class="left_menu"></div>
 <div class="top_search"><input type="text" placeholder="搜索工具..." aria-label="搜索工具"></div>
 <div id="panel">
 <main class="svc">
-
-  <header class="svc-head">
-    <p class="svc-kicker">免费工具 <span>→</span> <strong>具体需求</strong> <span>→</span> 确认范围</p>
-    <h1>TA 服务需求讨论</h1>
-    <p class="svc-lead">先用免费工具把问题跑通。需要批量流程或项目适配时，在这里把需求写清楚，再决定要不要发到论坛。</p>
-    <p class="svc-cta-row"><a class="svc-primary" href="#svc-form">开始填写需求</a><span>或先看下面的方向与交付边界</span></p>
-  </header>
-
-  <aside class="svc-stage">
-    <strong>当前阶段</strong>
-    <p>本页只做需求讨论。产品尚未开售，此阶段不收费、不承诺接单；后续如确认可行，范围、费用与时间另行约定。</p>
-  </aside>
-
-  <ol class="svc-steps">
-    <li><span class="svc-step-no">1</span><div><h3>填写需求</h3><p>任务、引擎版本、规模与验收标准。</p></div></li>
-    <li><span class="svc-step-no">2</span><div><h3>生成文本</h3><p>在浏览器本地生成，不上传服务器。</p></div></li>
-    <li><span class="svc-step-no">3</span><div><h3>自行发帖</h3><p>复制后到论坛 TA 区发帖，本页不代发。</p></div></li>
-  </ol>
-
-  <section class="svc-block">
-    <h2>可以从这些方向讨论</h2>
-    <ul class="svc-links">
-      <li><a href="sprite_sheet_splitter.html">序列帧与导入流程</a><span>先用免费拆分工具完成命名、ZIP 与通用元数据；批量规范与引擎适配可另行评估。</span></li>
-      <li><a href="combine_rgba.html">贴图批处理</a><span>通道打包、命名规则与重复检查；需说明原始格式、目标约定与处理规模。</span></li>
-      <li><a href="model_previewer.html">项目工具与检查报告</a><span>围绕可复现的问题评估小工具或检查脚本；引擎版本、资产权限与样例须先明确。</span></li>
-    </ul>
-  </section>
-
-  <section class="svc-block">
-    <h2>交付前要明确什么</h2>
-    <dl class="svc-terms">
-      <dt>范围</dt><dd>输入、输出、版本、规模，以及可复现的样例。</dd>
-      <dt>验收</dt><dd>以双方确认的样例和目标项目结果验证，不以「代码跑通」替代可用。</dd>
-      <dt>排除</dt><dd>未确认的功能、第三方素材授权、完整引擎 Shader 迁移、永久维护，均不默认包含。</dd>
-    </dl>
-    <p class="svc-note">不展示未经核实的成交、收益或交付成果；需要真实样例与验收记录。</p>
-  </section>
-
-  <section class="svc-form" id="svc-form" aria-labelledby="form-title">
-    <h2 id="form-title">整理需求</h2>
-    <p class="svc-privacy">这些字段只在本页生成文本，不上传服务器，也不采集邮箱或手机号。不要公开私有代码、凭据与未授权资产。</p>
-    <div class="svc-fields">
-      <label for="svc-task">任务类型<span class="svc-hint">必填，例如「批量序列帧命名与导入」</span><input id="svc-task" maxlength="160" placeholder="批量序列帧命名与导入"></label>
-      <label for="svc-engine">引擎 / 版本<span class="svc-hint">例如 Unity 2022 URP、UE 5.4</span><input id="svc-engine" maxlength="160" placeholder="Unity 2022 URP"></label>
-      <label for="svc-scale">规模 / 频率<span class="svc-hint">文件数量、多久重复一次</span><input id="svc-scale" maxlength="160" placeholder="约 300 个文件，每周一次"></label>
-      <label for="svc-expected">期望结果<span class="svc-hint">怎样算完成</span><input id="svc-expected" maxlength="400" placeholder="导入后命名与尺寸自动符合规范"></label>
-      <label for="svc-sample" class="svc-field-wide">可公开样例<span class="svc-hint">可公开描述即可，不要填写秘密</span><input id="svc-sample" maxlength="400" placeholder="自生成测试图，或公开示例链接"></label>
+    <header class="svc-head">
+        <p class="svc-eyebrow">TA 工具箱 <span> / </span> 需求与协作</p>
+        <h1>工具需求与定制咨询</h1>
+        <p class="svc-lead">现有工具差一步，或你的项目需要专用流程？把现在的问题和想要的结果说清楚，一起讨论怎么做。</p>
+        <div class="svc-cta-row">
+            <a class="svc-primary" href="#svc-form" data-intent="improvement">提一个工具需求 <span aria-hidden="true">↗</span></a>
+            <a class="svc-secondary" href="#svc-form" data-intent="custom">聊聊项目定制</a>
+            <a class="svc-link-button" href="https://lolicode.com/t/ta" target="_blank" rel="noopener noreferrer">先看看论坛讨论 →</a>
+        </div>
+    </header>
+    <aside class="svc-stage"><span class="svc-stage-dot" aria-hidden="true"></span><p><strong>开放需求讨论</strong> · 免费工具继续开放。定制服务尚未开售，本页不收费、不承诺接单；可行方案、交付范围与时间需另行确认。</p></aside>
+    <section aria-labelledby="svc-directions-title">
+        <p class="svc-section-label">从你的工作流开始</p>
+        <h2 id="svc-directions-title">这些问题，可以一起讨论</h2>
+        <div class="svc-directions">
+            <article class="svc-direction">
+                <span class="svc-direction-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7m-3.5-3.5v7"/></svg></span>
+                <h3>贴图与批处理</h3><p>通道打包、格式转换、命名检查，让重复操作变成一次处理。</p>
+                <div class="svc-direction-links"><button class="svc-topic" type="button" data-topic="texture">用这个方向填写 →</button><a href="combine_rgba.html">先试免费工具</a></div>
+            </article>
+            <article class="svc-direction">
+                <span class="svc-direction-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h14v18H5zM5 8h14M5 16h14M9 3v18m6-18v18"/><path d="m10.5 10 4 2-4 2z" fill="currentColor" stroke="none"/></svg></span>
+                <h3>序列帧与引擎导入</h3><p>拆分、导出与批量命名，接上项目实际使用的导入流程。</p>
+                <div class="svc-direction-links"><button class="svc-topic" type="button" data-topic="sprite">用这个方向填写 →</button><a href="sprite_sheet_splitter.html">先试免费工具</a></div>
+            </article>
+            <article class="svc-direction">
+                <span class="svc-direction-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="m12 2 9 5v10l-9 5-9-5V7zm0 10L3 7m9 5 9-5m-9 5v10"/><path d="m7 4.8 9 5"/></svg></span>
+                <h3>项目工具与资产检查</h3><p>定位可复现的问题，整理检查规则，评估适合你项目的小工具。</p>
+                <div class="svc-direction-links"><button class="svc-topic" type="button" data-topic="project">用这个方向填写 →</button><a href="model_previewer.html">先试免费工具</a></div>
+            </article>
+        </div>
+    </section>
+    <div class="svc-layout">
+        <section class="svc-form" id="svc-form" role="form" aria-labelledby="form-title">
+            <div class="svc-form-head"><p class="svc-section-label">01 / 说清楚问题</p><h2 id="form-title">整理你的需求</h2><p>先填标题和当前问题，其余可以边讨论边补充。</p></div>
+            <fieldset class="svc-purpose">
+                <legend>你想讨论什么？</legend>
+                <div class="svc-purpose-grid">
+                    <label><input type="radio" name="svc-intent" value="improvement" checked><span class="svc-purpose-text"><span class="svc-purpose-title">改进现有工具</span><span class="svc-purpose-desc">新增功能、使用体验或流程建议</span></span></label>
+                    <label><input type="radio" name="svc-intent" value="custom"><span class="svc-purpose-text"><span class="svc-purpose-title">咨询项目定制</span><span class="svc-purpose-desc">批量处理、项目适配或检查脚本</span></span></label>
+                </div>
+            </fieldset>
+            <div class="svc-fields">
+                <label class="svc-field-wide" for="svc-task"><span class="svc-label-row">一句话标题 <span class="svc-required">必填</span></span><span class="svc-hint">你希望增加或解决什么？</span><input id="svc-task" name="task" maxlength="160" required placeholder="例如：支持按项目规范批量打包 ORM 贴图"></label>
+                <label class="svc-field-wide" for="svc-problem"><span class="svc-label-row">现在卡在哪里 <span class="svc-required">必填</span></span><span class="svc-hint">目前怎么做、哪里费时，或怎样复现问题。</span><textarea id="svc-problem" name="problem" rows="3" maxlength="1600" required placeholder="现在每张贴图都要手动选通道、导出、重命名；文件多时容易漏处理。"></textarea></label>
+                <label class="svc-field-wide" for="svc-expected">希望得到什么结果<span class="svc-hint">输入什么、输出什么？怎样算符合预期？</span><textarea id="svc-expected" name="expected" rows="3" maxlength="1200" placeholder="选择一个文件夹后批量生成 ORM，保持尺寸，输出命名符合项目规则，并列出缺失通道。"></textarea></label>
+                <label for="svc-engine">工具 / 引擎 / 版本<span class="svc-hint">也可填写操作系统或目标平台。</span><input id="svc-engine" name="engine" maxlength="160" placeholder="例如：UE 5.4 / Windows"></label>
+                <label for="svc-scale">规模 / 使用频率<span class="svc-hint">文件数量、尺寸、多久重复一次。</span><input id="svc-scale" name="scale" maxlength="160" placeholder="例如：300 张 2K 贴图，每周一次"></label>
+                <label class="svc-field-wide" for="svc-constraints">项目约束<span class="svc-hint">选填：命名规范、交付形式、期望时间等。</span><input id="svc-constraints" name="constraints" maxlength="400" placeholder="例如：需要离线运行，文件名保留 _ORM 后缀"></label>
+                <label class="svc-field-wide" for="svc-sample">可公开的样例<span class="svc-hint">选填：公开链接，或能复现问题的样例说明。</span><input id="svc-sample" name="sample" maxlength="400" placeholder="例如：用自生成的测试图演示，不涉及项目素材"></label>
+            </div>
+            <p class="svc-privacy">这里填写的内容只用于本页生成讨论稿，不会自动上传或保存；刷新页面会清空。公开发帖前，请去掉私有代码、凭据和未授权素材。</p>
+            <div class="svc-actions"><button id="svc-generate" type="button" class="svc-primary" disabled>生成讨论稿 →</button><span id="svc-tip" class="svc-status" role="status" aria-live="polite">生成后预览，再选择复制和发帖。</span></div>
+            <noscript><p class="svc-status" data-state="error">请启用 JavaScript 生成讨论稿；也可以直接到论坛说明你的问题。</p></noscript>
+        </section>
+        <aside class="svc-preview" aria-labelledby="result-title">
+            <div class="svc-preview-head"><div><p class="svc-section-label">02 / 带着需求去讨论</p><h2 id="result-title">你的讨论稿</h2></div><span id="svc-draft-state" class="svc-badge" data-state="empty">尚未生成</span></div>
+            <div class="svc-preview-empty" id="svc-preview-empty"><p><strong>好的讨论，从具体问题开始。</strong></p><p>填完表单，这里会整理成可复制的文本。</p><ul><li>现在的流程与困难</li><li>想要的结果与验收方式</li><li>使用环境、规模与项目约束</li></ul><span>没有合适样例也没关系，先把问题讲清楚。</span></div>
+            <section class="svc-result" id="svc-result" hidden>
+                <textarea id="svc-output" rows="15" readonly aria-labelledby="result-title" aria-describedby="svc-result-note"></textarea>
+                <div class="svc-actions"><button id="svc-copy" type="button" class="svc-primary">复制讨论稿</button><a class="svc-secondary" href="https://lolicode.com/t/ta" target="_blank" rel="noopener noreferrer">打开论坛 TA 区 ↗</a></div>
+                <p id="svc-copy-tip" class="svc-status" role="status" aria-live="polite"></p>
+                <p class="svc-result-note" id="svc-result-note">登录论坛后点击「发布主题」，选择「TA知识」标签并粘贴讨论稿，再按实际情况修改。论坛内容对公众可见。</p>
+            </section>
+        </aside>
     </div>
-    <div class="svc-actions">
-      <button id="svc-generate" type="button" class="svc-primary">生成需求文本</button>
-      <span id="svc-tip" class="svc-status" role="status" aria-live="polite">生成后可复制到论坛发帖；剪贴板不可用时请手动复制。</span>
-    </div>
-  </section>
-
-  <section class="svc-result" id="svc-result" hidden aria-labelledby="result-title">
-    <h2 id="result-title">需求文本</h2>
-    <textarea id="svc-output" rows="10" readonly aria-labelledby="result-title"></textarea>
-    <div class="svc-actions">
-      <button id="svc-copy" type="button" class="svc-secondary">再次复制</button>
-      <a class="svc-primary svc-cta" href="https://lolicode.com/t/ta" target="_blank" rel="noopener noreferrer">去论坛 TA 区发帖 →</a>
-    </div>
-    <p class="svc-note">把上面的文本粘贴到论坛新帖即可。请勿公开代码、凭据或未授权资产；论坛帖子对公众可见。</p>
-  </section>
-
-  <footer class="svc-foot"><a href="../index.html">返回工具箱</a><span>·</span><a href="https://lolicode.com/" target="_blank" rel="noopener noreferrer">LoliCode 论坛</a></footer>
+    <section class="svc-discuss" aria-labelledby="svc-discuss-title">
+        <div><p class="svc-section-label">选对交流入口</p><h2 id="svc-discuss-title">需求讨论，还是网站反馈？</h2></div>
+        <div class="svc-contact-grid">
+            <div class="svc-contact-card"><h3>聊需求与方案</h3><p>工具改进、项目流程和定制想法，适合在论坛 TA 区公开交流，也方便补充样例、持续跟进。</p><a class="svc-link-button" href="https://lolicode.com/t/ta" target="_blank" rel="noopener noreferrer">进入论坛讨论 →</a></div>
+            <div class="svc-contact-card"><h3>反馈网站使用问题</h3><p>页面报错、按钮失效等，请用本站反馈。提交后邮箱、反馈内容和可选截图会发送到本站。</p><button class="svc-link-button" id="svc-feedback" type="button">打开网站反馈 →</button><p id="svc-feedback-tip" class="svc-status" role="status" aria-live="polite"></p></div>
+        </div>
+    </section>
+    <section class="svc-faq" aria-labelledby="svc-faq-title">
+        <h2 id="svc-faq-title">讨论前，先了解这几件事</h2>
+        <details><summary>工具改进和项目定制，有什么区别？</summary><p>工具改进面向更多人的共性问题，例如批量命名、导出选项或交互体验。项目定制围绕你的引擎版本、资产规范和工作流，需要先讨论可复现的样例、输入输出与验收标准。</p></details>
+        <details><summary>填写后，会直接提交或开始制作吗？</summary><p>不会。这里先帮你整理一份讨论稿，由你决定是否发到论坛。定制服务尚未开售；是否可行、制作范围、费用和时间，都需要后续单独确认。</p></details>
+        <details><summary>还没有完整方案，可以先提需求吗？</summary><p>可以。说清现在怎么做、最耗时的一步和希望得到的结果，就足够开始讨论。无需公开整个项目；可以用自生成的素材或最小可复现样例说明问题。</p></details>
+        <details><summary>确认方案时，哪些边界需要说清？</summary><p>应明确输入输出、引擎版本、处理规模、交付形式和验收样例。第三方素材授权、未确认的功能、完整 Shader 迁移及后续维护范围，需要另行约定。</p></details>
+    </section>
+    <footer class="svc-foot"><a href="../index.html">← 返回工具箱</a><a href="about.html">关于作者</a><span>把问题说具体，让讨论更有效。</span></footer>
 </main>
 </div>
-<script src="../js/menu.js?v=20261008"></script><script src="../js/services.js?v=20261008b"></script>
-</body></html>
+</body>
+</html>

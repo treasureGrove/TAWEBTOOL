@@ -30,7 +30,6 @@ const PRIORITIES = {
     'model_previewer.html':    { freq: 'monthly', pri: 0.8 },
     'video_cut.html':          { freq: 'monthly', pri: 0.8 },
     'video_format_cover.html': { freq: 'monthly', pri: 0.8 },
-    'video_converter.html':     { freq: 'monthly', pri: 0.8 },
     'sprite_sheet_packer.html':{ freq: 'monthly', pri: 0.8 },
     'sprite_sheet_splitter.html': { freq: 'monthly', pri: 0.8 },
     'shader_library.html':     { freq: 'monthly', pri: 0.8 },
@@ -41,6 +40,12 @@ const PRIORITIES = {
     'TA_wiki.html':            { freq: 'daily',    pri: 0.9 },
     'cloud_music.html':        { freq: 'monthly', pri: 0.5 },
     'about.html':              { freq: 'monthly', pri: 0.4 },
+    'gltf_optimizer.html':     { freq: 'monthly', pri: 0.7 },
+    'grove_range.html':        { freq: 'monthly', pri: 0.7 },
+    'grove_survivor.html':     { freq: 'monthly', pri: 0.7 },
+    'dafy_whale_tank.html':    { freq: 'monthly', pri: 0.8 },
+    'pelican.html':            { freq: 'monthly', pri: 0.7 },
+    'services.html':           { freq: 'monthly', pri: 0.7 },
 };
 
 // Reuse the checker's canonical, robots and redirect policy before generating.

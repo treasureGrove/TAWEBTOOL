@@ -5,486 +5,486 @@
   <link>https://tools.treasuregrove.art</link>
   <description>技术美术(TA)工具、术语百科与知识库的更新订阅</description>
   <language>zh-cn</language>
-  <lastBuildDate>Thu, 27 Aug 2026 03:25:12 GMT</lastBuildDate>
+  <lastBuildDate>Wed, 28 Oct 2026 20:00:02 GMT</lastBuildDate>
+  <item>
+    <title>Now available: 12 recipes for popular visual effects using the Universal Render Pipeline</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Unity 发布 URP 效果配方手册，提供 12 个适用于多种美术风格和平台的常见视觉效果实现方法，覆盖 Renderer Feature、GPU 实例化网格、贴花、体积材质、Stencil、实时 AO 和卡通着色等。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>LearnOpenGL - Theory</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>LearnOpenGL 的 PBR 理论章节讲解基于物理渲染的基本原理：从人眼与光的关系出发，介绍微表面模型、能量守恒、BRDF 以及 albedo、metallic、roughness 等 PBR 贴图通道的含义与制作逻辑。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>NVIDIA RTX Spark Powers Neural Rendering and AI Characters in Games</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 介绍 RTX Spark 平台，基于 Blackwell RTX，面向轻薄本和小型桌面；同时为开发者带来 DLSS 套件、ACE 本地 AI 角色、RTX Kit 神经渲染 SDK 以及 Nsight Graphics 性能分析支持。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>AMD FSR SDK 2.4 Brings ML Upscaling to RX 6000 Series and Ryzen APUs</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>AMD FSR SDK 2.4 将基于机器学习的 FSR Upscaling 4.1.2 扩展到 RX 6000 系列 GPU 和部分 Ryzen APU，新增 Vulkan 支持，并改进帧生成的帧节奏。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>DirectX Dump Files are now ready for your retail games</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Microsoft 的 DirectX Dump Files 正式发布，让零售版游戏发生 GPU 崩溃时能生成转储文件并载入 PIX 分析，包含挂起桶、页错误、驱动事件和 PIX 标记等定位信息。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Announcing Agility SDK 1.620 Retail and 1.722 Preview: DirectX Dump Files, Partial Graphics Programs, and So Much More!</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Agility SDK 1.620 正式版把 DirectX Dump Files、Fence Barriers Tier 1、批量异步命令列表和 Partial Graphics Programs 推向零售，1.722 预览版新增 GPU 时间线 CopyDescriptors 等特性。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>[PREVIEW] Raytracing: Clustered Geometry, Partitioned TLAS, Indirect Acceleration Structure Builds</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>DirectX 预览 DXR Clustered Geometry 与 Partitioned TLAS，并提供统一的 GPU 驱动 API 来构建更新加速结构，支持通过 ExecuteIndirectRTASOperations 在 GPU 端直接管理光线追踪的 CLAS（簇级加速结构）和分区 TLAS。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Async Commands Fallback Layer</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Agility SDK 1.620.1 为 Batched Async Commands 提供回退层，让不支持新命令的硬件也能用上 FillBuffers、ClearTextureSubresources 等拷贝与清除命令，但需付出额外状态管理开销。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>PIX 2610.28 – the biggest release of 2026</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>PIX 2610.28 是 2026 年最大版本，新增 Shader Explorer 的实时指令级 Profiling、ISA 与源码关联、GPU Capture 与 Shader Explorer 互通，并完整支持 Agility SDK 620/721 的新特性。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Combat VFX Showreel - Hellblade II (2024) | Tobias Noller</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Ninja Theory 的 VFX 作者分享《地狱之刃 2》战斗特效 Showreel，并在回帖中介绍体积雾做法：跟随玩家的全局体积雾立方体、叠加在火焰上的局部体积雾，以及远距离用 Fog Cards 补足。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Advanced Shader Delivery is Available Now Across Hardware and Coming Soon to Other Storefronts</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Microsoft 宣布 Advanced Shader Delivery 已在 AMD、Intel、NVIDIA、Qualcomm 的 Windows 设备上广泛可用，通过在下载游戏时预先交付着色器数据，减少加载时间、着色器卡顿和功耗，并将登陆更多商店平台。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Dev snapshot: Godot 4.8 beta 1</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Godot 4.8 beta 1 进入特性冻结，渲染方向更新包括多 bounce 环境光遮蔽近似、ASTC 6x6 与高质量压缩配置、兼容渲染器天空 Shader 的 SCREEN_UV 修复等，另含破坏性变更与诸多修复。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>What’s New for Game Developers: DLSS 5 with 3D-Guided Neural Rendering, NVIDIA ACE Updates, and New RTX Kit Capabilities</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 公布 DLSS 5，引入 3D-Guided Neural Rendering 和细粒度控制，让开发者添加更真实的光照与材质细节同时保留美术意图，并带来 ACE 与 RTX Kit 2026.3 多项更新。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Source-to-ISA correlation for pre-compiled AMD GPU code objects with RGA 2.15</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>AMD Radeon GPU Analyzer 2.15 支持把预编译好的 AMD GPU code object 反向关联到源码行，让 ISA 分析和调优不必依赖调试符号或重新编译。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Advanced Shader Delivery State Object Compiler now available</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>AMD 发布 D3D12 State Object Compiler 插件，帮助游戏在 AMD 显卡上接入 Microsoft Advanced Shader Delivery，提前预编译并分发 PSO/着色器数据，减少首次启动加载与卡顿。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Dev snapshot: Godot 4.8 dev 6</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Godot 4.8 dev 6 开发快照中，渲染亮点是为方向光加入屏幕空间接触阴影（SSCS）：为场景中每个方向光生成 R8 阴影纹理，并与现有阴影贴图混合，增强接触处细节。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Optimizing CPU-side Rendering Code</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Godot 渲染开发者 Clay John 以实例展示 CPU 侧渲染代码优化的完整流程：强调 CPU 与 GPU 需同时优化，性能取决于两者中较慢的一方，并通过 Profiler 与采样工具定位到 Polygon2D 等具体热点后逐项改进。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Dev snapshot: Godot 4.8 dev 5</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Godot 4.8 dev 5 引入 Mip 级纹理流送：按相机相对位置动态加载和卸载纹理 mip 层级，让同一时刻可见纹理数量大幅提升，同时修复了 alpha scissor 等材质因 mipmap 过度过滤而在远处消散的问题。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Temporally stable generative illumination with a one-step diffusion model</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>GPUOpen 介绍一种用单步潜空间扩散模型做实时全局光照的生成式方法，避免多步迭代开销，并重点解决时序稳定性，配套 AMD Capsaicin D3D12 框架与参考路径追踪器。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>AMD FSR plugin updated for Unreal Engine 5.8</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>AMD 更新 FSR 的 Unreal Engine 插件以支持 UE 5.8，把 ML 升采样与帧生成带入新引擎版本，并将 FSR Upscaling 支持扩展到 Radeon RX 7000 系列 GPU。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WebGPU Post Processing - 1D Lookup Tables (1D-LUT)</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>WebGPU Fundamentals 教程，讲解如何在后处理阶段用 1D LUT 纹理做色彩调整，包括 WGSL 采样、uniform 参数传递与渲染通道写法，属于可直接复用的 WebGPU 后处理落地示例。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WebGPU Post Processing - 3d lookup table (LUT)</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>WebGPU Fundamentals 教程，讲解后处理中 3D LUT 色彩分级的实现：加载 Adobe .cube 文件、在 WGSL 中三线性采样 3D 纹理，并与亮度、对比度等参数混合，属于可直接复用的 WebGPU 调色示例。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WebGPU Bind Group Layouts</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>WebGPU Fundamentals 教程，讲解 Bind Group Layout 如何让绑定组与渲染/计算管线匹配，说明 layout:'auto' 对可过滤纹理的限制，以及按 globals、材质、locals 分层组织绑定的常见做法。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>WebGPU Camera Controls</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>WebGPU Fundamentals 教程，讲解如何为 WebGPU 场景实现类似 Blender、Maya、Unity 编辑器使用的轨道相机控制，涉及相机矩阵计算、平移与旋转组合，以及场景图下的相机组织方式。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Lightweight attention-based indirect illumination</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>GPUOpen 介绍一种轻量级、基于注意力机制的神经 GI 模型，利用反射阴影图重建屏幕外间接光照，并能泛化到训练时未见的场景，配套 AMD Capsaicin D3D12 框架。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>MiniDXNN v0.4.0: Interactive neural texture compression on DirectX 12</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>MiniDXNN v0.4.0 加入 D3D12 Linear Algebra（SM 6.10）支持、输入编码和神经纹理压缩，并附带实时 GUI 应用，可在 DirectX 12 上训练和可视化 GPU 加速的 MLP。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Streamlining Resource Binding with End-to-End Support for Vulkan Descriptor Heaps</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 介绍 Vulkan Descriptor Heap 的端到端支持：在 GLSL 中用纹理与采样器数组加 push constant 索引做资源绑定，并在 Nsight Graphics 中查看映射、捕获和重放描述符堆。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>GPU view-adaptive crack-free subdivision of Bézier surfaces</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>GPUOpen 介绍基于 GPU Work Graphs 的双三次 Bézier 曲面视点自适应细分，能无裂缝地大幅减少三角形数量，同时简化实现并接近硬件曲面细分质量。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Q&amp;A: How Capcom Brought Path Tracing to RE ENGINE Across PRAGMATA and Resident Evil Requiem</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Capcom RE ENGINE 团队分享如何在《生化危机：安魂曲》和 PRAGMATA 两款风格不同的游戏中同时落地路径追踪，涉及全局光照与反射、DLSS Ray Reconstruction、ReSTIR GI、毛发透射，以及面向反射的资产生产流程调整。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Developers said…2026 Shader Ecosystem Survey Results</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Khronos 发布 2026 实时着色生态调研报告，汇总 400 多名着色器开发者、渲染工程师和 TA 的反馈，涵盖 GLSL/HLSL 使用比例、调试与性能分析痛点以及跨厂商着色器调试标准的需求。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>PIX 2606.18-preview: DirectX Dump Files and more</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>PIX 2606.18 预览版支持直接打开 DirectX Dump Files 分析，新增 GPU Capture 中的 DebugBreak()、默认开启的应用特定驱动状态，以及 Timing Capture 中自动标注异构核心类别信息。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>What’s New for Game Developers in NVIDIA RTX: DLSS 4.5 for UE5 and Multilingual AI Characters</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 公布 RTX 面向开发者的更新：UE5 获得 DLSS 4.5 与动态多帧生成，NvRTX 5.7.4 修复 RTX Mega Geometry 着色器编译、Opacity Micro-Map 稳定性、Substrate 材质集成与 NvAPI 问题，ACE 新增多语言 AI 角色。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Speed Up Unreal Engine NNE Inference with NVIDIA TensorRT for RTX Runtime</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 介绍 UE5 Neural Network Engine 的 TensorRT for RTX 插件，支持 GPU 与 RDG 两种推理方式，可加速超分、降噪和神经后处理等模型，并在消费级 RTX 设备上保持较强性能。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Build AI-Powered Games with NVIDIA DLSS 4.5, RTX, and Unreal Engine 5</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 开放 DLSS 4.5 集成，带来动态多帧生成、6X 多帧生成和第二代 Transformer 超分；文章还汇总 UE 的 TensorRT for RTX 插件、运动生成工具及 GDC/GTC 2026 相关技术会话。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>PIX 2605.28-preview: previewing new PIX and D3D12 features</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>PIX 2605.28 预览版配合 D3D12 Agility SDK 721，首次在 PC 上预览 Shader Explorer，可在 PIX 内新建管线项目、导入或编写 HLSL、设置管线状态并针对指定硬件家族编译查看 ISA，另有 D3D12 新特性支持。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>NVIDIA RTX Innovations Are Powering the Next Era of Game Development</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>NVIDIA 汇总 RTX 新一代游戏开发技术：RTX Mega Geometry 新增密集植被路径追踪系统，ReSTIR PT 实现全分辨率镜面反射间接光，RTX Kit 2026.2 更新毛发与反射优化。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>A Multi-Faceted Exploration (Part 4)</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>Self Shadow 系列第四篇讲解多重散射 BRDF 的实用化：用预计算与拟合处理只考虑单次散射的 BRDF，并给出可把镜面颜色拆出、适配实时渲染的分割积分变体，已被 Unity HDRP 与 Filament 采用。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>A Multi-Faceted Exploration (Part 3)</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>本文探讨多重散射微表面BRDF的高粗糙度能量补偿，比较Imageworks近似与Heitz参考解的差异，提出预计算包含Fresnel的多重散射方向反照率LUT以实现更精确的IBL预积分。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>A Multi-Faceted Exploration (Part 2)</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>文章讨论微表面BRDF单次散射假设导致的能量损失，以随机游走思路逼近Heitz多重散射参考解，并分析Imageworks多重散射补偿项在导体材质上的近似效果与炉测试表现。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>A Multi-Faceted Exploration (Part 1)</title>
+    <link>https://tools.treasuregrove.art/tools_html/TA_wiki.html</link>
+    <description>系列开篇介绍Imageworks生产着色模型对能量守恒的改进，说明经典解析BSDF缺少多重散射导致高粗糙度材质变暗，并用炉测试直观展示能量损失对美术贴图与Lookdev的困扰。</description>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
+  </item>
   <item>
     <title>ACES 色彩管理 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/aces-color-management.html</link>
     <description>ACES 色彩管理 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>Alpha 混合与透明排序：渲染透明的关键机制 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/alpha-blending.html</link>
     <description>Alpha 混合与透明排序：渲染透明的关键机制 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>各向异性高光：原理、实现与材质表现 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/anisotropy.html</link>
     <description>各向异性高光：原理、实现与材质表现 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>抗锯齿 MSAA、FXAA、TAA 对比：原理与选择指南 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html</link>
     <description>抗锯齿 MSAA、FXAA、TAA 对比：原理与选择指南 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>合批渲染 Batching - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/batch-rendering.html</link>
     <description>合批渲染 Batching - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>BC 贴图压缩格式 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/bc-texture-compression.html</link>
     <description>BC 贴图压缩格式 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>BlendShape 混合变形 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/blend-shape.html</link>
     <description>BlendShape 混合变形 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>Bloom 泛光效果解析：原理、实现与应用 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/bloom.html</link>
     <description>Bloom 泛光效果解析：原理、实现与应用 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>BRDF：双向反射分布函数详解 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/brdf.html</link>
     <description>BRDF：双向反射分布函数详解 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>调色 Color Grading - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/color-grading.html</link>
     <description>调色 Color Grading - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>计算着色器 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/compute-shader.html</link>
     <description>计算着色器 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>立方体贴图 Cubemap - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/cubemap.html</link>
     <description>立方体贴图 Cubemap - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>深度缓冲 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/depth-buffer.html</link>
     <description>深度缓冲 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>DLSS FSR 超分辨率 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html</link>
     <description>DLSS FSR 超分辨率 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>Draw Call 优化：原理、合批与性能提升指南 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/draw-call-optimization.html</link>
     <description>Draw Call 优化：原理、合批与性能提升指南 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>填充率 Fill Rate - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/fill-rate.html</link>
     <description>填充率 Fill Rate - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>前向渲染与延迟渲染：原理、区别与选择 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html</link>
     <description>前向渲染与延迟渲染：原理、区别与选择 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>菲涅尔效应详解：原理、公式与实时渲染应用 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/fresnel-effect.html</link>
     <description>菲涅尔效应详解：原理、公式与实时渲染应用 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>G-Buffer 延迟渲染 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/g-buffer.html</link>
     <description>G-Buffer 延迟渲染 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>伽马校正：原理、作用与渲染管线应用 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/gamma-correction.html</link>
     <description>伽马校正：原理、作用与渲染管线应用 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>GPU Driven 渲染 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/gpu-driven-rendering.html</link>
     <description>GPU Driven 渲染 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>GPU Instancing：原理、使用与性能优化 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/gpu-instancing.html</link>
     <description>GPU Instancing：原理、使用与性能优化 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>HDR 与 HDRI：高动态范围图像与环境贴图详解 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/hdr-hdri.html</link>
     <description>HDR 与 HDRI：高动态范围图像与环境贴图详解 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>HDR 渲染管线 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/hdr-render-pipeline.html</link>
     <description>HDR 渲染管线 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>AI绘画在线文生图工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-ai-draw.html</link>
     <description>AI绘画在线文生图工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>AI 通用生图在线工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-ai-image.html</link>
     <description>AI 通用生图在线工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>AI生视频在线文字生成视频工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-ai-video.html</link>
     <description>AI生视频在线文字生成视频工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>图片Base64互转在线工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-base64-image.html</link>
     <description>图片Base64互转在线工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>ChatGPT 在线对话使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-chatgpt.html</link>
     <description>ChatGPT 在线对话使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>网易云音乐在线网页版使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-cloud-music.html</link>
     <description>网易云音乐在线网页版使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>贴图拼贴网格排列在线工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-collage-texture.html</link>
     <description>贴图拼贴网格排列在线工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>贴图通道合成RGBA在线工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-combine-rgba.html</link>
     <description>贴图通道合成RGBA在线工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>图片压缩与格式转换：WebP 及常用格式指南 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-compress-image.html</link>
     <description>图片压缩与格式转换：WebP 及常用格式指南 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>色彩空间转换：Linear、sRGB 与 Gamma 校正教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-convert-color-space.html</link>
     <description>色彩空间转换：Linear、sRGB 与 Gamma 校正教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>视频格式转换：MP4、WebM 等格式互转教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-convert-video-format.html</link>
     <description>视频格式转换：MP4、WebM 等格式互转教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>HDR/HDRI 环境贴图编辑：从基础到高级技巧 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-edit-hdr.html</link>
     <description>HDR/HDRI 环境贴图编辑：从基础到高级技巧 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>如何生成 PBR 贴图：法线、粗糙度、金属度完整指南 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html</link>
     <description>如何生成 PBR 贴图：法线、粗糙度、金属度完整指南 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>GIF压缩在线动图压缩工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-gif-compress.html</link>
     <description>GIF压缩在线动图压缩工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>贴图信息查看在线工具使用教程 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-image-metadata.html</link>
     <description>贴图信息查看在线工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
   <item>
     <title>图集打包 Sprite Sheet 完全指南 - TA工具箱</title>
     <link>https://tools.treasuregrove.art/seo/how-to-pack-sprite-sheet.html</link>
     <description>图集打包 Sprite Sheet 完全指南 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>物理光照曝光EV计算器使用教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-physics-light.html</link>
-    <description>物理光照曝光EV计算器使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>3D 模型在线预览：支持 GLB、FBX、OBJ 的工具教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-preview-3d-model.html</link>
-    <description>3D 模型在线预览：支持 GLB、FBX、OBJ 的工具教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>在线PS网页版Photoshop免费使用教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-ps-online.html</link>
-    <description>在线PS网页版Photoshop免费使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>贴图通道拆分与合成：RGBA 通道操作教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html</link>
-    <description>贴图通道拆分与合成：RGBA 通道操作教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>雪碧图拆分在线切图工具使用教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-sprite-sheet-splitter.html</link>
-    <description>雪碧图拆分在线切图工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>无缝贴图平铺在线预览工具使用教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-tiling-texture.html</link>
-    <description>无缝贴图平铺在线预览工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>AI 图片无损放大：超分辨率工具使用教程 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-upscale-image-ai.html</link>
-    <description>AI 图片无损放大：超分辨率工具使用教程 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>如何使用 GLSL 转 HLSL 着色器转换器 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/how-to-use-glsl-hlsl-converter.html</link>
-    <description>如何使用 GLSL 转 HLSL 着色器转换器 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>IBL 基于图像的光照：原理与实现 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html</link>
-    <description>IBL 基于图像的光照：原理与实现 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>光照贴图烘焙：原理、流程与优化 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/lightmap-baking.html</link>
-    <description>光照贴图烘焙：原理、流程与优化 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>LOD 细节层次 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/lod-level-of-detail.html</link>
-    <description>LOD 细节层次 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>Mesh Shader - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/mesh-shader.html</link>
-    <description>Mesh Shader - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>Mipmap 多级渐远纹理：原理、作用与优化 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/mipmap.html</link>
-    <description>Mipmap 多级渐远纹理：原理、作用与优化 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>法线贴图格式 DirectX OpenGL - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/normal-map-format.html</link>
-    <description>法线贴图格式 DirectX OpenGL - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>法线贴图：原理、切线空间与应用详解 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/normal-map.html</link>
-    <description>法线贴图：原理、切线空间与应用详解 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>遮挡剔除：原理、实现与性能优化 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/occlusion-culling.html</link>
-    <description>遮挡剔除：原理、实现与性能优化 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>Overdraw 过度绘制 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/overdraw.html</link>
-    <description>Overdraw 过度绘制 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>视差贴图 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/parallax-mapping.html</link>
-    <description>视差贴图 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>后处理特效 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/post-processing-stack.html</link>
-    <description>后处理特效 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>光线追踪基础 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/ray-tracing-basics.html</link>
-    <description>光线追踪基础 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>反射探针 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/reflection-probe.html</link>
-    <description>反射探针 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>渲染目标 Render Target - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/render-target.html</link>
-    <description>渲染目标 Render Target - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>金属度粗糙度工作流：PBR材质创建指南 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html</link>
-    <description>金属度粗糙度工作流：PBR材质创建指南 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>屏幕空间反射 SSR - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/screen-space-reflection.html</link>
-    <description>屏幕空间反射 SSR - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>Shader 复杂度优化 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/shader-complexity-optimization.html</link>
-    <description>Shader 复杂度优化 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>阴影贴图：原理、算法与优化 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/shadow-map.html</link>
-    <description>阴影贴图：原理、算法与优化 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>骨骼动画 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/skeletal-animation.html</link>
-    <description>骨骼动画 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>sRGB 贴图工作流 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/srgb-texture-workflow.html</link>
-    <description>sRGB 贴图工作流 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>sRGB 与线性色彩空间：理解伽马校正与渲染管线 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/srgb-vs-linear.html</link>
-    <description>sRGB 与线性色彩空间：理解伽马校正与渲染管线 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>SSAO 屏幕空间环境光遮蔽：原理与实现 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/ssao.html</link>
-    <description>SSAO 屏幕空间环境光遮蔽：原理与实现 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>模板缓冲 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/stencil-buffer.html</link>
-    <description>模板缓冲 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>次表面散射 SSS：皮肤渲染核心技术与实现 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/subsurface-scattering.html</link>
-    <description>次表面散射 SSS：皮肤渲染核心技术与实现 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>曲面细分 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/tessellation.html</link>
-    <description>曲面细分 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>贴图密度 Texel Density - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/texel-density.html</link>
-    <description>贴图密度 Texel Density - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>贴图压缩格式：DXT、ETC、ASTC 对比与选择 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/texture-compression-format.html</link>
-    <description>贴图压缩格式：DXT、ETC、ASTC 对比与选择 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>色调映射：HDR到LDR的转换与ACES应用 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/tone-mapping.html</link>
-    <description>色调映射：HDR到LDR的转换与ACES应用 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>UV 映射与展开：3D模型纹理贴图基础 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/uv-mapping.html</link>
-    <description>UV 映射与展开：3D模型纹理贴图基础 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>UV 重叠检查 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/uv-overlap.html</link>
-    <description>UV 重叠检查 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>可变速率着色 VRS - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/variable-rate-shading.html</link>
-    <description>可变速率着色 VRS - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
-  </item>
-  <item>
-    <title>顶点着色器与片元着色器：区别与作用 - TA工具箱</title>
-    <link>https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html</link>
-    <description>顶点着色器与片元着色器：区别与作用 - TA工具箱</description>
-    <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+    <pubDate>Wed, 28 Oct 2026 00:00:00 GMT</pubDate>
   </item>
 </channel>
 </rss>

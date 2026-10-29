@@ -34,7 +34,7 @@ class SearchIndexTest(unittest.TestCase):
         queue = self.root / 'scripts/baidu_urls.txt'
         before = queue.read_bytes()
         page = self.root / 'en/index.html'
-        page.write_text(page.read_text().replace('index, follow', 'noindex, follow'))
+        page.write_text(page.read_text(encoding='utf-8').replace('index, follow', 'noindex, follow'), encoding='utf-8')
         self.assertTrue(check.validate(self.root, True)[0])
         self.assertEqual(before, queue.read_bytes())
     def generate_sitemap(self, success=True):
@@ -97,13 +97,13 @@ class SearchIndexTest(unittest.TestCase):
         sitemap, queue = self.root / 'sitemap.xml', self.root / 'scripts/baidu_urls.txt'
         before = sitemap.read_bytes(), queue.read_bytes()
         page = self.root / 'en/index.html'
-        page.write_text(page.read_text().replace('index, follow', 'noindex, follow'))
+        page.write_text(page.read_text(encoding='utf-8').replace('index, follow', 'noindex, follow'), encoding='utf-8')
         result = self.generate_sitemap(success=False)
         self.assertIn('noindex in sitemap', result.stderr)
         self.assertEqual(before, (sitemap.read_bytes(), queue.read_bytes()))
     def test_existing_queued_tool_cannot_be_silently_removed(self):
         page = self.root / 'tools_html/about.html'
-        page.write_text(page.read_text().replace('rel="canonical"', 'rel="alternate"'))
+        page.write_text(page.read_text(encoding='utf-8').replace('rel="canonical"', 'rel="alternate"'), encoding='utf-8')
         sitemap, queue = self.root / 'sitemap.xml', self.root / 'scripts/baidu_urls.txt'
         before = sitemap.read_bytes(), queue.read_bytes()
         result = self.generate_sitemap(success=False)

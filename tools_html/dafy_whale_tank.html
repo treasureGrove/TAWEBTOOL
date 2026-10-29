@@ -1,0 +1,124 @@
+<!-- 由 DeepSeek 制作的《大肥鱼开坦克》游戏页；游戏本体在 panel 窗口内嵌呈现 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="大肥鱼开坦克 —— 圆滚滚的鲸鱼娘开着「白饭号」坦克，在星空甲板上把来抢白饭的泡泡坦克统统轰回海里。three.js 实时 3D，键盘鼠标或触屏直接开玩，由 DeepSeek 制作。">
+    <meta name="keywords" content="大肥鱼开坦克,大肥鱼,鲸鱼娘,鲸鱼少女,鲸鱼坦克,坦克小游戏,坦克大战,3D 小游戏,3D 网页游戏,网页游戏,在线小游戏,three.js,避弹,波次,打怪,射击小游戏,白饭号,星空甲板,TA工具箱,游戏,DeepSeek,DeepSeek 制作,AI 制作,AI 生成,claude">
+    <meta name="author" content="宝藏小树林">
+    <meta name="generator" content="DeepSeek">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/dafy_whale_tank.html">
+
+    <meta property="og:title" content="大肥鱼开坦克 - 3D 鲸鱼坦克小游戏 | TA工具箱">
+    <meta property="og:description" content="鲸鱼娘驾驶「白饭号」在星空甲板上打泡泡坦克，three.js 实时 3D，键盘与触屏都能玩，由 DeepSeek 制作。">
+    <meta property="og:url" content="https://tools.treasuregrove.art/tools_html/dafy_whale_tank.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TA工具箱">
+    <meta property="og:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="TA工具箱 · 技术美术在线工具箱">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand">
+    <meta name="twitter:title" content="大肥鱼开坦克 - 3D 鲸鱼坦克小游戏 | TA工具箱">
+    <meta name="twitter:description" content="鲸鱼娘开坦克打泡泡坦克，three.js 实时 3D，由 DeepSeek 制作。">
+
+    <title>大肥鱼开坦克 - 3D 鲸鱼坦克小游戏 | TA工具箱</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/dafy_whale_tank.css">
+
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="48x48" href="../assets/images/icon/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="../assets/images/icon/favicon-144x144.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/icon/apple-touch-icon.png">
+</head>
+
+<body>
+    <script src="../js/menu.js?v=20261026-dafy" defer></script>
+
+    <!-- 窄屏/触屏沉浸模式下唯一的外壳：返回 + 标题 + 显隐工具箱 -->
+    <div class="dafy-bar" id="dafyBar">
+        <a class="dafy-bar-back" href="../index.html" title="返回 TA工具箱" aria-label="返回 TA工具箱">←</a>
+        <span class="dafy-bar-title">大肥鱼开坦克 · 白饭号</span>
+        <button class="dafy-bar-exit" id="dafyBarExit" type="button">显示工具箱</button>
+    </div>
+
+    <div id="main_bg"></div>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="text" placeholder="搜索"></div>
+
+    <div id="panel" class="dafy-panel">
+        <iframe class="dafy-frame" src="../games/dafy-whale-tank/" title="大肥鱼开坦克 · 鲸鱼白饭保卫战（由 DeepSeek 制作）" allow="fullscreen; autoplay" allowfullscreen loading="eager"></iframe>
+        <div class="dafy-fallback" id="dafyFallback" hidden>
+            <h1>大肥鱼开坦克暂不可用</h1>
+            <p>当前浏览器没有可用的 WebGL，无法运行这个 3D 坦克小游戏。请换用支持 WebGL 的浏览器（桌面 Chrome / Edge / Firefox / Safari 均可），或回到工具箱选择其它工具。</p>
+            <p><a class="dafy-home-link" href="../index.html">← 返回 TA工具箱</a></p>
+        </div>
+        <p class="dafy-credit">本作《大肥鱼开坦克 · 鲸鱼白饭保卫战》由 DeepSeek 制作，three.js 实时 3D 渲染，场景贴图与音效全部程序化生成，收录于 TA工具箱游戏页。</p>
+    </div>
+
+    <script>
+        // 没有 WebGL 时移除 iframe：避免无谓地下载并初始化整包 3D 场景，改为给出明确提示。
+        (function () {
+            function webglSupported() {
+                try {
+                    var canvas = document.createElement('canvas');
+                    return Boolean(window.WebGLRenderingContext && (canvas.getContext('webgl2') || canvas.getContext('webgl')));
+                } catch (error) { return false; }
+            }
+            if (webglSupported()) return;
+            var frame = document.querySelector('.dafy-frame');
+            if (frame && frame.parentNode) frame.parentNode.removeChild(frame);
+            var fallback = document.getElementById('dafyFallback');
+            if (fallback) fallback.hidden = false;
+        })();
+    </script>
+
+    <script>
+        // 沉浸模式：窄屏或触屏时，把站点外壳（76px 图标栏 / 搜索框 / 反馈浮钮）让开，
+        // 只留顶部返回栏 + 占满剩余空间的游戏面板。桌面端保持原布局。
+        // URL 上可用 ?immersive=1 / ?immersive=0 强制开关。
+        (function () {
+            var root = document.documentElement;
+            var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+            var narrow = window.matchMedia && window.matchMedia('(max-width: 980px)').matches;
+            var force = new URLSearchParams(location.search).get('immersive');
+            var on = force === '1' ? true : force === '0' ? false : (coarse || narrow);
+
+            function apply(next) {
+                on = !!next;
+                root.classList.toggle('dafy-immersive', on);
+                var btn = document.getElementById('dafyBarExit');
+                if (btn) btn.textContent = on ? '显示工具箱' : '隐藏工具箱';
+                return on;
+            }
+            apply(on);
+
+            var exitBtn = document.getElementById('dafyBarExit');
+            if (exitBtn) {
+                exitBtn.addEventListener('click', function () { apply(!on); });
+            }
+
+            // 游戏 iframe 里的「全屏」按钮通过 postMessage 请求沉浸
+            window.addEventListener('message', function (e) {
+                if (e.origin !== location.origin) return;
+                var d = e.data;
+                if (!d || typeof d !== 'object' || d.type !== 'dafy-immersive') return;
+                var now = apply(d.on !== false);
+                try {
+                    e.source.postMessage({ type: 'dafy-immersive-state', on: now }, location.origin);
+                } catch (err) {}
+            });
+        })();
+    </script>
+</body>
+
+</html>

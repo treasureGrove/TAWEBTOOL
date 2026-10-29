@@ -31,6 +31,8 @@ var MENU_DATA = [
         { label: '铅之圣咏', href: 'lead_canticle.html', keywords: ['废土', '鉴定', '当铺', '背包', '经营', '多结局', '3D', '游戏', 'lead', 'canticle'] },
         { label: '小树林尸潮', href: 'grove_range.html', keywords: ['FPS', '射击', '僵尸', '尸潮', '小游戏', 'game', 'shooter', '波次', '排行', '最高分', 'three', '3D射击', '爆头', '小树林'] },
         { label: '单目幸存者', href: 'grove_survivor.html', keywords: ['幸存者', '弹幕', '生存', '自动射击', 'roguelike', 'vampire', '俯视角', '小游戏', '升级', '排行'] },
+        { label: '鹈鹕骑行', href: 'pelican.html', keywords: ['鹈鹕', '鹈鹕骑自行车', '骑自行车', 'pelican', 'on a bicycle', 'bicycle', '自行车', '海岸', '黄金时刻', '程序化生成', 'three.js', '3D', '风景', '治愈', '小游戏', '游戏', 'Claude Sonnet 5.5', 'Claude Sonnet5.5', 'claude sonnet 5.5', 'sonnet 5.5', 'claude', 'sonnet', 'AI制作', 'AI生成'] },
+        { label: '大肥鱼开坦克', href: 'dafy_whale_tank.html', keywords: ['大肥鱼', '鲸鱼娘', '鲸鱼', '坦克', '坦克大战', '3D 坦克', '小游戏', '游戏', 'three.js', '白饭号', '星空甲板', '避弹', '波次', '射击', 'DeepSeek', 'AI 制作', 'dafy', 'whale', 'tank'] },
     ]},
     { name: '游戏工具', icon: 'icon-ta', items: [
         { label: '图集打包工具', href: 'sprite_sheet_packer.html', keywords: ['Sprite', 'Atlas', '图集', '序列帧', 'UI图集', 'spritesheet', 'pack', '贴图集', '合并', 'sprite sheet', '帧动画'] },
@@ -49,7 +51,7 @@ var MENU_DATA = [
         { label: '网易云音乐', href: 'cloud_music.html', keywords: ['音乐', '歌曲', '歌单', 'music', 'netease', '播放器', '听歌', 'mp3', 'player', '电台', 'fm'] },
     ]},
     { name: '关于', icon: 'icon-about', items: [
-        { label: 'TA服务需求讨论', href: 'services.html', keywords: ['服务', '定制', '需求', '反馈', '批量', '工作流', 'ta', 'service'] },
+        { label: '需求与定制咨询', href: 'services.html', keywords: ['服务', '定制', '咨询', '讨论', '需求', '工具改进', '反馈', '批量', '工作流', 'ta', 'service'] },
         { label: '关于作者', href: 'about.html', keywords: ['关于', '作者', 'about', 'author', '宝藏小树林', 'treasuregrove', 'bilibili', 'b站', '联系', 'contact', '主页', '个人'] },
     ]},
 ];
