@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "revision": 2026101902,
+  "updatedAt": "2026-10-19",
+  "entries": [
+    {
+      "id": "artificial-analysis",
+      "kind": "rankings",
+      "name": "Artificial Analysis",
+      "category": "general",
+      "url": "https://artificialanalysis.ai/leaderboards/models",
+      "sourceUrl": "https://artificialanalysis.ai/leaderboards/models",
+      "summary": {
+        "zh": "综合比较模型能力、价格、响应速度和上下文，适合选型前横向了解。",
+        "en": "Compare model capability, price, speed and context before choosing a model."
+      },
+      "offer": "ranking",
+      "access": "public",
+      "limits": {
+        "zh": "不同指标分别计算；以原站方法和实时结果为准。",
+        "en": "Each metric has its own methodology. Read the live results and methodology at the source."
+      },
+      "checkedAt": "2026-10-19",
+      "preview": {
+        "filename": "artificial-analysis-81519b0e6c2c.jpg",
+        "sha256": "81519b0e6c2ce04ae4cc965a646a905668d37ed712105a0a9e42ccd3d86de703",
+        "capturedAt": "2026-10-19"
+      }
+    },
+    {
+      "id": "livebench",
+      "kind": "rankings",
+      "name": "LiveBench",
+      "category": "general",
+      "url": "https://livebench.ai/",
+      "sourceUrl": "https://livebench.ai/",
+      "summary": {
+        "zh": "查看独立基准任务的模型表现，并了解测试方法。",
+        "en": "Explore independent model benchmarks and their methodology."
+      },
+      "offer": "ranking",
+      "access": "public",
+      "limits": {
+        "zh": "不同代际与任务集不直接合并，原站可能需要加载脚本。",
+        "en": "Benchmark generations and task sets are distinct. The source site may require JavaScript."
+      },
+      "checkedAt": "2026-10-19",
+      "preview": {
+        "filename": "livebench-a818b4666b9b.jpg",
+        "sha256": "a818b4666b9b90bff7395d1bf8ae9d11cd3b4d12db206a5b42d7729d8e802ae2",
+        "capturedAt": "2026-10-19"
+      }
+    },
+    {
+      "id": "aider",
+      "kind": "rankings",
+      "name": "Aider Leaderboards",
+      "category": "coding",
+      "url": "https://aider.chat/docs/leaderboards/",
+      "sourceUrl": "https://github.com/Aider-AI/aider/blob/main/aider/website/docs/leaderboards/index.md",
+      "summary": {
+        "zh": "聚焦模型修改代码与多语言编程任务的表现。",
+        "en": "Compare model performance on code editing and polyglot programming tasks."
+      },
+      "offer": "ranking",
+      "access": "public",
+      "limits": {
+        "zh": "成绩基于 Aider 的测试方式与配置，不代表所有 Agent 场景。",
+        "en": "Scores use Aider-specific tests and settings and do not represent every agent workflow."
+      },
+      "checkedAt": "2026-10-19",
+      "preview": {
+        "filename": "aider-fd3770d0718d.jpg",
+        "sha256": "fd3770d0718dd0a4d321abb58be1efd48927248f63ea577f79d3e3e6b45af232",
+        "capturedAt": "2026-10-19"
+      }
+    },
+    {
+      "id": "arena",
+      "kind": "rankings",
+      "name": "Arena",
+      "category": "multimodal",
+      "url": "https://arena.ai/leaderboard",
+      "sourceUrl": "https://arena.ai/leaderboard",
+      "summary": {
+        "zh": "以用户偏好对战为特色，查看文本、视觉、网页开发等不同榜单。",
+        "en": "Explore preference-based rankings for text, vision and web development."
+      },
+      "offer": "ranking",
+      "access": "public",
+      "limits": {
+        "zh": "偏好排名与标准化任务分数含义不同，请查看具体子榜。",
+        "en": "Preference rankings differ from task benchmark scores. Check the individual leaderboard."
+      },
+      "checkedAt": "2026-10-19"
+    },
+    {
+      "id": "swe-bench",
+      "kind": "rankings",
+      "name": "SWE-bench",
+      "category": "coding",
+      "url": "https://www.swebench.com/",
+      "sourceUrl": "https://www.swebench.com/",
+      "summary": {
+        "zh": "围绕真实软件仓库问题，查看编程 Agent 的任务解决表现。",
+        "en": "Compare coding agents on real software repository issues."
+      },
+      "offer": "ranking",
+      "access": "public",
+      "limits": {
+        "zh": "结果同时受模型、Agent 工具和测试环境影响；注意 Verified 等分组。",
+        "en": "Results depend on the model, agent tools and environment. Check groups such as Verified."
+      },
+      "checkedAt": "2026-10-19"
+    },
+    {
+      "id": "opencode-zen",
+      "kind": "free-ai",
+      "name": "OpenCode Zen",
+      "category": "coding",
+      "url": "https://opencode.ai/zen",
+      "sourceUrl": "https://opencode.ai/v2/docs/console/models/#free-models",
+      "summary": {
+        "zh": "查看 OpenCode 提供的免费模型与体验活动，从官方入口了解如何使用。",
+        "en": "Find free models and trial offers provided through OpenCode."
+      },
+      "offer": "limited-free",
+      "access": "account",
+      "limits": {
+        "zh": "部分模型限时免费；其他模型可能收费，使用范围及限流以官方说明为准。",
+        "en": "Only selected models are temporarily free. Other models may be paid; check official access rules and limits."
+      },
+      "checkedAt": "2026-10-19"
+    },
+    {
+      "id": "openrouter-free",
+      "kind": "free-ai",
+      "name": "OpenRouter Free",
+      "category": "platform",
+      "url": "https://openrouter.ai/collections/free-models",
+      "sourceUrl": "https://openrouter.ai/docs/api/reference/limits",
+      "summary": {
+        "zh": "发现免费模型和免费路由，适合了解开源模型与轻量体验。",
+        "en": "Discover free models and routing options for lightweight experimentation."
+      },
+      "offer": "free-tier",
+      "access": "account",
+      "limits": {
+        "zh": "免费模型有请求限制和供给限制；账号额度与政策可能变化。",
+        "en": "Free models have request and availability limits. Account allowances and policies can change."
+      },
+      "checkedAt": "2026-10-19"
+    },
+    {
+      "id": "google-ai-studio",
+      "kind": "free-ai",
+      "name": "Google AI Studio",
+      "category": "multimodal",
+      "url": "https://aistudio.google.com/",
+      "sourceUrl": "https://ai.google.dev/gemini-api/docs/pricing",
+      "summary": {
+        "zh": "在浏览器体验 Gemini 与多模态开发工具，查看可用的免费层。",
+        "en": "Try Gemini and multimodal development tools in a browser and explore free-tier access."
+      },
+      "offer": "free-tier",
+      "access": "account",
+      "limits": {
+        "zh": "模型、地区、账号和功能影响可用额度；付费服务单独计费。",
+        "en": "Availability depends on the model, region, account and feature. Paid services are billed separately."
+      },
+      "checkedAt": "2026-10-19"
+    },
+    {
+      "id": "nvidia-build",
+      "kind": "free-ai",
+      "name": "NVIDIA Build",
+      "category": "platform",
+      "url": "https://build.nvidia.com/",
+      "sourceUrl": "https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf",
+      "summary": {
+        "zh": "体验 NVIDIA 托管的模型演示与开发 API 试用入口。",
+        "en": "Explore hosted model demos and developer API trials from NVIDIA."
+      },
+      "offer": "trial",
+      "access": "account",
+      "limits": {
+        "zh": "试用受账号、可用额度和试用条款限制，不代表永久免费生产服务。",
+        "en": "Trials depend on account eligibility, available credits and trial terms; production use is separate."
+      },
+      "checkedAt": "2026-10-19"
+    }
+  ]
+}

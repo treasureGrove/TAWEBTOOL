@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-const html = await readFile(new URL('../../lolicode/index.html', import.meta.url), 'utf8');
+const html = (await readFile(new URL('../../lolicode/index.html', import.meta.url), 'utf8')).replace(/\s+/g, ' ');
 const current = html.match(/<span class="detail-label">现在就能用<\/span>([\s\S]*?)<\/article>/)?.[1];
 const planned = html.match(/<article class="roadmap-note">([\s\S]*?)<\/article>/)?.[1];
 

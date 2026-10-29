@@ -1,0 +1,40 @@
+{
+  "batch": "20261020-polish-autoplay-v1",
+  "manifestSHA256": "b53272387d83cee6ad0dee173122c009db954c7308f3a7d3a35926b1b9992b1b",
+  "archiveSHA256": "efa49b853565e422001b7cb688a5265e9e4af5576f951533ab1b47f8d6ee9649",
+  "deployScriptSHA256": "61a71f38488ec2595538ea9b104fcbdc935f7838f0e3cc4550cf3a7f0adc3b4b",
+  "config": {
+    "passed": true,
+    "snippetSHA256": "074f4b90d14a67bcf4bc2ca5e2f950b409a5967d3a0f8b9ffd4a436c5e5dcbe9",
+    "mainSHA256": "819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75",
+    "restoredTestSHA256": "23781dc75433dbff6011bd380dd53a4588f42df17b6466a44549d5fef8079485",
+    "exactTwoStaticPathChanges": true,
+    "allLaterRoutesByteIdentical": true,
+    "routeDependenciesUnchanged": true
+  },
+  "homeIndexSHA256": "f2a7583afe60fa6891dd487c22b6455abbd3863fd95d4572a4f93a13c4256974",
+  "toolsIndexSHA256": "15478e06171743fef1d05b9e93f8a497aae5b244c41febd04ed40efc57f04f85",
+  "cssSHA256": "68962f07d16a4ba81d18427da0dc9f785011cad93a28c91bd18840f481cf6b31",
+  "motionSHA256": "ea115d36ef9bd591586f09a1a2a79ad44e8d2c7b22dd0241ebf3fb68a7b42613",
+  "downloadsSHA256": "4466ca7770d15a3a02107da726497da5261ab826a2636280face74c331abaa10",
+  "feedSHA256": "1a57ce7c52d8185c9bb878df311ad158e4144480b2bac6032289ad687409159e",
+  "productVersion": "1.0.1",
+  "nativeVersion": "4.1.1",
+  "verifiedResources": 54,
+  "oldAndCurrentDownloadRoutes": 6,
+  "videoRange206BothSites": true,
+  "previewBrowserApproved": true,
+  "privateBackupDirectoryBothHosts": "/root/lolicode-20261020-polish-autoplay-v1",
+  "rollbackActions": [
+    "restore-production",
+    "restore-tools"
+  ],
+  "proofDirectory": "tmp/lolicode-polish-autoplay-20261020",
+  "productionBrowserApproved": true,
+  "browserEvidence": [
+    "test-home.png",
+    "test-film.png",
+    "production-home.png",
+    "production-film.png"
+  ]
+}

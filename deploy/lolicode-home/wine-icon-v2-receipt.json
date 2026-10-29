@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-20",
+  "sites": [
+    "https://lolicode.com/",
+    "https://tools.treasuregrove.art/lolicode/"
+  ],
+  "productionReleaseDirectory": "/var/www/lolicode-site/releases/20261020-wine-icon-v2",
+  "icon": {
+    "appearance": "Original App character with burgundy rounded background and transparent outer corners",
+    "png512SHA256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1",
+    "icoSHA256": "59378c8e1068b3349734444a0037c836cde082c3db4f168b88cdd5e05a007538",
+    "forumURL": "https://lolicode.com/assets/favicon-lolicode-wine-c7396fd91efb.png",
+    "forumLogoSettingChanged": false
+  },
+  "websiteDeployment": {
+    "manifestSHA256": "49a77503c4d656d7a4af8c4058cfe612e841d8efbae402c8615c33efd4704d69",
+    "archiveSHA256": "cd88d2cbc5aa353e68b207e11f24aa628c30a5b26c0cc2dd8e6493c63e959754",
+    "mainNginxConfigUnchangedSHA256": "819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75",
+    "previewRestored": true,
+    "evidenceDirectory": "tmp/lolicode-wine-icon-20261020",
+    "publicStaticResourcesVerified": 37,
+    "productionBrowserScreenshot": "tmp/lolicode-wine-icon-20261020/production-v1.0.1-home.png",
+    "productionBrowserVersion": "1.0.1"
+  },
+  "appRelease": {
+    "productVersion": "1.0.1",
+    "nativeVersion": "4.1.1",
+    "frozenSourceCommit": "2e13832ddca2b209c69b3ad0f806b5d49dac71f3",
+    "releaseURL": "https://github.com/treasureGrove/LoliCode-Releases/releases/tag/lolicode-v1.0.1",
+    "bothStableFeedsSHA256": "1a57ce7c52d8185c9bb878df311ad158e4144480b2bac6032289ad687409159e",
+    "nginxSnippetAfterAddingVersionedDownloadRoutesSHA256": "f09d645f753efc76bbc1bac2f8445e33f31506d8d5d05b168a82ab182782c68e",
+    "installerUpgradeAndRepeatInstallVerified": true,
+    "portableExtractionVerified": true,
+    "officialUpdaterFullDownloadAndSignatureVerified": true,
+    "deliveryRecord": "D:/projectGithub/TAI-Switch/docs/guides/lolicode-v1.0.1-delivery.md"
+  },
+  "dailySEO": {
+    "bothTimersEnabledAndActive": true,
+    "timezone": "Asia/Shanghai (UTC+08:00, same offset as Asia/Singapore)",
+    "nextHealthCheckAndChangedSubmission": "2026-10-21T08:45:00+08:00",
+    "nextWebsiteAgentReview": "2026-10-21T08:50:00+08:00",
+    "websiteAgent": "Existing OpenCode with deepseek/deepseek-flash",
+    "actualChineseReportGenerated": true,
+    "existingCronsUnchanged": true,
+    "sameDayAPIDedupVerified": true,
+    "firstIndexNowReceipt": "HTTP 200 received; receipt does not confirm indexing",
+    "google": "Registered sitemap discovery; no daily authenticated API submission",
+    "baidu": "Failed TLS certificate hostname verification for data.zz.baidu.com; strict verification retained; eligible for retry the next day",
+    "evidenceDirectory": "tmp/lolicode-daily-seo-20261020-v1"
+  }
+}

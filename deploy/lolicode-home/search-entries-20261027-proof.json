@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "url": "https://lolicode.com/",
+      "canonical": "https://lolicode.com/",
+      "noindex": false
+    },
+    {
+      "url": "https://lolicode.com/all",
+      "canonical": "https://lolicode.com/all",
+      "noindex": false
+    },
+    {
+      "url": "https://lolicode.com/all?page=2",
+      "canonical": "https://lolicode.com/all?page=2",
+      "noindex": false
+    },
+    {
+      "url": "https://test.lolicode.com/all",
+      "canonical": "https://test.lolicode.com/all",
+      "noindex": true
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/",
+      "canonical": "https://lolicode.com/",
+      "noindex": false
+    },
+    {
+      "url": "https://direct.lolicode.com/",
+      "noindex": true,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://direct.lolicode.com/all",
+      "noindex": true,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://direct.lolicode.com/api",
+      "noindex": true,
+      "contentType": "application/vnd.api+json"
+    },
+    {
+      "url": "https://direct.lolicode.com/sitemap.xml",
+      "noindex": true,
+      "contentType": "application/xml; charset=utf-8"
+    },
+    {
+      "url": "https://direct.lolicode.com/robots.txt",
+      "noindex": true,
+      "contentType": "text/plain; charset=utf-8"
+    },
+    {
+      "url": "https://direct.lolicode.com/assets/forum.css",
+      "noindex": true,
+      "contentType": "text/css"
+    },
+    {
+      "url": "https://direct.lolicode.com/assets/forum.js",
+      "noindex": true,
+      "contentType": "application/javascript"
+    },
+    {
+      "url": "https://direct.lolicode.com/assets/forum-zh-Hans.js",
+      "noindex": true,
+      "contentType": "application/javascript"
+    },
+    {
+      "url": "https://lolicode.com/api",
+      "status": 200
+    },
+    {
+      "url": "https://lolicode.com/sitemap.xml",
+      "status": 200
+    },
+    {
+      "url": "https://lolicode.com/sitemap-desktop.xml",
+      "status": 200
+    },
+    {
+      "url": "https://lolicode.com/feed",
+      "status": 200
+    },
+    {
+      "url": "https://lolicode.com/downloads/updates/latest.json",
+      "status": 200
+    }
+  ]
+}

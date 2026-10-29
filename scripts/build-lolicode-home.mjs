@@ -8,6 +8,7 @@ import {
 } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { createHash } from "node:crypto";
 
 const repository = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -19,8 +20,24 @@ const assetNames = [
   "downloads.js",
   "motion.js",
   "logo.svg",
+  "site-icon.png",
+  "site-icon-192.png",
+  "site-icon-512.png",
+  "favicon-16.png",
+  "favicon-32.png",
+  "favicon-48.png",
+  "favicon.ico",
+  "apple-touch-icon.png",
   "maid.png",
   "workbench.jpg",
+  "companion.webp",
+  "atelier-room.webp",
+  "brooch.webp",
+  "workbench-cream.jpg",
+  "channels-light.jpg",
+  "lolicode-tour.mp4",
+  "tour-poster.webp",
+  "discovery-v1.json",
 ];
 const markerName = ".lolicode-home-build.json";
 
@@ -30,12 +47,34 @@ function replaceRequired(source, pattern, replacement, label) {
   return source.replace(pattern, replacement);
 }
 
+function requireOfficialHomeUrl(source, pattern, attribute, label) {
+  const tags = source.match(pattern) || [];
+  const values = tags.length === 1
+    ? [...tags[0].matchAll(new RegExp(`\\b${attribute}\\s*=\\s*(["'])(.*?)\\1`, "gi"))]
+    : [];
+  if (values.length !== 1 || values[0][2] !== "https://lolicode.com/") {
+    throw new Error(`Expected exactly one official homepage ${label}`);
+  }
+}
+
 export function renderHome(source, forumPath = "/all") {
   if (!/^\/[A-Za-z0-9][A-Za-z0-9/_-]*$/.test(forumPath)) {
     throw new Error(
       "Forum path must be a non-root absolute path, for example /all",
     );
   }
+  requireOfficialHomeUrl(
+    source,
+    /<link\b(?=[^>]*\brel\s*=\s*["']canonical["'])[^>]*>/gi,
+    "href",
+    "canonical",
+  );
+  requireOfficialHomeUrl(
+    source,
+    /<meta\b(?=[^>]*\bproperty\s*=\s*["']og:url["'])[^>]*>/gi,
+    "content",
+    "Open Graph URL",
+  );
   let html = replaceRequired(
     source,
     /(<meta\s+name="lolicode-download-profile"\s+content=")tools("\s*\/>)/,
@@ -44,19 +83,7 @@ export function renderHome(source, forumPath = "/all") {
   );
   html = replaceRequired(
     html,
-    /(<link\s+rel="canonical"\s+href=")https:\/\/tools\.treasuregrove\.art\/lolicode\/("\s*\/>)/,
-    "$1https://lolicode.com/$2",
-    "canonical",
-  );
-  html = replaceRequired(
-    html,
-    /(<meta\s+property="og:url"\s+content=")https:\/\/tools\.treasuregrove\.art\/lolicode\/("\s*\/>)/,
-    "$1https://lolicode.com/$2",
-    "Open Graph URL",
-  );
-  html = replaceRequired(
-    html,
-    /((?:src|href)=")\.\/assets\//g,
+    /((?:src|href|poster)=")\.\/assets\//g,
     "$1/desktop-assets/",
     "assets",
   );
@@ -93,12 +120,46 @@ export async function buildHome({ outDirectory, forumPath = "/all" }) {
       "Output must not overwrite the repository or source directories",
     );
   }
+  const catalog = JSON.parse(
+    await readFile(
+      path.join(sourceDirectory, "assets/discovery-v1.json"),
+      "utf8",
+    ),
+  );
+  const previews = catalog.entries
+    .filter((entry) => entry.preview)
+    .map((entry) => {
+      const preview = entry.preview;
+      if (
+        !/^[a-z0-9-]+$/.test(entry.id) ||
+        !/^[a-f0-9]{64}$/.test(preview.sha256) ||
+        !["png", "jpg"].some(
+          (ext) =>
+            preview.filename ===
+            `${entry.id}-${preview.sha256.slice(0, 12)}.${ext}`,
+        )
+      )
+        throw new Error("Invalid discovery preview");
+      return { name: `rankings/${preview.filename}`, sha256: preview.sha256 };
+    });
+  const buildAssets = [...assetNames, ...previews.map((entry) => entry.name)];
   const sourceFiles = [
     "index.html",
-    ...assetNames.map((name) => `assets/${name}`),
+    "sitemap-desktop.xml",
+    ...buildAssets.map((name) => `assets/${name}`),
   ];
   for (const name of sourceFiles)
     await requirePlainFile(path.join(sourceDirectory, name));
+  for (const preview of previews) {
+    const bytes = await readFile(
+      path.join(sourceDirectory, "assets", preview.name),
+    );
+    if (
+      bytes.length > 2 * 1024 * 1024 ||
+      createHash("sha256").update(bytes).digest("hex") !== preview.sha256
+    )
+      throw new Error("Discovery preview checksum mismatch");
+  }
   const html = renderHome(
     await readFile(path.join(sourceDirectory, "index.html"), "utf8"),
     forumPath,
@@ -127,7 +188,13 @@ export async function buildHome({ outDirectory, forumPath = "/all" }) {
   await mkdir(assets, { recursive: true });
   if ((await lstat(assets)).isSymbolicLink())
     throw new Error("Assets output must not be a symlink");
-  for (const name of assetNames) {
+  if (previews.length) {
+    const directory = path.join(assets, "rankings");
+    await mkdir(directory, { recursive: true });
+    if ((await lstat(directory)).isSymbolicLink())
+      throw new Error("Rankings output must not be a symlink");
+  }
+  for (const name of buildAssets) {
     const destination = path.join(assets, name);
     try {
       await requirePlainFile(destination);
@@ -143,6 +210,13 @@ export async function buildHome({ outDirectory, forumPath = "/all" }) {
     if (error.code !== "ENOENT") throw error;
   }
   await writeFile(index, html);
+  const sitemap = path.join(output, "sitemap-desktop.xml");
+  try {
+    await requirePlainFile(sitemap);
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
+  await copyFile(path.join(sourceDirectory, "sitemap-desktop.xml"), sitemap);
   await writeFile(
     path.join(output, markerName),
     JSON.stringify(
@@ -156,7 +230,8 @@ export async function buildHome({ outDirectory, forumPath = "/all" }) {
     forumUrl: `https://lolicode.com${forumPath}`,
     files: [
       "index.html",
-      ...assetNames.map((name) => `desktop-assets/${name}`),
+      "sitemap-desktop.xml",
+      ...buildAssets.map((name) => `desktop-assets/${name}`),
     ],
   };
 }

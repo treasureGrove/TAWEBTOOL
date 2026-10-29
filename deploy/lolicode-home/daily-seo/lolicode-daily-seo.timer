@@ -1,0 +1,11 @@
+[Unit]
+Description=Run LoliCode SEO checks daily at 08:45 China time
+
+[Timer]
+OnCalendar=*-*-* 08:45:00 Asia/Shanghai
+AccuracySec=1s
+Persistent=true
+Unit=lolicode-daily-seo.service
+
+[Install]
+WantedBy=timers.target

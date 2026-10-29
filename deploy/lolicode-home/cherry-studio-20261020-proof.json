@@ -1,0 +1,365 @@
+{
+  "passed": true,
+  "resources": [
+    {
+      "url": "https://lolicode.com/desktop-assets/atelier-room.webp?studio-check=20261020",
+      "status": 200,
+      "bytes": 93506,
+      "sha256": "2058e4de2f45617eac9a830f2ff21bd0dcae60e0ae0a2011c906857e5a775f36",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/brooch.webp?studio-check=20261020",
+      "status": 200,
+      "bytes": 10234,
+      "sha256": "143d33374528c06e7b8c9f245ce20cebcc03db0901ca4fed3cc9361a7ea1b604",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/channels-light.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 55568,
+      "sha256": "ca5a854f95d395c8e0394ad557f5213dea0671522a7c8d7761f259aef19db163",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/companion.webp?studio-check=20261020",
+      "status": 200,
+      "bytes": 142730,
+      "sha256": "c22070262de0607fc52d1a0440de42c6acd41a061c37cb68b5f4b0189b495f78",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/discovery-v1.json?studio-check=20261020",
+      "status": 200,
+      "bytes": 7909,
+      "sha256": "640eb752d40fe4a8d88ecdaefdb915dc4389c98ad51b3e68a5e8b828db32eb2d",
+      "contentType": "application/json"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/downloads.js?studio-check=20261020",
+      "status": 200,
+      "bytes": 10682,
+      "sha256": "4466ca7770d15a3a02107da726497da5261ab826a2636280face74c331abaa10",
+      "contentType": "application/javascript"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/logo.svg?studio-check=20261020",
+      "status": 200,
+      "bytes": 851,
+      "sha256": "010541bf8e14e3a14dd68c3bf7a18daa137ce24cf5519d75fba9832618d070b0",
+      "contentType": "image/svg+xml"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/maid.png?studio-check=20261020",
+      "status": 200,
+      "bytes": 1807059,
+      "sha256": "57df11bc05392e3c73b4bdab1e1112dc85323c9836109032bd81e5db45d774de",
+      "contentType": "image/png"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/motion.js?studio-check=20261020",
+      "status": 200,
+      "bytes": 8403,
+      "sha256": "ffda298c2ddec54773dd18d70e9ad4a8f53d98598f1a885835c0d8d5c65a4af4",
+      "contentType": "application/javascript"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/rankings/aider-fd3770d0718d.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 40740,
+      "sha256": "fd3770d0718dd0a4d321abb58be1efd48927248f63ea577f79d3e3e6b45af232",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/rankings/artificial-analysis-81519b0e6c2c.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 69973,
+      "sha256": "81519b0e6c2ce04ae4cc965a646a905668d37ed712105a0a9e42ccd3d86de703",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/rankings/livebench-a818b4666b9b.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 60213,
+      "sha256": "a818b4666b9b90bff7395d1bf8ae9d11cd3b4d12db206a5b42d7729d8e802ae2",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/site.css?studio-check=20261020",
+      "status": 200,
+      "bytes": 33758,
+      "sha256": "8fc82c4929dde55746fac52b3f9d14f1bb0763dbf2b95594b7e185ceac24e729",
+      "contentType": "text/css"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/workbench-cream.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 71480,
+      "sha256": "acdafe8f739222a2cfa947e3a779c141d8edfcf93e3a3db5056ac3737ab52443",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://lolicode.com/desktop-assets/workbench.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 60208,
+      "sha256": "9ca71515c562cffde6a52ec2d51485c9ee70eb8c4dfd7adf3d00976ead51043d",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://lolicode.com/?studio-check=20261020",
+      "status": 200,
+      "bytes": 22063,
+      "sha256": "72ee9a34228b683a0f75132b9182dd699fa43f75d31936d832ebc9be5fc160b0",
+      "contentType": "text/html"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/atelier-room.webp?studio-check=20261020",
+      "status": 200,
+      "bytes": 93506,
+      "sha256": "2058e4de2f45617eac9a830f2ff21bd0dcae60e0ae0a2011c906857e5a775f36",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/brooch.webp?studio-check=20261020",
+      "status": 200,
+      "bytes": 10234,
+      "sha256": "143d33374528c06e7b8c9f245ce20cebcc03db0901ca4fed3cc9361a7ea1b604",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/channels-light.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 55568,
+      "sha256": "ca5a854f95d395c8e0394ad557f5213dea0671522a7c8d7761f259aef19db163",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/companion.webp?studio-check=20261020",
+      "status": 200,
+      "bytes": 142730,
+      "sha256": "c22070262de0607fc52d1a0440de42c6acd41a061c37cb68b5f4b0189b495f78",
+      "contentType": "image/webp"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/motion.js?studio-check=20261020",
+      "status": 200,
+      "bytes": 8403,
+      "sha256": "ffda298c2ddec54773dd18d70e9ad4a8f53d98598f1a885835c0d8d5c65a4af4",
+      "contentType": "application/javascript"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/site.css?studio-check=20261020",
+      "status": 200,
+      "bytes": 33758,
+      "sha256": "8fc82c4929dde55746fac52b3f9d14f1bb0763dbf2b95594b7e185ceac24e729",
+      "contentType": "text/css"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/assets/workbench-cream.jpg?studio-check=20261020",
+      "status": 200,
+      "bytes": 71480,
+      "sha256": "acdafe8f739222a2cfa947e3a779c141d8edfcf93e3a3db5056ac3737ab52443",
+      "contentType": "image/jpeg"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/?studio-check=20261020",
+      "status": 200,
+      "bytes": 21982,
+      "sha256": "47a742fb68e3fefb92078b6b2bd09468d59cf6ab6a47484c764f518d49a6cfda",
+      "contentType": "text/html"
+    }
+  ],
+  "feeds": [
+    {
+      "url": "https://lolicode.com/downloads/updates/latest.json",
+      "unchanged": true,
+      "productVersion": "1.0.0"
+    },
+    {
+      "url": "https://tools.treasuregrove.art/lolicode/updates/latest.json",
+      "unchanged": true,
+      "productVersion": "1.0.0"
+    }
+  ],
+  "routes": [
+    {
+      "path": "/all",
+      "status": 200
+    },
+    {
+      "path": "/api",
+      "status": 200
+    },
+    {
+      "path": "/sitemap.xml",
+      "status": 200
+    }
+  ],
+  "installerRedirect": "https://github.com/treasureGrove/LoliCode-Releases/releases/download/lolicode-v1.0.0/LoliCode-1.0.0-Windows-x64-Setup.exe",
+  "batch": "20261020-cherry-studio-v1",
+  "manifestSHA256": "e660496f5ee1bdaf5ac327d51d545264d93245c562d7b0881f818d89266c97be",
+  "browser": {
+    "browser-qa.json": {
+      "passed": true,
+      "results": [
+        {
+          "width": 1440,
+          "noOverflow": true
+        },
+        {
+          "width": 1024,
+          "noOverflow": true
+        },
+        {
+          "width": 850,
+          "noOverflow": true
+        },
+        {
+          "width": 768,
+          "noOverflow": true
+        },
+        {
+          "width": 600,
+          "noOverflow": true
+        },
+        {
+          "width": 390,
+          "noOverflow": true
+        },
+        {
+          "width": 320,
+          "noOverflow": true
+        }
+      ],
+      "errors": [],
+      "downloads": "https://lolicode.com/downloads/releases/1.0.0/LoliCode-1.0.0-Windows-x64-Setup.exe",
+      "keyboardTabs": true,
+      "modalEscapeAndFocusRestored": true,
+      "reducedMotion": true,
+      "noJavaScriptReadable": true
+    },
+    "preview-proof": {
+      "passed": true,
+      "results": [
+        {
+          "width": 1440,
+          "noOverflow": true
+        },
+        {
+          "width": 1024,
+          "noOverflow": true
+        },
+        {
+          "width": 850,
+          "noOverflow": true
+        },
+        {
+          "width": 768,
+          "noOverflow": true
+        },
+        {
+          "width": 600,
+          "noOverflow": true
+        },
+        {
+          "width": 390,
+          "noOverflow": true
+        },
+        {
+          "width": 320,
+          "noOverflow": true
+        }
+      ],
+      "errors": [],
+      "downloads": "https://lolicode.com/downloads/releases/1.0.0/LoliCode-1.0.0-Windows-x64-Setup.exe",
+      "keyboardTabs": true,
+      "modalEscapeAndFocusRestored": true,
+      "reducedMotion": true,
+      "noJavaScriptReadable": true
+    },
+    "live-home": {
+      "passed": true,
+      "results": [
+        {
+          "width": 1440,
+          "noOverflow": true
+        },
+        {
+          "width": 1024,
+          "noOverflow": true
+        },
+        {
+          "width": 850,
+          "noOverflow": true
+        },
+        {
+          "width": 768,
+          "noOverflow": true
+        },
+        {
+          "width": 600,
+          "noOverflow": true
+        },
+        {
+          "width": 390,
+          "noOverflow": true
+        },
+        {
+          "width": 320,
+          "noOverflow": true
+        }
+      ],
+      "errors": [],
+      "downloads": "https://lolicode.com/downloads/releases/1.0.0/LoliCode-1.0.0-Windows-x64-Setup.exe",
+      "keyboardTabs": true,
+      "modalEscapeAndFocusRestored": true,
+      "reducedMotion": true,
+      "noJavaScriptReadable": true
+    },
+    "live-tools": {
+      "passed": true,
+      "results": [
+        {
+          "width": 1440,
+          "noOverflow": true
+        },
+        {
+          "width": 1024,
+          "noOverflow": true
+        },
+        {
+          "width": 850,
+          "noOverflow": true
+        },
+        {
+          "width": 768,
+          "noOverflow": true
+        },
+        {
+          "width": 600,
+          "noOverflow": true
+        },
+        {
+          "width": 390,
+          "noOverflow": true
+        },
+        {
+          "width": 320,
+          "noOverflow": true
+        }
+      ],
+      "errors": [],
+      "downloads": "https://lolicode.com/downloads/releases/1.0.0/LoliCode-1.0.0-Windows-x64-Setup.exe",
+      "keyboardTabs": true,
+      "modalEscapeAndFocusRestored": true,
+      "reducedMotion": true,
+      "noJavaScriptReadable": true
+    }
+  },
+  "unitTests": {
+    "passed": 146,
+    "failed": 0
+  },
+  "testConfigRestoredSHA256": "23781dc75433dbff6011bd380dd53a4588f42df17b6466a44549d5fef8079485"
+}

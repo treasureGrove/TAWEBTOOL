@@ -1,0 +1,165 @@
+{
+  "batch": "20261027-image-search-v1",
+  "manifestSHA256": "a2ace7b2de4ddb48a7c48f9de0ab4463ab9fad50ae3ec87abdc85da9e87032ab",
+  "websiteTestsPassed": 164,
+  "deployOfflineChecksPassed": 12,
+  "preview": {
+    "host": "test.lolicode.com",
+    "passed": true,
+    "manifestSHA256": "a2ace7b2de4ddb48a7c48f9de0ab4463ab9fad50ae3ec87abdc85da9e87032ab",
+    "homeSHA256": "09bc41b4cd2dab702a5b409296d972fe27b725856f999c9e71a10e6d087c872a",
+    "images": [
+      {
+        "url": "https://lolicode.com/desktop-assets/site-icon-512.png",
+        "size": [
+          512,
+          512
+        ],
+        "mime": "image/png",
+        "sha256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/companion.webp",
+        "size": [
+          720,
+          768
+        ],
+        "mime": "image/webp",
+        "sha256": "c22070262de0607fc52d1a0440de42c6acd41a061c37cb68b5f4b0189b495f78"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/workbench.jpg",
+        "size": [
+          1000,
+          650
+        ],
+        "mime": "image/jpeg",
+        "sha256": "9ca71515c562cffde6a52ec2d51485c9ee70eb8c4dfd7adf3d00976ead51043d"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/workbench-cream.jpg",
+        "size": [
+          1000,
+          650
+        ],
+        "mime": "image/jpeg",
+        "sha256": "acdafe8f739222a2cfa947e3a779c141d8edfcf93e3a3db5056ac3737ab52443"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/channels-light.jpg",
+        "size": [
+          900,
+          600
+        ],
+        "mime": "image/jpeg",
+        "sha256": "ca5a854f95d395c8e0394ad557f5213dea0671522a7c8d7761f259aef19db163"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/tour-poster.webp",
+        "size": [
+          1600,
+          1000
+        ],
+        "mime": "image/webp",
+        "sha256": "bf13790f4ef5c9f6897c5ceea1e4bb68d07f84cdf54c1a25f956a1d7d9fef887"
+      }
+    ],
+    "faviconLinks": [
+      "/desktop-assets/favicon-16.png",
+      "/desktop-assets/favicon-32.png",
+      "/desktop-assets/favicon-48.png",
+      "/desktop-assets/site-icon-192.png"
+    ],
+    "preferredImage": "https://lolicode.com/desktop-assets/companion.webp",
+    "previewNoindex": true,
+    "meaning": "Crawl eligibility verified; does not confirm image indexing or search-result display."
+  },
+  "production": {
+    "host": "lolicode.com",
+    "passed": true,
+    "manifestSHA256": "a2ace7b2de4ddb48a7c48f9de0ab4463ab9fad50ae3ec87abdc85da9e87032ab",
+    "homeSHA256": "09bc41b4cd2dab702a5b409296d972fe27b725856f999c9e71a10e6d087c872a",
+    "images": [
+      {
+        "url": "https://lolicode.com/desktop-assets/site-icon-512.png",
+        "size": [
+          512,
+          512
+        ],
+        "mime": "image/png",
+        "sha256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/companion.webp",
+        "size": [
+          720,
+          768
+        ],
+        "mime": "image/webp",
+        "sha256": "c22070262de0607fc52d1a0440de42c6acd41a061c37cb68b5f4b0189b495f78"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/workbench.jpg",
+        "size": [
+          1000,
+          650
+        ],
+        "mime": "image/jpeg",
+        "sha256": "9ca71515c562cffde6a52ec2d51485c9ee70eb8c4dfd7adf3d00976ead51043d"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/workbench-cream.jpg",
+        "size": [
+          1000,
+          650
+        ],
+        "mime": "image/jpeg",
+        "sha256": "acdafe8f739222a2cfa947e3a779c141d8edfcf93e3a3db5056ac3737ab52443"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/channels-light.jpg",
+        "size": [
+          900,
+          600
+        ],
+        "mime": "image/jpeg",
+        "sha256": "ca5a854f95d395c8e0394ad557f5213dea0671522a7c8d7761f259aef19db163"
+      },
+      {
+        "url": "https://lolicode.com/desktop-assets/tour-poster.webp",
+        "size": [
+          1600,
+          1000
+        ],
+        "mime": "image/webp",
+        "sha256": "bf13790f4ef5c9f6897c5ceea1e4bb68d07f84cdf54c1a25f956a1d7d9fef887"
+      }
+    ],
+    "faviconLinks": [
+      "/desktop-assets/favicon-16.png",
+      "/desktop-assets/favicon-32.png",
+      "/desktop-assets/favicon-48.png",
+      "/desktop-assets/site-icon-192.png"
+    ],
+    "preferredImage": "https://lolicode.com/desktop-assets/companion.webp",
+    "previewNoindex": false,
+    "meaning": "Crawl eligibility verified; does not confirm image indexing or search-result display."
+  },
+  "googleSitemap": "submission confirmed",
+  "bingSitemap": "submitted 2026-10-27; processing",
+  "googleImageSearchBaseline": {
+    "selectedRange": "28 days",
+    "chartDates": [
+      "2026-10-19",
+      "2026-10-25"
+    ],
+    "page": "https://lolicode.com/",
+    "clicks": 0,
+    "indexingStatus": "unconfirmed",
+    "impressions": 0,
+    "note": "Zero impressions do not establish non-indexing; not web-search metrics."
+  },
+  "imageDisplayConfirmed": false,
+  "continuousImageChecks": "added to existing lolicode heartbeat; schedule preserved",
+  "backup": "/root/lolicode-20261027-image-search-v1/"
+}

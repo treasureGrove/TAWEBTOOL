@@ -1,0 +1,41 @@
+[Unit]
+Description=Review the LoliCode daily status with the existing website AI
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=900
+StartLimitBurst=3
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+WorkingDirectory=/var/lib/lolicode-seo-review/work
+Environment=HOME=/var/lib/lolicode-seo-review/home
+Environment=XDG_DATA_HOME=/var/lib/lolicode-seo-review/data
+Environment=XDG_CONFIG_HOME=/var/lib/lolicode-seo-review/config
+Environment=XDG_CACHE_HOME=/var/lib/lolicode-seo-review/cache
+Environment=XDG_STATE_HOME=/var/lib/lolicode-seo-review/state
+ExecStart=/usr/bin/python3 /usr/local/lib/lolicode-seo-review/review.py
+TimeoutStartSec=240
+Restart=on-failure
+RestartSec=60
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=tmpfs
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=yes
+CapabilityBoundingSet=
+ReadWritePaths=/var/lib/lolicode-seo-review
+# The installed runtime and original auth inode are mounted read-only.
+# No credential file is copied, and the rest of /root is hidden.
+BindReadOnlyPaths=/root/node-v22.14.0-linux-x64
+BindReadOnlyPaths=/root/.local/share/opencode/auth.json:/var/lib/lolicode-seo-review/data/opencode/auth.json
+StandardOutput=journal
+StandardError=journal

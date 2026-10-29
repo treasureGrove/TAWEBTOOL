@@ -1,0 +1,35 @@
+{
+  "batch": "20261020-editorial-motion-v1",
+  "manifestSHA256": "3caf44abd5abe66746b0f623ec6c648fde46115e1581d08fbc67c73e0e5d3042",
+  "archiveSHA256": "8f897a4e221d3d6590525f8e0a0a7d0bde47767c8e3ea516269f03f8b7130ab2",
+  "deployScriptSHA256": "24232fb1d9c73aea4d793712eec0b331da4d1bb3cf5bcc6b9ed927cbc3cca2bb",
+  "config": {
+    "passed": true,
+    "snippetSHA256": "66fef3485917706b0b2c84b915eacae4b0e4544e89f8e9d7b90538764a80a06a",
+    "mainSHA256": "819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75",
+    "restoredTestSHA256": "23781dc75433dbff6011bd380dd53a4588f42df17b6466a44549d5fef8079485",
+    "exactTwoStaticPathChanges": true,
+    "allLaterRoutesByteIdentical": true,
+    "routeDependenciesUnchanged": true
+  },
+  "homeIndexSHA256": "02b55167e23198aa0e848d43d0af47dbaaa7ec2ad8a3ee01db2f40b3b46275ba",
+  "toolsIndexSHA256": "2af8da4b5e7a6de618a9258e4ff6bed5cea1cc6b661a800193b6c28fbd926b3d",
+  "cssSHA256": "94656181e3021acf067d89d7e493ad3e34166f6af148630dcadf4bbdf7b879d4",
+  "motionSHA256": "6e93ac782670e2d8f5c14f8d9b44820c9bb8d34c721edd0f9c5efa0aeb3600cf",
+  "downloadsSHA256": "4466ca7770d15a3a02107da726497da5261ab826a2636280face74c331abaa10",
+  "feedSHA256": "1a57ce7c52d8185c9bb878df311ad158e4144480b2bac6032289ad687409159e",
+  "productVersion": "1.0.1",
+  "nativeVersion": "4.1.1",
+  "verifiedResources": 54,
+  "oldAndCurrentDownloadRoutes": 6,
+  "videoRange206BothSites": true,
+  "previewBrowserApproved": true,
+  "productionBrowserApproved": false,
+  "knownFollowup": "Ribbon group was narrower than wide viewports; isolated CSS/index v2 fix is pending.",
+  "privateBackupDirectoryBothHosts": "/root/lolicode-20261020-editorial-motion-v1",
+  "rollbackActions": [
+    "restore-production",
+    "restore-tools"
+  ],
+  "proofDirectory": "tmp/lolicode-editorial-motion-20261020"
+}

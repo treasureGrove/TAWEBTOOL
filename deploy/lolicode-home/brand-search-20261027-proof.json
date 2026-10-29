@@ -1,0 +1,301 @@
+{
+  "batch": "20261027-brand-search-v1",
+  "manifestSHA256": "3b3ce89292c3014c2f82bd0c7300ae30a0c269c9e5d556a2007642a642337688",
+  "websiteTestsPassed": 164,
+  "deployOfflineChecksPassed": 10,
+  "preview": {
+    "host": "test.lolicode.com",
+    "passed": true,
+    "manifestSHA256": "3b3ce89292c3014c2f82bd0c7300ae30a0c269c9e5d556a2007642a642337688",
+    "htmlSHA256": "5a371960b6fe3d1360646490cea051ddc36d5e6eae9fe8a0a8048ef9bb328d95",
+    "verifiedUnchangedAssets": [
+      {
+        "path": "desktop-assets/apple-touch-icon.png",
+        "sha256": "f9cf0c4a0fbe66c00d543612d2ad20df0500b0ff8074a768c5996e1dcb89f2cc",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/atelier-room.webp",
+        "sha256": "2058e4de2f45617eac9a830f2ff21bd0dcae60e0ae0a2011c906857e5a775f36",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/brooch.webp",
+        "sha256": "143d33374528c06e7b8c9f245ce20cebcc03db0901ca4fed3cc9361a7ea1b604",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/channels-light.jpg",
+        "sha256": "ca5a854f95d395c8e0394ad557f5213dea0671522a7c8d7761f259aef19db163",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/companion.webp",
+        "sha256": "c22070262de0607fc52d1a0440de42c6acd41a061c37cb68b5f4b0189b495f78",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/discovery-v1.json",
+        "sha256": "640eb752d40fe4a8d88ecdaefdb915dc4389c98ad51b3e68a5e8b828db32eb2d",
+        "contentType": "application/json"
+      },
+      {
+        "path": "desktop-assets/downloads.js",
+        "sha256": "4466ca7770d15a3a02107da726497da5261ab826a2636280face74c331abaa10",
+        "contentType": "application/javascript"
+      },
+      {
+        "path": "desktop-assets/favicon-16.png",
+        "sha256": "a8229d301f1635015c0a5e6bf10e48fc992bf51b37bbdfdc6f7839450d8cdd20",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/favicon-32.png",
+        "sha256": "c49f1bb6fc62e9e1daa7e25c6b8aa3d10bd68a3b7853f12be2222a81528e641e",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/favicon-48.png",
+        "sha256": "e330f10149f12b2f2c9bbba4fb228e5c2e8e146ceb793015538406e8ff050ca3",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/favicon.ico",
+        "sha256": "59378c8e1068b3349734444a0037c836cde082c3db4f168b88cdd5e05a007538",
+        "contentType": "image/x-icon"
+      },
+      {
+        "path": "desktop-assets/logo.svg",
+        "sha256": "010541bf8e14e3a14dd68c3bf7a18daa137ce24cf5519d75fba9832618d070b0",
+        "contentType": "image/svg+xml"
+      },
+      {
+        "path": "desktop-assets/lolicode-tour.mp4",
+        "sha256": "5de623d629e23c3ed502b9990875c81a4df340614acc47d412bb1b1a2763ceba",
+        "contentType": "video/mp4"
+      },
+      {
+        "path": "desktop-assets/maid.png",
+        "sha256": "57df11bc05392e3c73b4bdab1e1112dc85323c9836109032bd81e5db45d774de",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/motion.js",
+        "sha256": "6e93ac782670e2d8f5c14f8d9b44820c9bb8d34c721edd0f9c5efa0aeb3600cf",
+        "contentType": "application/javascript"
+      },
+      {
+        "path": "desktop-assets/rankings/aider-fd3770d0718d.jpg",
+        "sha256": "fd3770d0718dd0a4d321abb58be1efd48927248f63ea577f79d3e3e6b45af232",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/rankings/artificial-analysis-81519b0e6c2c.jpg",
+        "sha256": "81519b0e6c2ce04ae4cc965a646a905668d37ed712105a0a9e42ccd3d86de703",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/rankings/livebench-a818b4666b9b.jpg",
+        "sha256": "a818b4666b9b90bff7395d1bf8ae9d11cd3b4d12db206a5b42d7729d8e802ae2",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/site-icon-192.png",
+        "sha256": "d61be5f0e91ea35bf2b1626cc646da4d03351727d048dc08971ac9e672c74249",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/site-icon-512.png",
+        "sha256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/site-icon.png",
+        "sha256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/site.css",
+        "sha256": "a72350d4466ec249ccc34c0e58f91bccd7e0fbe159632d800e97d3a64e0de4da",
+        "contentType": "text/css"
+      },
+      {
+        "path": "desktop-assets/tour-poster.webp",
+        "sha256": "bf13790f4ef5c9f6897c5ceea1e4bb68d07f84cdf54c1a25f956a1d7d9fef887",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/workbench-cream.jpg",
+        "sha256": "acdafe8f739222a2cfa947e3a779c141d8edfcf93e3a3db5056ac3737ab52443",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/workbench.jpg",
+        "sha256": "9ca71515c562cffde6a52ec2d51485c9ee70eb8c4dfd7adf3d00976ead51043d",
+        "contentType": "image/jpeg"
+      }
+    ],
+    "canonical": "https://lolicode.com/",
+    "previewNoindex": true
+  },
+  "production": {
+    "host": "lolicode.com",
+    "passed": true,
+    "manifestSHA256": "3b3ce89292c3014c2f82bd0c7300ae30a0c269c9e5d556a2007642a642337688",
+    "htmlSHA256": "5a371960b6fe3d1360646490cea051ddc36d5e6eae9fe8a0a8048ef9bb328d95",
+    "verifiedUnchangedAssets": [
+      {
+        "path": "desktop-assets/apple-touch-icon.png",
+        "sha256": "f9cf0c4a0fbe66c00d543612d2ad20df0500b0ff8074a768c5996e1dcb89f2cc",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/atelier-room.webp",
+        "sha256": "2058e4de2f45617eac9a830f2ff21bd0dcae60e0ae0a2011c906857e5a775f36",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/brooch.webp",
+        "sha256": "143d33374528c06e7b8c9f245ce20cebcc03db0901ca4fed3cc9361a7ea1b604",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/channels-light.jpg",
+        "sha256": "ca5a854f95d395c8e0394ad557f5213dea0671522a7c8d7761f259aef19db163",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/companion.webp",
+        "sha256": "c22070262de0607fc52d1a0440de42c6acd41a061c37cb68b5f4b0189b495f78",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/discovery-v1.json",
+        "sha256": "640eb752d40fe4a8d88ecdaefdb915dc4389c98ad51b3e68a5e8b828db32eb2d",
+        "contentType": "application/json"
+      },
+      {
+        "path": "desktop-assets/downloads.js",
+        "sha256": "4466ca7770d15a3a02107da726497da5261ab826a2636280face74c331abaa10",
+        "contentType": "application/javascript"
+      },
+      {
+        "path": "desktop-assets/favicon-16.png",
+        "sha256": "a8229d301f1635015c0a5e6bf10e48fc992bf51b37bbdfdc6f7839450d8cdd20",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/favicon-32.png",
+        "sha256": "c49f1bb6fc62e9e1daa7e25c6b8aa3d10bd68a3b7853f12be2222a81528e641e",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/favicon-48.png",
+        "sha256": "e330f10149f12b2f2c9bbba4fb228e5c2e8e146ceb793015538406e8ff050ca3",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/favicon.ico",
+        "sha256": "59378c8e1068b3349734444a0037c836cde082c3db4f168b88cdd5e05a007538",
+        "contentType": "image/x-icon"
+      },
+      {
+        "path": "desktop-assets/logo.svg",
+        "sha256": "010541bf8e14e3a14dd68c3bf7a18daa137ce24cf5519d75fba9832618d070b0",
+        "contentType": "image/svg+xml"
+      },
+      {
+        "path": "desktop-assets/lolicode-tour.mp4",
+        "sha256": "5de623d629e23c3ed502b9990875c81a4df340614acc47d412bb1b1a2763ceba",
+        "contentType": "video/mp4"
+      },
+      {
+        "path": "desktop-assets/maid.png",
+        "sha256": "57df11bc05392e3c73b4bdab1e1112dc85323c9836109032bd81e5db45d774de",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/motion.js",
+        "sha256": "6e93ac782670e2d8f5c14f8d9b44820c9bb8d34c721edd0f9c5efa0aeb3600cf",
+        "contentType": "application/javascript"
+      },
+      {
+        "path": "desktop-assets/rankings/aider-fd3770d0718d.jpg",
+        "sha256": "fd3770d0718dd0a4d321abb58be1efd48927248f63ea577f79d3e3e6b45af232",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/rankings/artificial-analysis-81519b0e6c2c.jpg",
+        "sha256": "81519b0e6c2ce04ae4cc965a646a905668d37ed712105a0a9e42ccd3d86de703",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/rankings/livebench-a818b4666b9b.jpg",
+        "sha256": "a818b4666b9b90bff7395d1bf8ae9d11cd3b4d12db206a5b42d7729d8e802ae2",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/site-icon-192.png",
+        "sha256": "d61be5f0e91ea35bf2b1626cc646da4d03351727d048dc08971ac9e672c74249",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/site-icon-512.png",
+        "sha256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/site-icon.png",
+        "sha256": "c7396fd91efb772cf23a6832206d401b1707fa69abe5e5cfae7ac736a502bbb1",
+        "contentType": "image/png"
+      },
+      {
+        "path": "desktop-assets/site.css",
+        "sha256": "a72350d4466ec249ccc34c0e58f91bccd7e0fbe159632d800e97d3a64e0de4da",
+        "contentType": "text/css"
+      },
+      {
+        "path": "desktop-assets/tour-poster.webp",
+        "sha256": "bf13790f4ef5c9f6897c5ceea1e4bb68d07f84cdf54c1a25f956a1d7d9fef887",
+        "contentType": "image/webp"
+      },
+      {
+        "path": "desktop-assets/workbench-cream.jpg",
+        "sha256": "acdafe8f739222a2cfa947e3a779c141d8edfcf93e3a3db5056ac3737ab52443",
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "desktop-assets/workbench.jpg",
+        "sha256": "9ca71515c562cffde6a52ec2d51485c9ee70eb8c4dfd7adf3d00976ead51043d",
+        "contentType": "image/jpeg"
+      }
+    ],
+    "canonical": "https://lolicode.com/",
+    "previewNoindex": false
+  },
+  "google": {
+    "collectedOn": "2026-10-27",
+    "source": "Google Search Console authenticated browser UI",
+    "property": "https://lolicode.com/",
+    "pageFilter": "exact https://lolicode.com/",
+    "searchType": "web",
+    "selectedRange": "28 days",
+    "chartDates": [
+      "2026-10-19",
+      "2026-10-25"
+    ],
+    "clicks": 0,
+    "impressions": 3,
+    "ctr": 0,
+    "averagePosition": 3.3,
+    "sitemapSubmission": "confirmed successful 2026-10-27",
+    "lastCrawlBeforeRequest": "2026-10-20 17:37:39 as displayed by GSC",
+    "indexingRequest": "confirmed requested; Google added URL to priority crawl queue",
+    "uiReportUrl": "https://search.google.com/search-console/performance/search-analytics?resource_id=https%3A%2F%2Flolicode.com%2F&breakdown=query&page=!https%3A%2F%2Flolicode.com%2F&num_of_days=28"
+  },
+  "automationId": "lolicode",
+  "scheduleLocal": "Tuesday and Friday 10:00 Asia/Singapore",
+  "indexnow": "new digest eligible 2026-10-28 08:45; daily limit preserved",
+  "baidu": "external TLS hostname validation failure remains",
+  "backup": "/root/lolicode-20261027-brand-search-v1/"
+}

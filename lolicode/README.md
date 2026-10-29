@@ -46,7 +46,8 @@ node --test scripts/tests/lolicode-downloads.test.mjs scripts/tests/lolicode-hom
 
 `--forum-path` 是社区现有入口的域内绝对路径，默认 `/all`。工具站源页面也固定链接到
 `https://lolicode.com/all`，根域改为产品首页后不会把社区入口导回首页。
-构建会转换 canonical、Open Graph 地址、全部社区链接与工具箱返回入口，
+工具站与根域都将 canonical、Open Graph 地址声明为唯一官网 `https://lolicode.com/`。
+构建会验证地址唯一且正确，再转换社区链接与工具箱返回入口，
 并把图片、样式与脚本统一指向 `/desktop-assets/`。输出目录只能为空目录或
 本构建器已经标记的目录；不会删除其它文件。
 

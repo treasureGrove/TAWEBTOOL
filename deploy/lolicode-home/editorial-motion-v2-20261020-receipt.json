@@ -1,0 +1,49 @@
+{
+  "batch": "20261020-editorial-motion-v2",
+  "manifestSHA256": "314f3b8e1aab28cd4b2c7bd236b2c7922136d040df57e7fdaa9cd98e19a72a3a",
+  "archiveSHA256": "d11ff16a2edfa7e0a1b3080123d4d188dc482a3fba7a54467e024acde60a27cd",
+  "deployScriptSHA256": "4523c7c94020e81670d270f8f16b51fdfbc94ba80bc0952d591f550854888f1a",
+  "config": {
+    "passed": true,
+    "snippetSHA256": "f95d55e57825241d2f0a5f1b7fa0f3445cb1eb3df3eeec7b213877d918b6043d",
+    "mainSHA256": "819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75",
+    "restoredTestSHA256": "23781dc75433dbff6011bd380dd53a4588f42df17b6466a44549d5fef8079485",
+    "exactTwoStaticPathChanges": true,
+    "allLaterRoutesByteIdentical": true,
+    "routeDependenciesUnchanged": true
+  },
+  "homeIndexSHA256": "8285b428b37ff2670667d8ad9a36d1d654f69435340419f37a4c136cce736d5a",
+  "toolsIndexSHA256": "b237f7eba3d2aa2bf4b0d63495814b64021621339b04bac47089592f3c490c12",
+  "cssSHA256": "a72350d4466ec249ccc34c0e58f91bccd7e0fbe159632d800e97d3a64e0de4da",
+  "motionSHA256": "6e93ac782670e2d8f5c14f8d9b44820c9bb8d34c721edd0f9c5efa0aeb3600cf",
+  "downloadsSHA256": "4466ca7770d15a3a02107da726497da5261ab826a2636280face74c331abaa10",
+  "feedSHA256": "1a57ce7c52d8185c9bb878df311ad158e4144480b2bac6032289ad687409159e",
+  "productVersion": "1.0.1",
+  "nativeVersion": "4.1.1",
+  "verifiedResources": 54,
+  "oldAndCurrentDownloadRoutes": 6,
+  "videoRange206BothSites": true,
+  "previewBrowserApproved": true,
+  "productionBrowserApproved": true,
+  "changeScope": "CSS ribbon-set min-width:100vw and justify-content:space-around; HTML CSS cache key only. Motion and all other resources retained.",
+  "privateBackupDirectoryBothHosts": "/root/lolicode-20261020-editorial-motion-v2",
+  "rollbackActions": [
+    "restore-production",
+    "restore-tools"
+  ],
+  "proofDirectory": "tmp/lolicode-editorial-motion-v2-20261020",
+  "browserEvidence": [
+    "test-ribbon.png",
+    "production-home.png",
+    "production-ribbon.png"
+  ],
+  "browserChecks": {
+    "desktopRibbonCoverage": true,
+    "environmentAnimationsRunning": true,
+    "noHorizontalOverflow": true,
+    "bodyFontPixels": 16,
+    "visibleVideoPlaying": true,
+    "offscreenHeroAnimationsPaused": true,
+    "consoleErrors": 0
+  }
+}

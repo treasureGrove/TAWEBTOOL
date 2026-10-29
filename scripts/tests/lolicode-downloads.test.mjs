@@ -595,3 +595,18 @@ test("new script tolerates old HTML without the optional Tencent controls", asyn
   assert.equal(e.status.dataset.state, "ready");
   assert.ok(e.installer.href);
 });
+
+
+test("independent product version labels and links retain monotonic native update versions", async () => {
+  const manifest=release("https://lolicode.com/downloads/releases");
+  manifest.version="4.1.0";manifest.productVersion="1.0.0";
+  manifest.platforms["windows-x86_64"].url="https://lolicode.com/downloads/releases/1.0.0/LoliCode-1.0.0-Windows-x64-Setup.exe";
+  manifest.downloads["windows-x86_64-portable"].url="https://lolicode.com/downloads/releases/1.0.0/LoliCode-Portable.zip";
+  manifest.downloads["windows-x86_64-installer-github"]=githubBackup("1.0.0");
+  const {elements}=await run({manifest,profile:"home"});
+  assert.equal(elements.status.dataset.state,"ready");
+  assert.equal(elements.version.textContent,"LoliCode 1.0.0");
+  assert.equal(elements.installer.href,manifest.platforms["windows-x86_64"].url);
+  manifest.productVersion="1.0.1";
+  const bad=await run({manifest,profile:"home"});assertBlocked(bad.elements);
+});

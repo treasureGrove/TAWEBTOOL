@@ -1,0 +1,28 @@
+[Unit]
+Description=LoliCode daily fixed SEO checks and changed URL submission
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/var/lib/lolicode-seo
+ExecStart=/usr/bin/php /usr/local/lib/lolicode-daily-seo/run.php
+TimeoutStartSec=180
+UMask=0077
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=yes
+CapabilityBoundingSet=
+ReadWritePaths=/var/lib/lolicode-seo /var/www/forum/storage/logs/indexnow.log
+StandardOutput=journal
+StandardError=journal

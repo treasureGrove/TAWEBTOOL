@@ -176,23 +176,29 @@
       ) {
         throw new Error("invalid release");
       }
-      const installerUrl = downloadUrl(platform.url, release.version);
+      const publicVersion = release.productVersion ?? release.version;
+      if (!/^\d+\.\d+\.\d+$/.test(publicVersion)) throw new Error("invalid product version");
+      const [buildMajor, buildMinor, buildPatch] = release.version.split(".").map(Number);
+      const expectedPublic = buildMajor >= 4 && buildMinor >= 1
+        ? `${buildMajor - 3}.${buildMinor - 1}.${buildPatch}` : release.version;
+      if (publicVersion !== expectedPublic) throw new Error("product/build version mismatch");
+      const installerUrl = downloadUrl(platform.url, publicVersion);
       const portableInfo = release.downloads?.["windows-x86_64-portable"];
       const portableUrl = portableInfo
-        ? downloadUrl(portableInfo.url, release.version, true)
+        ? downloadUrl(portableInfo.url, publicVersion, true)
         : null;
       const githubInfo = release.downloads?.["windows-x86_64-installer-github"];
       const githubUrl = githubInfo === undefined
         ? null
-        : githubInstallerUrl(githubInfo, release.version);
+        : githubInstallerUrl(githubInfo, publicVersion);
       const tencentInstallerInfo = release.downloads?.["windows-x86_64-installer-tencent"];
       const tencentInstallerUrl = tencentInstallerInfo === undefined
         ? null
-        : tencentDownloadUrl(tencentInstallerInfo, githubInfo, installerUrl, release.version);
+        : tencentDownloadUrl(tencentInstallerInfo, githubInfo, installerUrl, publicVersion);
       const tencentPortableInfo = release.downloads?.["windows-x86_64-portable-tencent"];
       const tencentPortableUrl = tencentPortableInfo === undefined
         ? null
-        : tencentDownloadUrl(tencentPortableInfo, portableInfo, portableUrl, release.version, true);
+        : tencentDownloadUrl(tencentPortableInfo, portableInfo, portableUrl, publicVersion, true);
 
       // Activate links only after the complete manifest has passed validation.
       enable(installer, installerUrl);
@@ -204,11 +210,11 @@
         tencentDownloads.hidden = !((tencentInstallerUrl && tencentInstaller)
           || (tencentPortableUrl && tencentPortable));
       }
-      version.textContent = `LoliCode ${release.version}`;
-      releaseVersion.textContent = `v${release.version}`;
+      version.textContent = `LoliCode ${publicVersion}`;
+      releaseVersion.textContent = `v${publicVersion}`;
       status.dataset.state = "ready";
       status.textContent = "正式版已发布 · 推荐安装版，支持应用内更新。";
-      renderNotes(release.notes, release.version);
+      renderNotes(release.notes, publicVersion);
       const date =
         typeof release.pub_date === "string"
           ? new Date(release.pub_date)

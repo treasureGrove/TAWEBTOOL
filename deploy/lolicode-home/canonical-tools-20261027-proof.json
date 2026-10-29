@@ -1,0 +1,17 @@
+{
+  "batch": "20261027-canonical-tools-v1",
+  "passed": true,
+  "canonical": "https://lolicode.com/",
+  "ogUrl": "https://lolicode.com/",
+  "beforeSHA256": "b237f7eba3d2aa2bf4b0d63495814b64021621339b04bac47089592f3c490c12",
+  "afterSHA256": "4ab1c229ab586ad09a1987aeb88c622db56977f14b89300c680b6fe19edea361",
+  "retainedFiles": [
+    "assets/downloads.js",
+    "assets/site.css",
+    "assets/motion.js",
+    "updates/latest.json",
+    "sitemap-desktop.xml"
+  ],
+  "onlyDiff": "Two public head URLs; all other HTML bytes identical",
+  "backup": "/root/lolicode-20261027-canonical-tools-v1"
+}

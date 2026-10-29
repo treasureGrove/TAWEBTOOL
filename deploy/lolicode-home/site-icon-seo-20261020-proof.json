@@ -1,0 +1,67 @@
+{
+  "batch": "20261020-site-icon-seo-v1",
+  "completedAt": "2026-10-20T09:40:54.186994+00:00",
+  "site": "https://lolicode.com/",
+  "localPreview": "http://127.0.0.1:4184/",
+  "icon": {
+    "source": "TAI-Switch/src-tauri/icons/icon.png",
+    "pngSHA256": "29510ffa69ebea63783398b20d16ea0a37b6b954de7cddff2207fc48fb8eba37",
+    "icoSHA256": "f8240a6d0b62bf3fbc71191b1b1419c0ea7a53bb39d054dc5e9a62b1a4342318",
+    "originalAppBytesPreserved": true,
+    "smallSizes": [
+      16,
+      32,
+      48
+    ]
+  },
+  "deployment": {
+    "manifestSHA256": "c8f19e32a094ce43da18dc65a76e165d0f16a7f34c6caf58015de0b62bc62ca7",
+    "configuration": {
+      "snippetSHA256": "f5d65e6cab066fa5c0085bded6dd32d1985c703d5f3123a51302810cb052c37c",
+      "mainUnchangedSHA256": "819dfde97b2533df4dd1dd5f7838cf371199a38b687a813dfdbc82657280bd75",
+      "testRestoredSHA256": "23781dc75433dbff6011bd380dd53a4588f42df17b6466a44549d5fef8079485"
+    },
+    "publicResourcesVerified": 37,
+    "targetedTestsPassed": 9,
+    "downloadFeedsAndForumPreserved": true
+  },
+  "search": {
+    "google": {
+      "ownershipVerified": true,
+      "sitemap": "https://lolicode.com/sitemap-desktop.xml",
+      "sitemapStatus": "success",
+      "discoveredPages": 1,
+      "homepageAlreadyIndexedBeforeRequest": true,
+      "homepageRefreshRequest": "accepted-priority-crawl-queue",
+      "screenshots": [
+        "google-sitemap-success.png",
+        "google-home-final.png"
+      ]
+    },
+    "bing": {
+      "siteAdded": true,
+      "sitemap": "https://lolicode.com/sitemap-desktop.xml",
+      "sitemapStatus": "Success",
+      "discoveredPages": 1,
+      "errors": 0,
+      "warnings": 0,
+      "indexNowStatus": 200,
+      "screenshots": [
+        "bing-sitemap-success.png"
+      ]
+    },
+    "baidu": {
+      "ownershipVerified": true,
+      "homepageSubmission": "success",
+      "sitemapSubmitted": false,
+      "sitemapDailyQuota": 0,
+      "method": "manual-homepage-url",
+      "screenshots": [
+        "baidu-verified.png",
+        "baidu-home-submitted.png"
+      ]
+    }
+  },
+  "note": "Submission and sitemap processing do not guarantee new indexing, search-result icon refresh, ranking, or traffic. Google reported the homepage already indexed before this refresh request.",
+  "evidenceDirectory": "D:\\projectGithub\\TAWEBTOOL\\tmp\\lolicode-icon-seo-20261020"
+}
