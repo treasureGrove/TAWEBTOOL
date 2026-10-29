@@ -2,7 +2,17 @@ logs/
 data/feedback/
 data/game_scores/entries.json
 tmp/
+.tmp/
+.qoder/
+artifacts/
+__pycache__/
+*.py[cod]
 .playwright-mcp/
 footer-flex-page.png
+/stats/
+/.well-known/acme-challenge/
+/tokens.json
+/lolicode/.publish-stage-*/
+/lolicode/resources/
 /lolicode/releases/
 /lolicode/updates/

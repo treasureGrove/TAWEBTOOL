@@ -1,1 +1,0 @@
-Markdown reference documents covering browser-side AI image/video processing, MP4 muxing, and video editing with CDN cross-origin solutions for the TAWEBTOOL project.

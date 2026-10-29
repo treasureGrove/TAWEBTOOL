@@ -1,1 +1,0 @@
-Automated TA (Technical Artist) knowledge base pipeline that scrapes RSS/GitHub/search sources, filters and enriches entries via DeepSeek AI, and publishes a curated JSON wiki with email digests.

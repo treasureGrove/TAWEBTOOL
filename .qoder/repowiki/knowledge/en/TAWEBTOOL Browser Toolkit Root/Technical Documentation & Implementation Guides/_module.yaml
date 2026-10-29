@@ -1,8 +1,0 @@
-schema_version: 1
-module_path: docs
-title: Technical Documentation & Implementation Guides
-scope:
-    - doc/
-source_files: []
-depends_on: []
-related_to: []

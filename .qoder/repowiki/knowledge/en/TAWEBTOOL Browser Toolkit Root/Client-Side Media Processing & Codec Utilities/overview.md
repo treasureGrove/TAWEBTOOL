@@ -1,1 +1,0 @@
-Provides browser-based media encoding, decoding, and muxing capabilities through bundled WebAssembly runtimes and pure JavaScript codec implementations.
