@@ -42,10 +42,9 @@
         return luma;
     }
 
-    function ridgeFeatures(luma, width, height) {
+    function ridgeFeatures(luma, width, height, radius) {
         const ridge = new Float32Array(luma.length);
         const feature = new Float32Array(luma.length);
-        const radius = Math.max(2, Math.round(width / 300));
         const diagonal = Math.max(1, Math.round(radius * Math.SQRT1_2));
         const offsets = [radius, width * radius, (width + 1) * diagonal, (width - 1) * diagonal];
 
@@ -78,7 +77,7 @@
         return { ridge, feature };
     }
 
-    function correlation(values, width, height, dx, dy) {
+    function correlation(values, width, height, dx, dy, step = 4) {
         const left = Math.max(0, -dx) + 5;
         const right = Math.min(width, width - dx) - 5;
         const top = Math.max(0, -dy) + 5;
@@ -88,8 +87,8 @@
         let rightEnergy = 0;
         let product = 0;
 
-        for (let y = top; y < bottom; y += 4) {
-            for (let index = y * width + left, end = y * width + right; index < end; index += 4) {
+        for (let y = top; y < bottom; y += step) {
+            for (let index = y * width + left, end = y * width + right; index < end; index += step) {
                 const a = values[index];
                 const b = values[index + offset];
                 leftEnergy += a * a;
@@ -257,13 +256,144 @@
         return expand(template, cols, rows, Math.max(1, Math.round((grid ? 2 : 3) * scale)));
     }
 
-    function detectRepeatingWatermark(image) {
-        const resize = Math.min(1, analysisEdge / Math.max(image.width, image.height));
-        const width = Math.round(image.width * resize);
-        const height = Math.round(image.height * resize);
-        if (width < 320 || height < 230) return null;
+    function coarseTranslations(feature, width, height) {
+        const decimation = 3;
+        const cols = Math.floor(width / decimation);
+        const rows = Math.floor(height / decimation);
+        const coarse = new Float32Array(cols * rows);
+        for (let y = 0; y < rows; y++) {
+            for (let x = 0; x < cols; x++) {
+                const source = y * decimation * width + x * decimation;
+                let sum = 0;
+                for (let dy = 0; dy < decimation; dy++) {
+                    for (let dx = 0; dx < decimation; dx++) sum += feature[source + dy * width + dx];
+                }
+                coarse[y * cols + x] = sum / (decimation * decimation);
+            }
+        }
+
+        const maxX = Math.floor(cols * 0.60);
+        const maxY = Math.floor(rows * 0.60);
+        const searchWidth = maxX * 2 + 1;
+        const scores = new Float32Array(searchWidth * (maxY + 1));
+        const minDistance = Math.min(cols, rows) * 0.10;
+        const step = Math.max(3, Math.round(Math.min(cols, rows) / 45));
+        for (let dy = 0; dy <= maxY; dy++) {
+            for (let dx = dy ? -maxX : 1; dx <= maxX; dx++) {
+                if ((cols - Math.abs(dx)) * (rows - dy) < coarse.length * 0.34) continue;
+                if (dx * dx + dy * dy < minDistance ** 2) continue;
+                scores[dy * searchWidth + dx + maxX] = correlation(coarse, cols, rows, dx, dy, step);
+            }
+        }
+
+        const peaks = [];
+        for (let y = 1; y < maxY; y++) {
+            for (let x = 1; x < searchWidth - 1; x++) {
+                const index = y * searchWidth + x;
+                const score = scores[index];
+                if (score < 0.20 || score < Math.max(scores[index - 1], scores[index + 1],
+                    scores[index - searchWidth], scores[index + searchWidth])) continue;
+                peaks.push({ x: (x - maxX) * decimation, y: y * decimation, score });
+            }
+        }
+        return peaks.sort((a, b) => b.score - a.score).slice(0, 28);
+    }
+
+    function refineTranslation(feature, width, height, peak) {
+        const correlate = (x, y) => correlation(feature, width, height, x, y);
+        let best = { x: peak.x, y: peak.y, score: 0 };
+        for (let y = peak.y - 2; y <= peak.y + 2; y++) {
+            for (let x = peak.x - 2; x <= peak.x + 2; x++) {
+                const score = correlate(x, y);
+                if (score > best.score) best = { x, y, score };
+            }
+        }
+        const { x, y, score } = best;
+        return {
+            x: x + refinePeak([correlate(x - 1, y), score, correlate(x + 1, y)], 1) - 1,
+            y: y + refinePeak([correlate(x, y - 1), score, correlate(x, y + 1)], 1) - 1,
+            score
+        };
+    }
+
+    function findSlantedLattice(feature, width, height) {
+        const translations = coarseTranslations(feature, width, height)
+            .map(peak => refineTranslation(feature, width, height, peak))
+            .filter(peak => peak.score >= 0.19);
+        let basis = null;
+        let shortest = Infinity;
+
+        for (let index = 0; index < translations.length; index++) {
+            const u = translations[index];
+            const uLength = Math.hypot(u.x, u.y);
+            for (let other = index + 1; other < translations.length; other++) {
+                const v = translations[other];
+                const vLength = Math.hypot(v.x, v.y);
+                const distance = uLength + vLength;
+                if (distance >= shortest || Math.min(u.score, v.score) < Math.max(u.score, v.score) * 0.64) continue;
+                const determinant = u.x * v.y - u.y * v.x;
+                const area = Math.abs(determinant);
+                if (area < feature.length * 0.012 || area > feature.length * 0.15
+                    || area < uLength * vLength * 0.55) continue;
+                if (Math.min(Math.abs(u.x), Math.abs(v.x), u.y, v.y) < Math.min(width, height) * 0.025) continue;
+                // A lattice must repeat at combinations of its two independent translations.
+                const across = correlation(feature, width, height, Math.round(u.x + v.x), Math.round(u.y + v.y));
+                const along = correlation(feature, width, height, Math.round(u.x - v.x), Math.round(u.y - v.y));
+                if (Math.min(across, along) < Math.max(0.15, Math.min(u.score, v.score) * 0.58)) continue;
+                basis = { u, v, determinant, uLength };
+                shortest = distance;
+            }
+        }
+        return basis;
+    }
+
+    function slantedMask(ridge, feature, width, height) {
+        const basis = findSlantedLattice(feature, width, height);
+        if (!basis) return null;
+
+        const { u, v, determinant, uLength } = basis;
+        const cols = Math.round(uLength);
+        const rows = Math.round(Math.abs(determinant) / uLength);
+        const tile = new Float32Array(cols * rows);
+        const counts = new Uint16Array(tile.length);
+        const addresses = new Uint32Array(ridge.length);
+        // Express image pixels in the repeating cell's skewed coordinates.
+        const a = v.y * cols / determinant;
+        const b = -v.x * cols / determinant;
+        const c = -u.y * rows / determinant;
+        const d = u.x * rows / determinant;
+        for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+                const index = y * width + x;
+                const phase = modulo(Math.round(c * x + d * y), rows) * cols + modulo(Math.round(a * x + b * y), cols);
+                addresses[index] = phase;
+                tile[phase] += ridge[index];
+                counts[phase]++;
+            }
+        }
+
+        const template = new Uint8Array(tile.length);
+        for (let index = 0; index < tile.length; index++) {
+            if (counts[index] >= 3 && tile[index] / counts[index] > 16) template[index] = 255;
+        }
+        // Accept weaker strokes only near a seed shared by several copies.
+        const closeSeeds = expand(template, cols, rows, 3);
+        for (let index = 0; index < tile.length; index++) {
+            if (closeSeeds[index] && counts[index] >= 3 && tile[index] / counts[index] > 9) template[index] = 255;
+        }
+        const result = new Uint8Array(addresses.length);
+        // Allow for soft antialiasing and slight drift between repeated copies. Use a smaller
+        // margin when the wider footprint would cover too much of a densely marked image.
+        for (const radius of [7, 4, 2]) {
+            const expanded = expand(template, cols, rows, radius);
+            for (let index = 0; index < result.length; index++) result[index] = expanded[addresses[index]];
+            if (usableMask(result)) return result;
+        }
+        return null;
+    }
+
+    function alignedMask(ridge, feature, width, height) {
         const scale = width / analysisEdge;
-        const { ridge, feature } = ridgeFeatures(imageLuma(image, width, height), width, height);
         const horizontal = strongestPeak(feature, width, height, false);
         const vertical = strongestPeak(feature, width, height, true);
         if (horizontal.score < 0.045 || vertical.score < 0.065) return null;
@@ -299,15 +429,39 @@
 
         const tile = fold(ridge, width, height, horizontal.period, periodY, rowShift, grid);
         const template = labelMask(tile, scale, grid);
-        let selectedPixels = 0;
         const result = new Uint8Array(width * height);
         for (let index = 0; index < result.length; index++) {
             if (!grid?.[index] && !template[tile.addresses[index]]) continue;
             result[index] = 255;
-            selectedPixels++;
         }
-        if (selectedPixels < result.length * 0.005 || selectedPixels > result.length * 0.28) return null;
-        if (resize === 1) return result;
+        return result;
+    }
+
+    function usableMask(mask) {
+        if (!mask) return false;
+        let selected = 0;
+        for (const pixel of mask) if (pixel) selected++;
+        return selected >= mask.length * 0.005 && selected <= mask.length * 0.28;
+    }
+
+    function detectRepeatingWatermark(image) {
+        const resize = Math.min(1, analysisEdge / Math.max(image.width, image.height));
+        const width = Math.round(image.width * resize);
+        const height = Math.round(image.height * resize);
+        if (width < 320 || height < 230) return null;
+
+        const luma = imageLuma(image, width, height);
+        const alignedRadius = Math.max(2, Math.round(width / 300));
+        const slantedRadius = Math.max(2, Math.ceil(width / 300));
+        const aligned = ridgeFeatures(luma, width, height, alignedRadius);
+        let result = alignedMask(aligned.ridge, aligned.feature, width, height);
+        const slanted = !usableMask(result);
+        if (slanted) {
+            const features = alignedRadius === slantedRadius ? aligned : ridgeFeatures(luma, width, height, slantedRadius);
+            result = slantedMask(features.ridge, features.feature, width, height);
+            if (!usableMask(result)) return null;
+        }
+        if (resize === 1) return { mask: result, slanted };
 
         const fullSize = new Uint8Array(image.width * image.height);
         const columns = Uint16Array.from({ length: image.width }, (_, x) => Math.floor(x * width / image.width));
@@ -315,7 +469,7 @@
             const source = Math.floor(y * height / image.height) * width;
             for (let x = 0; x < image.width; x++) fullSize[y * image.width + x] = result[source + columns[x]];
         }
-        return fullSize;
+        return { mask: fullSize, slanted };
     }
 
     self.detectRepeatingWatermark = detectRepeatingWatermark;

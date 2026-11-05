@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const workerUrl = new URL('watermark_ai_worker.js?v=2', document.currentScript.src);
+    const workerUrl = new URL('watermark_ai_worker.js?v=3', document.currentScript.src);
     const maxDetectionEdge = 1200;
     const contextPadding = 128;
     const maxModelEdge = 1536;

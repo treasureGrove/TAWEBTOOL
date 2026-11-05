@@ -27,15 +27,31 @@ async function loadSession() {
 
 async function detect(width, height, rgba) {
     if (!detectorsLoaded) {
-        importScripts('watermark_pattern.js?v=1', 'watermark_wordmark.js?v=1', 'watermark_detect_ai.js?v=1');
+        importScripts('watermark_pattern.js?v=2', 'watermark_wordmark.js?v=1', 'watermark_detect_ai.js?v=2');
         detectorsLoaded = true;
     }
     const image = { width, height, data: rgba };
     progress('正在检查重复图案和斜向字标…');
-    const pattern = self.detectRepeatingWatermark(image) || self.detectDiagonalWatermark(image);
+    const repeating = self.detectRepeatingWatermark(image);
+    const pattern = repeating?.mask || self.detectDiagonalWatermark(image);
+    let partial = false;
+    if (repeating?.slanted) {
+        try {
+            loadRuntime();
+            progress('已识别斜排水印，正在检查其他标记…');
+            const proposal = await self.detectWatermarkWithAI(image, ort, progress, true);
+            const secondary = self.detectSecondaryWatermark(image, proposal, pattern);
+            if (secondary) {
+                for (let i = 0; i < pattern.length; i++) pattern[i] |= secondary[i];
+            }
+        } catch {
+            // The repeating pattern is usable even when the supplemental model is unavailable.
+            partial = true;
+        }
+    }
     if (!pattern) loadRuntime();
     const data = pattern || await self.detectWatermarkWithAI(image, ort, progress);
-    self.postMessage({ result: data ? { width, height, data, confident: Boolean(pattern) } : null }, data ? [data.buffer] : []);
+    self.postMessage({ result: data ? { width, height, data, confident: Boolean(pattern), partial } : null }, data ? [data.buffer] : []);
 }
 
 self.onmessage = async ({ data: { action, width, height, rgba, mask } }) => {
