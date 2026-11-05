@@ -201,3 +201,4 @@ https://tools.treasuregrove.art/tools_html/grove_range.html
 https://tools.treasuregrove.art/tools_html/grove_survivor.html
 https://tools.treasuregrove.art/tools_html/services.html
 https://tools.treasuregrove.art/tools_html/pelican.html
+https://tools.treasuregrove.art/tools_html/watermark_remover.html

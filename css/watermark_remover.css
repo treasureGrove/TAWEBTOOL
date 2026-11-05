@@ -1,0 +1,129 @@
+:root { --app-waifu-safe-height: 0px; background: #edf2ed; }
+
+#panel.wm-panel {
+    padding: clamp(16px, 4vw, 54px);
+    background: #f6f7f2;
+}
+
+.wm-page {
+    --wm-ink: #162f2a;
+    --wm-muted: #4f645e;
+    --wm-line: #d6e0d9;
+    --wm-green: #135f4b;
+    max-width: 1100px;
+    margin: 0 auto;
+    color: var(--wm-ink);
+}
+
+.wm-page :where(h1, h2, p, button, small, strong, div, span, a) {
+    font-family: system-ui, "Microsoft YaHei", sans-serif;
+}
+
+.wm-page [hidden] { display: none; }
+.wm-heading { margin-bottom: clamp(22px, 4vw, 38px); }
+.wm-heading h1 { margin: 8px 0 10px; font-size: clamp(32px, 5vw, 58px); line-height: 1.15; letter-spacing: -0.045em; }
+.wm-heading p { color: var(--wm-muted); font-size: clamp(14px, 2vw, 17px); line-height: 1.7; }
+.wm-eyebrow { display: flex; align-items: center; gap: 8px; color: var(--wm-green); font-size: 12px; font-weight: 700; }
+.wm-eyebrow span:first-child { width: 8px; height: 8px; border-radius: 50%; background: #458a73; }
+.wm-eyebrow a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.wm-slash { color: #667f75; }
+
+.wm-start, .wm-editor { display: grid; gap: 14px; }
+.wm-start { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+.wm-editor { grid-template-columns: minmax(0, 1fr) minmax(215px, 260px); align-items: start; }
+
+.wm-drop, .wm-demo-card, .wm-workspace, .wm-controls {
+    background: #fff;
+    border: 1px solid var(--wm-line);
+    border-radius: 16px;
+    min-width: 0;
+}
+
+.wm-drop {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    min-height: 260px;
+    padding: 24px 16px;
+    border: 1px dashed #83ac9e;
+    background: radial-gradient(ellipse at 50% 0%, #e9f4ed, #fff 75%);
+    text-align: center;
+}
+
+.wm-drop.wm-dragging, .wm-workspace.wm-dragging { outline: 3px solid var(--wm-green); outline-offset: -3px; }
+.wm-import-icon { margin-bottom: 12px; color: var(--wm-green); }
+.wm-drop h2, .wm-controls h2 { margin: 0; font-size: 18px; }
+.wm-drop p { margin: 8px 0 18px; font-size: 13px; color: var(--wm-muted); }
+.wm-demo-card { padding: 10px; display: flex; flex-direction: column; }
+.wm-demo-art { position: relative; overflow: hidden; border-radius: 10px; aspect-ratio: 8 / 5; background: #b2d3c1; }
+.wm-demo-art canvas { display: block; width: 100%; height: 100%; }
+.wm-demo-art span { position: absolute; top: 14%; right: 8%; width: 40%; height: 18%; border: 1px dashed white; background: #fff1; }
+.wm-demo-caption { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding: 12px 4px 4px; }
+.wm-demo-caption strong, .wm-demo-caption small, .wm-file-details strong, .wm-file-details small { display: block; }
+.wm-demo-caption strong, .wm-file-details strong { font-size: 14px; }
+.wm-demo-caption small, .wm-file-details small { margin-top: 4px; color: var(--wm-muted); font-size: 12px; }
+
+.wm-button, .wm-views button, .wm-text-button {
+    color: var(--wm-ink);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.wm-button { min-height: 38px; padding: 8px 13px; border: 1px solid var(--wm-line); border-radius: 8px; background: #fff; }
+.wm-button:hover:not(:disabled) { background: #edf5f0; border-color: #a2bdb1; }
+.wm-primary { background: var(--wm-green); color: #fff; border-color: var(--wm-green); }
+.wm-primary:hover:not(:disabled) { background: #0e4c3c; border-color: #0e4c3c; }
+.wm-page button:disabled { cursor: default; opacity: 0.5; }
+.wm-page :focus-visible { outline: 2px solid #287d67; outline-offset: 3px; }
+
+.wm-workspace { overflow: hidden; }
+.wm-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; }
+.wm-file-details { min-width: 0; }
+.wm-file-details strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wm-views { display: flex; flex-shrink: 0; padding: 3px; gap: 2px; border-radius: 8px; background: #edf2ee; }
+.wm-views button { min-height: 32px; padding: 4px 9px; border: 0; border-radius: 6px; background: transparent; }
+.wm-views button[aria-pressed="true"] { color: var(--wm-green); background: #fff; box-shadow: 0 1px 3px #17342c20; }
+.wm-stage { display: grid; place-items: center; padding: 12px; min-height: 128px; background: #1d322e; }
+.wm-frame {
+    position: relative;
+    max-width: 100%;
+    touch-action: none;
+    cursor: crosshair;
+    background: conic-gradient(#dae2df 25%, #f1f4f3 0 50%, #dae2df 0 75%, #f1f4f3 0) 0 0 / 16px 16px;
+}
+
+.wm-frame canvas { display: block; max-width: 100%; max-height: min(60vh, 700px); width: auto; height: auto; }
+.wm-frame svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.wm-frame rect, .wm-frame circle { fill: #f9db6933; stroke: #ffe46b; stroke-width: 2; vector-effect: non-scaling-stroke; }
+.wm-frame rect { stroke-dasharray: 5 3; }
+.wm-stage-note { margin: 0; padding: 12px; color: var(--wm-muted); font-size: 12px; line-height: 1.55; }
+
+.wm-controls { display: grid; gap: 10px; padding: 14px; }
+.wm-controls-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.wm-controls-title span { padding: 4px 8px; background: #e5f2eb; color: var(--wm-green); border-radius: 20px; font-size: 12px; }
+.wm-controls p { margin: 0 0 3px; color: var(--wm-muted); font-size: 13px; line-height: 1.65; }
+.wm-mark-actions, .wm-secondary-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.wm-mark-actions .wm-button { padding-inline: 4px; }
+.wm-secondary-actions { border-top: 1px solid var(--wm-line); padding-top: 8px; }
+.wm-text-button { min-height: 32px; background: transparent; border: 0; color: var(--wm-green); }
+.wm-text-button:hover:not(:disabled) { text-decoration: underline; }
+.wm-status, .wm-footer { color: var(--wm-muted); font-size: 13px; line-height: 1.65; }
+.wm-status { min-height: 1.65em; margin: 12px 0; }
+.wm-status[data-error="true"] { color: #a12c23; }
+.wm-footer { border-top: 1px solid var(--wm-line); padding-top: 10px; }
+.wm-footer p { margin: 4px 0; }
+.wm-footer strong { color: var(--wm-green); }
+
+@media (max-width: 980px) {
+    .left_menu ul.menu_root { padding-inline: 4px; scrollbar-gutter: auto; }
+    .left_menu .left_item { padding-inline: 3px; }
+}
+
+@media (max-width: 700px) {
+    .left_menu { display: none; }
+    #panel.wm-panel, .top_search { left: var(--app-shell-gap); }
+    .wm-start, .wm-editor { grid-template-columns: minmax(0, 1fr); }
+    .wm-drop { min-height: 180px; }
+    .wm-frame canvas { max-height: 48vh; }
+}

@@ -4,6 +4,7 @@
         'ai_upscale.html': '超分辨率无损放大图片',
         'ai_draw.html': '文生图在线 AI 绘画',
         'compress_image.html': '批量压缩与格式转换',
+        'watermark_remover.html': '框选修复 · 本地处理',
         'gif_compress.html': 'GIF 动图压缩优化',
         'combine_rgba.html': 'RGBA 通道打包合成',
         'texture_channel_splitter.html': '拆分查看贴图通道',

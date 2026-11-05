@@ -9,6 +9,7 @@ var MENU_DATA = [
     ]},
     { name: '图片处理', icon: 'icon-image', items: [
         { label: '图片压缩转换', href: 'compress_image.html', keywords: ['格式转换', 'jpg', 'png', 'webp', 'dds', 'tga', 'convert', 'compress', '压缩', '转格式', 'bmp', 'heic', 'avif', '缩小', '体积', 'convertio'] },
+        { label: '图片去水印', href: 'watermark_remover.html', keywords: ['去水印', '水印移除', '图片修复', '去文字', '去标志', 'watermark remover', 'inpaint'] },
         { label: '图片与Base64互转', href: 'base64_image.html', keywords: ['base64', 'data uri', '图片转码', '编码', '解码', '图片转base64', 'base64转图片', 'encode', 'decode', 'dataurl'] },
         { label: 'GIF压缩器', href: 'gif_compress.html', keywords: ['动图', '压缩', 'gif', 'animated', '动画', '表情包', '帧率', '缩小gif', 'gif缩小', 'gif压缩'] },
         { label: '贴图通道合成', href: 'combine_rgba.html', keywords: ['RGBA', '通道', '合并', 'combine', 'merge', '贴图合成', '打包', 'channel', '金属度粗糙度', 'orm', '合成通道'] },

@@ -18,6 +18,7 @@ const PRIORITIES = {
     'resources.html':          { freq: 'monthly', pri: 0.5 },
     'chatgpt.html':            { freq: 'weekly',  pri: 0.8 },
     'compress_image.html':     { freq: 'weekly',  pri: 0.9 },
+    'watermark_remover.html':   { freq: 'monthly', pri: 0.7 },
     'base64_image.html':       { freq: 'weekly',  pri: 0.8 },
     'gif_compress.html':       { freq: 'monthly', pri: 0.8 },
     'combine_rgba.html':       { freq: 'monthly', pri: 0.8 },

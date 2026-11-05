@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="在浏览器本地框选并修复图片上的水印、角标或日期戳，对比修复前后，按原图尺寸下载 PNG。">
+    <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/watermark_remover.html">
+    <link rel="icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/watermark_remover.css?v=1">
+    <title>图片去水印 · 本地框选修复 - TA工具箱</title>
+</head>
+<body>
+    <div class="left_menu"></div>
+    <div class="top_search"><input type="search" placeholder="搜索工具" aria-label="搜索工具"></div>
+    <main id="panel" class="wm-panel">
+        <div class="wm-page">
+            <header class="wm-heading">
+                <div class="wm-eyebrow"><span></span><a href="../">TA 工具箱</a><span class="wm-slash">/</span> 图片处理</div>
+                <h1>图片去水印</h1>
+                <p>框出水印、角标或日期戳，用周围像素补齐背景。修好后可对比原图，再按原尺寸下载。</p>
+            </header>
+
+            <input id="wm-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+            <section class="wm-start" id="wm-start" aria-label="打开图片">
+                <div class="wm-drop" id="wm-drop">
+                    <svg class="wm-import-icon" width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                        <rect x="7" y="10" width="34" height="28" rx="5" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="17" cy="19" r="2" fill="currentColor"/>
+                        <path d="m8 32 10-8 7 6 6-5 9 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M34 7v10m-5-5h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <h2>拖入一张图片</h2>
+                    <p>JPG、PNG、WebP · 最大 24 MB</p>
+                    <button class="wm-button wm-primary" type="button" id="wm-open">选择图片</button>
+                </div>
+                <div class="wm-demo-card">
+                    <div class="wm-demo-art" aria-hidden="true">
+                        <canvas id="wm-demo-preview" width="480" height="300"></canvas>
+                        <span></span>
+                    </div>
+                    <div class="wm-demo-caption">
+                        <div><strong>用示例试试看</strong><small>载入后已框好水印，可以直接修复。</small></div>
+                        <button class="wm-button" type="button" id="wm-demo">载入示例 <span aria-hidden="true">↗</span></button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="wm-editor" id="wm-editor" aria-label="图片工作区" hidden>
+                <div class="wm-workspace" id="wm-workspace">
+                    <div class="wm-toolbar">
+                        <div class="wm-file-details"><strong id="wm-filename"></strong><small id="wm-size"></small></div>
+                        <div class="wm-views" role="group" aria-label="修复前后对比">
+                            <button type="button" id="wm-before" aria-pressed="true">原图</button>
+                            <button type="button" id="wm-after" aria-pressed="false" disabled>修复后</button>
+                        </div>
+                    </div>
+                    <div class="wm-stage">
+                        <div class="wm-frame" id="wm-frame" tabindex="0" role="group" aria-label="图片选区" aria-describedby="wm-selection-help">
+                            <canvas id="wm-original"></canvas>
+                            <canvas id="wm-result" hidden></canvas>
+                            <svg id="wm-overlay" aria-hidden="true"></svg>
+                        </div>
+                    </div>
+                    <p class="wm-stage-note" id="wm-selection-help">拖动鼠标或手指框住水印。键盘可用方向键移动，按空格开始和结束选区。</p>
+                </div>
+                <aside class="wm-controls" aria-label="修复操作">
+                    <div class="wm-controls-title"><h2>修复区域</h2><span id="wm-count">0 个选区</span></div>
+                    <p>尽量贴近水印的边缘框选。多个水印可以分别框住，再一起修复。</p>
+                    <div class="wm-mark-actions">
+                        <button class="wm-button" type="button" id="wm-undo" disabled>撤销选区</button>
+                        <button class="wm-button" type="button" id="wm-clear" disabled>清空选区</button>
+                    </div>
+                    <button class="wm-button wm-primary" type="button" id="wm-apply" disabled>修复所选区域</button>
+                    <button class="wm-button" type="button" id="wm-download" disabled>下载 PNG</button>
+                    <div class="wm-secondary-actions">
+                        <button class="wm-text-button" type="button" id="wm-replace">换一张图</button>
+                        <button class="wm-text-button" type="button" id="wm-reset" disabled>还原原图</button>
+                    </div>
+                </aside>
+            </section>
+
+            <p id="wm-status" class="wm-status" role="status"></p>
+            <footer class="wm-footer">
+                <p><strong>本地处理</strong> · 图片只在浏览器中读取和修复。请处理自己的图片或有权编辑的素材。</p>
+                <p>纯色和渐变背景更容易补平，复杂纹理可能留下修复痕迹。</p>
+            </footer>
+        </div>
+    </main>
+    <script src="../js/menu.js?v=20261105-watermark"></script>
+    <script src="../js/image_watermark_restore.js?v=1"></script>
+    <script src="../js/watermark_remover.js?v=1"></script>
+</body>
+</html>
