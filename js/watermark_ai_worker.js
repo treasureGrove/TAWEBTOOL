@@ -2,23 +2,50 @@
 const runtime = new URL('../third_part/onnxruntime-web/1.17.1/', self.location.href);
 const model = new URL('../models/migan/migan_pipeline_v2.onnx', self.location.href);
 let session;
+let detectorsLoaded = false;
+
+function progress(message) {
+    self.postMessage({ progress: message });
+}
+
+function loadRuntime() {
+    if (self.ort) return;
+    importScripts(new URL('ort.min.js', runtime).href);
+    ort.env.wasm.wasmPaths = runtime.href;
+    // Single-thread WASM works without cross-origin isolation. The worker keeps the page responsive.
+    ort.env.wasm.numThreads = 1;
+}
 
 async function loadSession() {
     if (session) return session;
 
-    self.postMessage({ progress: '正在加载本地 AI 模型（约 28 MB）…' });
-    if (!self.ort) importScripts(new URL('ort.min.js', runtime).href);
-    ort.env.wasm.wasmPaths = runtime.href;
-    // Single-thread WASM works without cross-origin isolation. The worker keeps the page responsive.
-    ort.env.wasm.numThreads = 1;
+    progress('正在加载本地 AI 修复模型（约 28 MB）…');
+    loadRuntime();
     session = await ort.InferenceSession.create(model.href, { executionProviders: ['wasm'] });
     return session;
 }
 
-self.onmessage = async ({ data: { width, height, rgba, mask } }) => {
+async function detect(width, height, rgba) {
+    if (!detectorsLoaded) {
+        importScripts('watermark_pattern.js?v=1', 'watermark_wordmark.js?v=1', 'watermark_detect_ai.js?v=1');
+        detectorsLoaded = true;
+    }
+    const image = { width, height, data: rgba };
+    progress('正在检查重复图案和斜向字标…');
+    const pattern = self.detectRepeatingWatermark(image) || self.detectDiagonalWatermark(image);
+    if (!pattern) loadRuntime();
+    const data = pattern || await self.detectWatermarkWithAI(image, ort, progress);
+    self.postMessage({ result: data ? { width, height, data, confident: Boolean(pattern) } : null }, data ? [data.buffer] : []);
+}
+
+self.onmessage = async ({ data: { action, width, height, rgba, mask } }) => {
     try {
+        if (action === 'detect') {
+            await detect(width, height, rgba);
+            return;
+        }
         const engine = await loadSession();
-        self.postMessage({ progress: 'AI 正在修复选区…' });
+        progress('AI 正在修复选区…');
 
         const count = width * height;
         const rgb = new Uint8Array(3 * count);

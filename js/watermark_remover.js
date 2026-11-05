@@ -21,6 +21,7 @@
     const after = get('after');
     const undo = get('undo');
     const clear = get('clear');
+    const auto = get('auto');
     const apply = get('apply');
     const download = get('download');
     const replace = get('replace');
@@ -44,6 +45,7 @@
     let showResult = false;
     let busy = false;
     let repairing = false;
+    let detecting = false;
 
     const currentTool = () => useAI ? aiTool : 'box';
     const brushDiameter = () => Number(brush.value) * original.width / frame.getBoundingClientRect().width;
@@ -117,12 +119,16 @@
             button.setAttribute('aria-pressed', String(button.dataset.tool === aiTool));
         }
         get('mode-help').textContent = useAI
-            ? '尽量只涂到水印，保留周围细节供 AI 参考。首次使用需加载约 28 MB 模型。'
+            ? '自动识别可见水印。把握较低时会先显示建议区域，可用画笔调整。'
             : '框住水印，用周围像素快速补齐。适合纯色和渐变背景。';
+        auto.hidden = !useAI;
+        auto.disabled = busy || !mask || markCount > 0 || comparingOriginal;
+        auto.textContent = detecting ? '正在识别…' : '自动去水印';
         undo.disabled = busy || !markCount || comparingOriginal;
         clear.disabled = undo.disabled;
         apply.disabled = undo.disabled;
-        apply.textContent = repairing ? '正在修复…' : useAI ? '开始 AI 修复' : '修复所选区域';
+        apply.textContent = repairing ? '正在修复…' : useAI ? '修复标记区域' : '修复所选区域';
+        apply.classList.toggle('wm-primary', markCount > 0);
         download.disabled = busy || !hasResult;
         reset.disabled = busy || !hasResult;
         editor.setAttribute('aria-busy', String(busy));
@@ -215,7 +221,7 @@
             original.height = height;
             original.getContext('2d').drawImage(image, 0, 0);
             openEditor(file.name, width, height);
-            report('图片已打开。请标记要修复的区域。');
+            report(useAI ? '图片已打开。点击「自动去水印」开始。' : '图片已打开。请框出要修复的区域。');
         } catch {
             report('无法读取这张图片，请尝试重新保存为 JPG、PNG 或 WebP。', true);
         } finally {
@@ -375,7 +381,7 @@
             hoverPoint = null;
             useAI = button === aiMode;
             render();
-            report(useAI ? 'AI 模式已开启。可以用画笔涂抹水印。' : '快速模式已开启。请框出水印。');
+            report(useAI ? 'AI 模式已开启。可以自动识别水印，也可用画笔标记。' : '快速模式已开启。请框出水印。');
         });
     }
     for (const button of toolButtons) {
@@ -420,7 +426,7 @@
         report('已还原为原图。');
     });
 
-    apply.addEventListener('click', async () => {
+    async function repairMarkedRegions(automatic = false) {
         cancelSelection();
         busy = true;
         repairing = true;
@@ -454,7 +460,7 @@
             showResult = true;
             if (useAI) mask.clear();
             else regions = [];
-            report('修复完成。可切换查看原图，或下载 PNG。');
+            report(automatic ? '已自动识别并修复水印。可以对比原图或下载 PNG。' : '修复完成。可切换查看原图，或下载 PNG。');
         } catch {
             next.width = 1;
             next.height = 1;
@@ -466,6 +472,34 @@
             repairing = false;
             render();
         }
+    }
+
+    apply.addEventListener('click', () => repairMarkedRegions());
+
+    auto.addEventListener('click', async () => {
+        cancelSelection();
+        busy = true;
+        detecting = true;
+        render();
+        report('正在识别图片中的水印…');
+        let autoRepair = false;
+        try {
+            const proposal = await window.detectImageWatermark(hasResult ? result : original, report);
+            if (!proposal) {
+                report('没有找到可靠的水印位置。可用画笔标记后修复。');
+                return;
+            }
+            mask.addBitmap(proposal);
+            autoRepair = proposal.confident;
+            if (!autoRepair) report('已标出疑似水印。确认标记后，点击「修复标记区域」。');
+        } catch {
+            report('自动识别未完成。请重试，或用画笔标记后修复。', true);
+        } finally {
+            busy = false;
+            detecting = false;
+            render();
+        }
+        if (autoRepair) await repairMarkedRegions(true);
     });
 
     download.addEventListener('click', () => {

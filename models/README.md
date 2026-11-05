@@ -13,6 +13,14 @@ Source: https://huggingface.co/andraniksargsyan/migan/blob/1538c13/migan_pipelin
 
 SHA-256: `6f1f3530a1a2324b19752018ce756088b07973cda8d7d890034ace5c8a48c40b`
 
+`watermark_detector/visible_watermark_mask.onnx` provides visible watermark selection suggestions.
+It is an ONNX opset 17 conversion of the DevynLabs U-Net++ `segmenter.pth` checkpoint with per-channel int8 convolution weights.
+The checkpoint is distributed under the [Apache 2.0 license](watermark_detector/LICENSE.txt).
+Source: https://huggingface.co/christophernavas/watermark-remover/blob/509fb6833823f4e9c519f8e4f87a9053567c779c/segmenter.pth
+
+- Source SHA-256 `a4579c690e43ba2f73d7328ad49252a60660eff03de1c9f7a26b49d83d555a66`
+- ONNX SHA-256 `58a365657484c740a8ee87ed96e87521f05ea651fd2c477877c26c9fa0a867a8`
+
 Quick fetch (from repo root):
 
 ```bash

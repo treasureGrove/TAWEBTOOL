@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="在浏览器里标记水印、角标或日期戳，用本地 AI 修复背景，对比前后并下载原尺寸 PNG。">
+    <meta name="description" content="在浏览器里自动识别和修复可见水印。可用画笔调整识别区域，对比前后并下载原尺寸 PNG。">
     <link rel="canonical" href="https://tools.treasuregrove.art/tools_html/watermark_remover.html">
     <link rel="icon" href="../favicon.ico">
     <link rel="stylesheet" href="../css/common.css">
@@ -18,7 +18,7 @@
             <header class="wm-heading">
                 <div class="wm-eyebrow"><span></span><a href="../">TA 工具箱</a><span class="wm-slash">/</span> 图片处理</div>
                 <h1>图片去水印</h1>
-                <p>涂抹水印、角标或日期戳，在浏览器里用 AI 补齐背景。修好后可对比原图，再按原尺寸下载。</p>
+                <p>选图后自动识别水印，用本地 AI 补齐背景。修好后可对比原图，再按原尺寸下载。</p>
             </header>
 
             <input id="wm-file" type="file" accept="image/png,image/jpeg,image/webp" hidden>
@@ -71,7 +71,8 @@
                         <button type="button" id="wm-mode-ai" aria-pressed="true">AI 修复</button>
                         <button type="button" id="wm-mode-quick" aria-pressed="false">快速修复</button>
                     </div>
-                    <p id="wm-mode-help">尽量只涂到水印，保留周围细节供 AI 参考。首次使用需加载约 28 MB 模型。</p>
+                    <button class="wm-button wm-primary" type="button" id="wm-auto" disabled>自动去水印</button>
+                    <p id="wm-mode-help">自动识别重复字标和网格。把握较低时会先显示建议区域，可用画笔调整。</p>
                     <div id="wm-ai-tools">
                         <div class="wm-views wm-tools" role="group" aria-label="标记工具">
                             <button type="button" data-tool="brush" aria-pressed="true">画笔</button>
@@ -84,7 +85,7 @@
                         <button class="wm-button" type="button" id="wm-undo" disabled>撤销标记</button>
                         <button class="wm-button" type="button" id="wm-clear" disabled>清空标记</button>
                     </div>
-                    <button class="wm-button wm-primary" type="button" id="wm-apply" disabled>开始 AI 修复</button>
+                    <button class="wm-button" type="button" id="wm-apply" disabled>修复标记区域</button>
                     <button class="wm-button" type="button" id="wm-download" disabled>下载 PNG</button>
                     <div class="wm-secondary-actions">
                         <button class="wm-text-button" type="button" id="wm-replace">换一张图</button>
@@ -96,14 +97,14 @@
             <p id="wm-status" class="wm-status" role="status"></p>
             <footer class="wm-footer">
                 <p><strong>本地处理</strong> · 图片只在浏览器中读取和修复。请处理自己的图片或有权编辑的素材。</p>
-                <p>模型只补标记区域。水印覆盖人物轮廓或大片背景时，修复结果可能有偏差。</p>
+                <p>模型按需加载。水印覆盖人物轮廓或大片背景时，修复结果可能有偏差。</p>
             </footer>
         </div>
     </main>
     <script src="../js/menu.js?v=20261105-watermark"></script>
     <script src="../js/image_watermark_restore.js?v=1"></script>
-    <script src="../js/watermark_mask.js?v=1"></script>
-    <script src="../js/watermark_ai.js?v=1"></script>
-    <script src="../js/watermark_remover.js?v=2"></script>
+    <script src="../js/watermark_mask.js?v=2"></script>
+    <script src="../js/watermark_ai.js?v=2"></script>
+    <script src="../js/watermark_remover.js?v=3"></script>
 </body>
 </html>

@@ -1,7 +1,8 @@
 (() => {
     'use strict';
 
-    const workerUrl = new URL('watermark_ai_worker.js?v=1', document.currentScript.src);
+    const workerUrl = new URL('watermark_ai_worker.js?v=2', document.currentScript.src);
+    const maxDetectionEdge = 1200;
     const contextPadding = 128;
     const maxModelEdge = 1536;
     const patchRows = 256;
@@ -15,8 +16,8 @@
         worker = null;
     }
 
-    function runModel(width, height, rgba, mask, report) {
-        if (pending) return Promise.reject(new Error('AI repair is already running'));
+    function runWorker(task, transfer, report) {
+        if (pending) return Promise.reject(new Error('AI processing is already running'));
         if (!worker) {
             worker = new Worker(workerUrl);
             worker.onmessage = ({ data }) => {
@@ -38,12 +39,24 @@
         return new Promise((resolve, reject) => {
             pending = { resolve, reject, report };
             try {
-                worker.postMessage({ width, height, rgba, mask }, [rgba.buffer, mask.buffer]);
+                worker.postMessage(task, transfer);
             } catch (error) {
                 pending = null;
                 reject(error);
             }
         });
+    }
+
+    async function detectWatermark(canvas, report) {
+        const scale = Math.min(1, maxDetectionEdge / Math.max(canvas.width, canvas.height));
+        const sample = document.createElement('canvas');
+        sample.width = Math.max(1, Math.round(canvas.width * scale));
+        sample.height = Math.max(1, Math.round(canvas.height * scale));
+        const context = sample.getContext('2d', { willReadFrequently: true });
+        context.imageSmoothingQuality = 'high';
+        context.drawImage(canvas, 0, 0, sample.width, sample.height);
+        const { width, height, data: rgba } = context.getImageData(0, 0, sample.width, sample.height);
+        return runWorker({ action: 'detect', width, height, rgba }, [rgba.buffer], report);
     }
 
     async function repairWatermarkWithAI(context, selection, report) {
@@ -83,7 +96,8 @@
             }
         }
 
-        const repaired = await runModel(modelWidth, modelHeight, modelImage.data, mask, report);
+        const rgba = modelImage.data;
+        const repaired = await runWorker({ action: 'repair', width: modelWidth, height: modelHeight, rgba, mask }, [rgba.buffer, mask.buffer], report);
         let patchContext;
         if (scaled) {
             modelContext.putImageData(new ImageData(repaired, modelWidth, modelHeight), 0, 0);
@@ -121,4 +135,5 @@
     }
 
     window.repairWatermarkWithAI = repairWatermarkWithAI;
+    window.detectImageWatermark = detectWatermark;
 })();

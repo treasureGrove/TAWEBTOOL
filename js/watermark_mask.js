@@ -6,7 +6,14 @@
         context.fillStyle = context.strokeStyle = '#ffcf59';
         if (action.rectangle) {
             const { x, y, width, height } = action.rectangle;
-            context.fillRect(x, y, width, height);
+            if (action.bitmap) {
+                context.save();
+                context.imageSmoothingEnabled = false;
+                context.drawImage(action.bitmap, x, y, width, height);
+                context.restore();
+            } else {
+                context.fillRect(x, y, width, height);
+            }
             return;
         }
 
@@ -138,8 +145,44 @@
             return { x: left + firstX, y: top + firstY, width: maskWidth, height: maskHeight, data: mask, selectedPixels };
         }
 
+        function addBitmap({ width: bitmapWidth, height: bitmapHeight, data }) {
+            const pixels = new ImageData(bitmapWidth, bitmapHeight);
+            let left = bitmapWidth;
+            let top = bitmapHeight;
+            let right = 0;
+            let bottom = 0;
+            for (let y = 0; y < bitmapHeight; y++) {
+                for (let x = 0; x < bitmapWidth; x++) {
+                    const i = y * bitmapWidth + x;
+                    if (!data[i]) continue;
+                    const offset = i * 4;
+                    pixels.data[offset] = 255;
+                    pixels.data[offset + 1] = 207;
+                    pixels.data[offset + 2] = 89;
+                    pixels.data[offset + 3] = 255;
+                    left = Math.min(left, x);
+                    right = Math.max(right, x + 1);
+                    top = Math.min(top, y);
+                    bottom = Math.max(bottom, y + 1);
+                }
+            }
+            if (left >= right) return;
+            const cropped = document.createElement('canvas');
+            cropped.width = right - left;
+            cropped.height = bottom - top;
+            cropped.getContext('2d').putImageData(pixels, -left, -top, left, top, cropped.width, cropped.height);
+            actions.push({ bitmap: cropped, rectangle: {
+                x: left * width / bitmapWidth,
+                y: top * height / bitmapHeight,
+                width: cropped.width * width / bitmapWidth,
+                height: cropped.height * height / bitmapHeight
+            } });
+            revision++;
+        }
+
         return {
             get count() { return actions.length; },
+            addBitmap,
             addRectangle(rectangle) {
                 actions.push({ rectangle });
                 revision++;
