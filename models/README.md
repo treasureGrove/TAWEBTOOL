@@ -7,6 +7,12 @@ Recommended models:
 - Upscale (ESRGAN): Real-ESRGAN-General-x4v3.onnx
   Source: https://huggingface.co/qualcomm/Real-ESRGAN-General-x4v3/resolve/main/Real-ESRGAN-General-x4v3.onnx
 
+The image watermark tool uses the bundled `migan/migan_pipeline_v2.onnx` for browser-local inpainting.
+It was released by Picsart AI Research under the [MIT license](migan/LICENSE.txt).
+Source: https://huggingface.co/andraniksargsyan/migan/blob/1538c13/migan_pipeline_v2.onnx
+
+SHA-256: `6f1f3530a1a2324b19752018ce756088b07973cda8d7d890034ace5c8a48c40b`
+
 Quick fetch (from repo root):
 
 ```bash

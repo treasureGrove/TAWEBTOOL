@@ -94,6 +94,7 @@
 }
 
 .wm-frame canvas { display: block; max-width: 100%; max-height: min(60vh, 700px); width: auto; height: auto; }
+.wm-frame .wm-mask-preview { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; pointer-events: none; }
 .wm-frame svg { display: block; position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .wm-frame rect, .wm-frame circle { fill: #f9db6933; stroke: #ffe46b; stroke-width: 2; vector-effect: non-scaling-stroke; }
 .wm-frame rect { stroke-dasharray: 5 3; }
@@ -103,6 +104,10 @@
 .wm-controls-title { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .wm-controls-title span { padding: 4px 8px; background: #e5f2eb; color: var(--wm-green); border-radius: 20px; font-size: 12px; }
 .wm-controls p { margin: 0 0 3px; color: var(--wm-muted); font-size: 13px; line-height: 1.65; }
+.wm-modes button, .wm-tools button { flex: 1 1 0; }
+.wm-brush-size { display: grid; grid-template-columns: 1fr auto; gap: 4px; margin-top: 10px; color: var(--wm-muted); font-size: 12px; }
+.wm-brush-size input { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--wm-green); }
+.wm-brush-size output { font: inherit; }
 .wm-mark-actions, .wm-secondary-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .wm-mark-actions .wm-button { padding-inline: 4px; }
 .wm-secondary-actions { border-top: 1px solid var(--wm-line); padding-top: 8px; }

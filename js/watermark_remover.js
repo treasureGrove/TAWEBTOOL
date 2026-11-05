@@ -7,6 +7,12 @@
     const editor = get('editor');
     const frame = get('frame');
     const overlay = get('overlay');
+    const maskPreview = get('mask-preview');
+    const maskPreviewContext = maskPreview.getContext('2d');
+    const aiMode = get('mode-ai');
+    const quickMode = get('mode-quick');
+    const toolButtons = [...get('ai-tools').querySelectorAll('[data-tool]')];
+    const brush = get('brush');
     const original = get('original');
     const status = get('status');
     const open = get('open');
@@ -27,12 +33,20 @@
 
     let result = get('result');
     let regions = [];
+    let mask;
+    let useAI = true;
+    let aiTool = 'brush';
     let draft = null;
     let keyboardPoint = null;
+    let hoverPoint = null;
     let filename = '';
     let hasResult = false;
     let showResult = false;
     let busy = false;
+    let repairing = false;
+
+    const currentTool = () => useAI ? aiTool : 'box';
+    const brushDiameter = () => Number(brush.value) * original.width / frame.getBoundingClientRect().width;
 
     function report(message, error = false) {
         status.textContent = message;
@@ -82,7 +96,7 @@
 
     function render() {
         const comparingOriginal = hasResult && !showResult;
-        const hasRegions = regions.length > 0;
+        const markCount = useAI ? (mask?.count ?? 0) : regions.length;
         original.hidden = showResult;
         result.hidden = !showResult;
         before.setAttribute('aria-pressed', String(!showResult));
@@ -92,13 +106,27 @@
         open.disabled = busy;
         demo.disabled = busy;
         replace.disabled = busy;
-        undo.disabled = busy || !hasRegions || comparingOriginal;
+        aiMode.setAttribute('aria-pressed', String(useAI));
+        quickMode.setAttribute('aria-pressed', String(!useAI));
+        aiMode.disabled = quickMode.disabled = busy;
+        get('ai-tools').hidden = !useAI;
+        get('brush-size').hidden = aiTool === 'box';
+        brush.disabled = busy || comparingOriginal;
+        for (const button of toolButtons) {
+            button.disabled = brush.disabled;
+            button.setAttribute('aria-pressed', String(button.dataset.tool === aiTool));
+        }
+        get('mode-help').textContent = useAI
+            ? '尽量只涂到水印，保留周围细节供 AI 参考。首次使用需加载约 28 MB 模型。'
+            : '框住水印，用周围像素快速补齐。适合纯色和渐变背景。';
+        undo.disabled = busy || !markCount || comparingOriginal;
         clear.disabled = undo.disabled;
         apply.disabled = undo.disabled;
+        apply.textContent = repairing ? '正在修复…' : useAI ? '开始 AI 修复' : '修复所选区域';
         download.disabled = busy || !hasResult;
         reset.disabled = busy || !hasResult;
         editor.setAttribute('aria-busy', String(busy));
-        get('count').textContent = `${regions.length} 个选区`;
+        get('count').textContent = `${markCount} 个${useAI ? '标记' : '选区'}`;
         drawOverlay();
     }
 
@@ -114,11 +142,18 @@
 
     function drawOverlay() {
         overlay.replaceChildren();
-        if (hasResult && !showResult) return;
-        for (const region of regions) overlay.append(svgShape('rect', region));
-        if (draft) overlay.append(svgShape('rect', rectangle(draft.from, draft.to)));
-        if (keyboardPoint) {
-            overlay.append(svgShape('circle', { cx: keyboardPoint.x, cy: keyboardPoint.y, r: Math.max(original.width, original.height) * 0.006 }));
+        const comparingOriginal = hasResult && !showResult;
+        maskPreview.hidden = !useAI || !mask || comparingOriginal;
+        if (comparingOriginal) return;
+        if (!maskPreview.hidden) mask.paint(maskPreviewContext);
+        if (!useAI) {
+            for (const region of regions) overlay.append(svgShape('rect', region));
+        }
+        if (draft?.tool === 'box') overlay.append(svgShape('rect', rectangle(draft.from, draft.to)));
+        const cursor = keyboardPoint ?? hoverPoint;
+        if (cursor && !busy) {
+            const r = currentTool() === 'box' ? Math.max(original.width, original.height) * 0.006 : brushDiameter() / 2;
+            overlay.append(svgShape('circle', { cx: cursor.x, cy: cursor.y, r }));
         }
     }
 
@@ -132,9 +167,16 @@
     function openEditor(name, width, height, initialRegions = []) {
         filename = name;
         clearResult();
-        regions = initialRegions;
+        regions = [...initialRegions];
+        aiTool = 'brush';
+        mask = window.createWatermarkMask(width, height);
+        for (const region of initialRegions) mask.addRectangle(region);
         draft = null;
         keyboardPoint = null;
+        hoverPoint = null;
+        const scale = Math.min(1, 900 / Math.max(width, height));
+        maskPreview.width = Math.max(1, Math.round(width * scale));
+        maskPreview.height = Math.max(1, Math.round(height * scale));
         overlay.setAttribute('viewBox', `0 0 ${width} ${height}`);
         overlay.setAttribute('preserveAspectRatio', 'none');
         get('filename').textContent = name;
@@ -173,7 +215,7 @@
             original.height = height;
             original.getContext('2d').drawImage(image, 0, 0);
             openEditor(file.name, width, height);
-            report('图片已打开。请框出要修复的区域。');
+            report('图片已打开。请标记要修复的区域。');
         } catch {
             report('无法读取这张图片，请尝试重新保存为 JPG、PNG 或 WebP。', true);
         } finally {
@@ -184,12 +226,21 @@
     }
 
     function finishSelection() {
+        if (draft.tool !== 'box') {
+            mask.endStroke();
+            draft = null;
+            render();
+            return;
+        }
         const region = rectangle(draft.from, draft.to);
         draft = null;
         if (region.width < 2 || region.height < 2) {
             report('请拖动指针，框出水印占据的区域。');
         } else if (region.width === original.width && region.height === original.height) {
             report('请缩小选区，留出可用于修补的周边像素。', true);
+        } else if (useAI) {
+            mask.addRectangle(region);
+            report('已添加标记。可以继续标记，或开始修复。');
         } else if (regions.length >= maxSelections || [...regions, region].reduce((area, item) => area + item.width * item.height, 0) > maxSelectionPixels) {
             report('本次选区已达上限。请先修复现有选区，或缩小框选范围。', true);
         } else {
@@ -197,6 +248,22 @@
             report('选区已添加。可以继续框选，或开始修复。');
         }
         render();
+    }
+
+    function beginSelection(point, pointerId) {
+        const tool = currentTool();
+        draft = { from: point, to: point, pointerId, tool };
+        if (tool !== 'box') mask.beginStroke(point, brushDiameter(), tool === 'erase');
+    }
+
+    function moveSelection(point) {
+        draft.to = point;
+        if (draft.tool !== 'box') mask.extendStroke(point);
+    }
+
+    function cancelSelection() {
+        if (draft && draft.tool !== 'box') mask.cancelStroke();
+        draft = null;
     }
 
     function imagePoint(event) {
@@ -211,24 +278,30 @@
         if (busy || (hasResult && !showResult) || event.button !== 0 || !event.isPrimary) return;
         frame.focus({ preventScroll: true });
         keyboardPoint = null;
-        const point = imagePoint(event);
-        draft = { from: point, to: point, pointerId: event.pointerId };
+        cancelSelection();
+        beginSelection(imagePoint(event), event.pointerId);
         frame.setPointerCapture(event.pointerId);
         drawOverlay();
     });
     frame.addEventListener('pointermove', (event) => {
-        if (busy || draft?.pointerId !== event.pointerId) return;
-        draft.to = imagePoint(event);
+        if (busy || (hasResult && !showResult) || !event.isPrimary) return;
+        const point = imagePoint(event);
+        hoverPoint = currentTool() !== 'box' && event.pointerType === 'mouse' ? point : null;
+        if (draft?.pointerId === event.pointerId) moveSelection(point);
+        drawOverlay();
+    });
+    frame.addEventListener('pointerleave', () => {
+        hoverPoint = null;
         drawOverlay();
     });
     frame.addEventListener('pointerup', (event) => {
         if (busy || draft?.pointerId !== event.pointerId) return;
-        draft.to = imagePoint(event);
+        moveSelection(imagePoint(event));
         finishSelection();
     });
     frame.addEventListener('lostpointercapture', (event) => {
         if (draft?.pointerId !== event.pointerId) return;
-        draft = null;
+        cancelSelection();
         drawOverlay();
     });
 
@@ -238,8 +311,9 @@
         const direction = directions[event.key];
         if (!direction && event.key !== ' ' && event.key !== 'Escape') return;
         event.preventDefault();
+        hoverPoint = null;
         if (event.key === 'Escape') {
-            draft = null;
+            cancelSelection();
             keyboardPoint = null;
             drawOverlay();
             return;
@@ -251,16 +325,16 @@
                 x: Math.min(original.width, Math.max(0, keyboardPoint.x + direction[0] * step)),
                 y: Math.min(original.height, Math.max(0, keyboardPoint.y + direction[1] * step))
             };
-            if (draft) draft.to = keyboardPoint;
+            if (draft) moveSelection(keyboardPoint);
         } else if (!event.repeat) {
             if (draft) finishSelection();
-            else draft = { from: keyboardPoint, to: keyboardPoint };
+            else beginSelection(keyboardPoint);
         }
         drawOverlay();
     });
     frame.addEventListener('blur', () => {
         keyboardPoint = null;
-        if (draft?.pointerId === undefined) draft = null;
+        if (draft?.pointerId === undefined) cancelSelection();
         drawOverlay();
     });
 
@@ -295,46 +369,82 @@
         report('已框出示例中的水印，可以直接点击修复。');
     });
 
+    for (const button of [aiMode, quickMode]) {
+        button.addEventListener('click', () => {
+            cancelSelection();
+            hoverPoint = null;
+            useAI = button === aiMode;
+            render();
+            report(useAI ? 'AI 模式已开启。可以用画笔涂抹水印。' : '快速模式已开启。请框出水印。');
+        });
+    }
+    for (const button of toolButtons) {
+        button.addEventListener('click', () => {
+            cancelSelection();
+            aiTool = button.dataset.tool;
+            render();
+        });
+    }
+    brush.addEventListener('input', () => {
+        get('brush-value').value = `${brush.value} px`;
+        drawOverlay();
+    });
+
     before.addEventListener('click', () => {
         showResult = false;
         render();
-        report('正在查看原图。切回「修复后」可继续框选。');
+        report('正在查看原图。切回「修复后」可继续标记。');
     });
     after.addEventListener('click', () => {
         showResult = true;
         render();
-        report('正在查看修复结果。可以继续框选，也可以下载。');
+        report('正在查看修复结果。可以继续标记，也可以下载。');
     });
     undo.addEventListener('click', () => {
-        regions.pop();
+        if (useAI) mask.undo();
+        else regions.pop();
         render();
-        report('已撤销最后一个选区。');
+        report('已撤销最后一次标记。');
     });
     clear.addEventListener('click', () => {
-        regions = [];
+        if (useAI) mask.clear();
+        else regions = [];
         render();
-        report('已清空待修复选区。');
+        report('已清空待修复标记。');
     });
     reset.addEventListener('click', () => {
         clearResult();
+        mask.clear();
         regions = [];
         render();
         report('已还原为原图。');
     });
 
     apply.addEventListener('click', async () => {
+        cancelSelection();
         busy = true;
+        repairing = true;
         render();
-        report('正在修复选区…');
+        report('正在准备标记区域…');
         const next = document.createElement('canvas');
         try {
             // Paint the progress message before running the local pixel operation.
             await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const aiMask = useAI ? mask.getMask() : null;
+            if (useAI && !aiMask) {
+                report('请先涂抹或框出需要修复的区域。', true);
+                return;
+            }
+            if (useAI && (aiMask.selectedPixels > maxSelectionPixels || aiMask.selectedPixels === original.width * original.height)) {
+                report('标记范围过大。请缩小范围，或分几次修复。', true);
+                return;
+            }
             next.width = original.width;
             next.height = original.height;
             const context = next.getContext('2d', { willReadFrequently: true });
             context.drawImage(hasResult ? result : original, 0, 0);
-            window.restoreImageWatermarks(context, regions);
+            if (useAI) await window.repairWatermarkWithAI(context, aiMask, report);
+            else window.restoreImageWatermarks(context, regions);
             next.id = result.id;
             result.replaceWith(next);
             result.width = 1;
@@ -342,14 +452,18 @@
             result = next;
             hasResult = true;
             showResult = true;
-            regions = [];
+            if (useAI) mask.clear();
+            else regions = [];
             report('修复完成。可切换查看原图，或下载 PNG。');
         } catch {
             next.width = 1;
             next.height = 1;
-            report('当前选区无法修复。请缩小选区，并留出可参考的周边背景。', true);
+            report(useAI
+                ? 'AI 修复未完成。请重试、缩小标记范围，或切换到快速修复。'
+                : '当前选区无法修复。请缩小选区，并留出可参考的周边背景。', true);
         } finally {
             busy = false;
+            repairing = false;
             render();
         }
     });
