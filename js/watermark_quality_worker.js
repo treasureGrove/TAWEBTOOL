@@ -1,4 +1,5 @@
 import * as ort from '../third_part/onnxruntime-web/1.30.0/ort.wasm.min.js';
+import './watermark_residual.js?v=1';
 
 const modelUrl = new URL('../models/lama_quality/lama_int4_int8_r4.onnx', import.meta.url);
 const runtime = new URL('../third_part/onnxruntime-web/1.30.0/', import.meta.url);
@@ -122,7 +123,7 @@ function copyRepair(rgb, { fittedWidth, fittedHeight, left, top }, width, height
     }
 }
 
-self.onmessage = async ({ data: { action, width, height, rgba, mask } }) => {
+self.onmessage = async ({ data: { action, width, height, rgba, mask, refineRepeated } }) => {
     if (action !== 'repair') return;
 
     try {
@@ -143,7 +144,9 @@ self.onmessage = async ({ data: { action, width, height, rgba, mask } }) => {
             mask: new ort.Tensor('float32', input.selection, [1, 1, side, side])
         });
         if (output.type !== 'float32' || output.data.length !== 3 * plane) throw new Error('Unexpected LaMa output');
+        const original = refineRepeated ? rgba.slice() : null;
         copyRepair(output.data, input, width, height, rgba, mask);
+        if (original) self.refineWatermarkResidue(original, rgba, mask, width, height);
         self.postMessage({ result: rgba }, [rgba.buffer]);
     } catch (error) {
         self.postMessage({ error: error instanceof Error ? error.message : String(error) });

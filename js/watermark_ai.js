@@ -1,8 +1,8 @@
 (() => {
     'use strict';
 
-    const workerUrl = new URL('watermark_ai_worker.js?v=3', document.currentScript.src);
-    const qualityUrl = new URL('watermark_quality_worker.js?v=1', document.currentScript.src);
+    const workerUrl = new URL('watermark_ai_worker.js?v=4', document.currentScript.src);
+    const qualityUrl = new URL('watermark_quality_worker.js?v=2', document.currentScript.src);
     const maxDetectionEdge = 1200;
     const contextPadding = 128;
     const maxModelEdge = 1536;
@@ -66,7 +66,7 @@
         return runWorker({ action: 'detect', width, height, rgba }, [rgba.buffer], report);
     }
 
-    async function repairWatermarkWithAI(context, selection, report, useQuality = true) {
+    async function repairWatermarkWithAI(context, selection, report, { quality = true, refineRepeated = false } = {}) {
         const { x, y, width, height, data } = selection;
         const left = Math.max(0, x - contextPadding);
         const top = Math.max(0, y - contextPadding);
@@ -104,8 +104,8 @@
         }
 
         const rgba = modelImage.data;
-        const run = useQuality ? runQualityWorker : runWorker;
-        const repaired = await run({ action: 'repair', width: modelWidth, height: modelHeight, rgba, mask }, [rgba.buffer, mask.buffer], report);
+        const run = quality ? runQualityWorker : runWorker;
+        const repaired = await run({ action: 'repair', width: modelWidth, height: modelHeight, rgba, mask, refineRepeated }, [rgba.buffer, mask.buffer], report);
         let patchContext;
         if (scaled) {
             modelContext.putImageData(new ImageData(repaired, modelWidth, modelHeight), 0, 0);

@@ -453,7 +453,7 @@
         report('已还原为原图。');
     });
 
-    async function repairMarkedRegions(completion = '修复完成。可切换查看原图，或下载 PNG。') {
+    async function repairMarkedRegions(completion = '修复完成。可切换查看原图，或下载 PNG。', refineRepeated = false) {
         cancelSelection();
         busy = true;
         repairing = true;
@@ -478,10 +478,10 @@
             context.drawImage(hasResult ? result : original, 0, 0);
             if (useAI) {
                 try {
-                    await window.repairWatermarkWithAI(context, aiMask, report);
+                    await window.repairWatermarkWithAI(context, aiMask, report, { refineRepeated });
                 } catch {
                     report('精细修复不可用，正在尝试标准 AI 修复…');
-                    await window.repairWatermarkWithAI(context, aiMask, report, false);
+                    await window.repairWatermarkWithAI(context, aiMask, report, { quality: false });
                     completion = '已用标准 AI 修复。可切换查看原图，或下载 PNG。';
                 }
             } else {
@@ -519,6 +519,7 @@
         render();
         report('正在识别图片中的水印…');
         let autoCompletion;
+        let repeating = false;
         try {
             const proposal = await window.detectImageWatermark(hasResult ? result : original, report);
             if (!proposal) {
@@ -527,6 +528,7 @@
             }
             mask.addBitmap(proposal);
             if (proposal.confident) {
+                repeating = proposal.repeating;
                 autoCompletion = proposal.partial
                     ? '已修复重复水印。其他标记识别失败，可以再试一次。'
                     : '已自动识别并修复水印。可以对比原图或下载 PNG。';
@@ -540,7 +542,7 @@
             detecting = false;
             render();
         }
-        if (autoCompletion) await repairMarkedRegions(autoCompletion);
+        if (autoCompletion) await repairMarkedRegions(autoCompletion, repeating);
     });
 
     download.addEventListener('click', () => {

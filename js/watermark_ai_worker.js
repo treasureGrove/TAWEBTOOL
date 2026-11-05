@@ -51,7 +51,7 @@ async function detect(width, height, rgba) {
     }
     if (!pattern) loadRuntime();
     const data = pattern || await self.detectWatermarkWithAI(image, ort, progress);
-    self.postMessage({ result: data ? { width, height, data, confident: Boolean(pattern), partial } : null }, data ? [data.buffer] : []);
+    self.postMessage({ result: data ? { width, height, data, confident: Boolean(pattern), repeating: Boolean(repeating), partial } : null }, data ? [data.buffer] : []);
 }
 
 self.onmessage = async ({ data: { action, width, height, rgba, mask } }) => {
