@@ -2,50 +2,57 @@
     'use strict';
 
     const workerUrl = new URL('watermark_ai_worker.js?v=3', document.currentScript.src);
+    const qualityUrl = new URL('watermark_quality_worker.js?v=1', document.currentScript.src);
     const maxDetectionEdge = 1200;
     const contextPadding = 128;
     const maxModelEdge = 1536;
     const patchRows = 256;
-    let worker;
-    let pending;
 
-    function resetWorker(error) {
-        pending?.reject(error);
-        pending = null;
-        worker.terminate();
-        worker = null;
-    }
+    function createWorkerClient(url, options) {
+        let worker;
+        let pending;
 
-    function runWorker(task, transfer, report) {
-        if (pending) return Promise.reject(new Error('AI processing is already running'));
-        if (!worker) {
-            worker = new Worker(workerUrl);
-            worker.onmessage = ({ data }) => {
-                if (!pending) return;
-                if (data.progress) {
-                    pending.report(data.progress);
-                    return;
-                }
-                if (data.error) {
-                    resetWorker(new Error(data.error));
-                    return;
-                }
-                pending.resolve(data.result);
-                pending = null;
-            };
-            worker.onerror = (event) => resetWorker(new Error(event.message || 'AI worker failed'));
+        function resetWorker(error) {
+            pending?.reject(error);
+            pending = null;
+            worker.terminate();
+            worker = null;
         }
 
-        return new Promise((resolve, reject) => {
-            pending = { resolve, reject, report };
-            try {
-                worker.postMessage(task, transfer);
-            } catch (error) {
-                pending = null;
-                reject(error);
+        return (task, transfer, report) => {
+            if (pending) return Promise.reject(new Error('AI processing is already running'));
+            if (!worker) {
+                worker = new Worker(url, options);
+                worker.onmessage = ({ data }) => {
+                    if (!pending) return;
+                    if (data.progress) {
+                        pending.report(data.progress);
+                        return;
+                    }
+                    if (data.error) {
+                        resetWorker(new Error(data.error));
+                        return;
+                    }
+                    pending.resolve(data.result);
+                    pending = null;
+                };
+                worker.onerror = (event) => resetWorker(new Error(event.message || 'AI worker failed'));
             }
-        });
+
+            return new Promise((resolve, reject) => {
+                pending = { resolve, reject, report };
+                try {
+                    worker.postMessage(task, transfer);
+                } catch (error) {
+                    pending = null;
+                    reject(error);
+                }
+            });
+        };
     }
+
+    const runWorker = createWorkerClient(workerUrl);
+    const runQualityWorker = createWorkerClient(qualityUrl, { type: 'module' });
 
     async function detectWatermark(canvas, report) {
         const scale = Math.min(1, maxDetectionEdge / Math.max(canvas.width, canvas.height));
@@ -59,7 +66,7 @@
         return runWorker({ action: 'detect', width, height, rgba }, [rgba.buffer], report);
     }
 
-    async function repairWatermarkWithAI(context, selection, report) {
+    async function repairWatermarkWithAI(context, selection, report, useQuality = true) {
         const { x, y, width, height, data } = selection;
         const left = Math.max(0, x - contextPadding);
         const top = Math.max(0, y - contextPadding);
@@ -97,7 +104,8 @@
         }
 
         const rgba = modelImage.data;
-        const repaired = await runWorker({ action: 'repair', width: modelWidth, height: modelHeight, rgba, mask }, [rgba.buffer, mask.buffer], report);
+        const run = useQuality ? runQualityWorker : runWorker;
+        const repaired = await run({ action: 'repair', width: modelWidth, height: modelHeight, rgba, mask }, [rgba.buffer, mask.buffer], report);
         let patchContext;
         if (scaled) {
             modelContext.putImageData(new ImageData(repaired, modelWidth, modelHeight), 0, 0);

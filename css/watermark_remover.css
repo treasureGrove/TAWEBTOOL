@@ -54,6 +54,8 @@
 .wm-import-icon { margin-bottom: 12px; color: var(--wm-green); }
 .wm-drop h2, .wm-controls h2 { margin: 0; font-size: 18px; }
 .wm-drop p { margin: 8px 0 18px; font-size: 13px; color: var(--wm-muted); }
+.wm-drop .wm-paste-hint { margin-bottom: 0; }
+.wm-paste-hint kbd { font-size: inherit; }
 .wm-demo-card { padding: 10px; display: flex; flex-direction: column; }
 .wm-demo-art { position: relative; overflow: hidden; border-radius: 10px; aspect-ratio: 8 / 5; background: #b2d3c1; }
 .wm-demo-art canvas { display: block; width: 100%; height: 100%; }
@@ -88,10 +90,9 @@
 .wm-frame {
     position: relative;
     max-width: 100%;
-    touch-action: none;
-    cursor: crosshair;
     background: conic-gradient(#dae2df 25%, #f1f4f3 0 50%, #dae2df 0 75%, #f1f4f3 0) 0 0 / 16px 16px;
 }
+.wm-frame.wm-selecting { touch-action: none; cursor: crosshair; }
 
 .wm-frame canvas { display: block; max-width: 100%; max-height: min(60vh, 700px); width: auto; height: auto; }
 .wm-frame .wm-mask-preview { position: absolute; inset: 0; width: 100%; height: 100%; max-height: none; pointer-events: none; }
@@ -105,6 +106,9 @@
 .wm-controls-title span { padding: 4px 8px; background: #e5f2eb; color: var(--wm-green); border-radius: 20px; font-size: 12px; }
 .wm-controls p { margin: 0 0 3px; color: var(--wm-muted); font-size: 13px; line-height: 1.65; }
 .wm-modes button, .wm-tools button { flex: 1 1 0; }
+.wm-manual-tools { padding: 8px 0; border-block: 1px solid var(--wm-line); }
+.wm-manual-tools summary { cursor: pointer; font-size: 13px; font-weight: 700; }
+.wm-manual-tools[open] summary { margin-bottom: 8px; }
 .wm-brush-size { display: grid; grid-template-columns: 1fr auto; gap: 4px; margin-top: 10px; color: var(--wm-muted); font-size: 12px; }
 .wm-brush-size input { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--wm-green); }
 .wm-brush-size output { font: inherit; }

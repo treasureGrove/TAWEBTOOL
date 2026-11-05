@@ -11,7 +11,8 @@
     const maskPreviewContext = maskPreview.getContext('2d');
     const aiMode = get('mode-ai');
     const quickMode = get('mode-quick');
-    const toolButtons = [...get('ai-tools').querySelectorAll('[data-tool]')];
+    const manual = get('ai-tools');
+    const toolButtons = [...manual.querySelectorAll('[data-tool]')];
     const brush = get('brush');
     const original = get('original');
     const status = get('status');
@@ -48,6 +49,7 @@
     let detecting = false;
 
     const currentTool = () => useAI ? aiTool : 'box';
+    const canMark = () => !useAI || manual.open;
     const brushDiameter = () => Number(brush.value) * original.width / frame.getBoundingClientRect().width;
 
     function report(message, error = false) {
@@ -111,7 +113,12 @@
         aiMode.setAttribute('aria-pressed', String(useAI));
         quickMode.setAttribute('aria-pressed', String(!useAI));
         aiMode.disabled = quickMode.disabled = busy;
-        get('ai-tools').hidden = !useAI;
+        manual.hidden = !useAI;
+        frame.classList.toggle('wm-selecting', canMark() && !comparingOriginal);
+        frame.tabIndex = canMark() && !comparingOriginal ? 0 : -1;
+        get('selection-help').textContent = canMark()
+            ? '用鼠标或手指标记。键盘可用方向键移动，按空格开始和结束标记。'
+            : '可以直接粘贴另一张图片。';
         get('brush-size').hidden = aiTool === 'box';
         brush.disabled = busy || comparingOriginal;
         for (const button of toolButtons) {
@@ -119,13 +126,15 @@
             button.setAttribute('aria-pressed', String(button.dataset.tool === aiTool));
         }
         get('mode-help').textContent = useAI
-            ? '自动识别可见水印。把握较低时会先显示建议区域，可用画笔调整。'
+            ? '首次精细修复需加载约 51 MB。识别把握较低时会先标出疑似区域。'
             : '框住水印，用周围像素快速补齐。适合纯色和渐变背景。';
-        auto.hidden = !useAI;
+        auto.hidden = !useAI || markCount > 0;
         auto.disabled = busy || !mask || markCount > 0 || comparingOriginal;
         auto.textContent = detecting ? '正在识别…' : '自动去水印';
         undo.disabled = busy || !markCount || comparingOriginal;
         clear.disabled = undo.disabled;
+        get('mark-actions').hidden = !markCount;
+        apply.hidden = useAI && !markCount;
         apply.disabled = undo.disabled;
         apply.textContent = repairing ? '正在修复…' : useAI ? '修复标记区域' : '修复所选区域';
         apply.classList.toggle('wm-primary', markCount > 0);
@@ -191,7 +200,7 @@
         start.hidden = true;
         editor.hidden = false;
         render();
-        frame.focus();
+        if (canMark()) frame.focus();
     }
 
     async function loadFile(file) {
@@ -281,7 +290,7 @@
     }
 
     frame.addEventListener('pointerdown', (event) => {
-        if (busy || (hasResult && !showResult) || event.button !== 0 || !event.isPrimary) return;
+        if (!canMark() || busy || (hasResult && !showResult) || event.button !== 0 || !event.isPrimary) return;
         frame.focus({ preventScroll: true });
         keyboardPoint = null;
         cancelSelection();
@@ -290,7 +299,7 @@
         drawOverlay();
     });
     frame.addEventListener('pointermove', (event) => {
-        if (busy || (hasResult && !showResult) || !event.isPrimary) return;
+        if (!canMark() || busy || (hasResult && !showResult) || !event.isPrimary) return;
         const point = imagePoint(event);
         hoverPoint = currentTool() !== 'box' && event.pointerType === 'mouse' ? point : null;
         if (draft?.pointerId === event.pointerId) moveSelection(point);
@@ -313,7 +322,7 @@
 
     const directions = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
     frame.addEventListener('keydown', (event) => {
-        if (busy || (hasResult && !showResult) || draft?.pointerId !== undefined) return;
+        if (!canMark() || busy || (hasResult && !showResult) || draft?.pointerId !== undefined) return;
         const direction = directions[event.key];
         if (!direction && event.key !== ' ' && event.key !== 'Escape') return;
         event.preventDefault();
@@ -367,6 +376,16 @@
         loadFile(fileInput.files[0]);
         fileInput.value = '';
     });
+    document.addEventListener('paste', (event) => {
+        if (event.target instanceof Element && event.target.closest('input, textarea, [contenteditable="true"]')) return;
+        const clipboard = event.clipboardData;
+        if (!clipboard) return;
+        const image = Array.from(clipboard.files).find((file) => file.type.startsWith('image/'))
+            || Array.from(clipboard.items).find((item) => item.kind === 'file' && item.type.startsWith('image/'))?.getAsFile();
+        if (!image) return;
+        event.preventDefault();
+        loadFile(image);
+    });
     demo.addEventListener('click', () => {
         original.width = 960;
         original.height = 600;
@@ -391,6 +410,14 @@
             render();
         });
     }
+    manual.addEventListener('toggle', () => {
+        if (!manual.open) {
+            cancelSelection();
+            hoverPoint = null;
+            keyboardPoint = null;
+        }
+        render();
+    });
     brush.addEventListener('input', () => {
         get('brush-value').value = `${brush.value} px`;
         drawOverlay();
@@ -449,8 +476,17 @@
             next.height = original.height;
             const context = next.getContext('2d', { willReadFrequently: true });
             context.drawImage(hasResult ? result : original, 0, 0);
-            if (useAI) await window.repairWatermarkWithAI(context, aiMask, report);
-            else window.restoreImageWatermarks(context, regions);
+            if (useAI) {
+                try {
+                    await window.repairWatermarkWithAI(context, aiMask, report);
+                } catch {
+                    report('精细修复不可用，正在尝试标准 AI 修复…');
+                    await window.repairWatermarkWithAI(context, aiMask, report, false);
+                    completion = '已用标准 AI 修复。可切换查看原图，或下载 PNG。';
+                }
+            } else {
+                window.restoreImageWatermarks(context, regions);
+            }
             next.id = result.id;
             result.replaceWith(next);
             result.width = 1;

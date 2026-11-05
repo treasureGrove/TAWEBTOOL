@@ -21,6 +21,13 @@ Source: https://huggingface.co/christophernavas/watermark-remover/blob/509fb6833
 - Source SHA-256 `a4579c690e43ba2f73d7328ad49252a60660eff03de1c9f7a26b49d83d555a66`
 - ONNX SHA-256 `58a365657484c740a8ee87ed96e87521f05ea651fd2c477877c26c9fa0a867a8`
 
+`lama_quality/lama_int4_int8_r4.onnx` provides the optional high-quality inpainting mode.
+The quantized export is based on Big LaMa by Suvorov et al. and Carve's ONNX export, with int4/int8 weights and rank-four Fourier operations by othytenk.
+The model is distributed under the [Apache 2.0 license](lama_quality/LICENSE.txt).
+Source: https://huggingface.co/othytenk/lama-int4-int8/blob/b52ebb642126086fe3da1524a3b1d7629ae4c6a9/lama_int4_int8_r4.onnx
+
+SHA-256: `4e3b78a253eb4abf21896811c928ffa91214b916e5d6ced24cecdd7999b4aaa1`
+
 Quick fetch (from repo root):
 
 ```bash
