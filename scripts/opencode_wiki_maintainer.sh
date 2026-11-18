@@ -41,8 +41,11 @@ sync_git_after_update() {
   git config user.email "${GIT_AUTHOR_EMAIL:-1324236706@qq.com}" >/dev/null
 
   if git remote get-url origin >/dev/null 2>&1; then
-    git pull --rebase --autostash origin "$(git branch --show-current)" || {
+    pull_out="$(git pull --rebase --autostash origin "$(git branch --show-current)" 2>&1)" || {
       echo "- Git sync: pull --rebase failed"
+      printf '%s\n' "$pull_out" | tail -n 12 | sed 's/^/    /'
+      echo "    常见原因：工作区存在会被合并覆盖的未跟踪文件（手工部署留下的同名文件）。"
+      echo "    处理方式：确认这些文件内容后移走或纳入仓库，再重跑；不要用 git clean 直接删。"
       return 1
     }
   fi
