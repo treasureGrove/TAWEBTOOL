@@ -71,6 +71,17 @@ h1 { font-size: 30px; line-height: 1.35; margin: 12px 0 6px; }
 .seo-footer { text-align: center; color: var(--seo-muted); font-size: 13px; padding: 20px; }
 .seo-footer a { color: var(--seo-accent); text-decoration: none; }
 
+/* 文章页 → 工具页互链区块（静态预渲染，见 scripts/prerender_seo_tool_links.mjs） */
+.seo-tools { margin-top: 26px; background: var(--seo-card); border: 1px solid var(--seo-border); border-radius: 12px; padding: 18px 20px; }
+.seo-tools h2 { font-size: 18px; margin: 0 0 12px; }
+.seo-tool-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.seo-tool-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid var(--seo-border); border-radius: 10px; background: #f9fafb; text-decoration: none; transition: border-color .15s, background .15s; }
+.seo-tool-card:hover { border-color: var(--seo-accent); background: #f0f3ff; }
+.seo-tool-card b { font-size: 14px; color: var(--seo-text); }
+.seo-tool-card span { font-size: 12px; color: var(--seo-muted); }
+.seo-tools-more { margin: 12px 0 0; font-size: 13px; }
+.seo-tools-more a { color: var(--seo-accent); }
+
 @media (max-width: 640px) {
   h1 { font-size: 24px; }
   .seo-content { padding: 18px; }

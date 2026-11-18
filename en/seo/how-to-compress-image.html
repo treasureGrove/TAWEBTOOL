@@ -86,15 +86,15 @@ var _hmt = _hmt || [];
 <p>```</p>
 <h2>Compression Parameter Recommendations</h2>
 <ul>
-<li>**Web images**: Lossy WebP quality 75-85 is usually visually lossless.</li>
-<li>**Transparent images**: Use WebP lossless mode or PNG compression.</li>
-<li>**Photos**: JPEG quality 80 compared to WebP quality 80, WebP files are smaller.</li>
+<li><strong>Web images</strong>: Lossy WebP quality 75-85 is usually visually lossless.</li>
+<li><strong>Transparent images</strong>: Use WebP lossless mode or PNG compression.</li>
+<li><strong>Photos</strong>: JPEG quality 80 compared to WebP quality 80, WebP files are smaller.</li>
 </ul>
 <h2>Notes</h2>
 <ul>
-<li>**Browser Compatibility**: WebP is supported by major browsers, but older browsers may not be compatible. Provide fallbacks if necessary.</li>
-<li>**Metadata Preservation**: Some tools remove EXIF information; choose to preserve if needed.</li>
-<li>**Batch Processing**: Command-line tools are suitable for batch processing.</li>
+<li><strong>Browser Compatibility</strong>: WebP is supported by major browsers, but older browsers may not be compatible. Provide fallbacks if necessary.</li>
+<li><strong>Metadata Preservation</strong>: Some tools remove EXIF information; choose to preserve if needed.</li>
+<li><strong>Batch Processing</strong>: Command-line tools are suitable for batch processing.</li>
 </ul>
 <h2>Summary</h2>
 <p>Choosing the right tool and method can significantly reduce image size and speed up web page loading. WebP is currently the recommended format, but consider more modern formats like AVIF depending on needs.</p>
@@ -104,9 +104,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Which is better, WebP or JPEG?</h3><p>At the same quality, WebP is typically 25-35% smaller than JPEG, supports transparency and animation, making it the preferred choice for modern web.</p></div>
 <div class="faq-item"><h3>How to batch convert images to WebP?</h3><p>Use command-line tools like cwebp with a loop script, or use Squoosh's batch feature or ImageMagick's mogrify command.</p></div>
 <div class="faq-item"><h3>What if image quality degrades noticeably after compression?</h3><p>Increase the quality parameter, e.g., raise WebP quality from 70 to 85, or use lossless compression.</p></div>
-<div class="faq-item"><h3>How to convert WebP back to PNG or JPG?</h3><p>Open in image editing software (e.g., GIMP, Photoshop) and save as desired format, or use ImageMagick: `magick input.webp output.png`.</p></div>
+<div class="faq-item"><h3>How to convert WebP back to PNG or JPG?</h3><p>Open in image editing software (e.g., GIMP, Photoshop) and save as desired format, or use ImageMagick: <code>magick input.webp output.png</code>.</p></div>
 <div class="faq-item"><h3>Is it necessary to use AVIF format?</h3><p>AVIF offers higher compression but slower encoding and less tool support. Consider it if the target environment supports it.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">色彩空间转换</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-pack-sprite-sheet.html">图集打包 Sprite Sheet</a></p></section>
   </article>
 </main>

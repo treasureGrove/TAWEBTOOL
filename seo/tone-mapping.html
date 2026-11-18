@@ -43,15 +43,15 @@ var _hmt = _hmt || [];
 <p>渲染管线通常在线性空间计算 HDR 光照，亮度值可能从 0 到数百甚至更高，而普通显示器只能显示 0 到 1（或 0-255）。直接将 HDR 值截断会导致亮部过曝、暗部死黑。色调映射将广泛的亮度范围压缩到显示器可显示的范围，同时保持视觉真实感，避免细节丢失。</p>
 <h2>常用色调映射算法</h2>
 <h3>Reinhard 色调映射</h3>
-<p>经典算法：`L_display = L / (1 + L)`。它将无限亮度映射到 [0,1]，简单高效，但可能导致对比度降低和颜色饱和度变化。</p>
+<p>经典算法：<code>L_display = L / (1 + L)</code>。它将无限亮度映射到 [0,1]，简单高效，但可能导致对比度降低和颜色饱和度变化。</p>
 <h3>Filmic 色调映射</h3>
 <p>模拟电影胶片的响应曲线，提供更好的高光过渡和色彩保持。常见变体如 ACES Filmic、Uncharted 2 等。</p>
 <h3>ACES 色调映射</h3>
 <p>ACES（Academy Color Encoding System）是电影行业标准，其色调映射曲线被广泛采用。它通过复杂的拟合曲线实现电影级效果，保留高光细节和色彩准确性。在 Unity 和 Unreal 中，ACES 是默认选项之一。</p>
 <h3>其他算法</h3>
 <ul>
-<li>**电影级色调映射**：自定义曲线，提供艺术控制。</li>
-<li>**局部色调映射**：根据局部区域调整对比度，较复杂，较少用于实时。</li>
+<li><strong>电影级色调映射</strong>：自定义曲线，提供艺术控制。</li>
+<li><strong>局部色调映射</strong>：根据局部区域调整对比度，较复杂，较少用于实时。</li>
 </ul>
 <h2>在渲染管线中的应用</h2>
 <p>实时渲染中，色调映射通常作为后处理步骤，在 HDR 渲染之后、伽马校正之前执行。流程：</p>
@@ -82,7 +82,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>不进行色调映射会怎样？</h3><p>HDR 值会截断，导致亮部过曝、暗部丢失细节，画面失真。</p></div>
 <div class="faq-item"><h3>移动端可以使用色调映射吗？</h3><p>可以，但增加后处理开销，需评估性能。可以使用简化的 Reinhard 或近似曲线。</p></div>
 <div class="faq-item"><h3>如何调整色调映射的效果？</h3><p>可以调整曝光、白点、曲线参数，或选择不同算法。在 Unity 中，Post Processing 提供多个参数。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>色彩空间转换器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR 编辑器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/bloom.html">Bloom 泛光</a></p></section>
   </article>
 </main>

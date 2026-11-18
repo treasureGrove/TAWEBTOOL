@@ -42,8 +42,8 @@ var _hmt = _hmt || [];
 <h2>Principles of Shadow Mapping</h2>
 <p>Shadow mapping typically involves two passes:</p>
 <ol>
-<li>**Shadow Pass**: Render the scene from the light's position, writing only depth, to obtain the shadow map. For directional lights, use orthographic projection; for point lights, use perspective projection or cube maps (six faces).</li>
-<li>**Main Rendering Pass**: Render the scene normally. In the fragment shader, transform world coordinates to light space, sample the shadow map, and compare depths. If the current fragment's depth is greater than the corresponding depth in the shadow map (plus bias), the fragment is in shadow, and lighting is attenuated.</li>
+<li><strong>Shadow Pass</strong>: Render the scene from the light's position, writing only depth, to obtain the shadow map. For directional lights, use orthographic projection; for point lights, use perspective projection or cube maps (six faces).</li>
+<li><strong>Main Rendering Pass</strong>: Render the scene normally. In the fragment shader, transform world coordinates to light space, sample the shadow map, and compare depths. If the current fragment's depth is greater than the corresponding depth in the shadow map (plus bias), the fragment is in shadow, and lighting is attenuated.</li>
 </ul>
 <h2>Common Problems</h2>
 <h3>Shadow Acne</h3>
@@ -56,16 +56,16 @@ var _hmt = _hmt || [];
 <p>Shadow maps use depth textures, which have limited precision; distant areas may suffer from Z-fighting. Use Cascaded Shadow Maps (CSM) to improve precision for directional lights in large scenes.</p>
 <h2>Optimization Methods</h2>
 <ul>
-<li>**Cascaded Shadow Maps (CSM)**: Divide the view frustum into multiple regions, each using a different resolution shadow map to improve near shadow quality.</li>
-<li>**Tight Light Frustum**: Adjust the light projection range to tightly enclose the scene, improving shadow map utilization.</li>
-<li>**Use Lower Resolution Shadow Maps**: For distant or small objects, reduce shadow map resolution.</li>
-<li>**Shadow Distance Limit**: Do not render shadows beyond a certain distance.</li>
-<li>**Cache Static Shadows**: Bake shadows for static objects into lightmaps.</li>
+<li><strong>Cascaded Shadow Maps (CSM)</strong>: Divide the view frustum into multiple regions, each using a different resolution shadow map to improve near shadow quality.</li>
+<li><strong>Tight Light Frustum</strong>: Adjust the light projection range to tightly enclose the scene, improving shadow map utilization.</li>
+<li><strong>Use Lower Resolution Shadow Maps</strong>: For distant or small objects, reduce shadow map resolution.</li>
+<li><strong>Shadow Distance Limit</strong>: Do not render shadows beyond a certain distance.</li>
+<li><strong>Cache Static Shadows</strong>: Bake shadows for static objects into lightmaps.</li>
 </ul>
 <h2>Application in Engines</h2>
 <ul>
-<li>**Unity**: Uses Shadow Map technology, supports CSM, soft shadows, shadow distance, etc.</li>
-<li>**Unreal**: Uses Shadow Map and Ray Traced Shadows, supports various optimizations.</li>
+<li><strong>Unity</strong>: Uses Shadow Map technology, supports CSM, soft shadows, shadow distance, etc.</li>
+<li><strong>Unreal</strong>: Uses Shadow Map and Ray Traced Shadows, supports various optimizations.</li>
 </ul>
 <h2>Frequently Asked Questions</h2>
 <h3>What is the difference between shadow mapping and ray traced shadows?</h3>
@@ -86,7 +86,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How do point lights generate shadow maps?</h3><p>Point lights typically use cube shadow maps, rendering depth from six directions, or use single-pass dual-paraboloid mapping.</p></div>
 <div class="faq-item"><h3>How to optimize shadows on mobile?</h3><p>On mobile, use low-resolution shadow maps, limit shadow distance, use simple hard shadows, or disable shadows.</p></div>
 <div class="faq-item"><h3>What is CSM?</h3><p>Cascaded Shadow Maps divide the view frustum into multiple regions, each with different resolution shadow maps, balancing shadow quality near and far.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/lod-level-of-detail.html">LOD 细节层次</a></p></section>
   </article>
 </main>

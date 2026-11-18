@@ -42,30 +42,30 @@ var _hmt = _hmt || [];
 <p>在着色器中，通过一个三维方向向量来采样立方体贴图，GPU会根据方向向量选择适当的纹理面并进行插值。</p>
 <h2>立方体贴图的用途</h2>
 <ul>
-<li>**天空盒（Skybox）**：渲染场景背景，模拟远处环境。</li>
-<li>**环境映射（Environment Mapping）**：用于反射和折射效果，模拟物体表面对周围环境的反射。</li>
-<li>**基于图像的光照（IBL）**：存储预计算的环境光照信息，用于PBR材质。</li>
-<li>**动态反射**：可以实时渲染场景到立方体贴图，实现动态反射。</li>
-<li>**光照探针**：在特定位置捕获环境光照，用于对动态物体进行间接光照。</li>
+<li><strong>天空盒（Skybox）</strong>：渲染场景背景，模拟远处环境。</li>
+<li><strong>环境映射（Environment Mapping）</strong>：用于反射和折射效果，模拟物体表面对周围环境的反射。</li>
+<li><strong>基于图像的光照（IBL）</strong>：存储预计算的环境光照信息，用于PBR材质。</li>
+<li><strong>动态反射</strong>：可以实时渲染场景到立方体贴图，实现动态反射。</li>
+<li><strong>光照探针</strong>：在特定位置捕获环境光照，用于对动态物体进行间接光照。</li>
 </ul>
 <h2>创建立方体贴图</h2>
 <p>立方体贴图可以通过以下方式创建：</p>
 <ul>
-<li>**静态图像**：使用6张正方形纹理，分别对应六个面，导入引擎并设置为Cubemap。</li>
-<li>**全景图转换**：将等距柱状投影（Equirectangular）的全景图转换为立方体贴图。</li>
-<li>**实时渲染**：在场景中放置摄像机，渲染六个方向到渲染目标，生成动态Cubemap。</li>
-<li>**生成HDR环境贴图**：使用工具（如Substance、Blender）烘焙。</li>
+<li><strong>静态图像</strong>：使用6张正方形纹理，分别对应六个面，导入引擎并设置为Cubemap。</li>
+<li><strong>全景图转换</strong>：将等距柱状投影（Equirectangular）的全景图转换为立方体贴图。</li>
+<li><strong>实时渲染</strong>：在场景中放置摄像机，渲染六个方向到渲染目标，生成动态Cubemap。</li>
+<li><strong>生成HDR环境贴图</strong>：使用工具（如Substance、Blender）烘焙。</li>
 </ul>
 <h2>立方体贴图的采样</h2>
-<p>在着色器中，使用`samplerCUBE`（或`TextureCube`）进行采样。采样时需要一个三维方向向量，该向量从立方体中心指向采样方向。GPU会找到与该方向相交的立方体面，并返回对应纹理坐标处的颜色。</p>
+<p>在着色器中，使用<code>samplerCUBE</code>（或<code>TextureCube</code>）进行采样。采样时需要一个三维方向向量，该向量从立方体中心指向采样方向。GPU会找到与该方向相交的立方体面，并返回对应纹理坐标处的颜色。</p>
 <h2>立方体贴图与Mipmap</h2>
 <p>立方体贴图支持Mipmap链，每个mip级别是原分辨率的缩小版。在反射和IBL中，常使用粗糙度来选择mip级别，模拟不同粗糙度表面的模糊反射。</p>
 <h2>立方体贴图的注意事项</h2>
 <ul>
-<li>**接缝**：如果六个面边缘不一致，可能出现可见接缝。确保纹理边缘无缝对接。</li>
-<li>**方向约定**：不同引擎可能对立方体贴图的面布局和方向有不同约定（如Y轴翻转），导入时需注意。</li>
-<li>**内存占用**：立方体贴图包含六个面，内存是普通2D纹理的6倍，注意优化。</li>
-<li>**性能**：动态生成立方体贴图需要渲染场景六次，开销较大，应谨慎使用。</li>
+<li><strong>接缝</strong>：如果六个面边缘不一致，可能出现可见接缝。确保纹理边缘无缝对接。</li>
+<li><strong>方向约定</strong>：不同引擎可能对立方体贴图的面布局和方向有不同约定（如Y轴翻转），导入时需注意。</li>
+<li><strong>内存占用</strong>：立方体贴图包含六个面，内存是普通2D纹理的6倍，注意优化。</li>
+<li><strong>性能</strong>：动态生成立方体贴图需要渲染场景六次，开销较大，应谨慎使用。</li>
 </ul>
 <h2>总结</h2>
 <p>立方体贴图是实现环境效果的基础，广泛应用于现代渲染管线。</p>
@@ -77,7 +77,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>立方体贴图在PBR中如何使用？</h3><p>在基于图像的光照（IBL）中，立方体贴图存储环境辐射度，用于计算间接漫反射和镜面反射。常使用预滤波的mipmap来近似不同粗糙度的反射。</p></div>
 <div class="faq-item"><h3>为什么立方体贴图有接缝？</h3><p>接缝通常由于六个面纹理在边缘处不连续，或者采样时滤波不一致。解决方法包括使用无缝纹理、启用无缝立方体贴图采样（如果硬件支持）。</p></div>
 <div class="faq-item"><h3>如何优化立方体贴图的内存？</h3><p>降低分辨率、使用压缩格式（如BC6H用于HDR）、只存储必要的mip级别。在移动平台，可以考虑使用预卷积的辐照度图和预滤波环境图。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR 编辑器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a></p></section>
   </article>
 </main>

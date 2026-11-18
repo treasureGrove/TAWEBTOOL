@@ -53,9 +53,9 @@ var _hmt = _hmt || [];
 <h2>Using an Online EV Calculator</h2>
 <p>Many photography and 3D websites provide EV calculators, such as:</p>
 <ul>
-<li>**Omni Calculator EV Calculator**: Enter aperture, shutter, ISO to calculate EV.</li>
-<li>**Exposure Value Calculator by scantips.com**: Provides EV tables and detailed explanations.</li>
-<li>**PhotoPills EV Calculator**: Mobile app, suitable for outdoor shooting.</li>
+<li><strong>Omni Calculator EV Calculator</strong>: Enter aperture, shutter, ISO to calculate EV.</li>
+<li><strong>Exposure Value Calculator by scantips.com</strong>: Provides EV tables and detailed explanations.</li>
+<li><strong>PhotoPills EV Calculator</strong>: Mobile app, suitable for outdoor shooting.</li>
 </ul>
 <p>Omni Calculator is recommended for its user-friendly interface.</p>
 <h2>Steps for Online EV Calculation</h2>
@@ -64,9 +64,9 @@ var _hmt = _hmt || [];
 <li>Open the Omni EV Calculator webpage.</li>
 <li>In the input fields, select or enter:</li>
 </ul>
-<p>   - **Aperture (f-stop)**: e.g., f/2.8</p>
-<p>   - **Shutter speed**: e.g., 1/125 sec</p>
-<p>   - **ISO**: e.g., 100</p>
+<p>   - <strong>Aperture (f-stop)</strong>: e.g., f/2.8</p>
+<p>   - <strong>Shutter speed</strong>: e.g., 1/125 sec</p>
+<p>   - <strong>ISO</strong>: e.g., 100</p>
 <ol>
 <li>The calculator automatically displays the EV value, and may also show scene luminance suggestions.</li>
 <li>You can also reverse calculate: enter the desired EV and two parameters to find the third.</li>
@@ -75,7 +75,7 @@ var _hmt = _hmt || [];
 <h2>Application in 3D Rendering</h2>
 <p>In physical renderers (such as Blender Cycles, Unreal Engine), exposure settings affect final image brightness. EV can guide camera parameters:</p>
 <ul>
-<li>Convert EV to exposure gain: `Exposure Gain = 2^EV`</li>
+<li>Convert EV to exposure gain: <code>Exposure Gain = 2^EV</code></li>
 <li>In the renderer, either directly input EV or adjust aperture, shutter, ISO to match real photography.</li>
 <li>When using HDRI environment maps, EV can help balance ambient light with artificial light.</li>
 </ul>
@@ -95,7 +95,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Are online calculators accurate?</h3><p>They are accurate for standard metering models, but real scenes have multiple light sources and reflections, so EV is only a reference. It is recommended to combine with histograms and test shots.</p></div>
 <div class="faq-item"><h3>Can EV be calculated for video exposure?</h3><p>Yes, EV applies to video exposure as well, but you must consider frame rate constraints on shutter speed. The 180-degree shutter rule is often used (shutter time = 1/(2*frame rate)).</p></div>
 <div class="faq-item"><h3>Are there mobile EV calculators?</h3><p>Yes, apps like PhotoPills and Lightme provide EV calculation and scene references, suitable for outdoor shooting.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/physics_light.html"><b>Physical Light Calculator</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
   </article>
 </main>

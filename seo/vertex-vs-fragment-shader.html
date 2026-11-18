@@ -43,20 +43,20 @@ var _hmt = _hmt || [];
 <p>顶点着色器是渲染管线的第一个可编程阶段，对每个顶点执行一次。其输入包括顶点属性（位置、法线、颜色、UV 等），输出变换后的顶点位置和传递给片元着色器的插值数据。</p>
 <p>典型功能：</p>
 <ul>
-<li>**坐标变换**：将顶点从模型空间变换到世界空间、观察空间、裁剪空间。</li>
-<li>**法线变换**：处理非均匀缩放时的法线矩阵。</li>
-<li>**纹理坐标传递**：传递 UV 或计算特殊效果（如动画 UV）。</li>
-<li>**逐顶点光照**：简单光照计算（如 Gouraud 着色）。</li>
+<li><strong>坐标变换</strong>：将顶点从模型空间变换到世界空间、观察空间、裁剪空间。</li>
+<li><strong>法线变换</strong>：处理非均匀缩放时的法线矩阵。</li>
+<li><strong>纹理坐标传递</strong>：传递 UV 或计算特殊效果（如动画 UV）。</li>
+<li><strong>逐顶点光照</strong>：简单光照计算（如 Gouraud 着色）。</li>
 </ul>
 <p>顶点着色器无法创建或删除顶点，只能处理现有顶点。</p>
 <h2>片元着色器</h2>
 <p>片元着色器（也称像素着色器）对光栅化后的每个片元执行一次（实际可能因深度测试被丢弃）。其输入是从顶点着色器插值得到的数据（如 UV、颜色、世界位置、法线等），输出是片元颜色（可能包括深度）。</p>
 <p>典型功能：</p>
 <ul>
-<li>**纹理采样**：从纹理贴图获取颜色。</li>
-<li>**逐片元光照**：计算更精确的光照（如 Phong 着色）。</li>
-<li>**颜色混合**：应用 Alpha 混合、雾效等。</li>
-<li>**后处理效果**：在全屏四边形上实现后处理算法。</li>
+<li><strong>纹理采样</strong>：从纹理贴图获取颜色。</li>
+<li><strong>逐片元光照</strong>：计算更精确的光照（如 Phong 着色）。</li>
+<li><strong>颜色混合</strong>：应用 Alpha 混合、雾效等。</li>
+<li><strong>后处理效果</strong>：在全屏四边形上实现后处理算法。</li>
 </ul>
 <p>片元着色器是性能关键，因为其执行次数远多于顶点着色器。</p>
 <h2>两者区别</h2>
@@ -112,7 +112,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>片元着色器执行次数一定多于顶点着色器吗？</h3><p>通常是的，因为一个三角形覆盖多个像素，但有早期深度剔除等优化。</p></div>
 <div class="faq-item"><h3>如何优化片元着色器性能？</h3><p>减少纹理采样、避免复杂计算、使用LOD、减少分支等。</p></div>
 <div class="faq-item"><h3>几何着色器与它们有什么关系？</h3><p>几何着色器位于顶点和片元之间，可以处理整个图元并生成新顶点，但现代渲染中较少使用。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader 函数库</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/glsl_hlsl_converter.html"><b>GLSL/HLSL 转换器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a></p></section>
   </article>
 </main>

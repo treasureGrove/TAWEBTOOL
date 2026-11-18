@@ -41,19 +41,19 @@ var _hmt = _hmt || [];
 <p>GPU Instancing is a rendering optimization technique that allows drawing multiple instances of the same mesh and material in a single draw call, with each instance having different transformations (position, rotation, scale) and material properties. This greatly reduces the number of draw calls, lowering CPU overhead, especially suitable for many repeated objects (like grass, trees, bullets, etc.).</p>
 <h2>How It Works</h2>
 <p>In traditional rendering, each object requires a separate draw call. GPU Instancing packs data for multiple instances (such as transformation matrices, colors) into an instance buffer; the vertex shader accesses the corresponding data based on instance ID. The GPU automatically executes vertex processing for each instance but sends only one draw command.</p>
-<p>In graphics APIs, `glDrawElementsInstanced` or `DrawIndexedInstanced` is typically used to specify the instance count. Shaders need to declare instanced attributes and use `SV_InstanceID` or `gl_InstanceID` to index data.</p>
+<p>In graphics APIs, <code>glDrawElementsInstanced</code> or <code>DrawIndexedInstanced</code> is typically used to specify the instance count. Shaders need to declare instanced attributes and use <code>SV_InstanceID</code> or <code>gl_InstanceID</code> to index data.</p>
 <h2>Requirements for GPU Instancing</h2>
 <ul>
-<li>**Same Mesh**: Instances must share the same geometry.</li>
-<li>**Same Material**: Material must support instancing (in Unity, check Enable Instancing; in Unreal, use Instanced Static Mesh Component).</li>
-<li>**Shader Support**: Shader must handle instanced attributes.</li>
-<li>**Platform Support**: Most modern GPUs and graphics APIs support it; on mobile, check for OpenGL ES 3.0+ or Metal.</li>
+<li><strong>Same Mesh</strong>: Instances must share the same geometry.</li>
+<li><strong>Same Material</strong>: Material must support instancing (in Unity, check Enable Instancing; in Unreal, use Instanced Static Mesh Component).</li>
+<li><strong>Shader Support</strong>: Shader must handle instanced attributes.</li>
+<li><strong>Platform Support</strong>: Most modern GPUs and graphics APIs support it; on mobile, check for OpenGL ES 3.0+ or Metal.</li>
 </ul>
 <h2>Implementation in Engines</h2>
 <h3>Unity</h3>
 <ul>
 <li>Check Enable GPU Instancing in the material Inspector.</li>
-<li>Use `Graphics.DrawMeshInstanced` to manually submit instance data.</li>
+<li>Use <code>Graphics.DrawMeshInstanced</code> to manually submit instance data.</li>
 <li>Particle systems and terrain trees automatically use instancing.</li>
 </ul>
 <h3>Unreal Engine</h3>
@@ -88,7 +88,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Does GPU Instancing support skinned meshes?</h3><p>Usually not, because skinned meshes require bone transformations, and each instance may have different animation. Unity's Skinned Mesh Renderer does not support instancing.</p></div>
 <div class="faq-item"><h3>How is GPU Instancing performance on mobile?</h3><p>Mobile GPUs support instancing, but pay attention to instance count and vertex complexity; overly large instanced draws may affect performance.</p></div>
 <div class="faq-item"><h3>How to check if instancing is working in Unity?</h3><p>In Frame Debugger, see if draw calls are marked as Instanced, or check Saved by batching statistics.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a></p></section>
   </article>
 </main>

@@ -84,18 +84,18 @@ var _hmt = _hmt || [];
 <p>In Substance Painter, use fill layers and masks to precisely control metalness.</p>
 <h2>Tool Recommendations</h2>
 <ul>
-<li>**Blender**: Free and open-source, supports baking normals from high-poly.</li>
-<li>**Substance Suite**: Industry standard, offers Designer and Painter with powerful procedural and hand-painting capabilities.</li>
-<li>**CrazyBump / ShaderMap**: Designed for generating normal, roughness and other maps from photos.</li>
-<li>**Materialize**: Free tool that can generate multiple PBR maps from a single photo.</li>
-<li>**AwesomeBump**: Open-source alternative.</li>
+<li><strong>Blender</strong>: Free and open-source, supports baking normals from high-poly.</li>
+<li><strong>Substance Suite</strong>: Industry standard, offers Designer and Painter with powerful procedural and hand-painting capabilities.</li>
+<li><strong>CrazyBump / ShaderMap</strong>: Designed for generating normal, roughness and other maps from photos.</li>
+<li><strong>Materialize</strong>: Free tool that can generate multiple PBR maps from a single photo.</li>
+<li><strong>AwesomeBump</strong>: Open-source alternative.</li>
 </ul>
 <h2>Notes</h2>
 <ul>
-<li>**Color Space**: Normal maps should use linear color space; roughness and metallic maps usually use linear or grayscale, avoiding sRGB correction.</li>
-<li>**Map Resolution**: Decide based on target platform and model complexity, typically 1024x1024 or 2048x2048.</li>
-<li>**Seamless Tiling**: If the material needs to tile, ensure the generated maps are seamless.</li>
-<li>**Consistency**: Ensure all maps are aligned with consistent texture coordinates.</li>
+<li><strong>Color Space</strong>: Normal maps should use linear color space; roughness and metallic maps usually use linear or grayscale, avoiding sRGB correction.</li>
+<li><strong>Map Resolution</strong>: Decide based on target platform and model complexity, typically 1024x1024 or 2048x2048.</li>
+<li><strong>Seamless Tiling</strong>: If the material needs to tile, ensure the generated maps are seamless.</li>
+<li><strong>Consistency</strong>: Ensure all maps are aligned with consistent texture coordinates.</li>
 </ul>
 <h2>Summary</h2>
 <p>There are multiple methods to generate PBR maps, choose according to project needs and resources. Baking from high-poly offers highest quality but is time-consuming; generating from photos is fast but limited in accuracy; procedural generation is flexible but requires expertise. It is recommended to combine multiple methods.</p>
@@ -107,7 +107,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What is the difference between roughness and glossiness?</h3><p>Roughness is the inverse of glossiness. In roughness maps, white indicates rough and black indicates smooth; in glossiness maps, it is the opposite. Many engines use roughness.</p></div>
 <div class="faq-item"><h3>Does the metallic map have to be pure black and white?</h3><p>Not necessarily. For most materials, the boundary between metal and non-metal is clear, but transition areas (e.g., rusted metal) can use grayscale values.</p></div>
 <div class="faq-item"><h3>How to ensure baked normal map details are correct?</h3><p>Ensure the high-poly and low-poly models match well, UVs are properly unwrapped, and use sufficient sampling and cage settings during baking.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>RGBA Channel Packer</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/texture_channel_splitter.html"><b>Texture Channel Splitter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a></p></section>
   </article>
 </main>

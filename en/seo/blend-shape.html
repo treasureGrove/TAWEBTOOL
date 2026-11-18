@@ -41,12 +41,12 @@ var _hmt = _hmt || [];
 <p>BlendShape (also called Morph Target) is an animation technique based on vertex interpolation. It linearly interpolates between multiple pre-sculpted target shapes to change the vertex positions of a mesh in real time, producing smooth deformation effects. BlendShape is particularly suitable for subtle, localized deformations like facial expressions and lip-sync, complementing skeletal animation.</p>
 <h2>Working Principle</h2>
 <p>BlendShape requires a base shape and multiple target shapes. Each target shape defines vertex offsets relative to the base shape. The final vertex position is computed as:</p>
-<p>`V_final = V_base + Σ (wi * ΔVi)`</p>
+<p><code>V_final = V_base + Σ (wi * ΔVi)</code></p>
 <p>where ΔVi is the vertex offset of the i-th target shape and wi is the blend weight for that target. Weights are typically between 0 and 1 but can exceed this range for exaggerated effects. All targets share the same topology (vertex count and triangle connectivity).</p>
 <h2>Difference from Skeletal Animation</h2>
 <ul>
-<li>**Skeletal Animation**: Drives vertices indirectly through hierarchical bone transforms, suitable for large rigid motions like limbs.</li>
-<li>**BlendShape**: Directly manipulates vertex positions, suitable for fine surface deformations like facial muscle movements, wrinkles, etc.</li>
+<li><strong>Skeletal Animation</strong>: Drives vertices indirectly through hierarchical bone transforms, suitable for large rigid motions like limbs.</li>
+<li><strong>BlendShape</strong>: Directly manipulates vertex positions, suitable for fine surface deformations like facial muscle movements, wrinkles, etc.</li>
 </ul>
 <p>They are often used together: skeletal animation controls head rotation and body movement, while BlendShape controls facial expressions.</p>
 <h2>Application Scenarios</h2>
@@ -64,13 +64,13 @@ var _hmt = _hmt || [];
 <h3>GPU Computation</h3>
 <p>BlendShape calculations are typically done in the vertex shader. Vertex data includes base position, multiple target offsets, and corresponding weights; the shader computes the weighted sum. For many BlendShapes, compute shaders or combining passes can optimize performance.</p>
 <h2>Advantages and Limitations</h2>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>Can represent very fine deformations, not limited by bone structure.</li>
 <li>Intuitive art workflow: just sculpt target shapes.</li>
 <li>Compatible with skeletal animation, can be layered.</li>
 </ul>
-<p>**Limitations**:</p>
+<p><strong>Limitations</strong>:</p>
 <ul>
 <li>Each BlendShape requires storing full vertex offset data, consuming more memory, especially for high-poly models.</li>
 <li>Only linear interpolation; complex non-linear deformations may need more targets.</li>
@@ -97,7 +97,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Which uses more memory, BlendShape data or skeletal animation data?</h3><p>Usually BlendShape data uses more memory because each target shape stores a full array of vertex offsets; skeletal animation only stores transforms of a few bones. So control BlendShape count.</p></div>
 <div class="faq-item"><h3>Can BlendShapes be used simultaneously with skeletal animation?</h3><p>Yes. After skinning, apply BlendShape deformations, or vice versa. Typically skeletal skinning is applied first, then BlendShape offsets, but order can be adjusted as needed.</p></div>
 <div class="faq-item"><h3>How to create BlendShapes?</h3><p>In DCC software (like Maya, Blender), duplicate the base mesh, sculpt the target shape, then use BlendShape tools to associate with the base mesh. Preserve BlendShape information when exporting to game engines.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/skeletal-animation.html">骨骼动画</a> · <a href="https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html">顶点着色器与片元着色器</a> · <a href="https://tools.treasuregrove.art/en/seo/compute-shader.html">计算着色器</a></p></section>
   </article>
 </main>

@@ -41,12 +41,12 @@ var _hmt = _hmt || [];
 <p>光线追踪（Ray Tracing）是一种基于物理光学模拟的渲染技术。它从摄像机出发，为每个像素发射一条或多条光线，计算光线与场景中物体的交点，并根据材质属性递归追踪反射、折射等次级光线，最终累积得到像素颜色。与光栅化不同，光线追踪能精确处理全局光照效果，如软阴影、反射、折射、焦散等，因此生成的图像更接近真实世界。</p>
 <h2>基本原理</h2>
 <h3>光线与场景求交</h3>
-<p>光线定义为原点 O 和方向 D：`P(t) = O + tD`。需要求解光线与几何图元（三角形、球体等）的最近交点。常用数据结构如 BVH（层次包围盒）加速求交过程。</p>
+<p>光线定义为原点 O 和方向 D：<code>P(t) = O + tD</code>。需要求解光线与几何图元（三角形、球体等）的最近交点。常用数据结构如 BVH（层次包围盒）加速求交过程。</p>
 <h3>着色模型</h3>
 <p>在交点处，根据材质属性（如 BRDF）计算直接光照和间接光照。直接光照可发射阴影光线（Shadow Ray）检测遮挡；间接光照则递归发射反射光线、折射光线等，模拟光线的多次反弹。</p>
 <h3>渲染方程</h3>
 <p>光线追踪求解的核心是渲染方程：</p>
-<p>`L_o(p, ω_o) = L_e(p, ω_o) + ∫ f_r(p, ω_i, ω_o) L_i(p, ω_i) (n·ω_i) dω_i`</p>
+<p><code>L_o(p, ω_o) = L_e(p, ω_o) + ∫ f_r(p, ω_i, ω_o) L_i(p, ω_i) (n·ω_i) dω_i</code></p>
 <p>实际中通过蒙特卡洛采样近似积分，如路径追踪算法。</p>
 <h2>主要算法</h2>
 <h3>递归光线追踪（Whitted 光线追踪）</h3>
@@ -63,13 +63,13 @@ var _hmt = _hmt || [];
 <h3>混合渲染</h3>
 <p>当前游戏通常采用混合渲染：使用光栅化处理大部分场景，用光线追踪增强特定效果，如反射、阴影、环境光遮蔽、全局光照等。这样在性能与画质间取得平衡。</p>
 <h2>优点与局限</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>物理正确：直接模拟光线传播，自然产生复杂光学效果。</li>
 <li>简化美术流程：无需手工烘焙光照或制作反射探针。</li>
 <li>可扩展：通过增加样本可逐步提高质量。</li>
 </ul>
-<p>**局限**：</p>
+<p><strong>局限</strong>：</p>
 <ul>
 <li>计算量大：实时渲染仍需大幅优化和降噪。</li>
 <li>需要硬件支持：专用光追硬件能显著加速，但老硬件无法使用。</li>
@@ -85,7 +85,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>实时光线追踪需要什么硬件？</h3><p>通常需要支持硬件加速的GPU，如NVIDIA RTX系列、AMD RDNA 2及以后的显卡。这些GPU包含专门的光线求交单元。</p></div>
 <div class="faq-item"><h3>光线追踪能完全替代光栅化吗？</h3><p>目前还不能，因为光线追踪计算量仍然很大，尤其对于复杂场景。混合渲染是当前主流，未来可能实现完全光线追踪。</p></div>
 <div class="faq-item"><h3>光线追踪如何处理动态场景？</h3><p>需要更新加速结构（如BVH），这可能会带来额外开销。现代引擎采用增量更新或重建策略来平衡性能。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/seo/ssao.html">SSAO 环境光遮蔽</a> · <a href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">DLSS FSR 超分辨率</a></p></section>
   </article>
 </main>

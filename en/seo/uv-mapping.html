@@ -43,18 +43,18 @@ var _hmt = _hmt || [];
 <p>UV unwrapping is the process of unfolding the triangular faces of a 3D mesh onto a 2D plane to generate a UV layout. An ideal UV unwrap should minimize stretching, overlapping, and seams, ensuring even distribution of texture on the model.</p>
 <h3>Unwrapping Methods</h3>
 <ul>
-<li>**Automatic Unwrapping**: Software generates UVs automatically based on algorithms, such as Blender's Smart UV Project, Unfold3D, etc.</li>
-<li>**Manual Unwrapping**: Artists manually cut seams and use relaxing and unwrapping tools to adjust UVs for optimal layout.</li>
-<li>**Projection Unwrapping**: Project the model onto a plane from a specific viewpoint, like planar, cylindrical, or spherical projection.</li>
+<li><strong>Automatic Unwrapping</strong>: Software generates UVs automatically based on algorithms, such as Blender's Smart UV Project, Unfold3D, etc.</li>
+<li><strong>Manual Unwrapping</strong>: Artists manually cut seams and use relaxing and unwrapping tools to adjust UVs for optimal layout.</li>
+<li><strong>Projection Unwrapping</strong>: Project the model onto a plane from a specific viewpoint, like planar, cylindrical, or spherical projection.</li>
 </ul>
 <p>In game assets, manual optimization of UV layout is often needed to improve texel density and reduce seams.</p>
 <h2>UV Mapping Considerations</h2>
 <ul>
-<li>**Seams**: Texture may be discontinuous at UV borders; place seams in hidden areas (e.g., inner sides, back of model).</li>
-<li>**Stretching**: Mismatch in proportions between UV shells and 3D faces causes texture stretching; need uniform unwrapping.</li>
-<li>**Overlapping**: Multiple faces using the same UV region (e.g., symmetrical models) can save texture space, but beware of normal maps, etc.</li>
-<li>**Texel Density**: Maintain consistent pixel density across model parts to avoid blurry areas.</li>
-<li>**UV Channels**: Models can have multiple UV channels for different maps (e.g., lightmaps use a second UV set).</li>
+<li><strong>Seams</strong>: Texture may be discontinuous at UV borders; place seams in hidden areas (e.g., inner sides, back of model).</li>
+<li><strong>Stretching</strong>: Mismatch in proportions between UV shells and 3D faces causes texture stretching; need uniform unwrapping.</li>
+<li><strong>Overlapping</strong>: Multiple faces using the same UV region (e.g., symmetrical models) can save texture space, but beware of normal maps, etc.</li>
+<li><strong>Texel Density</strong>: Maintain consistent pixel density across model parts to avoid blurry areas.</li>
+<li><strong>UV Channels</strong>: Models can have multiple UV channels for different maps (e.g., lightmaps use a second UV set).</li>
 </ul>
 <h2>Usage in Game Engines</h2>
 <p>In Unity and Unreal, UV coordinates are automatically read when importing models. Lightmaps require a second UV set (UV1), which must be non-overlapping and within 0-1 range. Engines provide UV inspection tools (e.g., Unreal's UV density view).</p>
@@ -77,7 +77,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What does &quot;island&quot; mean in UV unwrapping?</h3><p>An island is a group of contiguous faces in UV unwrapping that share UV space, with gaps between islands to avoid texture bleeding.</p></div>
 <div class="faq-item"><h3>How to detect UV stretching?</h3><p>In 3D software, display a UV checkerboard or use stretching visualization tools. Engines also have similar views.</p></div>
 <div class="faq-item"><h3>What is the relationship between UV maps and texture coordinates?</h3><p>UV maps are vertex attributes storing UV coordinates. They are interpolated during rasterization to get fragment UVs for texture sampling.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/tiling_texture.html"><b>Tiling Texture Preview</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a></p></section>
   </article>
 </main>

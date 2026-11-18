@@ -42,35 +42,35 @@ var _hmt = _hmt || [];
 <p>In game development and real-time rendering, color grading is often part of post-processing effects, changing the overall visual appearance of a scene through color mapping adjustments.</p>
 <h2>Purpose of Color Grading</h2>
 <ul>
-<li>**Unify Style**: Ensure all elements in the scene have harmonious colors.</li>
-<li>**Convey Mood**: Express atmosphere through color tones, such as dark and cool tones for horror games, or warm tones for cozy scenes.</li>
-<li>**Enhance Visual Quality**: Increase contrast and saturation to make the image more impactful.</li>
-<li>**Simulate Film Looks**: Mimic the color style of specific movies.</li>
+<li><strong>Unify Style</strong>: Ensure all elements in the scene have harmonious colors.</li>
+<li><strong>Convey Mood</strong>: Express atmosphere through color tones, such as dark and cool tones for horror games, or warm tones for cozy scenes.</li>
+<li><strong>Enhance Visual Quality</strong>: Increase contrast and saturation to make the image more impactful.</li>
+<li><strong>Simulate Film Looks</strong>: Mimic the color style of specific movies.</li>
 </ul>
 <h2>Color Grading Tools and Parameters</h2>
 <p>Common color grading tools include:</p>
 <ul>
-<li>**Color Look-Up Table (LUT)**: Uses a pre-generated lookup table to map colors, quickly applying complex color grades. Many engines support importing LUT textures.</li>
-<li>**Color Balance**: Adjusts color shifts in shadows, midtones, and highlights.</li>
-<li>**Curves**: Adjust brightness, contrast, and RGB channels through curves.</li>
-<li>**Hue/Saturation/Lightness (HSL)**: Targets specific color ranges for adjustment.</li>
-<li>**Tone Mapping**: Combined with color grading, affects overall contrast.</li>
+<li><strong>Color Look-Up Table (LUT)</strong>: Uses a pre-generated lookup table to map colors, quickly applying complex color grades. Many engines support importing LUT textures.</li>
+<li><strong>Color Balance</strong>: Adjusts color shifts in shadows, midtones, and highlights.</li>
+<li><strong>Curves</strong>: Adjust brightness, contrast, and RGB channels through curves.</li>
+<li><strong>Hue/Saturation/Lightness (HSL)</strong>: Targets specific color ranges for adjustment.</li>
+<li><strong>Tone Mapping</strong>: Combined with color grading, affects overall contrast.</li>
 </ul>
 <p>In game engines such as Unity's Post Processing Stack and Unreal Engine's Color Grading module, these parameters are available.</p>
 <h2>Color Grading Workflow</h2>
 <p>A typical workflow is as follows:</p>
 <ol>
-<li>**Basic Correction**: Ensure correct exposure and white balance, usually processed in linear space.</li>
-<li>**Stylized Grading**: Apply LUTs or adjust parameters to achieve artistic effects.</li>
-<li>**Output Transform**: Apply tone mapping and color space conversion to ensure correct display on target devices.</li>
-<li>**Iterative Testing**: Test grading effects under different scenes and lighting conditions.</li>
+<li><strong>Basic Correction</strong>: Ensure correct exposure and white balance, usually processed in linear space.</li>
+<li><strong>Stylized Grading</strong>: Apply LUTs or adjust parameters to achieve artistic effects.</li>
+<li><strong>Output Transform</strong>: Apply tone mapping and color space conversion to ensure correct display on target devices.</li>
+<li><strong>Iterative Testing</strong>: Test grading effects under different scenes and lighting conditions.</li>
 </ul>
 <p>Grading is typically done after HDR rendering and before output to the screen.</p>
 <h2>Using Color Grading in Game Development</h2>
 <ul>
-<li>**Implementation**: Most engines provide post-process volumes or camera effects for global grading. Scripts can also dynamically adjust, e.g., changing color tone based on game state.</li>
-<li>**LUT Generation**: Tools like Photoshop, DaVinci Resolve can create LUTs, then import into the engine.</li>
-<li>**Performance Consideration**: Grading is usually a full-screen post-process, but computationally inexpensive, especially when using LUTs.</li>
+<li><strong>Implementation</strong>: Most engines provide post-process volumes or camera effects for global grading. Scripts can also dynamically adjust, e.g., changing color tone based on game state.</li>
+<li><strong>LUT Generation</strong>: Tools like Photoshop, DaVinci Resolve can create LUTs, then import into the engine.</li>
+<li><strong>Performance Consideration</strong>: Grading is usually a full-screen post-process, but computationally inexpensive, especially when using LUTs.</li>
 </ul>
 <h2>Conclusion</h2>
 <p>Color grading is an important means to enhance visual presentation in games and films. By properly using grading tools, you can create unique visual styles and increase immersion.</p>
@@ -82,7 +82,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>When is color grading performed in game development?</h3><p>Typically in the post-processing stage of the rendering pipeline, after or before tone mapping. Many engines allow applying color grading after other post-processing effects.</p></div>
 <div class="faq-item"><h3>Does color grading affect performance?</h3><p>Color grading itself is computationally simple, but as a full-screen post-process it consumes some GPU resources. Using LUTs can be very efficient, usually with negligible performance impact.</p></div>
 <div class="faq-item"><h3>How to create a LUT for a game?</h3><p>You can use image editing software (like Photoshop) to grade a standard LUT image, or use professional tools like DaVinci Resolve to generate, then import into the engine. Some engines support generating LUTs directly from screenshot grading.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
   </article>
 </main>

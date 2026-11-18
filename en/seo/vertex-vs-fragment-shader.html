@@ -43,20 +43,20 @@ var _hmt = _hmt || [];
 <p>The vertex shader is the first programmable stage in the rendering pipeline, executed once per vertex. Its inputs include vertex attributes (position, normal, color, UV, etc.), and outputs include the transformed vertex position and interpolated data passed to the fragment shader.</p>
 <p>Typical functions:</p>
 <ul>
-<li>**Coordinate Transformation**: Transform vertices from model space to world space, view space, and clip space.</li>
-<li>**Normal Transformation**: Handle normal matrices for non-uniform scaling.</li>
-<li>**Texture Coordinate Passing**: Pass UVs or compute special effects (such as animated UVs).</li>
-<li>**Per-Vertex Lighting**: Simple lighting calculations (e.g., Gouraud shading).</li>
+<li><strong>Coordinate Transformation</strong>: Transform vertices from model space to world space, view space, and clip space.</li>
+<li><strong>Normal Transformation</strong>: Handle normal matrices for non-uniform scaling.</li>
+<li><strong>Texture Coordinate Passing</strong>: Pass UVs or compute special effects (such as animated UVs).</li>
+<li><strong>Per-Vertex Lighting</strong>: Simple lighting calculations (e.g., Gouraud shading).</li>
 </ul>
 <p>The vertex shader cannot create or delete vertices, only process existing ones.</p>
 <h2>Fragment Shader</h2>
 <p>The fragment shader (also called pixel shader) is executed once per fragment after rasterization (though some may be discarded by depth testing). Its input is interpolated data from the vertex shader (such as UV, color, world position, normal, etc.), and output is the fragment color (possibly including depth).</p>
 <p>Typical functions:</p>
 <ul>
-<li>**Texture Sampling**: Get color from textures.</li>
-<li>**Per-Fragment Lighting**: Compute more accurate lighting (e.g., Phong shading).</li>
-<li>**Color Blending**: Apply alpha blending, fog effects, etc.</li>
-<li>**Post-Processing Effects**: Implement post-processing algorithms on full-screen quads.</li>
+<li><strong>Texture Sampling</strong>: Get color from textures.</li>
+<li><strong>Per-Fragment Lighting</strong>: Compute more accurate lighting (e.g., Phong shading).</li>
+<li><strong>Color Blending</strong>: Apply alpha blending, fog effects, etc.</li>
+<li><strong>Post-Processing Effects</strong>: Implement post-processing algorithms on full-screen quads.</li>
 </ul>
 <p>The fragment shader is performance-critical because it executes far more times than the vertex shader.</p>
 <h2>Differences</h2>
@@ -112,7 +112,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Does the fragment shader always execute more times than the vertex shader?</h3><p>Usually yes, because one triangle covers multiple pixels, but there are optimizations like early depth culling.</p></div>
 <div class="faq-item"><h3>How to optimize fragment shader performance?</h3><p>Reduce texture sampling, avoid complex calculations, use LOD, reduce branches, etc.</p></div>
 <div class="faq-item"><h3>How does the geometry shader relate to them?</h3><p>The geometry shader sits between vertex and fragment shaders, can process whole primitives and generate new vertices, but is less used in modern rendering.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/glsl_hlsl_converter.html"><b>GLSL / HLSL Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a></p></section>
   </article>
 </main>

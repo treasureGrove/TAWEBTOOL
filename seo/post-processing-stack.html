@@ -42,16 +42,16 @@ var _hmt = _hmt || [];
 <p>后处理通常在渲染管线的最后阶段执行，使用片段着色器对全屏四边形进行处理。</p>
 <h2>常见的后处理特效</h2>
 <ul>
-<li>**泛光（Bloom）**：提取图像中的高亮区域，进行模糊后叠加回原图，模拟明亮光源的光晕。</li>
-<li>**景深（Depth of Field）**：根据深度缓冲区模糊前景或背景，模拟相机聚焦效果。</li>
-<li>**色调映射（Tone Mapping）**：将HDR图像转换为LDR，控制整体亮度和对比度。</li>
-<li>**颜色分级（Color Grading）**：调整色彩平衡、饱和度等，创造特定氛围。</li>
-<li>**运动模糊（Motion Blur）**：基于运动矢量模糊快速移动的物体，增强速度感。</li>
-<li>**环境光遮蔽（SSAO）**：在屏幕空间近似计算局部遮蔽，增加接触阴影。</li>
-<li>**抗锯齿（Anti-aliasing）**：如FXAA、TAA，减少边缘锯齿。</li>
-<li>**晕影（Vignette）**：使图像边缘变暗，聚焦中心。</li>
-<li>**色差（Chromatic Aberration）**：模拟镜头色散，边缘产生颜色偏移。</li>
-<li>**噪点/胶片颗粒（Film Grain）**：添加噪声，增强电影感。</li>
+<li><strong>泛光（Bloom）</strong>：提取图像中的高亮区域，进行模糊后叠加回原图，模拟明亮光源的光晕。</li>
+<li><strong>景深（Depth of Field）</strong>：根据深度缓冲区模糊前景或背景，模拟相机聚焦效果。</li>
+<li><strong>色调映射（Tone Mapping）</strong>：将HDR图像转换为LDR，控制整体亮度和对比度。</li>
+<li><strong>颜色分级（Color Grading）</strong>：调整色彩平衡、饱和度等，创造特定氛围。</li>
+<li><strong>运动模糊（Motion Blur）</strong>：基于运动矢量模糊快速移动的物体，增强速度感。</li>
+<li><strong>环境光遮蔽（SSAO）</strong>：在屏幕空间近似计算局部遮蔽，增加接触阴影。</li>
+<li><strong>抗锯齿（Anti-aliasing）</strong>：如FXAA、TAA，减少边缘锯齿。</li>
+<li><strong>晕影（Vignette）</strong>：使图像边缘变暗，聚焦中心。</li>
+<li><strong>色差（Chromatic Aberration）</strong>：模拟镜头色散，边缘产生颜色偏移。</li>
+<li><strong>噪点/胶片颗粒（Film Grain）</strong>：添加噪声，增强电影感。</li>
 </ul>
 <h2>后处理的实现原理</h2>
 <p>后处理通常需要多个渲染目标，流程如下：</p>
@@ -63,17 +63,17 @@ var _hmt = _hmt || [];
 <p>为减少性能消耗，常将多个效果合并到一个着色器中，或使用降分辨率处理（如半分辨率模糊）。</p>
 <h2>后处理的性能考虑</h2>
 <ul>
-<li>**像素填充率**：全屏效果消耗大量像素处理，尤其多个效果叠加。</li>
-<li>**带宽**：渲染目标之间的读写消耗显存带宽。</li>
-<li>**内存**：额外的渲染目标占用显存。</li>
-<li>**优化策略**：合并效果、使用降分辨率、减少渲染目标切换、利用Compute Shader异步处理。</li>
+<li><strong>像素填充率</strong>：全屏效果消耗大量像素处理，尤其多个效果叠加。</li>
+<li><strong>带宽</strong>：渲染目标之间的读写消耗显存带宽。</li>
+<li><strong>内存</strong>：额外的渲染目标占用显存。</li>
+<li><strong>优化策略</strong>：合并效果、使用降分辨率、减少渲染目标切换、利用Compute Shader异步处理。</li>
 </ul>
 <h2>在游戏引擎中使用后处理</h2>
 <p>大多数引擎提供后处理框架：</p>
 <ul>
-<li>**Unity**：使用Post Processing Stack（URP/HDRP内置）或第三方插件。</li>
-<li>**Unreal Engine**：使用Post Process Volume，可调整各种效果参数。</li>
-<li>**自定义引擎**：需要手动管理渲染目标和着色器。</li>
+<li><strong>Unity</strong>：使用Post Processing Stack（URP/HDRP内置）或第三方插件。</li>
+<li><strong>Unreal Engine</strong>：使用Post Process Volume，可调整各种效果参数。</li>
+<li><strong>自定义引擎</strong>：需要手动管理渲染目标和着色器。</li>
 </ul>
 <p>开发者可以根据需求启用或禁用效果，并在不同质量等级下调整。</p>
 <h2>总结</h2>
@@ -86,7 +86,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>后处理必须使用HDR吗？</h3><p>不一定，但许多效果（如Bloom）在HDR下效果更好，因为需要识别高亮区域。LDR下也可以实现，但质量可能受限。</p></div>
 <div class="faq-item"><h3>移动平台适合使用后处理吗？</h3><p>移动平台性能有限，应谨慎使用。选择轻量效果，并降低分辨率或简化算法，避免过热和耗电。</p></div>
 <div class="faq-item"><h3>如何优化后处理性能？</h3><p>合并多个效果为一个pass，减少渲染目标切换；使用半分辨率处理模糊等效果；关闭不必要的效果；利用Compute Shader。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/bloom.html">Bloom 泛光</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/color-grading.html">调色 Color Grading</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a></p></section>
   </article>
 </main>

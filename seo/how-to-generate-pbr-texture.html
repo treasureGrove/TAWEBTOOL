@@ -84,18 +84,18 @@ var _hmt = _hmt || [];
 <p>在 Substance Painter 中，使用填充图层和遮罩来精确控制金属度。</p>
 <h2>工具推荐</h2>
 <ul>
-<li>**Blender**：免费开源，支持从高模烘焙法线。</li>
-<li>**Substance Suite**：行业标准，提供 Designer 和 Painter，强大的程序化和手绘能力。</li>
-<li>**CrazyBump / ShaderMap**：专为从照片生成法线、粗糙度等贴图设计。</li>
-<li>**Materialize**：免费工具，可从单张照片生成多种 PBR 贴图。</li>
-<li>**AwesomeBump**：开源替代。</li>
+<li><strong>Blender</strong>：免费开源，支持从高模烘焙法线。</li>
+<li><strong>Substance Suite</strong>：行业标准，提供 Designer 和 Painter，强大的程序化和手绘能力。</li>
+<li><strong>CrazyBump / ShaderMap</strong>：专为从照片生成法线、粗糙度等贴图设计。</li>
+<li><strong>Materialize</strong>：免费工具，可从单张照片生成多种 PBR 贴图。</li>
+<li><strong>AwesomeBump</strong>：开源替代。</li>
 </ul>
 <h2>注意事项</h2>
 <ul>
-<li>**颜色空间**：法线贴图应使用线性颜色空间，粗糙度和金属度贴图通常使用线性或灰度，避免 sRGB 校正。</li>
-<li>**贴图尺寸**：根据目标平台和模型复杂度决定，通常为 1024x1024 或 2048x2048。</li>
-<li>**无缝平铺**：如果材质需要平铺，确保生成的贴图无缝。</li>
-<li>**一致性**：确保所有贴图对齐，纹理坐标一致。</li>
+<li><strong>颜色空间</strong>：法线贴图应使用线性颜色空间，粗糙度和金属度贴图通常使用线性或灰度，避免 sRGB 校正。</li>
+<li><strong>贴图尺寸</strong>：根据目标平台和模型复杂度决定，通常为 1024x1024 或 2048x2048。</li>
+<li><strong>无缝平铺</strong>：如果材质需要平铺，确保生成的贴图无缝。</li>
+<li><strong>一致性</strong>：确保所有贴图对齐，纹理坐标一致。</li>
 </ul>
 <h2>总结</h2>
 <p>生成 PBR 贴图有多种方法，可根据项目需求和资源选择。从高模烘焙质量最高，但耗时；从照片生成快速但精度有限；程序化生成灵活但需要专业知识。建议结合使用多种方法。</p>
@@ -107,7 +107,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>粗糙度和光泽度有什么区别？</h3><p>粗糙度是光泽度的反相。粗糙度贴图中白色表示粗糙，黑色表示光滑；光泽度贴图则相反。许多引擎使用粗糙度。</p></div>
 <div class="faq-item"><h3>金属度贴图必须是纯黑纯白吗？</h3><p>不一定。对于大多数材质，金属和非金属区域边界清晰，但过渡区域（如锈蚀金属）可以使用灰度值。</p></div>
 <div class="faq-item"><h3>如何确保烘焙的法线贴图细节正确？</h3><p>确保高低模匹配良好，UV 展开合理，烘焙时使用足够的采样和 cage 设置。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>贴图通道合成</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/texture_channel_splitter.html"><b>贴图通道分离</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a></p></section>
   </article>
 </main>

@@ -41,29 +41,29 @@ var _hmt = _hmt || [];
 <p>The sRGB texture workflow is a key part of color management in real-time rendering. It involves correctly handling color space in the graphics pipeline to ensure accurate final displayed colors. The core principle is: color textures (such as albedo, diffuse) are typically stored in sRGB color space because human perception of brightness is nonlinear, and sRGB encoding utilizes limited bit depth more effectively. However, lighting calculations must be performed in linear space; otherwise results are incorrect. Therefore, after sampling a texture, colors need to be converted from sRGB to linear space, and after rendering, the output is converted back to sRGB for display.</p>
 <h2>Why sRGB Workflow is Needed</h2>
 <ul>
-<li>**Physical correctness**: Lighting equations hold only in linear space. If computed directly in sRGB space, lighting will be too bright or color shifted.</li>
-<li>**Avoid color distortion**: Incorrect color space handling causes texture colors to deviate from design, especially in shadows and highlights.</li>
-<li>**Consistency**: Ensures colors appear consistent across platforms and displays.</li>
+<li><strong>Physical correctness</strong>: Lighting equations hold only in linear space. If computed directly in sRGB space, lighting will be too bright or color shifted.</li>
+<li><strong>Avoid color distortion</strong>: Incorrect color space handling causes texture colors to deviate from design, especially in shadows and highlights.</li>
+<li><strong>Consistency</strong>: Ensures colors appear consistent across platforms and displays.</li>
 </ul>
 <h2>Difference between sRGB and Linear Space</h2>
 <ul>
-<li>**sRGB**: A nonlinear color space that encodes gamma correction (about 2.2) for storage and display, matching human perception.</li>
-<li>**Linear space**: Lighting calculations and physical simulations should occur in this space; pixel values are proportional to light intensity.</li>
+<li><strong>sRGB</strong>: A nonlinear color space that encodes gamma correction (about 2.2) for storage and display, matching human perception.</li>
+<li><strong>Linear space</strong>: Lighting calculations and physical simulations should occur in this space; pixel values are proportional to light intensity.</li>
 </ul>
 <h2>Implementing sRGB Workflow</h2>
 <p>In graphics APIs and engines, this is typically achieved by:</p>
 <ol>
-<li>**Texture import settings**: Mark color textures as sRGB so the GPU automatically converts them to linear space upon sampling. For example, in Unity, color textures default to &quot;sRGB (Color Texture)&quot; checked, while data textures like normal maps, roughness, etc., use linear.</li>
-<li>**Render target format**: Use framebuffer formats that support sRGB (e.g., sRGB8_ALPHA8); the GPU automatically performs linear-to-sRGB conversion on write.</li>
-<li>**In shaders**: If handled manually, perform `pow(color, 2.2)` after sampling color textures, or use hardware sRGB texture sampling.</li>
-<li>**Final output**: If rendering to a non-sRGB target, manual gamma correction is needed.</li>
+<li><strong>Texture import settings</strong>: Mark color textures as sRGB so the GPU automatically converts them to linear space upon sampling. For example, in Unity, color textures default to &quot;sRGB (Color Texture)&quot; checked, while data textures like normal maps, roughness, etc., use linear.</li>
+<li><strong>Render target format</strong>: Use framebuffer formats that support sRGB (e.g., sRGB8_ALPHA8); the GPU automatically performs linear-to-sRGB conversion on write.</li>
+<li><strong>In shaders</strong>: If handled manually, perform <code>pow(color, 2.2)</code> after sampling color textures, or use hardware sRGB texture sampling.</li>
+<li><strong>Final output</strong>: If rendering to a non-sRGB target, manual gamma correction is needed.</li>
 </ul>
 <h2>Considerations</h2>
 <ul>
-<li>**Do not use sRGB for non-color data**: Normal maps, roughness, metallic, AO, etc., should use linear space; otherwise values are decoded incorrectly.</li>
-<li>**Blending order**: Transparent blending should occur in linear space, then converted to sRGB for output.</li>
-<li>**Mipmap generation**: Mipmaps for sRGB textures should be generated in sRGB space; otherwise average colors appear too dark.</li>
-<li>**UI elements**: UI is usually designed in sRGB space and should avoid being linearized.</li>
+<li><strong>Do not use sRGB for non-color data</strong>: Normal maps, roughness, metallic, AO, etc., should use linear space; otherwise values are decoded incorrectly.</li>
+<li><strong>Blending order</strong>: Transparent blending should occur in linear space, then converted to sRGB for output.</li>
+<li><strong>Mipmap generation</strong>: Mipmaps for sRGB textures should be generated in sRGB space; otherwise average colors appear too dark.</li>
+<li><strong>UI elements</strong>: UI is usually designed in sRGB space and should avoid being linearized.</li>
 </ul>
 <h2>Common Mistakes</h2>
 <ul>
@@ -81,7 +81,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to set up sRGB texture workflow in Unity?</h3><p>In Player Settings, set Color Space to Linear. Then in texture import settings, color textures should have sRGB checked by default, while data textures should have it unchecked.</p></div>
 <div class="faq-item"><h3>Is linear space rendering better than gamma space?</h3><p>Yes, linear space rendering provides physically correct lighting, more realistic colors, and avoids overexposure or distortion. Modern engines and mobile devices recommend using linear space.</p></div>
 <div class="faq-item"><h3>What is the relationship between sRGB and gamma correction?</h3><p>sRGB encoding includes gamma correction (about 2.2) to compensate for display nonlinearity. Gamma correction is the process of converting linear values to sRGB values; inverse gamma correction converts them back to linear.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>Texture Info Inspector</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

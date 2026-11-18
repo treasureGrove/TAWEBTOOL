@@ -45,9 +45,9 @@ var _hmt = _hmt || [];
 <p>Reflection probes can be static (baked at edit time) or dynamic (updated at runtime). Dynamic probes render the scene in real time, which is more expensive and typically used for important areas or moving objects.</p>
 <h2>Types of Reflection Probes</h2>
 <ul>
-<li>**Static Reflection Probes**: Baked at build time, do not change at runtime, low performance overhead. Suitable for fixed scenes.</li>
-<li>**Dynamic Reflection Probes**: Updated at runtime, can reflect moving objects and lighting changes, but high performance cost. Often update frequency and resolution are limited.</li>
-<li>**Real-time Reflection Probes**: Updated every frame for high-fidelity reflections, such as mirrors, but highest cost.</li>
+<li><strong>Static Reflection Probes</strong>: Baked at build time, do not change at runtime, low performance overhead. Suitable for fixed scenes.</li>
+<li><strong>Dynamic Reflection Probes</strong>: Updated at runtime, can reflect moving objects and lighting changes, but high performance cost. Often update frequency and resolution are limited.</li>
+<li><strong>Real-time Reflection Probes</strong>: Updated every frame for high-fidelity reflections, such as mirrors, but highest cost.</li>
 </ul>
 <h2>Placement and Influence Range of Reflection Probes</h2>
 <p>Reflection probes can be placed at key positions in the scene with defined influence ranges (e.g., spherical or box-shaped areas). Objects select the most relevant probe or blend data from multiple probes based on their position for smooth transitions.</p>
@@ -56,11 +56,11 @@ var _hmt = _hmt || [];
 <p>Reflection probes provide static or low-frequency environment reflections but cannot capture off-screen details or precise reflections of dynamic objects. Screen Space Reflections (SSR) can supplement this, but limited to what is on screen. Both are often used together.</p>
 <h2>Performance Optimization</h2>
 <ul>
-<li>**Reduce Resolution**: The cubemap resolution of reflection probes need not be very high; usually 128-256 is sufficient for most reflections.</li>
-<li>**Limit Update Frequency**: Dynamic probes can update a few times per second instead of every frame.</li>
-<li>**Use Time Slicing**: Render the six faces across frames to reduce per-frame cost.</li>
-<li>**Reasonably Layout**: Avoid too many probes; use blending to reduce count.</li>
-<li>**Use Pre-filtering**: Pre-generate mipmaps for different roughness levels to reduce runtime computation.</li>
+<li><strong>Reduce Resolution</strong>: The cubemap resolution of reflection probes need not be very high; usually 128-256 is sufficient for most reflections.</li>
+<li><strong>Limit Update Frequency</strong>: Dynamic probes can update a few times per second instead of every frame.</li>
+<li><strong>Use Time Slicing</strong>: Render the six faces across frames to reduce per-frame cost.</li>
+<li><strong>Reasonably Layout</strong>: Avoid too many probes; use blending to reduce count.</li>
+<li><strong>Use Pre-filtering</strong>: Pre-generate mipmaps for different roughness levels to reduce runtime computation.</li>
 </ul>
 <h2>Conclusion</h2>
 <p>Reflection probes are practical tools for achieving environmental reflections and indirect lighting in real-time rendering. Proper use can significantly enhance scene realism.</p>
@@ -72,7 +72,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Can reflection probes reflect dynamic objects?</h3><p>Only dynamic or real-time reflection probes can include dynamic objects, but this comes with high performance cost. Static probes only reflect the static scene as baked.</p></div>
 <div class="faq-item"><h3>Do reflection probes affect performance?</h3><p>Yes, especially real-time updating probes. Static probes have almost no runtime overhead (except sampling). Dynamic probes require scene rendering, so control count and update frequency.</p></div>
 <div class="faq-item"><h3>How to make objects use multiple reflection probes?</h3><p>Engines usually automatically select and blend nearby probes based on object position. You can set blending distances and weights for smooth transitions.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR Editor</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a></p></section>
   </article>
 </main>

@@ -42,29 +42,29 @@ var _hmt = _hmt || [];
 <h2>遮挡剔除的原理</h2>
 <p>遮挡剔除通常基于深度缓冲或空间数据结构。常见方法包括：</p>
 <ul>
-<li>**硬件遮挡查询**：使用 GPU 查询（如 D3D 的 ID3D11Query）测试物体的包围盒是否通过深度测试，如果未通过则说明被遮挡。</li>
-<li>**软件光栅化**：CPU 光栅化遮挡体到低分辨率深度缓冲，然后测试物体包围盒。</li>
-<li>**层次 Z 缓冲**：维护一个金字塔形深度缓冲，快速测试包围盒可见性。</li>
-<li>**门户剔除**：适用于室内场景，通过门洞传播可见性。</li>
+<li><strong>硬件遮挡查询</strong>：使用 GPU 查询（如 D3D 的 ID3D11Query）测试物体的包围盒是否通过深度测试，如果未通过则说明被遮挡。</li>
+<li><strong>软件光栅化</strong>：CPU 光栅化遮挡体到低分辨率深度缓冲，然后测试物体包围盒。</li>
+<li><strong>层次 Z 缓冲</strong>：维护一个金字塔形深度缓冲，快速测试包围盒可见性。</li>
+<li><strong>门户剔除</strong>：适用于室内场景，通过门洞传播可见性。</li>
 </ul>
 <p>在游戏引擎中，通常使用保守的包围盒（如 AABB）进行测试，以减少计算量。</p>
 <h2>在引擎中的应用</h2>
 <ul>
-<li>**Unity**：使用 Umbra 中间件提供遮挡剔除。需要在 Window &gt; Rendering &gt; Occlusion Culling 中烘焙遮挡数据（设置遮挡区域、静态物体等）。运行时自动执行。</li>
-<li>**Unreal Engine**：默认启用遮挡剔除，使用硬件查询和软件光栅化结合。可以通过 `r.EnableOcclusionCulling` 控制。</li>
+<li><strong>Unity</strong>：使用 Umbra 中间件提供遮挡剔除。需要在 Window &gt; Rendering &gt; Occlusion Culling 中烘焙遮挡数据（设置遮挡区域、静态物体等）。运行时自动执行。</li>
+<li><strong>Unreal Engine</strong>：默认启用遮挡剔除，使用硬件查询和软件光栅化结合。可以通过 <code>r.EnableOcclusionCulling</code> 控制。</li>
 </ul>
 <h2>遮挡剔除的注意事项</h2>
 <ul>
-<li>**动态物体**：遮挡剔除对动态物体效果有限，通常仅对静态物体高效。</li>
-<li>**烘焙**：Unity 的遮挡剔除需要烘焙场景，修改场景后需重新烘焙。</li>
-<li>**粒度**：通常以物体或组件为单位，过大或过小都会影响效果。</li>
-<li>**移动端**：移动端 GPU 查询可能开销大，可使用简化的 PVS（潜在可见集）预计算。</li>
+<li><strong>动态物体</strong>：遮挡剔除对动态物体效果有限，通常仅对静态物体高效。</li>
+<li><strong>烘焙</strong>：Unity 的遮挡剔除需要烘焙场景，修改场景后需重新烘焙。</li>
+<li><strong>粒度</strong>：通常以物体或组件为单位，过大或过小都会影响效果。</li>
+<li><strong>移动端</strong>：移动端 GPU 查询可能开销大，可使用简化的 PVS（潜在可见集）预计算。</li>
 </ul>
 <h2>与其他剔除技术的比较</h2>
 <ul>
-<li>**视锥剔除**：剔除视野外物体，是最基本的剔除。</li>
-<li>**背面剔除**：剔除背向摄像机的三角形，硬件自动完成。</li>
-<li>**遮挡剔除**：剔除被遮挡物体，进一步减少渲染负载。</li>
+<li><strong>视锥剔除</strong>：剔除视野外物体，是最基本的剔除。</li>
+<li><strong>背面剔除</strong>：剔除背向摄像机的三角形，硬件自动完成。</li>
+<li><strong>遮挡剔除</strong>：剔除被遮挡物体，进一步减少渲染负载。</li>
 </ul>
 <p>实际渲染中，三种剔除技术通常结合使用。</p>
 <h2>常见问题</h2>
@@ -86,7 +86,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>遮挡剔除对移动端性能有帮助吗？</h3><p>有帮助，但移动端可能使用简化方法，如预计算可见性（PVS）。</p></div>
 <div class="faq-item"><h3>动态物体能被遮挡剔除吗？</h3><p>可以，但通常使用硬件查询，性能开销可能较大。有些引擎对动态物体使用保守剔除。</p></div>
 <div class="faq-item"><h3>遮挡剔除会不会产生错误剔除？</h3><p>如果算法过于激进，可能错误剔除可见物体。因此通常使用保守测试，如包围盒代替精确网格。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
   </article>
 </main>

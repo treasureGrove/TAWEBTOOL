@@ -43,41 +43,41 @@ var _hmt = _hmt || [];
 <p>SSS的物理基础是光在参与介质（participating media）中的传输。当光进入半透明材质，与介质中的粒子（如皮肤中的细胞、血液）发生散射和吸收。散射系数和吸收系数决定了光的传播路径和衰减。对于皮肤，红光穿透深度较大，而蓝绿光被吸收较多，因此从皮肤透出的光偏红，形成标志性的暖色半透明感。</p>
 <p>实时渲染中精确模拟体积散射需要昂贵的路径追踪，因此通常使用近似模型。常见方法包括：</p>
 <ul>
-<li>**纹理空间扩散（Texture Space Diffusion）**：将模型展开到纹理空间，在纹理空间进行模糊，再映射回三维表面。该方法由NVIDIA的Demo团队推广，适合实时应用。</li>
-<li>**屏幕空间模糊（Screen Space Blur）**：渲染场景后，对特定材质的对象在屏幕空间进行深度感知的模糊，高效但物理准确性较低。</li>
-<li>**预积分皮肤着色（Pre-Integrated Skin Shading）**：使用查找表存储不同曲率和光照角度下的散射结果，结合法线贴图模拟细节散射。</li>
-<li>**薄表面透射（Thin Surface Transmission）**：对于薄物体（如耳朵、树叶），计算光线从背面穿透的光照，添加半透明效果。</li>
+<li><strong>纹理空间扩散（Texture Space Diffusion）</strong>：将模型展开到纹理空间，在纹理空间进行模糊，再映射回三维表面。该方法由NVIDIA的Demo团队推广，适合实时应用。</li>
+<li><strong>屏幕空间模糊（Screen Space Blur）</strong>：渲染场景后，对特定材质的对象在屏幕空间进行深度感知的模糊，高效但物理准确性较低。</li>
+<li><strong>预积分皮肤着色（Pre-Integrated Skin Shading）</strong>：使用查找表存储不同曲率和光照角度下的散射结果，结合法线贴图模拟细节散射。</li>
+<li><strong>薄表面透射（Thin Surface Transmission）</strong>：对于薄物体（如耳朵、树叶），计算光线从背面穿透的光照，添加半透明效果。</li>
 </ul>
 <h2>实时渲染实现要点</h2>
 <p>在游戏引擎（如Unity、Unreal）中，实现高质量的SSS通常结合多种技术：</p>
 <ol>
-<li>**扩散剖面（Diffusion Profile）**：定义不同颜色通道的散射距离和强度。例如皮肤通常使用红色通道散射距离较长，蓝色通道较短。</li>
-<li>**屏幕空间次表面散射**：在延迟渲染管线中，对皮肤材质的像素在屏幕空间进行多次模糊，根据深度和法线加权，模拟近距离散射。</li>
-<li>**纹理空间扩散**：需要模型有良好的UV展开，且避免UV重叠。将光照结果烘焙到纹理空间，执行高斯模糊，再采样回表面。</li>
-<li>**透射项（Transmission）**：对于耳朵、鼻孔等薄壁区域，计算背光强度，乘以透射颜色，添加到最终着色。</li>
+<li><strong>扩散剖面（Diffusion Profile）</strong>：定义不同颜色通道的散射距离和强度。例如皮肤通常使用红色通道散射距离较长，蓝色通道较短。</li>
+<li><strong>屏幕空间次表面散射</strong>：在延迟渲染管线中，对皮肤材质的像素在屏幕空间进行多次模糊，根据深度和法线加权，模拟近距离散射。</li>
+<li><strong>纹理空间扩散</strong>：需要模型有良好的UV展开，且避免UV重叠。将光照结果烘焙到纹理空间，执行高斯模糊，再采样回表面。</li>
+<li><strong>透射项（Transmission）</strong>：对于耳朵、鼻孔等薄壁区域，计算背光强度，乘以透射颜色，添加到最终着色。</li>
 </ul>
 <p>实现时需注意：SSS应在线性空间计算，确保能量守恒；散射半径需根据世界空间尺度调整；与PBR材质结合时，需在漫反射项中加入SSS分量。</p>
 <h2>参数调优与艺术指导</h2>
 <p>SSS效果高度依赖艺术参数调整，常用参数包括：</p>
 <ul>
-<li>**散射颜色（Scatter Color）**：控制内部散射的光的颜色，皮肤通常偏红。</li>
-<li>**散射半径/强度（Scatter Radius/Intensity）**：决定光线在内部传播的距离和衰减，影响材质的通透感。</li>
-<li>**透射颜色（Transmission Color）**：光线穿过薄壁后的颜色。</li>
-<li>**纹理权重（Texture Weight）**：控制细节法线对SSS的影响，避免模糊细节。</li>
+<li><strong>散射颜色（Scatter Color）</strong>：控制内部散射的光的颜色，皮肤通常偏红。</li>
+<li><strong>散射半径/强度（Scatter Radius/Intensity）</strong>：决定光线在内部传播的距离和衰减，影响材质的通透感。</li>
+<li><strong>透射颜色（Transmission Color）</strong>：光线穿过薄壁后的颜色。</li>
+<li><strong>纹理权重（Texture Weight）</strong>：控制细节法线对SSS的影响，避免模糊细节。</li>
 </ul>
 <p>调优时需参考真实材质：皮肤散射半径在几毫米到几厘米，且红色通道散射远于蓝色。同时注意性能：屏幕空间模糊可通过降采样减少开销，纹理空间扩散可预计算部分结果。</p>
 <h2>应用场景与常见问题</h2>
 <p>SSS广泛应用于：</p>
 <ul>
-<li>**数字人类**：电影、游戏角色皮肤，追求照片真实感。</li>
-<li>**蜡像、玉石、食物**：增强材质的半透明质感。</li>
-<li>**植被**：叶片薄壁透光，模拟阳光穿透叶片的效果。</li>
+<li><strong>数字人类</strong>：电影、游戏角色皮肤，追求照片真实感。</li>
+<li><strong>蜡像、玉石、食物</strong>：增强材质的半透明质感。</li>
+<li><strong>植被</strong>：叶片薄壁透光，模拟阳光穿透叶片的效果。</li>
 </ul>
 <p>常见问题包括：</p>
 <ul>
-<li>**过度散射导致材质显得浑浊**：需平衡散射强度和模糊半径。</li>
-<li>**UV接缝处出现不连续**：纹理空间扩散需处理UV边界。</li>
-<li>**性能消耗过高**：采用降采样、限制模糊半径或使用预积分技术。</li>
+<li><strong>过度散射导致材质显得浑浊</strong>：需平衡散射强度和模糊半径。</li>
+<li><strong>UV接缝处出现不连续</strong>：纹理空间扩散需处理UV边界。</li>
+<li><strong>性能消耗过高</strong>：采用降采样、限制模糊半径或使用预积分技术。</li>
 </ul>
 <p>掌握SSS技术，能显著提升角色和有机材质的真实感，是实时渲染进阶的重要环节。</p>
 
@@ -88,7 +88,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>SSS和PBR材质如何结合？</h3><p>在PBR框架中，SSS通常作为漫反射项的一部分。可以将漫反射光照结果分离出需要散射的部分，应用扩散剖面模糊，再与镜面反射项相加，保持能量守恒。</p></div>
 <div class="faq-item"><h3>移动端实时渲染能支持SSS吗？</h3><p>可以，但需使用轻量级近似，如预积分皮肤着色或简单的屏幕空间模糊，并在低分辨率下执行。需权衡效果与性能。</p></div>
 <div class="faq-item"><h3>为什么皮肤渲染中红光散射更明显？</h3><p>皮肤中的血液和黑色素对蓝绿光吸收较强，而对红光吸收较弱，因此红光穿透深度更大，散射出皮肤的比例更高，使皮肤呈现暖红色调。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/bloom.html">Bloom 泛光</a></p></section>
   </article>
 </main>

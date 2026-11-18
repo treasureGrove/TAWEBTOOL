@@ -41,29 +41,29 @@ var _hmt = _hmt || [];
 <p>sRGB贴图工作流是实时渲染中颜色管理的关键部分。它涉及在图形管线中正确处理颜色空间，以确保最终显示的颜色准确。核心原则是：颜色贴图（如反照率、漫反射）通常以sRGB颜色空间存储，因为人眼对亮度的感知是非线性的，sRGB编码可以更有效地利用有限的位深。然而，光照计算必须在线性空间进行，否则结果会不正确。因此，需要在采样纹理后将颜色从sRGB转换到线性空间，渲染完成后再将输出转换回sRGB进行显示。</p>
 <h2>为什么需要sRGB工作流</h2>
 <ul>
-<li>**物理正确性**：光照方程在线性空间中才成立。如果在sRGB空间直接计算，会导致光照过亮或色彩偏移。</li>
-<li>**避免颜色失真**：不正确的颜色空间处理会导致纹理颜色与设计不符，尤其在暗部和亮部。</li>
-<li>**一致性**：确保在不同平台和显示器上颜色一致。</li>
+<li><strong>物理正确性</strong>：光照方程在线性空间中才成立。如果在sRGB空间直接计算，会导致光照过亮或色彩偏移。</li>
+<li><strong>避免颜色失真</strong>：不正确的颜色空间处理会导致纹理颜色与设计不符，尤其在暗部和亮部。</li>
+<li><strong>一致性</strong>：确保在不同平台和显示器上颜色一致。</li>
 </ul>
 <h2>sRGB与线性空间的区别</h2>
 <ul>
-<li>**sRGB**：是一种非线性颜色空间，编码了伽马校正（约2.2），用于存储和显示，以匹配人眼感知。</li>
-<li>**线性空间**：光照计算和物理模拟应在该空间进行，像素值与光强度成正比。</li>
+<li><strong>sRGB</strong>：是一种非线性颜色空间，编码了伽马校正（约2.2），用于存储和显示，以匹配人眼感知。</li>
+<li><strong>线性空间</strong>：光照计算和物理模拟应在该空间进行，像素值与光强度成正比。</li>
 </ul>
 <h2>实现sRGB工作流</h2>
 <p>在图形API和引擎中，通常通过以下方式实现：</p>
 <ol>
-<li>**纹理导入设置**：将颜色贴图标记为sRGB，这样GPU在采样时会自动将其转换到线性空间。例如，在Unity中，颜色贴图默认勾选“sRGB (Color Texture)”，而法线贴图、粗糙度等数据贴图则使用线性。</li>
-<li>**渲染目标格式**：使用支持sRGB的帧缓冲格式（如sRGB8_ALPHA8），GPU在写入时会自动进行线性到sRGB的转换。</li>
-<li>**着色器中的处理**：如果手动处理，需要在采样颜色贴图后执行`pow(color, 2.2)`或使用硬件sRGB纹理采样。</li>
-<li>**最终输出**：如果渲染到非sRGB目标，需要手动进行伽马校正。</li>
+<li><strong>纹理导入设置</strong>：将颜色贴图标记为sRGB，这样GPU在采样时会自动将其转换到线性空间。例如，在Unity中，颜色贴图默认勾选“sRGB (Color Texture)”，而法线贴图、粗糙度等数据贴图则使用线性。</li>
+<li><strong>渲染目标格式</strong>：使用支持sRGB的帧缓冲格式（如sRGB8_ALPHA8），GPU在写入时会自动进行线性到sRGB的转换。</li>
+<li><strong>着色器中的处理</strong>：如果手动处理，需要在采样颜色贴图后执行<code>pow(color, 2.2)</code>或使用硬件sRGB纹理采样。</li>
+<li><strong>最终输出</strong>：如果渲染到非sRGB目标，需要手动进行伽马校正。</li>
 </ul>
 <h2>注意事项</h2>
 <ul>
-<li>**不要对非颜色数据使用sRGB**：法线贴图、粗糙度、金属度、AO等数据应使用线性空间，否则数值会被错误解码。</li>
-<li>**混合顺序**：透明混合应在线性空间进行，然后转换为sRGB输出。</li>
-<li>**Mipmap生成**：sRGB纹理的mipmap应在sRGB空间生成，否则平均颜色会偏暗。</li>
-<li>**UI元素**：UI通常设计在sRGB空间，应避免被线性化处理。</li>
+<li><strong>不要对非颜色数据使用sRGB</strong>：法线贴图、粗糙度、金属度、AO等数据应使用线性空间，否则数值会被错误解码。</li>
+<li><strong>混合顺序</strong>：透明混合应在线性空间进行，然后转换为sRGB输出。</li>
+<li><strong>Mipmap生成</strong>：sRGB纹理的mipmap应在sRGB空间生成，否则平均颜色会偏暗。</li>
+<li><strong>UI元素</strong>：UI通常设计在sRGB空间，应避免被线性化处理。</li>
 </ul>
 <h2>常见错误</h2>
 <ul>
@@ -81,7 +81,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>在Unity中如何设置sRGB贴图工作流？</h3><p>在Player Settings中，Color Space选择Linear。然后在纹理导入设置中，颜色贴图默认勾选sRGB，数据贴图取消勾选。</p></div>
 <div class="faq-item"><h3>线性空间渲染比伽马空间好吗？</h3><p>是的，线性空间渲染提供物理正确的光照，色彩更真实，避免过曝或失真。现代引擎和移动设备都建议使用线性空间。</p></div>
 <div class="faq-item"><h3>sRGB和伽马校正有什么关系？</h3><p>sRGB编码包含了伽马校正（约2.2），用于补偿显示器的非线性响应。伽马校正是将线性值转换为sRGB值的过程，反伽马校正是将其转回线性。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>色彩空间转换器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>贴图信息查看器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

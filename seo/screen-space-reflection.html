@@ -50,24 +50,24 @@ var _hmt = _hmt || [];
 <p>光线步进可以使用固定步长、层次化步进（Hi-Z）或混合方法，以提高性能和准确性。</p>
 <h2>SSR的优势</h2>
 <ul>
-<li>**动态反射**：能够反射屏幕内的动态物体，不受预烘焙限制。</li>
-<li>**细节丰富**：反射内容基于实际渲染结果，真实感强。</li>
-<li>**无需额外几何渲染**：只使用屏幕空间数据，比平面反射或渲染到纹理开销低。</li>
+<li><strong>动态反射</strong>：能够反射屏幕内的动态物体，不受预烘焙限制。</li>
+<li><strong>细节丰富</strong>：反射内容基于实际渲染结果，真实感强。</li>
+<li><strong>无需额外几何渲染</strong>：只使用屏幕空间数据，比平面反射或渲染到纹理开销低。</li>
 </ul>
 <h2>SSR的局限性</h2>
 <ul>
-<li>**屏幕空间限制**：只能反射屏幕内可见的物体，屏幕外或背向相机的物体无法反射。</li>
-<li>**性能消耗**：光线步进需要多次深度采样，在高分辨率下可能很昂贵。</li>
-<li>**噪点**：如果步进精度不足，可能产生噪点或条纹，需要后处理去噪。</li>
-<li>**厚度问题**：对于薄物体，深度比较可能不准确，导致反射丢失或错误。</li>
+<li><strong>屏幕空间限制</strong>：只能反射屏幕内可见的物体，屏幕外或背向相机的物体无法反射。</li>
+<li><strong>性能消耗</strong>：光线步进需要多次深度采样，在高分辨率下可能很昂贵。</li>
+<li><strong>噪点</strong>：如果步进精度不足，可能产生噪点或条纹，需要后处理去噪。</li>
+<li><strong>厚度问题</strong>：对于薄物体，深度比较可能不准确，导致反射丢失或错误。</li>
 </ul>
 <h2>SSR的优化</h2>
 <ul>
-<li>**降低分辨率**：在半分辨率或四分之一分辨率下计算SSR，然后上采样。</li>
-<li>**层次化深度（Hi-Z）**：使用mipmap链加速光线步进，减少步数。</li>
-<li>**限制反射距离**：设置最大反射距离，避免长距离步进。</li>
-<li>**时间滤波**：结合前一帧结果，减少噪点。</li>
-<li>**重要性采样**：根据材质粗糙度调整步进策略。</li>
+<li><strong>降低分辨率</strong>：在半分辨率或四分之一分辨率下计算SSR，然后上采样。</li>
+<li><strong>层次化深度（Hi-Z）</strong>：使用mipmap链加速光线步进，减少步数。</li>
+<li><strong>限制反射距离</strong>：设置最大反射距离，避免长距离步进。</li>
+<li><strong>时间滤波</strong>：结合前一帧结果，减少噪点。</li>
+<li><strong>重要性采样</strong>：根据材质粗糙度调整步进策略。</li>
 </ul>
 <h2>SSR与其他反射技术的结合</h2>
 <p>SSR通常与反射探针、平面反射结合使用。当SSR失败时，回退到反射探针，确保始终有反射信息。也可以使用光线追踪提供更完整的反射方案。</p>
@@ -81,7 +81,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>如何减少SSR的噪点？</h3><p>使用时间滤波、空间滤波、增加步进精度或使用重要性采样。也可以结合模糊处理。</p></div>
 <div class="faq-item"><h3>移动平台适合使用SSR吗？</h3><p>移动平台性能有限，SSR可能开销过高。但可以使用简化版本或依赖反射探针。</p></div>
 <div class="faq-item"><h3>SSR需要哪些缓冲区？</h3><p>需要颜色缓冲、深度缓冲和法线缓冲。通常在延迟渲染中容易获得这些数据，前向渲染需要额外生成。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/seo/ray-tracing-basics.html">光线追踪基础</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

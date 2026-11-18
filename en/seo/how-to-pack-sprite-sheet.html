@@ -52,9 +52,9 @@ var _hmt = _hmt || [];
 </ul>
 <h3>Step 4: Adjust Packing Parameters</h3>
 <ul>
-<li>**Max Size**: Set maximum atlas width and height.</li>
-<li>**Margin and Spacing**: Prevent edge bleeding.</li>
-<li>**Rotation**: Allow sprite rotation for tighter packing.</li>
+<li><strong>Max Size</strong>: Set maximum atlas width and height.</li>
+<li><strong>Margin and Spacing</strong>: Prevent edge bleeding.</li>
+<li><strong>Rotation</strong>: Allow sprite rotation for tighter packing.</li>
 </ul>
 <h3>Step 5: Publish Atlas</h3>
 <p>Click &quot;Publish&quot; to generate the atlas image and data file.</p>
@@ -68,24 +68,24 @@ var _hmt = _hmt || [];
 <p>Select &quot;Sprite Sheet&quot; feature, set parameters, and click &quot;Generate&quot;.</p>
 <h2>Using ImageMagick Command Line</h2>
 <h3>Merge Images into Atlas</h3>
-<p>Use `montage` to arrange images in a grid, but it doesn't auto-pack tightly.</p>
+<p>Use <code>montage</code> to arrange images in a grid, but it doesn't auto-pack tightly.</p>
 <p>```bash</p>
 <p>magick montage *.png -tile 4x4 -geometry +0+0 atlas.png</p>
 <p>```</p>
-<p>For tight packing, combine with tools like `pngquant`.</p>
+<p>For tight packing, combine with tools like <code>pngquant</code>.</p>
 <h2>Using Online Tools</h2>
 <p>Such as Leshy SpriteSheet Tool, SpriteSheet Packer; upload images to pack.</p>
 <h2>Atlas Optimization Tips</h2>
 <ul>
-<li>**Size Selection**: Atlas dimensions usually powers of two (e.g., 1024x1024, 2048x2048) for GPU requirements.</li>
-<li>**Sorting**: Place frequently used sprites together to reduce switches.</li>
-<li>**Padding**: Reserve 1-2 pixel margin between sprites to avoid bleeding during texture filtering.</li>
-<li>**Compression**: Use lossless PNG or WebP.</li>
+<li><strong>Size Selection</strong>: Atlas dimensions usually powers of two (e.g., 1024x1024, 2048x2048) for GPU requirements.</li>
+<li><strong>Sorting</strong>: Place frequently used sprites together to reduce switches.</li>
+<li><strong>Padding</strong>: Reserve 1-2 pixel margin between sprites to avoid bleeding during texture filtering.</li>
+<li><strong>Compression</strong>: Use lossless PNG or WebP.</li>
 </ul>
 <h2>Common Issues</h2>
 <ul>
-<li>**Edge Bleeding**: Set extrude or padding when packing.</li>
-<li>**Performance**: Overly large atlas may cause slow loading; split appropriately.</li>
+<li><strong>Edge Bleeding</strong>: Set extrude or padding when packing.</li>
+<li><strong>Performance</strong>: Overly large atlas may cause slow loading; split appropriately.</li>
 </ul>
 <h2>Summary</h2>
 <p>Atlas packing is a basic skill in game development; professional tools can automate optimization. TexturePacker is most powerful, Shoebox is free, and ImageMagick suits simple needs.</p>
@@ -97,7 +97,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Which formats are suitable for saving atlas?</h3><p>PNG is common, supports transparency; JPEG can reduce file size but may cause artifacts if transparency is not needed.</p></div>
 <div class="faq-item"><h3>How to split an existing sprite sheet into individual sprites?</h3><p>Use TexturePacker's &quot;Unpack Atlas&quot; feature or ImageMagick's crop command based on coordinates.</p></div>
 <div class="faq-item"><h3>Which game engines does TexturePacker support?</h3><p>Supports Unity, Unreal, Cocos2d, Godot, Phaser, etc., and can export corresponding data files.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/sprite_sheet_packer.html"><b>Sprite Sheet Packer</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/sprite_sheet_splitter.html"><b>Sprite Sheet Splitter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-pack-sprite-sheet.html">图集打包 Sprite Sheet</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a></p></section>
   </article>
 </main>

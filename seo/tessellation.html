@@ -42,9 +42,9 @@ var _hmt = _hmt || [];
 <h2>渲染管线中的位置</h2>
 <p>曲面细分位于顶点着色器之后、几何着色器之前。它包含三个可选阶段：</p>
 <ul>
-<li>**外壳着色器（Hull Shader）**：定义细分因子，决定每个图元被细分的程度。</li>
-<li>**曲面细分器（Tessellator）**：固定功能单元，根据细分因子实际生成新的顶点和拓扑。</li>
-<li>**域着色器（Domain Shader）**：计算新顶点的位置、法线等属性，通常结合位移贴图。</li>
+<li><strong>外壳着色器（Hull Shader）</strong>：定义细分因子，决定每个图元被细分的程度。</li>
+<li><strong>曲面细分器（Tessellator）</strong>：固定功能单元，根据细分因子实际生成新的顶点和拓扑。</li>
+<li><strong>域着色器（Domain Shader）</strong>：计算新顶点的位置、法线等属性，通常结合位移贴图。</li>
 </ul>
 <p>在OpenGL中，对应的是曲面细分控制着色器（TCS）、曲面细分引擎和曲面细分评估着色器（TES）。</p>
 <h2>主要应用场景</h2>
@@ -57,13 +57,13 @@ var _hmt = _hmt || [];
 <h3>地形渲染</h3>
 <p>利用视锥体裁剪和距离判断，只对可见且近处的地形块进行高细分，节省性能。</p>
 <h2>优点与局限</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>初始模型只需低多边形，通过细分实时增加细节，节省内存和带宽。</li>
 <li>支持动态LOD，使几何复杂度随距离平滑变化。</li>
 <li>与位移贴图结合可生成高度逼真的表面细节。</li>
 </ul>
-<p>**局限**：</p>
+<p><strong>局限</strong>：</p>
 <ul>
 <li>需要支持曲面细分的GPU和图形API（DX11+ / OpenGL 4+），部分移动平台不支持。</li>
 <li>细分因子设置不当可能导致性能下降或产生裂缝（T-junctions）。</li>
@@ -71,9 +71,9 @@ var _hmt = _hmt || [];
 </ul>
 <h2>与相关技术的区别</h2>
 <ul>
-<li>**法线贴图**：仅改变光照计算，不改变几何形状。</li>
-<li>**视差贴图**：在片元着色器中偏移纹理坐标模拟深度，但不改变几何拓扑。</li>
-<li>**位移贴图**：通常需要曲面细分来提供足够的顶点密度，否则位移无法体现细节。</li>
+<li><strong>法线贴图</strong>：仅改变光照计算，不改变几何形状。</li>
+<li><strong>视差贴图</strong>：在片元着色器中偏移纹理坐标模拟深度，但不改变几何拓扑。</li>
+<li><strong>位移贴图</strong>：通常需要曲面细分来提供足够的顶点密度，否则位移无法体现细节。</li>
 </ul>
 <p>曲面细分是真正的几何操作，生成的新顶点参与后续管线处理，因此可产生正确的轮廓和阴影。</p>
 <h2>实现示例（伪代码）</h2>
@@ -108,7 +108,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>曲面细分会影响性能吗？</h3><p>是的，曲面细分会增加顶点数量和计算量，但通过自适应细分因子（如根据距离调整）可以平衡性能与画质。合理使用可获得较好收益。</p></div>
 <div class="faq-item"><h3>曲面细分和法线贴图有什么区别？</h3><p>法线贴图仅改变光照计算中的法线，不改变几何形状；曲面细分实际生成新的几何顶点，改变表面拓扑，因此轮廓和阴影也更真实。</p></div>
 <div class="faq-item"><h3>如何在Unity中使用曲面细分？</h3><p>Unity的HDRP和URP支持曲面细分着色器，需要在Shader中编写外壳和域着色器，或使用内置的曲面细分选项。具体可参考Unity文档。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/parallax-mapping.html">视差贴图</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a></p></section>
   </article>
 </main>

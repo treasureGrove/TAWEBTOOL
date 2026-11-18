@@ -42,42 +42,42 @@ var _hmt = _hmt || [];
 <h2>Common Texture Compression Formats</h2>
 <h3>DXT/BC Family (Desktop Platforms)</h3>
 <ul>
-<li>**DXT1/BC1**: 64 bits per 4x4 block, supports RGB and 1-bit alpha. Compression ratio 8:1 (relative to 24-bit RGB).</li>
-<li>**DXT3/BC2**: 128 bits per block, 4-bit alpha, suitable for textures with sharp alpha.</li>
-<li>**DXT5/BC3**: 128 bits per block, interpolated alpha, suitable for gradual alpha.</li>
-<li>**BC4/BC5**: Single and dual-channel formats, often used for normal maps (BC5 stores X and Y).</li>
-<li>**BC6H/BC7**: High-quality formats; BC6H for HDR, BC7 for high-quality LDR.</li>
+<li><strong>DXT1/BC1</strong>: 64 bits per 4x4 block, supports RGB and 1-bit alpha. Compression ratio 8:1 (relative to 24-bit RGB).</li>
+<li><strong>DXT3/BC2</strong>: 128 bits per block, 4-bit alpha, suitable for textures with sharp alpha.</li>
+<li><strong>DXT5/BC3</strong>: 128 bits per block, interpolated alpha, suitable for gradual alpha.</li>
+<li><strong>BC4/BC5</strong>: Single and dual-channel formats, often used for normal maps (BC5 stores X and Y).</li>
+<li><strong>BC6H/BC7</strong>: High-quality formats; BC6H for HDR, BC7 for high-quality LDR.</li>
 </ul>
 <p>These formats are widely used on Windows, Mac, and Linux.</p>
 <h3>ETC Family (Mobile Platforms)</h3>
 <ul>
-<li>**ETC1**: 64 bits per 4x4 block, supports RGB, no alpha, universal in OpenGL ES 2.0.</li>
-<li>**ETC2**: Backward compatible with ETC1, supports RGBA, OpenGL ES 3.0+.</li>
-<li>**EAC**: Single/dual-channel formats for normal maps, etc.</li>
+<li><strong>ETC1</strong>: 64 bits per 4x4 block, supports RGB, no alpha, universal in OpenGL ES 2.0.</li>
+<li><strong>ETC2</strong>: Backward compatible with ETC1, supports RGBA, OpenGL ES 3.0+.</li>
+<li><strong>EAC</strong>: Single/dual-channel formats for normal maps, etc.</li>
 </ul>
 <p>ETC is the baseline for Android devices.</p>
 <h3>ASTC (Adaptive Scalable Texture Compression)</h3>
 <p>ASTC is a newer format supporting various block sizes (4x4 to 12x12), offering flexible compression ratio and quality trade-offs. Supports RGBA, HDR, and is supported by most modern mobile GPUs (Adreno 5xx+, Mali T6xx+) and some desktop GPUs. ASTC is recommended for mobile.</p>
 <h3>Other Formats</h3>
 <ul>
-<li>**PVRTC**: Used by PowerVR GPUs, supported by early iOS devices, average quality.</li>
-<li>**ATITC**: Older Adreno GPU format, being phased out.</li>
+<li><strong>PVRTC</strong>: Used by PowerVR GPUs, supported by early iOS devices, average quality.</li>
+<li><strong>ATITC</strong>: Older Adreno GPU format, being phased out.</li>
 </ul>
 <h2>Format Selection Strategy</h2>
 <ul>
-<li>**Desktop**: Prefer BC7 (high quality) or BC1/BC3 (compatibility).</li>
-<li>**Mobile**: Prefer ASTC (modern devices), otherwise use ETC2.</li>
-<li>**Normal Maps**: Use dual-channel formats (BC5 or EAC) to save memory.</li>
-<li>**HDR Textures**: Use BC6H or ASTC HDR.</li>
-<li>**UI Textures**: If high quality is needed, use uncompressed or lossless formats (e.g., PNG), but watch memory.</li>
+<li><strong>Desktop</strong>: Prefer BC7 (high quality) or BC1/BC3 (compatibility).</li>
+<li><strong>Mobile</strong>: Prefer ASTC (modern devices), otherwise use ETC2.</li>
+<li><strong>Normal Maps</strong>: Use dual-channel formats (BC5 or EAC) to save memory.</li>
+<li><strong>HDR Textures</strong>: Use BC6H or ASTC HDR.</li>
+<li><strong>UI Textures</strong>: If high quality is needed, use uncompressed or lossless formats (e.g., PNG), but watch memory.</li>
 </ul>
 <p>In Unity and Unreal, compression formats can be set in texture import settings with per-platform overrides.</p>
 <h2>Compression Formats and Texture Types</h2>
 <ul>
-<li>**Color Textures**: Use lossy compression (BC1/BC3/ETC2/ASTC).</li>
-<li>**Normal Maps**: Use special formats (BC5) or compress after channel rearrangement.</li>
-<li>**Data Textures** (metallic, roughness): Single-channel or compressed, but mind precision.</li>
-<li>**UI Elements**: Often uncompressed or ASTC to avoid artifacts.</li>
+<li><strong>Color Textures</strong>: Use lossy compression (BC1/BC3/ETC2/ASTC).</li>
+<li><strong>Normal Maps</strong>: Use special formats (BC5) or compress after channel rearrangement.</li>
+<li><strong>Data Textures</strong> (metallic, roughness): Single-channel or compressed, but mind precision.</li>
+<li><strong>UI Elements</strong>: Often uncompressed or ASTC to avoid artifacts.</li>
 </ul>
 <h2>FAQ</h2>
 <h3>What is the relationship between DXT and BC?</h3>
@@ -98,7 +98,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why do normal maps use dual-channel compression?</h3><p>The Z component of a normal map can be derived from X and Y, so Z can be discarded; dual-channel formats store X and Y, reconstructing Z in the shader.</p></div>
 <div class="faq-item"><h3>How to choose compression format on mobile?</h3><p>If the target device supports ASTC, use ASTC; otherwise use ETC2. For iOS, PVRTC or ASTC (newer devices).</p></div>
 <div class="faq-item"><h3>Does compression degrade texture quality?</h3><p>Lossy compression causes block artifacts, especially on high-contrast edges. Balance quality and size by choosing appropriate format and block size.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>Texture Info Inspector</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
   </article>
 </main>

@@ -51,26 +51,26 @@ var _hmt = _hmt || [];
 <p>These operations enable complex rendering logic.</p>
 <h2>Common Applications of Stencil Buffer</h2>
 <ul>
-<li>**Shadow Volume**: Uses stencil buffer to mark shadow areas, with algorithms like Depth-fail or Depth-pass.</li>
-<li>**Mirror Reflections**: When rendering reflective scenes, use stencil buffer to mark the mirror area, restricting reflective objects to appear only within the mirror.</li>
-<li>**Decals**: Use stencil buffer to prevent decals from being rendered on unwanted surfaces.</li>
-<li>**Custom Clipping**: For example, clipping scrollable areas in UI, or rendering to a specific shape viewport.</li>
-<li>**Ray Marching Markers**: Mark visited areas in volume rendering.</li>
-<li>**Multi-pass Effects**: Pass markers between different rendering stages.</li>
+<li><strong>Shadow Volume</strong>: Uses stencil buffer to mark shadow areas, with algorithms like Depth-fail or Depth-pass.</li>
+<li><strong>Mirror Reflections</strong>: When rendering reflective scenes, use stencil buffer to mark the mirror area, restricting reflective objects to appear only within the mirror.</li>
+<li><strong>Decals</strong>: Use stencil buffer to prevent decals from being rendered on unwanted surfaces.</li>
+<li><strong>Custom Clipping</strong>: For example, clipping scrollable areas in UI, or rendering to a specific shape viewport.</li>
+<li><strong>Ray Marching Markers</strong>: Mark visited areas in volume rendering.</li>
+<li><strong>Multi-pass Effects</strong>: Pass markers between different rendering stages.</li>
 </ul>
 <h2>Difference Between Stencil Buffer and Depth Buffer</h2>
 <ul>
-<li>**Data Type**: Depth buffer stores floating-point depth values, stencil buffer stores integer markers.</li>
-<li>**Purpose**: Depth buffer is for visibility determination, stencil buffer is for controlling rendering regions and special effects.</li>
-<li>**Precision**: Depth buffer usually 24-bit or 32-bit, stencil buffer usually 8-bit.</li>
-<li>**Update**: Depth buffer is automatically updated by depth test, stencil buffer requires application-set operations.</li>
+<li><strong>Data Type</strong>: Depth buffer stores floating-point depth values, stencil buffer stores integer markers.</li>
+<li><strong>Purpose</strong>: Depth buffer is for visibility determination, stencil buffer is for controlling rendering regions and special effects.</li>
+<li><strong>Precision</strong>: Depth buffer usually 24-bit or 32-bit, stencil buffer usually 8-bit.</li>
+<li><strong>Update</strong>: Depth buffer is automatically updated by depth test, stencil buffer requires application-set operations.</li>
 </ul>
 <h2>Considerations When Using Stencil Buffer</h2>
 <ul>
-<li>**Clearing**: The stencil buffer should be cleared at the beginning of each frame (usually set to 0).</li>
-<li>**Bandwidth**: The stencil buffer shares bandwidth with the depth buffer, so additional operations may impact performance.</li>
-<li>**Format**: On mobile platforms, stencil buffer may be unavailable or have lower precision; check support.</li>
-<li>**Order**: Stencil test can occur before the fragment shader (Early Stencil), allowing early fragment discard and performance optimization.</li>
+<li><strong>Clearing</strong>: The stencil buffer should be cleared at the beginning of each frame (usually set to 0).</li>
+<li><strong>Bandwidth</strong>: The stencil buffer shares bandwidth with the depth buffer, so additional operations may impact performance.</li>
+<li><strong>Format</strong>: On mobile platforms, stencil buffer may be unavailable or have lower precision; check support.</li>
+<li><strong>Order</strong>: Stencil test can occur before the fragment shader (Early Stencil), allowing early fragment discard and performance optimization.</li>
 </ul>
 <h2>Conclusion</h2>
 <p>The stencil buffer is a powerful rendering control tool. Mastering its usage enables a variety of advanced effects.</p>
@@ -80,9 +80,20 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Can stencil buffer and depth buffer be used simultaneously?</h3><p>Yes, they are often stored in the same buffer (e.g., 24-bit depth + 8-bit stencil), and depth test and stencil test are performed together.</p></div>
 <div class="faq-item"><h3>What are typical applications of stencil buffer?</h3><p>Shadow volumes, mirror reflections, decals, custom clipping, UI masking, etc. Any per-pixel marking and testing scenario can use it.</p></div>
 <div class="faq-item"><h3>Do mobile devices support stencil buffer?</h3><p>Most modern mobile GPUs support stencil buffer, but precision may be 8-bit. On some older devices, it may not be supported, requiring fallbacks.</p></div>
-<div class="faq-item"><h3>How to clear the stencil buffer?</h3><p>At the start of a frame, use clear commands to reset the stencil buffer to 0 (or another specified value). In OpenGL, use `glClearStencil` and `glClear`; similar in DirectX.</p></div>
+<div class="faq-item"><h3>How to clear the stencil buffer?</h3><p>At the start of a frame, use clear commands to reset the stencil buffer to 0 (or another specified value). In OpenGL, use <code>glClearStencil</code> and <code>glClear</code>; similar in DirectX.</p></div>
 <div class="faq-item"><h3>Does stencil test happen before fragment shader?</h3><p>Modern GPUs support Early Stencil Test, which can run the stencil test before the fragment shader; if the test fails, the shader is skipped, saving computation. However, in some cases (such as fragment shader modifying stencil values), it may not be possible to run early.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a></p></section>
   </article>
 </main>

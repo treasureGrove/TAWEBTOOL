@@ -85,15 +85,15 @@ var _hmt = _hmt || [];
 <p>注意：需要按顺序提供各通道图像。</p>
 <h2>游戏开发中的常见应用</h2>
 <ul>
-<li>**ORM 贴图**：将环境光遮蔽（O）放入红通道，粗糙度（R）放入绿通道，金属度（M）放入蓝通道，减少贴图数量。</li>
-<li>**法线贴图压缩**：法线贴图通常存储 X 和 Y 分量，Z 分量可重建，因此可用两个通道存储。</li>
-<li>**遮罩贴图**：多个遮罩打包到不同通道。</li>
+<li><strong>ORM 贴图</strong>：将环境光遮蔽（O）放入红通道，粗糙度（R）放入绿通道，金属度（M）放入蓝通道，减少贴图数量。</li>
+<li><strong>法线贴图压缩</strong>：法线贴图通常存储 X 和 Y 分量，Z 分量可重建，因此可用两个通道存储。</li>
+<li><strong>遮罩贴图</strong>：多个遮罩打包到不同通道。</li>
 </ul>
 <h2>注意事项</h2>
 <ul>
-<li>**颜色空间**：通道操作应在线性空间或正确设置下进行，避免 sRGB 转换导致数据错误。</li>
-<li>**Alpha 通道**：确保 Alpha 通道不被意外修改。</li>
-<li>**精度**：8 位图像每个通道 256 级，可能不适合高精度数据，考虑使用 16 位或 32 位。</li>
+<li><strong>颜色空间</strong>：通道操作应在线性空间或正确设置下进行，避免 sRGB 转换导致数据错误。</li>
+<li><strong>Alpha 通道</strong>：确保 Alpha 通道不被意外修改。</li>
+<li><strong>精度</strong>：8 位图像每个通道 256 级，可能不适合高精度数据，考虑使用 16 位或 32 位。</li>
 </ul>
 <h2>总结</h2>
 <p>通道拆分与合成是贴图管线中的常见操作，掌握这些技巧可以提高工作流程效率，优化纹理资源。</p>
@@ -105,7 +105,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>如何查看某个通道的内容？</h3><p>在 Photoshop 中点击通道面板中的单通道，会显示该通道的灰度表示；在 GIMP 中类似。</p></div>
 <div class="faq-item"><h3>如何确保通道数据不被颜色管理改变？</h3><p>在处理技术贴图时，建议将图像模式设为灰度或确保颜色配置文件为线性，关闭颜色管理或使用原始数据。</p></div>
 <div class="faq-item"><h3>可以使用编程方式拆分和合成通道吗？</h3><p>可以，使用 Python 的 Pillow 或 OpenCV 库可以方便地操作通道，适合批量处理。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/texture_channel_splitter.html"><b>贴图通道分离</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>贴图通道合成</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a></p></section>
   </article>
 </main>

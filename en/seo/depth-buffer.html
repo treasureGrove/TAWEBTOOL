@@ -43,26 +43,26 @@ var _hmt = _hmt || [];
 <h2>How the Depth Buffer Works</h2>
 <p>The depth buffer stores a depth value per pixel, with precision depending on the texture format. Common formats include:</p>
 <ul>
-<li>**16-bit**: lower precision, may cause depth conflicts.</li>
-<li>**24-bit**: commonly used, higher precision.</li>
-<li>**32-bit float**: used for high precision requirements, such as shadow mapping.</li>
+<li><strong>16-bit</strong>: lower precision, may cause depth conflicts.</li>
+<li><strong>24-bit</strong>: commonly used, higher precision.</li>
+<li><strong>32-bit float</strong>: used for high precision requirements, such as shadow mapping.</li>
 </ul>
 <p>Depth values are non-linear after projection transformation, with higher precision near the camera and lower precision far away. This non-linear distribution better utilizes limited bit depth but may lead to Z-fighting for distant objects.</p>
 <h2>Depth Test and Depth Write</h2>
 <ul>
-<li>**Depth Test Function**: Can be set to Less, Greater, Equal, etc. Default is Less, meaning a fragment passes if its depth is less than the stored depth.</li>
-<li>**Depth Write**: After passing the test, you can choose whether to update the depth buffer. For transparent objects, depth write is typically disabled to avoid interfering with subsequent transparent rendering.</li>
+<li><strong>Depth Test Function</strong>: Can be set to Less, Greater, Equal, etc. Default is Less, meaning a fragment passes if its depth is less than the stored depth.</li>
+<li><strong>Depth Write</strong>: After passing the test, you can choose whether to update the depth buffer. For transparent objects, depth write is typically disabled to avoid interfering with subsequent transparent rendering.</li>
 </ul>
 <h2>Depth Buffer Precision Issues</h2>
 <ul>
-<li>**Z-fighting**: When two planes are extremely close, insufficient depth precision may cause alternating display and flickering. Solutions include increasing depth buffer precision, adjusting near/far clip planes, using polygon offset, etc.</li>
-<li>**Insufficient precision far away**: Non-linear depth results in low precision at distance, which can be improved by adjusting the projection matrix or using Reverse-Z technique.</li>
+<li><strong>Z-fighting</strong>: When two planes are extremely close, insufficient depth precision may cause alternating display and flickering. Solutions include increasing depth buffer precision, adjusting near/far clip planes, using polygon offset, etc.</li>
+<li><strong>Insufficient precision far away</strong>: Non-linear depth results in low precision at distance, which can be improved by adjusting the projection matrix or using Reverse-Z technique.</li>
 </ul>
 <h2>Depth Buffer Optimization</h2>
 <ul>
-<li>**Early-Z/Depth Prepass**: Render depth to the depth buffer first, then during the main rendering use depth test as Equal to skip the fragment shader for occluded pixels, reducing overdraw.</li>
-<li>**Avoid unnecessary depth writes**: Enable depth writes for opaque objects; disable for transparent objects.</li>
-<li>**Use appropriate depth format**: Choose based on scene requirements; mobile devices often use 24-bit or 16-bit.</li>
+<li><strong>Early-Z/Depth Prepass</strong>: Render depth to the depth buffer first, then during the main rendering use depth test as Equal to skip the fragment shader for occluded pixels, reducing overdraw.</li>
+<li><strong>Avoid unnecessary depth writes</strong>: Enable depth writes for opaque objects; disable for transparent objects.</li>
+<li><strong>Use appropriate depth format</strong>: Choose based on scene requirements; mobile devices often use 24-bit or 16-bit.</li>
 </ul>
 <h2>Depth Buffer and Deferred Rendering</h2>
 <p>In deferred rendering, the depth buffer is used to reconstruct pixel world-space positions, so it is often stored in high precision (e.g., 32-bit float), or depth reconstruction techniques are used.</p>
@@ -76,7 +76,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to handle depth for transparent objects?</h3><p>Transparent objects usually disable depth writes (to avoid blocking subsequent transparent objects) but enable depth testing (to ensure not penetrating opaque objects), and are rendered back-to-front.</p></div>
 <div class="faq-item"><h3>What is Early-Z?</h3><p>Early-Z is a hardware optimization that performs depth testing before the fragment shader. If the fragment is occluded, the shader is skipped, saving computation. However, certain operations (like enabling alpha test or depth write) may disable Early-Z.</p></div>
 <div class="faq-item"><h3>Why is depth buffer precision low at far distances?</h3><p>Because depth after projection transformation is non-linear, with most precision concentrated near the camera. This adapts to human eye sensitivity to near objects, but distant objects are prone to Z-fighting.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/stencil-buffer.html">模板缓冲</a></p></section>
   </article>
 </main>

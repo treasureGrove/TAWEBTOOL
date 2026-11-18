@@ -49,8 +49,8 @@ var _hmt = _hmt || [];
 <h2>Mesh Shader Pipeline</h2>
 <p>The Mesh Shader pipeline introduces two new stages:</p>
 <ol>
-<li>**Task Shader (also called Amplification Shader)**: Optional, used for coarse-grained processing such as frustum culling and LOD selection.</li>
-<li>**Mesh Shader**: Required, responsible for generating vertices and primitives (typically triangles).</li>
+<li><strong>Task Shader (also called Amplification Shader)</strong>: Optional, used for coarse-grained processing such as frustum culling and LOD selection.</li>
+<li><strong>Mesh Shader</strong>: Required, responsible for generating vertices and primitives (typically triangles).</li>
 </ul>
 <p>The workflow is similar to compute shaders: the task shader launches multiple thread groups, each of which can spawn a set of mesh shader thread groups, and the mesh shader outputs vertices and indices to the rasterizer.</p>
 <h2>Core Features</h2>
@@ -70,15 +70,15 @@ var _hmt = _hmt || [];
 <h3>High-Performance Rendering</h3>
 <p>For rendering many small objects (e.g., grass, rocks), Mesh Shader can batch and reduce CPU load.</p>
 <h2>Hardware and API Support</h2>
-<p>Requires a GPU supporting DirectX 12 Ultimate or Vulkan 1.2, such as NVIDIA Turing and later, AMD RDNA 2 and later. In APIs, Mesh Shader and Task Shader objects are created and executed using the `DispatchMesh` command.</p>
+<p>Requires a GPU supporting DirectX 12 Ultimate or Vulkan 1.2, such as NVIDIA Turing and later, AMD RDNA 2 and later. In APIs, Mesh Shader and Task Shader objects are created and executed using the <code>DispatchMesh</code> command.</p>
 <h2>Advantages and Challenges</h2>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>Greater flexibility in geometry processing to meet modern rendering demands.</li>
 <li>Reduces CPU bottlenecks, suitable for GPU-driven rendering.</li>
 <li>Scalable performance, facilitating efficient LOD and culling.</li>
 </ul>
-<p>**Challenges**:</p>
+<p><strong>Challenges</strong>:</p>
 <ul>
 <li>Higher programming complexity; requires understanding parallel computing models.</li>
 <li>Hardware support is limited; older devices cannot use it.</li>
@@ -99,7 +99,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Can Mesh Shader completely replace the traditional pipeline?</h3><p>Yes, Mesh Shader can replace vertex and geometry shaders, but for compatibility with older hardware, developers may need to maintain traditional paths.</p></div>
 <div class="faq-item"><h3>What scenarios are suitable for Mesh Shader?</h3><p>Suitable for procedural geometry generation, efficient culling, rendering massive small objects, GPU-driven rendering, and similar scenarios, especially reducing CPU overhead.</p></div>
 <div class="faq-item"><h3>How can I start learning Mesh Shader?</h3><p>Start with official samples and tutorials, and practice using engines or frameworks that support Mesh Shader, such as Unreal Engine 5 or Microsoft DirectX samples.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/compute-shader.html">计算着色器</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-driven-rendering.html">GPU Driven 渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/en/seo/tessellation.html">曲面细分</a> · <a href="https://tools.treasuregrove.art/en/seo/variable-rate-shading.html">可变速率着色 VRS</a></p></section>
   </article>
 </main>

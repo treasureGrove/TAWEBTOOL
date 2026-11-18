@@ -42,42 +42,42 @@ var _hmt = _hmt || [];
 <h2>常见贴图压缩格式</h2>
 <h3>DXT/BC 系列（桌面平台）</h3>
 <ul>
-<li>**DXT1/BC1**：每个 4x4 块 64 位，支持 RGB 和 1 位 Alpha。压缩比 8:1（相对于 24 位 RGB）。</li>
-<li>**DXT3/BC2**：每个块 128 位，支持 4 位 Alpha，适合有锐利 Alpha 的纹理。</li>
-<li>**DXT5/BC3**：每个块 128 位，支持插值 Alpha，适合渐变 Alpha。</li>
-<li>**BC4/BC5**：单通道和双通道格式，常用于法线贴图（BC5 存储 X、Y 分量）。</li>
-<li>**BC6H/BC7**：高质量格式，BC6H 用于 HDR，BC7 用于高质量 LDR。</li>
+<li><strong>DXT1/BC1</strong>：每个 4x4 块 64 位，支持 RGB 和 1 位 Alpha。压缩比 8:1（相对于 24 位 RGB）。</li>
+<li><strong>DXT3/BC2</strong>：每个块 128 位，支持 4 位 Alpha，适合有锐利 Alpha 的纹理。</li>
+<li><strong>DXT5/BC3</strong>：每个块 128 位，支持插值 Alpha，适合渐变 Alpha。</li>
+<li><strong>BC4/BC5</strong>：单通道和双通道格式，常用于法线贴图（BC5 存储 X、Y 分量）。</li>
+<li><strong>BC6H/BC7</strong>：高质量格式，BC6H 用于 HDR，BC7 用于高质量 LDR。</li>
 </ul>
 <p>这些格式广泛应用于 Windows、Mac、Linux 等桌面平台。</p>
 <h3>ETC 系列（移动平台）</h3>
 <ul>
-<li>**ETC1**：每个 4x4 块 64 位，支持 RGB，不支持 Alpha，OpenGL ES 2.0 通用。</li>
-<li>**ETC2**：兼容 ETC1，支持 RGBA，OpenGL ES 3.0 及以上。</li>
-<li>**EAC**：单通道和双通道格式，用于法线贴图等。</li>
+<li><strong>ETC1</strong>：每个 4x4 块 64 位，支持 RGB，不支持 Alpha，OpenGL ES 2.0 通用。</li>
+<li><strong>ETC2</strong>：兼容 ETC1，支持 RGBA，OpenGL ES 3.0 及以上。</li>
+<li><strong>EAC</strong>：单通道和双通道格式，用于法线贴图等。</li>
 </ul>
 <p>ETC 是 Android 设备的基线格式。</p>
 <h3>ASTC（自适应可伸缩纹理压缩）</h3>
 <p>ASTC 是较新的格式，支持多种块大小（从 4x4 到 12x12），提供灵活的压缩比和质量权衡。支持 RGBA、HDR 等，被大多数现代移动 GPU（如 Adreno 5xx+、Mali T6xx+）和部分桌面 GPU 支持。ASTC 是移动端的推荐选择。</p>
 <h3>其他格式</h3>
 <ul>
-<li>**PVRTC**：PowerVR GPU 使用的格式，iOS 早期设备支持，质量一般。</li>
-<li>**ATITC**：旧 Adreno GPU 格式，已逐渐淘汰。</li>
+<li><strong>PVRTC</strong>：PowerVR GPU 使用的格式，iOS 早期设备支持，质量一般。</li>
+<li><strong>ATITC</strong>：旧 Adreno GPU 格式，已逐渐淘汰。</li>
 </ul>
 <h2>格式选择策略</h2>
 <ul>
-<li>**桌面平台**：优先使用 BC7（高质量）或 BC1/BC3（兼容性）。</li>
-<li>**移动平台**：优先使用 ASTC（现代设备），否则使用 ETC2。</li>
-<li>**法线贴图**：使用双通道格式（BC5 或 EAC），节省内存。</li>
-<li>**HDR 纹理**：使用 BC6H 或 ASTC HDR。</li>
-<li>**UI 纹理**：如果要求高质量，可以使用不压缩或无损格式（如 PNG），但需注意内存。</li>
+<li><strong>桌面平台</strong>：优先使用 BC7（高质量）或 BC1/BC3（兼容性）。</li>
+<li><strong>移动平台</strong>：优先使用 ASTC（现代设备），否则使用 ETC2。</li>
+<li><strong>法线贴图</strong>：使用双通道格式（BC5 或 EAC），节省内存。</li>
+<li><strong>HDR 纹理</strong>：使用 BC6H 或 ASTC HDR。</li>
+<li><strong>UI 纹理</strong>：如果要求高质量，可以使用不压缩或无损格式（如 PNG），但需注意内存。</li>
 </ul>
 <p>在 Unity 和 Unreal 中，可以在纹理导入设置中选择压缩格式，并针对不同平台覆盖设置。</p>
 <h2>压缩格式与纹理类型</h2>
 <ul>
-<li>**颜色纹理**：使用有损压缩（BC1/BC3/ETC2/ASTC）。</li>
-<li>**法线贴图**：使用特殊格式（BC5）或重新排列通道后压缩。</li>
-<li>**数据纹理**（如金属度、粗糙度）：可使用单通道或压缩格式，但需注意精度。</li>
-<li>**UI 元素**：通常使用不压缩或 ASTC，以避免压缩伪影。</li>
+<li><strong>颜色纹理</strong>：使用有损压缩（BC1/BC3/ETC2/ASTC）。</li>
+<li><strong>法线贴图</strong>：使用特殊格式（BC5）或重新排列通道后压缩。</li>
+<li><strong>数据纹理</strong>（如金属度、粗糙度）：可使用单通道或压缩格式，但需注意精度。</li>
+<li><strong>UI 元素</strong>：通常使用不压缩或 ASTC，以避免压缩伪影。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>DXT 和 BC 有什么关系？</h3>
@@ -98,7 +98,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>法线贴图为什么使用双通道压缩？</h3><p>法线贴图的 Z 分量可以从 X、Y 计算得出，因此可以丢弃 Z，使用双通道格式存储 X、Y，在着色器中重建 Z。</p></div>
 <div class="faq-item"><h3>移动端如何选择压缩格式？</h3><p>如果目标设备支持 ASTC，使用 ASTC；否则使用 ETC2。对于 iOS，可以使用 PVRTC 或 ASTC（较新设备）。</p></div>
 <div class="faq-item"><h3>压缩会导致纹理质量下降吗？</h3><p>有损压缩会产生块状伪影，尤其在高对比度边缘。可通过选择合适的格式和块大小平衡质量和大小。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>贴图信息查看器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
   </article>
 </main>

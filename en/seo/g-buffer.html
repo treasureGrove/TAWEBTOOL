@@ -43,33 +43,33 @@ var _hmt = _hmt || [];
 <h2>Typical Composition of G-Buffer</h2>
 <p>Common G-Buffer layouts include:</p>
 <ul>
-<li>**Albedo**: The base color of objects, usually stored as RGBA8.</li>
-<li>**Normal**: Surface normal in world or view space, often RGBA16F or RGBA8 (compressed format).</li>
-<li>**Position**: World space position of the pixel; can be reconstructed from depth buffer and inverse projection matrix, so sometimes not stored directly to save bandwidth.</li>
-<li>**Material properties**: Such as roughness, metallic, specular reflectance, often packed into one RGBA8 texture.</li>
-<li>**Depth**: Stored in the depth buffer, used for position reconstruction and depth testing.</li>
-<li>**Others**: Such as emissive, AO, custom data, etc.</li>
+<li><strong>Albedo</strong>: The base color of objects, usually stored as RGBA8.</li>
+<li><strong>Normal</strong>: Surface normal in world or view space, often RGBA16F or RGBA8 (compressed format).</li>
+<li><strong>Position</strong>: World space position of the pixel; can be reconstructed from depth buffer and inverse projection matrix, so sometimes not stored directly to save bandwidth.</li>
+<li><strong>Material properties</strong>: Such as roughness, metallic, specular reflectance, often packed into one RGBA8 texture.</li>
+<li><strong>Depth</strong>: Stored in the depth buffer, used for position reconstruction and depth testing.</li>
+<li><strong>Others</strong>: Such as emissive, AO, custom data, etc.</li>
 </ul>
 <p>Different engines have different G-Buffer layouts; for example, Unreal Engine's G-Buffer may include more attributes to support complex materials.</p>
 <h2>Advantages of Deferred Rendering</h2>
 <ul>
-<li>**Decoupled lighting**: Geometry and lighting are separated, allowing efficient handling of many dynamic lights because lighting calculations are per-pixel and independent of scene complexity.</li>
-<li>**Easier post-processing**: Information in the G-Buffer can be used for screen-space effects like SSAO, SSR.</li>
-<li>**Simpler shaders**: Geometry stage uses simple shaders, lighting stage uses a unified lighting model.</li>
+<li><strong>Decoupled lighting</strong>: Geometry and lighting are separated, allowing efficient handling of many dynamic lights because lighting calculations are per-pixel and independent of scene complexity.</li>
+<li><strong>Easier post-processing</strong>: Information in the G-Buffer can be used for screen-space effects like SSAO, SSR.</li>
+<li><strong>Simpler shaders</strong>: Geometry stage uses simple shaders, lighting stage uses a unified lighting model.</li>
 </ul>
 <h2>Challenges of Deferred Rendering</h2>
 <ul>
-<li>**Bandwidth consumption**: G-Buffer requires reading and writing large amounts of data, which can become a bottleneck especially on mobile platforms with limited bandwidth.</li>
-<li>**Memory usage**: Multiple render targets consume video memory.</li>
-<li>**Transparent object handling**: Deferred rendering struggles with transparent objects, often requiring forward rendering assistance.</li>
-<li>**Anti-aliasing**: Traditional MSAA is incompatible with deferred rendering; alternatives like TAA, FXAA are needed.</li>
+<li><strong>Bandwidth consumption</strong>: G-Buffer requires reading and writing large amounts of data, which can become a bottleneck especially on mobile platforms with limited bandwidth.</li>
+<li><strong>Memory usage</strong>: Multiple render targets consume video memory.</li>
+<li><strong>Transparent object handling</strong>: Deferred rendering struggles with transparent objects, often requiring forward rendering assistance.</li>
+<li><strong>Anti-aliasing</strong>: Traditional MSAA is incompatible with deferred rendering; alternatives like TAA, FXAA are needed.</li>
 </ul>
 <h2>G-Buffer Optimization</h2>
 <ul>
-<li>**Compressed formats**: Use appropriate texture formats to reduce bandwidth, such as storing normals in RGBA8 (via encoding), using R16F for depth, etc.</li>
-<li>**Reducing render target count**: Store only necessary attributes; reconstruct others via computation.</li>
-<li>**Tile-based rendering**: Use tile-based architectures to optimize lighting.</li>
-<li>**Bandwidth optimization**: On mobile, consider forward+ rendering or tile-based deferred.</li>
+<li><strong>Compressed formats</strong>: Use appropriate texture formats to reduce bandwidth, such as storing normals in RGBA8 (via encoding), using R16F for depth, etc.</li>
+<li><strong>Reducing render target count</strong>: Store only necessary attributes; reconstruct others via computation.</li>
+<li><strong>Tile-based rendering</strong>: Use tile-based architectures to optimize lighting.</li>
+<li><strong>Bandwidth optimization</strong>: On mobile, consider forward+ rendering or tile-based deferred.</li>
 </ul>
 <h2>Summary</h2>
 <p>G-Buffer is key to deferred rendering. Understanding its design principles and trade-offs helps in developing high-performance real-time rendering applications.</p>
@@ -81,7 +81,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What data does G-Buffer typically contain?</h3><p>Commonly albedo, normal, depth, material properties (roughness, metallic, etc.). Some engines also store position, emissive, etc. The layout is customized based on requirements.</p></div>
 <div class="faq-item"><h3>Is deferred rendering suitable for mobile platforms?</h3><p>Mobile platforms have limited bandwidth, so traditional deferred rendering may perform poorly. Forward rendering or optimized variants (like forward+, tile-based deferred) are often used to balance.</p></div>
 <div class="faq-item"><h3>How to reduce G-Buffer bandwidth consumption?</h3><p>Use compressed texture formats, reduce texture precision, reduce the number of render targets, use depth to reconstruct position, etc. Techniques like tile-based deferred can also reduce global bandwidth.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
   </article>
 </main>

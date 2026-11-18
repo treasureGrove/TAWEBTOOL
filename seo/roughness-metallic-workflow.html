@@ -48,17 +48,17 @@ var _hmt = _hmt || [];
 <p>粗糙度贴图控制表面的微观粗糙程度。白色（值1）表示完全粗糙，漫反射强，高光分散；黑色（值0）表示完全光滑，高光锐利。粗糙度可以类比为光泽度的反值（粗糙度 = 1 - 光泽度）。</p>
 <h3>其他常用贴图</h3>
 <ul>
-<li>**法线贴图（Normal Map）**：提供表面凹凸细节，增强真实感。</li>
-<li>**环境光遮蔽贴图（AO Map）**：提供接触阴影，增强局部暗部细节。</li>
-<li>**高度贴图（Height Map）**：用于视差映射等效果，增加几何感。</li>
+<li><strong>法线贴图（Normal Map）</strong>：提供表面凹凸细节，增强真实感。</li>
+<li><strong>环境光遮蔽贴图（AO Map）</strong>：提供接触阴影，增强局部暗部细节。</li>
+<li><strong>高度贴图（Height Map）</strong>：用于视差映射等效果，增加几何感。</li>
 </ul>
 <h2>使用金属度粗糙度工作流的步骤</h2>
 <ol>
-<li>**创建或获取PBR贴图**：使用Substance Painter、Quixel Mixer等工具制作，或从素材库下载。</li>
-<li>**导入游戏引擎**：将贴图导入Unity或Unreal，创建材质。</li>
-<li>**连接贴图**：将反照率、金属度、粗糙度、法线等贴图分别连接到材质的对应输入。</li>
-<li>**调整参数**：根据需要调整贴图的平铺、偏移，或修改材质属性（如金属度、粗糙度的滑块）。</li>
-<li>**测试不同光照**：在多种光照环境下检查材质表现，确保一致性。</li>
+<li><strong>创建或获取PBR贴图</strong>：使用Substance Painter、Quixel Mixer等工具制作，或从素材库下载。</li>
+<li><strong>导入游戏引擎</strong>：将贴图导入Unity或Unreal，创建材质。</li>
+<li><strong>连接贴图</strong>：将反照率、金属度、粗糙度、法线等贴图分别连接到材质的对应输入。</li>
+<li><strong>调整参数</strong>：根据需要调整贴图的平铺、偏移，或修改材质属性（如金属度、粗糙度的滑块）。</li>
+<li><strong>测试不同光照</strong>：在多种光照环境下检查材质表现，确保一致性。</li>
 </ul>
 <h2>金属度粗糙度工作流与高光/光泽度工作流的对比</h2>
 <p>| 特性 | 金属度粗糙度工作流 | 高光/光泽度工作流 |</p>
@@ -88,7 +88,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>为什么金属度贴图不能有中间值？</h3><p>物理上材质通常要么是金属要么是非金属，中间值仅出现在过渡区域，因此建议保持二值或少量过渡。</p></div>
 <div class="faq-item"><h3>如何避免金属边缘的白边？</h3><p>确保反照率贴图在边界处颜色正确，或使用更高分辨率贴图来减少锯齿。</p></div>
 <div class="faq-item"><h3>金属度粗糙度工作流适合所有材质吗？</h3><p>适合大多数材质，但特殊材质（如皮肤、车漆）可能需要额外贴图来增强效果。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>贴图通道合成</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/fresnel-effect.html">菲涅尔效应</a></p></section>
   </article>
 </main>

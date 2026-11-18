@@ -41,29 +41,29 @@ var _hmt = _hmt || [];
 <p>BRDF (Bidirectional Reflectance Distribution Function) is a four-dimensional function that describes how light reflects off a surface. It defines the ratio of reflected radiance to incident irradiance for given incoming and outgoing directions. BRDF is the theoretical foundation of PBR, used to compute material lighting response.</p>
 <h2>Mathematical Definition of BRDF</h2>
 <p>The BRDF is defined as:</p>
-<p>`f_r(ω_i, ω_o) = dL_o(ω_o) / dE_i(ω_i)`</p>
+<p><code>f_r(ω_i, ω_o) = dL_o(ω_o) / dE_i(ω_i)</code></p>
 <p>where ω_i is the incoming light direction, ω_o is the reflected light direction, L_o is the reflected radiance, and E_i is the incident irradiance. A BRDF must satisfy two physical constraints:</p>
 <ul>
-<li>**Reciprocity**: Swapping incoming and outgoing directions leaves the BRDF value unchanged.</li>
-<li>**Energy conservation**: The integral over all outgoing directions does not exceed the incoming energy.</li>
+<li><strong>Reciprocity</strong>: Swapping incoming and outgoing directions leaves the BRDF value unchanged.</li>
+<li><strong>Energy conservation</strong>: The integral over all outgoing directions does not exceed the incoming energy.</li>
 </ul>
 <h2>Common BRDF Models</h2>
 <h3>Lambertian Diffuse</h3>
-<p>The simplest diffuse model, assuming a perfectly rough surface with uniform reflection. The BRDF is a constant `ρ/π`, where ρ is the albedo. It is commonly used for the diffuse term.</p>
+<p>The simplest diffuse model, assuming a perfectly rough surface with uniform reflection. The BRDF is a constant <code>ρ/π</code>, where ρ is the albedo. It is commonly used for the diffuse term.</p>
 <h3>Phong and Blinn-Phong</h3>
 <p>Classic empirical models: Phong uses the dot product of the reflection vector and view direction for specular highlights; Blinn-Phong optimizes with the half-vector. They do not strictly conserve energy but are computationally efficient.</p>
 <h3>Cook-Torrance Model</h3>
 <p>Widely used microfacet model in modern PBR. It splits BRDF into diffuse and specular terms, with the specular term based on microfacet theory:</p>
-<p>`f_spec = (D * G * F) / (4 * (N·L) * (N·V))`</p>
+<p><code>f_spec = (D * G * F) / (4 * (N·L) * (N·V))</code></p>
 <ul>
-<li>**D (Normal Distribution Function)**: Describes the distribution of microfacet normals; commonly GGX/Trowbridge-Reitz.</li>
-<li>**G (Geometric Attenuation Function)**: Describes microfacet self-shadowing; commonly Smith model.</li>
-<li>**F (Fresnel Term)**: Describes reflectivity variation with angle; commonly Schlick approximation.</li>
+<li><strong>D (Normal Distribution Function)</strong>: Describes the distribution of microfacet normals; commonly GGX/Trowbridge-Reitz.</li>
+<li><strong>G (Geometric Attenuation Function)</strong>: Describes microfacet self-shadowing; commonly Smith model.</li>
+<li><strong>F (Fresnel Term)</strong>: Describes reflectivity variation with angle; commonly Schlick approximation.</li>
 </ul>
 <h3>Other Models</h3>
 <ul>
-<li>**Oren-Nayar**: Accounts for rough surface diffuse, more accurate than Lambertian.</li>
-<li>**Disney Principled BRDF**: Artist-friendly parameterized model, adopted by many engines.</li>
+<li><strong>Oren-Nayar</strong>: Accounts for rough surface diffuse, more accurate than Lambertian.</li>
+<li><strong>Disney Principled BRDF</strong>: Artist-friendly parameterized model, adopted by many engines.</li>
 </ul>
 <h2>Application in Real-Time Rendering</h2>
 <p>In real-time rendering, shaders typically use a simplified Cook-Torrance model. For example, Unity's Standard Shader and Unreal's Lit Shader are based on the GGX microfacet model and Schlick Fresnel approximation. BRDF is also used in precomputed environment lighting (e.g., prefiltered IBL).</p>
@@ -86,7 +86,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What is a microfacet model?</h3><p>A microfacet model assumes the surface comprises tiny facets, with roughness described by statistical distribution; it is the basis of Cook-Torrance.</p></div>
 <div class="faq-item"><h3>Does BRDF satisfy reciprocity?</h3><p>A physically correct BRDF must satisfy reciprocity, meaning swapping incoming and outgoing directions yields the same result.</p></div>
 <div class="faq-item"><h3>How to choose a BRDF model?</h3><p>For PBR rendering, the GGX microfacet model is recommended for its good balance between realism and performance.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/subsurface-scattering.html">次表面散射 SSS</a></p></section>
   </article>
 </main>

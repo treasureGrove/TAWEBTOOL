@@ -45,8 +45,8 @@ var _hmt = _hmt || [];
 <h2>Gamma Correction and sRGB Conversion</h2>
 <p>Gamma correction refers to the process of converting between linear and sRGB. Typical formulas:</p>
 <ul>
-<li>Linear to sRGB: `C_srgb = C_linear^(1/2.2)` (approximate)</li>
-<li>sRGB to linear: `C_linear = C_srgb^2.2` (approximate)</li>
+<li>Linear to sRGB: <code>C_srgb = C_linear^(1/2.2)</code> (approximate)</li>
+<li>sRGB to linear: <code>C_linear = C_srgb^2.2</code> (approximate)</li>
 </ul>
 <p>The exact sRGB conversion uses a piecewise function, but approximation usually suffices. In the rendering pipeline:</p>
 <ol>
@@ -55,12 +55,12 @@ var _hmt = _hmt || [];
 <li>Final output: Convert the result from linear to sRGB for framebuffer or display.</li>
 </ul>
 <h2>Implementation in Game Engines</h2>
-<p>**Unity**:</p>
+<p><strong>Unity</strong>:</p>
 <ul>
 <li>In Player Settings, choose Color Space as Linear or Gamma. In Linear mode, the engine automatically handles sRGB texture decoding and output encoding.</li>
 <li>Texture assets can be marked as sRGB (default for color textures) or Linear (for data textures like normal maps, metallic maps).</li>
 </ul>
-<p>**Unreal Engine**:</p>
+<p><strong>Unreal Engine</strong>:</p>
 <ul>
 <li>Uses linear workflow by default; set sRGB option on texture import.</li>
 <li>Gamma can be adjusted in project settings.</li>
@@ -68,10 +68,10 @@ var _hmt = _hmt || [];
 <p>Correct color space settings are particularly important for PBR rendering because PBR relies on physically correct lighting calculations.</p>
 <h2>Common Issues and Considerations</h2>
 <ul>
-<li>**Incorrect texture marking**: If a normal map is marked as sRGB, it will be decoded incorrectly during sampling, causing wrong normal directions. Therefore, data textures (normal, metallic, roughness) should be marked as Linear.</li>
-<li>**Blending operations**: Blending colors in linear space is more accurate; blending in sRGB may cause edge artifacts.</li>
-<li>**UI elements**: UI typically uses sRGB colors directly and does not need linear conversion.</li>
-<li>**Mobile platforms**: Some mobile GPUs may not support linear rendering, requiring trade-offs.</li>
+<li><strong>Incorrect texture marking</strong>: If a normal map is marked as sRGB, it will be decoded incorrectly during sampling, causing wrong normal directions. Therefore, data textures (normal, metallic, roughness) should be marked as Linear.</li>
+<li><strong>Blending operations</strong>: Blending colors in linear space is more accurate; blending in sRGB may cause edge artifacts.</li>
+<li><strong>UI elements</strong>: UI typically uses sRGB colors directly and does not need linear conversion.</li>
+<li><strong>Mobile platforms</strong>: Some mobile GPUs may not support linear rendering, requiring trade-offs.</li>
 </ul>
 <h2>FAQ</h2>
 <h3>What is the difference between sRGB and linear color spaces?</h3>
@@ -92,7 +92,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What is gamma correction?</h3><p>Gamma correction is the process of converting between linear and sRGB using power functions to adjust luminance encoding for human perception and display devices.</p></div>
 <div class="faq-item"><h3>How do I know if a texture needs sRGB decoding?</h3><p>Color textures (albedo, diffuse) need sRGB decoding; data textures (normal, metallic, roughness) do not and should be marked Linear.</p></div>
 <div class="faq-item"><h3>How to switch to linear space in Unity?</h3><p>In Player Settings &gt; Other Settings &gt; Color Space, select Linear, and ensure all texture sRGB flags are correct.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">色彩空间转换</a></p></section>
   </article>
 </main>

@@ -42,37 +42,37 @@ var _hmt = _hmt || [];
 <h2>PBR 的核心原理</h2>
 <p>PBR 的核心在于模拟真实世界的光照行为，主要包括以下方面：</p>
 <ul>
-<li>**能量守恒**：物体表面反射的光能不会超过接收的光能。这意味着高光越强，漫反射越弱，反之亦然。</li>
-<li>**微表面理论**：物体表面由无数微小平面组成，这些微表面的朝向分布决定了粗糙度。粗糙度越低，微表面越整齐，反射越清晰；粗糙度越高，反射越模糊。</li>
-<li>**菲涅尔效应**：所有表面在掠射角（与视线夹角很小）时反射率都会增强。例如，站在湖边看远处水面会反射天空，而看脚下水面则更透明。</li>
+<li><strong>能量守恒</strong>：物体表面反射的光能不会超过接收的光能。这意味着高光越强，漫反射越弱，反之亦然。</li>
+<li><strong>微表面理论</strong>：物体表面由无数微小平面组成，这些微表面的朝向分布决定了粗糙度。粗糙度越低，微表面越整齐，反射越清晰；粗糙度越高，反射越模糊。</li>
+<li><strong>菲涅尔效应</strong>：所有表面在掠射角（与视线夹角很小）时反射率都会增强。例如，站在湖边看远处水面会反射天空，而看脚下水面则更透明。</li>
 </ul>
 <h2>金属度/粗糙度工作流</h2>
 <p>PBR 最常用的工作流是金属度/粗糙度工作流，它使用两张关键贴图定义材质属性：</p>
 <ul>
-<li>**金属度贴图（Metallic）**：指定哪些区域是金属（白色）或非金属（黑色）。金属的漫反射为黑色，高光为金属色；非金属的漫反射为固有色，高光为白色。</li>
-<li>**粗糙度贴图（Roughness）**：指定表面粗糙程度。白色表示完全粗糙（漫反射强，高光分散），黑色表示完全光滑（高光锐利）。</li>
+<li><strong>金属度贴图（Metallic）</strong>：指定哪些区域是金属（白色）或非金属（黑色）。金属的漫反射为黑色，高光为金属色；非金属的漫反射为固有色，高光为白色。</li>
+<li><strong>粗糙度贴图（Roughness）</strong>：指定表面粗糙程度。白色表示完全粗糙（漫反射强，高光分散），黑色表示完全光滑（高光锐利）。</li>
 </ul>
 <p>此外，还有反照率贴图（Albedo）定义基础颜色，法线贴图（Normal Map）定义表面细节。</p>
 <h2>PBR 的实现与应用</h2>
 <p>PBR 在多种引擎和软件中得到广泛应用：</p>
 <ul>
-<li>**游戏引擎**：Unity 使用 Standard Shader 和 URP/HDRP 中的 Lit Shader；Unreal Engine 使用基于物理的材质系统。</li>
-<li>**离线渲染器**：如 Arnold、V-Ray、Blender 的 Cycles 等，都支持 PBR 材质。</li>
-<li>**纹理制作**：使用 Substance Painter、Quixel Mixer 等工具可以便捷地创建 PBR 贴图。</li>
+<li><strong>游戏引擎</strong>：Unity 使用 Standard Shader 和 URP/HDRP 中的 Lit Shader；Unreal Engine 使用基于物理的材质系统。</li>
+<li><strong>离线渲染器</strong>：如 Arnold、V-Ray、Blender 的 Cycles 等，都支持 PBR 材质。</li>
+<li><strong>纹理制作</strong>：使用 Substance Painter、Quixel Mixer 等工具可以便捷地创建 PBR 贴图。</li>
 </ul>
 <p>在实际项目中，PBR 材质通常包括反照率、金属度、粗糙度、法线、环境光遮蔽（AO）等贴图，有时还会使用高度图进行视差映射。</p>
 <h2>PBR 的优缺点</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
-<li>**一致性**：材质在不同光照条件下表现一致，无需为每个场景调整参数。</li>
-<li>**真实性**：基于物理原理，渲染结果更接近真实世界。</li>
-<li>**可预测性**：艺术家只需关注材质属性，无需手动调整复杂的光照参数。</li>
+<li><strong>一致性</strong>：材质在不同光照条件下表现一致，无需为每个场景调整参数。</li>
+<li><strong>真实性</strong>：基于物理原理，渲染结果更接近真实世界。</li>
+<li><strong>可预测性</strong>：艺术家只需关注材质属性，无需手动调整复杂的光照参数。</li>
 </ul>
-<p>**缺点**：</p>
+<p><strong>缺点</strong>：</p>
 <ul>
-<li>**计算成本**：PBR 渲染涉及更复杂的计算，对性能有一定影响，尤其在移动端。</li>
-<li>**学习曲线**：需要理解物理概念，对初学者可能较陡峭。</li>
-<li>**贴图要求**：需要多张贴图，增加资源管理和制作成本。</li>
+<li><strong>计算成本</strong>：PBR 渲染涉及更复杂的计算，对性能有一定影响，尤其在移动端。</li>
+<li><strong>学习曲线</strong>：需要理解物理概念，对初学者可能较陡峭。</li>
+<li><strong>贴图要求</strong>：需要多张贴图，增加资源管理和制作成本。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>PBR 和传统渲染有什么区别？</h3>
@@ -93,7 +93,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>为什么 PBR 材质在不同光照下看起来更自然？</h3><p>因为 PBR 遵循能量守恒和物理规律，材质属性固定，光照变化时材质响应物理正确。</p></div>
 <div class="faq-item"><h3>如何选择金属度/粗糙度工作流还是高光/光泽度工作流？</h3><p>金属度/粗糙度工作流更直观、贴图更少，但可能有边缘伪影；高光/光泽度工作流控制更精细但贴图更多。现代引擎多推荐前者。</p></div>
 <div class="faq-item"><h3>PBR 是否只适用于 3D 游戏？</h3><p>不是。PBR 也广泛用于影视特效、建筑可视化、产品设计等领域，任何需要真实感渲染的场景均可使用。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a></p></section>
   </article>
 </main>

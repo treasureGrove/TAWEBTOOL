@@ -41,55 +41,55 @@ var _hmt = _hmt || [];
 <p>Shader complexity affects the execution efficiency of shaders on the GPU and directly relates to rendering performance. Excessive complexity can lead to high GPU utilization, thermal throttling, and even inability to run smoothly on low-end devices. Optimizing shader complexity is an important task in graphics programming.</p>
 <h2>Reasons for Optimizing Shader Complexity</h2>
 <ul>
-<li>**Increase frame rate**: Reduce GPU computation and speed up rendering.</li>
-<li>**Reduce power consumption**: Especially important on mobile devices to extend battery life.</li>
-<li>**Compatibility with low-end hardware**: Ensure the game runs on more devices.</li>
-<li>**Reduce heat**: Avoid performance degradation due to thermal throttling.</li>
+<li><strong>Increase frame rate</strong>: Reduce GPU computation and speed up rendering.</li>
+<li><strong>Reduce power consumption</strong>: Especially important on mobile devices to extend battery life.</li>
+<li><strong>Compatibility with low-end hardware</strong>: Ensure the game runs on more devices.</li>
+<li><strong>Reduce heat</strong>: Avoid performance degradation due to thermal throttling.</li>
 </ul>
 <h2>Common Optimization Strategies</h2>
 <h3>1. Simplify Mathematical Operations</h3>
 <ul>
-<li>**Avoid expensive functions**: Such as `pow`, `exp`, `log`, `sin`, `cos`, use approximations or lookup tables when possible.</li>
-<li>**Use multiplication instead of division**: For example, `x / 2.0` can be `x * 0.5`.</li>
-<li>**Utilize vector operations**: Use GPU SIMD instructions for parallel processing.</li>
-<li>**Reduce normalization**: Avoid unnecessary `normalize` when not needed.</li>
+<li><strong>Avoid expensive functions</strong>: Such as <code>pow</code>, <code>exp</code>, <code>log</code>, <code>sin</code>, <code>cos</code>, use approximations or lookup tables when possible.</li>
+<li><strong>Use multiplication instead of division</strong>: For example, <code>x / 2.0</code> can be <code>x * 0.5</code>.</li>
+<li><strong>Utilize vector operations</strong>: Use GPU SIMD instructions for parallel processing.</li>
+<li><strong>Reduce normalization</strong>: Avoid unnecessary <code>normalize</code> when not needed.</li>
 </ul>
 <h3>2. Reduce Texture Sampling</h3>
 <p>Texture sampling is a major bandwidth consumer and should be minimized.</p>
 <ul>
-<li>**Combine textures**: Pack multiple grayscale images into channels of one texture (e.g., roughness, metallic, AO into RGB).</li>
-<li>**Use mipmaps**: Select appropriate mip levels to reduce sampling overhead, but be aware of over-blurring.</li>
-<li>**Texture Atlas**: Combine multiple small textures into an atlas to reduce texture switches.</li>
+<li><strong>Combine textures</strong>: Pack multiple grayscale images into channels of one texture (e.g., roughness, metallic, AO into RGB).</li>
+<li><strong>Use mipmaps</strong>: Select appropriate mip levels to reduce sampling overhead, but be aware of over-blurring.</li>
+<li><strong>Texture Atlas</strong>: Combine multiple small textures into an atlas to reduce texture switches.</li>
 </ul>
 <h3>3. Avoid Dynamic Branching</h3>
 <p>GPUs execute in SIMD fashion; branches can cause thread divergence, reducing efficiency.</p>
 <ul>
-<li>**Use conditional assignment**: Such as `mix`, `step`, `smoothstep` instead of `if-else`.</li>
-<li>**Move branches out of loops**: If possible, decide on CPU side which shader variant to use.</li>
-<li>**Use shader variants**: Compile different versions for different material features, avoiding runtime branching.</li>
+<li><strong>Use conditional assignment</strong>: Such as <code>mix</code>, <code>step</code>, <code>smoothstep</code> instead of <code>if-else</code>.</li>
+<li><strong>Move branches out of loops</strong>: If possible, decide on CPU side which shader variant to use.</li>
+<li><strong>Use shader variants</strong>: Compile different versions for different material features, avoiding runtime branching.</li>
 </ul>
 <h3>4. Reduce Precision</h3>
-<p>On mobile platforms or for computations not requiring high precision, use `half` or `fixed` instead of `float`. Note on PC this may have no effect since modern GPUs have similar throughput for float and half.</p>
+<p>On mobile platforms or for computations not requiring high precision, use <code>half</code> or <code>fixed</code> instead of <code>float</code>. Note on PC this may have no effect since modern GPUs have similar throughput for float and half.</p>
 <h3>5. Optimize Loops</h3>
 <ul>
-<li>**Limit loop iterations**: Unroll small loops or use constant iteration counts.</li>
-<li>**Avoid texture sampling inside loops**: Move sampling outside the loop if possible.</li>
+<li><strong>Limit loop iterations</strong>: Unroll small loops or use constant iteration counts.</li>
+<li><strong>Avoid texture sampling inside loops</strong>: Move sampling outside the loop if possible.</li>
 </ul>
 <h3>6. Use LOD and Simplified Models</h3>
 <p>For distant objects, use simplified shaders to reduce computation.</p>
 <h2>Measuring Shader Complexity</h2>
 <ul>
-<li>**Instruction count**: After compilation, count instructions to understand basic cost.</li>
-<li>**Cycle count**: Use GPU performance analysis tools to measure actual execution cycles.</li>
-<li>**Register usage**: High register usage may reduce parallelism.</li>
+<li><strong>Instruction count</strong>: After compilation, count instructions to understand basic cost.</li>
+<li><strong>Cycle count</strong>: Use GPU performance analysis tools to measure actual execution cycles.</li>
+<li><strong>Register usage</strong>: High register usage may reduce parallelism.</li>
 </ul>
 <p>Common tools: NVIDIA Nsight, AMD Radeon GPU Profiler, RenderDoc, etc.</p>
 <h2>Practical Advice</h2>
 <ul>
-<li>**Start simple**: Implement functionality first, then optimize bottlenecks.</li>
-<li>**Use performance profilers**: Identify hot shaders.</li>
-<li>**Balance quality and performance**: Optimize within acceptable visual quality.</li>
-<li>**Use engine settings**: Such as Unity's shader LOD, Unreal's material quality switches.</li>
+<li><strong>Start simple</strong>: Implement functionality first, then optimize bottlenecks.</li>
+<li><strong>Use performance profilers</strong>: Identify hot shaders.</li>
+<li><strong>Balance quality and performance</strong>: Optimize within acceptable visual quality.</li>
+<li><strong>Use engine settings</strong>: Such as Unity's shader LOD, Unreal's material quality switches.</li>
 </ul>
 <h2>Summary</h2>
 <p>Shader complexity optimization requires balancing visual effects and performance. Through reasonable mathematical simplification, texture merging, avoiding branches, and other strategies, rendering efficiency can be significantly improved.</p>
@@ -101,7 +101,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why do dynamic branches affect performance?</h3><p>GPUs execute in SIMD; if threads in a warp take different branches, both paths execute serially, reducing efficiency. Use branchless code when possible.</p></div>
 <div class="faq-item"><h3>Which is more expensive: texture sampling or math operations?</h3><p>Depends on platform, but texture sampling usually consumes bandwidth and has high latency, especially on mobile. Reducing sampling is often more effective than reducing a few math instructions.</p></div>
 <div class="faq-item"><h3>How to evaluate shader performance?</h3><p>Use GPU performance analysis tools to inspect shader execution time, occupancy, instruction count, etc. Focus on hot shaders and optimize iteratively.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/overdraw.html">Overdraw 过度绘制</a> · <a href="https://tools.treasuregrove.art/en/seo/fill-rate.html">填充率 Fill Rate</a> · <a href="https://tools.treasuregrove.art/en/seo/batch-rendering.html">合批渲染 Batching</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
   </article>
 </main>

@@ -103,11 +103,11 @@
 
     function render() {
         var article = document.querySelector('main article') || document.querySelector('article');
-        if (!article || article.querySelector('.seo-tools')) return;
+        if (!article || article.querySelector('.seo-tools')) return false;
         var tools = collectTools();
         var picked = matchTools(tools, pageTokens());
         if (picked.length === 0) picked = hotTools(tools);
-        if (picked.length === 0) return;
+        if (picked.length === 0) return false;
 
         var cards = picked.map(function (t) {
             var name = isEn ? t.en : t.label;
@@ -128,6 +128,7 @@
         var related = article.querySelector('.seo-related');
         if (related) related.parentNode.insertBefore(section, related);
         else article.appendChild(section);
+        return true;
     }
 
     function injectStyles() {
@@ -146,6 +147,7 @@
         document.head.appendChild(style);
     }
 
-    injectStyles();
-    render();
+    // 页面已经有静态渲染的区块时（tools_html 里的文章都由预渲染脚本写入），
+    // 不重复注入样式，避免每页多一个 <style>。
+    if (render()) injectStyles();
 })();

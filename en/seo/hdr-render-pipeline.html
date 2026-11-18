@@ -41,10 +41,10 @@ var _hmt = _hmt || [];
 <p>HDR (High Dynamic Range) rendering pipeline is a rendering workflow that uses floating-point textures (such as RGBA16F) to store scene lighting information. Unlike traditional LDR (Low Dynamic Range) rendering which uses 8-bit integers, HDR allows storing brightness values exceeding 1.0, thereby preserving details in bright areas and avoiding overexposure. Finally, tone mapping converts the HDR image to an LDR image suitable for display devices.</p>
 <h2>Why Use HDR Rendering</h2>
 <ul>
-<li>**Preserve details**: In high-contrast scenes, HDR retains details in both bright and dark areas, avoiding pure white or pure black.</li>
-<li>**Physical correctness**: Paired with PBR materials and lighting, light intensity can exceed 1.0, making rendering more realistic.</li>
-<li>**Post-processing advantages**: Effects like Bloom require HDR information to correctly identify bright areas.</li>
-<li>**Avoid banding**: Floating-point formats provide higher precision, reducing banding artifacts in color gradients.</li>
+<li><strong>Preserve details</strong>: In high-contrast scenes, HDR retains details in both bright and dark areas, avoiding pure white or pure black.</li>
+<li><strong>Physical correctness</strong>: Paired with PBR materials and lighting, light intensity can exceed 1.0, making rendering more realistic.</li>
+<li><strong>Post-processing advantages</strong>: Effects like Bloom require HDR information to correctly identify bright areas.</li>
+<li><strong>Avoid banding</strong>: Floating-point formats provide higher precision, reducing banding artifacts in color gradients.</li>
 </ul>
 <h2>Key Components of HDR Rendering Pipeline</h2>
 <h3>1. HDR Render Target</h3>
@@ -54,17 +54,17 @@ var _hmt = _hmt || [];
 <h3>3. Tone Mapping</h3>
 <p>Tone mapping is the operator that maps HDR image to LDR display range. Common algorithms include:</p>
 <ul>
-<li>**Reinhard**: Simple and soft, but may reduce contrast.</li>
-<li>**ACES**: Cinematic tone mapping, providing more natural color and contrast.</li>
-<li>**Filmic**: Simulates film response.</li>
+<li><strong>Reinhard</strong>: Simple and soft, but may reduce contrast.</li>
+<li><strong>ACES</strong>: Cinematic tone mapping, providing more natural color and contrast.</li>
+<li><strong>Filmic</strong>: Simulates film response.</li>
 </ul>
 <h3>4. Post-processing</h3>
 <p>HDR provides better input for effects like bloom and lens flares, as these effects need to identify bright areas.</p>
 <h2>Implementing HDR Rendering Pipeline</h2>
 <p>In game engines, you usually just enable the HDR option:</p>
 <ul>
-<li>**Unity**: Enable HDR in the render pipeline asset, choose HDR format and tone mapping algorithm. Linear space and HDR are default.</li>
-<li>**Unreal Engine**: HDR rendering is default, with built-in tone mappers.</li>
+<li><strong>Unity</strong>: Enable HDR in the render pipeline asset, choose HDR format and tone mapping algorithm. Linear space and HDR are default.</li>
+<li><strong>Unreal Engine</strong>: HDR rendering is default, with built-in tone mappers.</li>
 </ul>
 <p>For custom engines:</p>
 <ol>
@@ -87,7 +87,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to enable HDR in Unity?</h3><p>In the render pipeline asset, check the HDR option, choose HDR format (e.g., R11G11B10F) and tone mapping algorithm (e.g., ACES). Also ensure Color Space is set to Linear.</p></div>
 <div class="faq-item"><h3>Does HDR rendering increase performance overhead?</h3><p>Yes, floating-point render targets consume more bandwidth and memory. However, modern GPUs handle it well, and R11G11B10F has manageable overhead. On mobile, use cautiously or selectively.</p></div>
 <div class="faq-item"><h3>What are the advantages of ACES tone mapping?</h3><p>ACES provides more natural color and contrast, avoids color shifts and highlight clipping, and is widely adopted in film and game industries.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR Editor</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/bloom.html">Bloom 泛光</a></p></section>
   </article>
 </main>

@@ -51,10 +51,10 @@ var _hmt = _hmt || [];
 <h3>VRS 实现层级</h3>
 <p>VRS 可通过多种方式设置着色率：</p>
 <ul>
-<li>**每绘制调用（Per-Draw）**：对整个 draw call 设置统一着色率。</li>
-<li>**每图元（Per-Primitive）**：在几何着色器或网格着色器中根据图元属性（如距离）设置。</li>
-<li>**屏幕空间图像（Screen-Space Image）**：使用一张纹理指定屏幕各区域的着色率，最灵活。</li>
-<li>**组合（Combiner）**：将上述来源结合，取最粗粒度。</li>
+<li><strong>每绘制调用（Per-Draw）</strong>：对整个 draw call 设置统一着色率。</li>
+<li><strong>每图元（Per-Primitive）</strong>：在几何着色器或网格着色器中根据图元属性（如距离）设置。</li>
+<li><strong>屏幕空间图像（Screen-Space Image）</strong>：使用一张纹理指定屏幕各区域的着色率，最灵活。</li>
+<li><strong>组合（Combiner）</strong>：将上述来源结合，取最粗粒度。</li>
 </ul>
 <h3>硬件支持</h3>
 <p>VRS 是 DirectX 12 Ultimate、Vulkan 1.2 的特性，需要较新 GPU（NVIDIA Turing、AMD RDNA 2、Intel Xe 等）。</p>
@@ -68,13 +68,13 @@ var _hmt = _hmt || [];
 <h3>结合注视点渲染（Foveated Rendering）</h3>
 <p>在 VR 中，根据眼球追踪，在用户注视点使用高着色率，周围大幅降低着色率，显著提升性能。</p>
 <h2>优点与挑战</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>直接减少像素着色器调用次数，降低 GPU 负载。</li>
 <li>灵活可控，可针对不同区域优化。</li>
 <li>与其他优化技术（如 LOD、剔除）互补。</li>
 </ul>
-<p>**挑战**：</p>
+<p><strong>挑战</strong>：</p>
 <ul>
 <li>降低着色率可能导致锯齿、模糊或细节丢失。</li>
 <li>需要合理设计着色率分配，否则画质下降明显。</li>
@@ -97,7 +97,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>哪些 GPU 支持 VRS？</h3><p>NVIDIA Turing（RTX 20 系列及 GTX 16 系列）及以后、AMD RDNA 2（RX 6000 系列）及以后、Intel Xe 系列等支持 VRS。</p></div>
 <div class="faq-item"><h3>VRS 会导致画质下降吗？</h3><p>如果使用得当，降低不敏感区域的着色率，主观画质影响很小。但不当使用可能导致明显的锯齿或细节丢失。</p></div>
 <div class="faq-item"><h3>如何在游戏引擎中启用 VRS？</h3><p>Unity 和 Unreal 引擎提供 VRS 支持，可通过渲染设置或插件开启。具体需参考引擎文档，并确保硬件和 API 支持。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/gpu-driven-rendering.html">GPU Driven 渲染</a> · <a href="https://tools.treasuregrove.art/seo/mesh-shader.html">Mesh Shader</a> · <a href="https://tools.treasuregrove.art/seo/dlss-fsr-upscaling.html">DLSS FSR 超分辨率</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a></p></section>
   </article>
 </main>

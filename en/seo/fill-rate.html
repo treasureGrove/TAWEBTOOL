@@ -39,21 +39,21 @@ var _hmt = _hmt || [];
     <div class="seo-content">
 <h2>What is Fill Rate</h2>
 <p>Fill Rate is the number of pixels that a graphics processing unit (GPU) can render to the screen per second, typically measured in millions of pixels per second (MP/s) or billions of pixels per second (GP/s). It is an important indicator of GPU performance, especially when dealing with high-resolution rendering and complex fragment shading.</p>
-<p>Fill rate can be divided into **pixel fill rate** and **texture fill rate**:</p>
+<p>Fill rate can be divided into <strong>pixel fill rate</strong> and <strong>texture fill rate</strong>:</p>
 <ul>
-<li>**Pixel fill rate**: The number of pixels the GPU can write to the frame buffer per second, determined by the number of Raster Operations Pipelines (ROPs) and clock speed.</li>
-<li>**Texture fill rate**: The number of texels the GPU can sample per second, determined by the number of Texture Mapping Units (TMUs) and clock speed.</li>
+<li><strong>Pixel fill rate</strong>: The number of pixels the GPU can write to the frame buffer per second, determined by the number of Raster Operations Pipelines (ROPs) and clock speed.</li>
+<li><strong>Texture fill rate</strong>: The number of texels the GPU can sample per second, determined by the number of Texture Mapping Units (TMUs) and clock speed.</li>
 </ul>
 <h2>Importance of Fill Rate</h2>
 <p>Fill rate directly affects rendering performance. When a scene requires processing a large number of pixels (e.g., high resolution, multiple layers, complex post-processing), fill rate can become a bottleneck. If the GPU's fill rate is insufficient, frame rate drops and stuttering occurs.</p>
 <p>Mobile devices are particularly sensitive to fill rate due to high screen resolutions but relatively low GPU fill rates.</p>
 <h2>Factors Influencing Fill Rate</h2>
 <ul>
-<li>**Resolution**: Higher resolution means more pixels to render, increasing fill rate demand.</li>
-<li>**Overdraw**: Multiple draws of the same pixel increase fill rate pressure.</li>
-<li>**Fragment shader complexity**: While complex shaders primarily consume ALU, multiple texture samples per pixel also consume texture fill rate.</li>
-<li>**Blending operations**: Alpha blending requires reading and writing the frame buffer, consuming extra bandwidth.</li>
-<li>**Post-processing**: Full-screen post-processing effects (like blur, bloom) process all pixels multiple times, greatly increasing fill rate requirements.</li>
+<li><strong>Resolution</strong>: Higher resolution means more pixels to render, increasing fill rate demand.</li>
+<li><strong>Overdraw</strong>: Multiple draws of the same pixel increase fill rate pressure.</li>
+<li><strong>Fragment shader complexity</strong>: While complex shaders primarily consume ALU, multiple texture samples per pixel also consume texture fill rate.</li>
+<li><strong>Blending operations</strong>: Alpha blending requires reading and writing the frame buffer, consuming extra bandwidth.</li>
+<li><strong>Post-processing</strong>: Full-screen post-processing effects (like blur, bloom) process all pixels multiple times, greatly increasing fill rate requirements.</li>
 </ul>
 <h2>Relationship between Fill Rate and Overdraw</h2>
 <p>Overdraw is a major source of fill rate consumption. For example, if a pixel is drawn 3 times, the fill rate demand effectively triples. Reducing overdraw can significantly lower fill rate pressure.</p>
@@ -92,7 +92,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why are mobile devices sensitive to fill rate?</h3><p>Mobile devices have high screen resolutions but relatively low GPU fill rates and limited bandwidth. High overdraw and complex post-processing can quickly exhaust fill rate, leading to heating and throttling.</p></div>
 <div class="faq-item"><h3>What is the difference between texture fill rate and pixel fill rate?</h3><p>Pixel fill rate is the capability to write pixels, while texture fill rate is the capability to sample textures. They can differ; complex texture sampling may make texture fill rate the bottleneck.</p></div>
 <div class="faq-item"><h3>How does post-processing affect fill rate?</h3><p>Each post-processing effect traverses all screen pixels, executes shaders, and may sample textures multiple times. Stacking multiple post-processing effects multiplies fill rate demand.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/overdraw.html">Overdraw 过度绘制</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

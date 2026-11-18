@@ -43,15 +43,15 @@ var _hmt = _hmt || [];
 <p>Rendering pipelines typically compute HDR lighting in linear space, where luminance values can range from 0 to hundreds or more, while ordinary displays can only show 0 to 1 (or 0-255). Directly truncating HDR values leads to overexposed highlights and crushed blacks. Tone mapping compresses the wide luminance range into a displayable range while maintaining visual realism and avoiding detail loss.</p>
 <h2>Common Tone Mapping Algorithms</h2>
 <h3>Reinhard Tone Mapping</h3>
-<p>Classic algorithm: `L_display = L / (1 + L)`. It maps infinite luminance to [0,1], simple and efficient, but may reduce contrast and alter color saturation.</p>
+<p>Classic algorithm: <code>L_display = L / (1 + L)</code>. It maps infinite luminance to [0,1], simple and efficient, but may reduce contrast and alter color saturation.</p>
 <h3>Filmic Tone Mapping</h3>
 <p>Simulates the response curve of film, providing better highlight rolloff and color preservation. Common variants include ACES Filmic and Uncharted 2.</p>
 <h3>ACES Tone Mapping</h3>
 <p>ACES (Academy Color Encoding System) is a motion picture industry standard, widely adopted for its tone mapping curve. It achieves cinematic quality with complex fitted curves, preserving highlight details and color accuracy. In Unity and Unreal, ACES is one of the default options.</p>
 <h3>Other Algorithms</h3>
 <ul>
-<li>**Cinematic tone mapping**: Custom curves for artistic control.</li>
-<li>**Local tone mapping**: Adjusts contrast based on local regions, more complex and less common in real-time.</li>
+<li><strong>Cinematic tone mapping</strong>: Custom curves for artistic control.</li>
+<li><strong>Local tone mapping</strong>: Adjusts contrast based on local regions, more complex and less common in real-time.</li>
 </ul>
 <h2>Application in the Rendering Pipeline</h2>
 <p>In real-time rendering, tone mapping is typically a post-processing step, executed after HDR rendering and before gamma correction. Flow:</p>
@@ -82,7 +82,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What happens without tone mapping?</h3><p>HDR values get truncated, causing overexposed highlights, loss of shadow detail, and distorted images.</p></div>
 <div class="faq-item"><h3>Can tone mapping be used on mobile?</h3><p>Yes, but it adds post-processing overhead; evaluate performance. Simplified Reinhard or approximate curves can be used on mobile.</p></div>
 <div class="faq-item"><h3>How to adjust tone mapping effects?</h3><p>Adjust exposure, white point, curve parameters, or choose different algorithms. In Unity, Post Processing provides multiple parameters.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR Editor</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/bloom.html">Bloom 泛光</a></p></section>
   </article>
 </main>

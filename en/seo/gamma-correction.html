@@ -45,23 +45,23 @@ var _hmt = _hmt || [];
 <h2>Mathematical Expression of Gamma Correction</h2>
 <p>Typical gamma correction formulas:</p>
 <ul>
-<li>**Encoding (linear to gamma)**: `V_out = V_in^(1/γ)`, where γ is usually 2.2.</li>
-<li>**Decoding (gamma to linear)**: `V_in = V_out^γ`.</li>
+<li><strong>Encoding (linear to gamma)</strong>: <code>V_out = V_in^(1/γ)</code>, where γ is usually 2.2.</li>
+<li><strong>Decoding (gamma to linear)</strong>: <code>V_in = V_out^γ</code>.</li>
 </ul>
 <p>For example, a linear value of 0.5 encodes to about 0.73 (0.5^(1/2.2)), and decoding restores it to 0.5. The sRGB standard uses a more precise piecewise function, but the gamma 2.2 approximation is sufficient for most cases.</p>
 <h2>Gamma Correction and the Rendering Pipeline</h2>
 <p>In real-time rendering, lighting calculations must be performed in linear space to ensure physical correctness. The rendering pipeline typically includes:</p>
 <ol>
-<li>**Texture sampling**: Color textures are stored in sRGB format and need decoding to linear space after sampling. Engines handle this automatically (e.g., marking as sRGB in Unity).</li>
-<li>**Lighting calculations**: Done in linear space, producing linear results.</li>
-<li>**Final output**: Encode the linear result back to sRGB for display devices.</li>
+<li><strong>Texture sampling</strong>: Color textures are stored in sRGB format and need decoding to linear space after sampling. Engines handle this automatically (e.g., marking as sRGB in Unity).</li>
+<li><strong>Lighting calculations</strong>: Done in linear space, producing linear results.</li>
+<li><strong>Final output</strong>: Encode the linear result back to sRGB for display devices.</li>
 </ul>
 <p>Without gamma correction, outputting linear values directly would make the image too dark; performing lighting calculations incorrectly in sRGB space would cause blending errors (e.g., darkened colors, abnormal saturation).</p>
 <h2>Engine Settings and Considerations</h2>
 <ul>
-<li>**Unity**: In Player Settings, set Color Space to Linear; the engine automatically handles texture decoding and output encoding. Ensure textures are flagged correctly: color textures as sRGB, data textures (normal, metallic) as Linear.</li>
-<li>**Unreal Engine**: Uses linear workflow by default; set sRGB option on texture import.</li>
-<li>**Notes**:</li>
+<li><strong>Unity</strong>: In Player Settings, set Color Space to Linear; the engine automatically handles texture decoding and output encoding. Ensure textures are flagged correctly: color textures as sRGB, data textures (normal, metallic) as Linear.</li>
+<li><strong>Unreal Engine</strong>: Uses linear workflow by default; set sRGB option on texture import.</li>
+<li><strong>Notes</strong>:</li>
 </ul>
 <p>  - Data textures should not undergo gamma correction, as it distorts numerical values.</p>
 <p>  - UI elements are usually processed directly in sRGB space, no linear conversion needed.</p>
@@ -85,7 +85,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How do I know if a texture needs gamma correction?</h3><p>Color textures need gamma correction (marked as sRGB); data textures do not (marked as Linear).</p></div>
 <div class="faq-item"><h3>What are the consequences of not doing gamma correction?</h3><p>It leads to images being too dark or too bright, incorrect color blending, and affects visual quality and physical correctness.</p></div>
 <div class="faq-item"><h3>How to handle gamma correction on mobile?</h3><p>Mobile GPUs may not support linear rendering; you can manually process in shaders or accept Gamma space rendering for performance.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">色彩空间转换</a></p></section>
   </article>
 </main>

@@ -42,33 +42,33 @@ var _hmt = _hmt || [];
 <h2>Implementation Principles and Steps</h2>
 <p>The core process of Bloom typically includes the following steps:</p>
 <ol>
-<li>**Brightness Extraction**: Compare the rendered result with a brightness threshold and keep only pixels exceeding the threshold. This step is usually done in linear space because brightness in linear space aligns better with physical laws. Use the formula `bright = max(0, color - threshold)` to extract bright areas.</li>
-<li>**Blurring**: Apply Gaussian blur or Fast Fourier Transform (FFT) blur to the extracted bright image to spread the bright areas outward. A common optimization is to downsample before blurring to reduce computation. Multiple downsample and blur passes can generate halos at different scales, simulating more natural diffusion.</li>
-<li>**Compositing**: Add the blurred bright image to the original image to obtain the final image with bloom. Sometimes different weights or scaling factors are used to control the intensity and range of the bloom.</li>
+<li><strong>Brightness Extraction</strong>: Compare the rendered result with a brightness threshold and keep only pixels exceeding the threshold. This step is usually done in linear space because brightness in linear space aligns better with physical laws. Use the formula <code>bright = max(0, color - threshold)</code> to extract bright areas.</li>
+<li><strong>Blurring</strong>: Apply Gaussian blur or Fast Fourier Transform (FFT) blur to the extracted bright image to spread the bright areas outward. A common optimization is to downsample before blurring to reduce computation. Multiple downsample and blur passes can generate halos at different scales, simulating more natural diffusion.</li>
+<li><strong>Compositing</strong>: Add the blurred bright image to the original image to obtain the final image with bloom. Sometimes different weights or scaling factors are used to control the intensity and range of the bloom.</li>
 </ul>
 <p>In real game engines (such as Unity, Unreal), Bloom is part of the post-processing stack and is often combined with Tone Mapping to ensure correct display of HDR lighting on LDR output.</p>
 <h2>Parameter Tuning and Effect Control</h2>
 <p>Bloom effect control parameters vary by engine, but common ones include:</p>
 <ul>
-<li>**Threshold**: Determines which pixels are included in bloom. A lower threshold causes more areas to bloom, possibly leading to overexposure; a higher threshold only blooms the brightest areas.</li>
-<li>**Intensity**: Controls the brightness of the bloom, i.e., the weight when compositing. Higher intensity makes the halo more pronounced.</li>
-<li>**Blur Radius / Scale**: Affects the spread of the halo. Larger radius produces softer, wider halos; smaller radius is more compact.</li>
-<li>**Scatter**: Simulates light scattering in the lens or medium, adjusting the shape and density of the halo.</li>
-<li>**Resolution**: Bloom processing is often done at lower resolution for performance, but too low can cause aliasing or loss of blurred detail.</li>
+<li><strong>Threshold</strong>: Determines which pixels are included in bloom. A lower threshold causes more areas to bloom, possibly leading to overexposure; a higher threshold only blooms the brightest areas.</li>
+<li><strong>Intensity</strong>: Controls the brightness of the bloom, i.e., the weight when compositing. Higher intensity makes the halo more pronounced.</li>
+<li><strong>Blur Radius / Scale</strong>: Affects the spread of the halo. Larger radius produces softer, wider halos; smaller radius is more compact.</li>
+<li><strong>Scatter</strong>: Simulates light scattering in the lens or medium, adjusting the shape and density of the halo.</li>
+<li><strong>Resolution</strong>: Bloom processing is often done at lower resolution for performance, but too low can cause aliasing or loss of blurred detail.</li>
 </ul>
 <p>When tuning, balance visual quality and performance. It is generally recommended to use Bloom in a High Dynamic Range (HDR) rendering pipeline for more accurate results.</p>
 <h2>Relationship with Other Technologies</h2>
 <ul>
-<li>**HDR (High Dynamic Range)**: Bloom works best in HDR rendering because HDR preserves highlight details, allowing more accurate identification of bright areas. If used in LDR, tone mapping must be applied first.</li>
-<li>**Tone Mapping**: Often used with Bloom to compress HDR scenes into the LDR range displayable by monitors while preserving highlight details. Bloom can be applied before or after tone mapping, depending on implementation.</li>
-<li>**Lens Flare**: Unlike Bloom, lens flare consists of discrete spots caused by internal reflections in the lens, while Bloom is an overall halo diffusion. They can be combined.</li>
+<li><strong>HDR (High Dynamic Range)</strong>: Bloom works best in HDR rendering because HDR preserves highlight details, allowing more accurate identification of bright areas. If used in LDR, tone mapping must be applied first.</li>
+<li><strong>Tone Mapping</strong>: Often used with Bloom to compress HDR scenes into the LDR range displayable by monitors while preserving highlight details. Bloom can be applied before or after tone mapping, depending on implementation.</li>
+<li><strong>Lens Flare</strong>: Unlike Bloom, lens flare consists of discrete spots caused by internal reflections in the lens, while Bloom is an overall halo diffusion. They can be combined.</li>
 </ul>
 <h2>Application Scenarios and Precautions</h2>
 <ul>
-<li>**Game Development**: Widely used to represent the sun, magical effects, neon lights, explosions, etc., enhancing visual impact. Examples: neon bloom in *Cyberpunk 2077*, sunlight halo in *The Legend of Zelda*.</li>
-<li>**Film Post-Production**: In CGI compositing, simulates optical characteristics of real cameras to blend virtual elements with live-action footage.</li>
-<li>**Mobile Optimization**: Because Bloom involves multiple blur and full-screen operations, optimization on mobile devices is needed, such as using downsampling, reducing blur passes, using compute shaders, etc.</li>
-<li>**Common Issues**: Bloom may cause the image to look washed out or overexposed; carefully adjust threshold and intensity. Using it in low dynamic range may lose detail; HDR rendering is recommended.</li>
+<li><strong>Game Development</strong>: Widely used to represent the sun, magical effects, neon lights, explosions, etc., enhancing visual impact. Examples: neon bloom in *Cyberpunk 2077*, sunlight halo in *The Legend of Zelda*.</li>
+<li><strong>Film Post-Production</strong>: In CGI compositing, simulates optical characteristics of real cameras to blend virtual elements with live-action footage.</li>
+<li><strong>Mobile Optimization</strong>: Because Bloom involves multiple blur and full-screen operations, optimization on mobile devices is needed, such as using downsampling, reducing blur passes, using compute shaders, etc.</li>
+<li><strong>Common Issues</strong>: Bloom may cause the image to look washed out or overexposed; carefully adjust threshold and intensity. Using it in low dynamic range may lose detail; HDR rendering is recommended.</li>
 </ul>
 <p>Mastering Bloom technology can effectively enhance the realism and artistic expression of images, making it an important post-processing step in the rendering pipeline.</p>
 
@@ -79,7 +79,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What is the difference between Bloom and lens flare?</h3><p>Bloom is an overall halo diffusion, simulating light scattering in the sensor or medium; lens flare consists of discrete spots from internal reflections in the lens, often combined with Bloom.</p></div>
 <div class="faq-item"><h3>Can mobile games use Bloom?</h3><p>Yes, but optimization is needed. Common methods include reducing bloom processing resolution, reducing blur passes, using compute shaders, or precomputed lookup tables to balance performance and quality.</p></div>
 <div class="faq-item"><h3>What should the Bloom threshold be set to?</h3><p>The threshold depends on scene brightness. Generally recommended between 0.8 and 1.0 (linear space), allowing only the brightest areas to bloom. Visualize the bright areas to assist adjustment.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/en/seo/gamma-correction.html">伽马校正</a></p></section>
   </article>
 </main>

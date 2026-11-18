@@ -40,18 +40,18 @@ var _hmt = _hmt || [];
 <h2>为什么需要查看贴图信息</h2>
 <p>在游戏开发和3D渲染中，了解贴图的属性对于优化性能至关重要。关键信息包括：</p>
 <ul>
-<li>**分辨率**：影响显存占用和纹理细节。</li>
-<li>**格式**：如PNG、JPG、TGA、EXR，决定压缩方式和质量。</li>
-<li>**颜色空间**：sRGB还是线性，影响渲染正确性。</li>
-<li>**位深度**：8位、16位还是32位，影响颜色精度。</li>
-<li>**显存估算**：可计算上传到GPU后的大致大小。</li>
+<li><strong>分辨率</strong>：影响显存占用和纹理细节。</li>
+<li><strong>格式</strong>：如PNG、JPG、TGA、EXR，决定压缩方式和质量。</li>
+<li><strong>颜色空间</strong>：sRGB还是线性，影响渲染正确性。</li>
+<li><strong>位深度</strong>：8位、16位还是32位，影响颜色精度。</li>
+<li><strong>显存估算</strong>：可计算上传到GPU后的大致大小。</li>
 </ul>
 <h2>使用在线工具查看贴图信息</h2>
 <p>简单图片信息可通过浏览器或在线工具获取：</p>
 <ul>
-<li>**Online Image Info Viewer**：上传图片，显示尺寸、文件大小、格式、位深度等。</li>
-<li>**Get-Metadata.com**：读取EXIF和基本属性。</li>
-<li>**Photopea**：打开图片后，在“图像”&gt;“图像大小”查看分辨率，文件信息中查看格式。</li>
+<li><strong>Online Image Info Viewer</strong>：上传图片，显示尺寸、文件大小、格式、位深度等。</li>
+<li><strong>Get-Metadata.com</strong>：读取EXIF和基本属性。</li>
+<li><strong>Photopea</strong>：打开图片后，在“图像”&gt;“图像大小”查看分辨率，文件信息中查看格式。</li>
 </ul>
 <p>对于专业贴图格式（如DDS、KTX），在线工具较少，建议使用本地工具。</p>
 <h2>在线查看图片信息操作步骤</h2>
@@ -87,15 +87,15 @@ var _hmt = _hmt || [];
 <p>可使用在线显存计算器估算：输入尺寸和格式，输出大小。</p>
 <h2>使用专业工具查看</h2>
 <ul>
-<li>**Windows资源管理器**：右键图片&gt;属性&gt;详细信息，可看尺寸和文件大小。</li>
-<li>**Texture Tools**：如NVIDIA Texture Tools Exporter、AMD Compressonator 可打开DDS并查看详细信息和显存统计。</li>
-<li>**渲染器内部**：在Unity/Unreal中选中纹理资产，Inspector面板会显示导入设置和显存占用估算。</li>
+<li><strong>Windows资源管理器</strong>：右键图片&gt;属性&gt;详细信息，可看尺寸和文件大小。</li>
+<li><strong>Texture Tools</strong>：如NVIDIA Texture Tools Exporter、AMD Compressonator 可打开DDS并查看详细信息和显存统计。</li>
+<li><strong>渲染器内部</strong>：在Unity/Unreal中选中纹理资产，Inspector面板会显示导入设置和显存占用估算。</li>
 </ul>
 <h2>注意事项</h2>
 <ul>
-<li>**文件大小≠显存大小**：PNG等压缩格式在磁盘上较小，但上传GPU后解压为原始格式可能很大。</li>
-<li>**颜色空间影响**：sRGB纹理在采样时会自动线性化，但数据纹理（如法线贴图）应标记为线性。</li>
-<li>**Mipmap影响**：开启Mipmap会增加约33%显存，但提升远距离渲染质量。</li>
+<li><strong>文件大小≠显存大小</strong>：PNG等压缩格式在磁盘上较小，但上传GPU后解压为原始格式可能很大。</li>
+<li><strong>颜色空间影响</strong>：sRGB纹理在采样时会自动线性化，但数据纹理（如法线贴图）应标记为线性。</li>
+<li><strong>Mipmap影响</strong>：开启Mipmap会增加约33%显存，但提升远距离渲染质量。</li>
 </ul>
 
     </div>
@@ -104,8 +104,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>如何计算贴图显存占用？</h3><p>使用公式：宽×高×每像素字节数×1.33（含Mipmap）。例如1024×1024的RGBA8纹理约5.33MB。</p></div>
 <div class="faq-item"><h3>贴图颜色空间在哪里查看？</h3><p>在线工具通常不显示颜色空间。在图像编辑软件或游戏引擎中可查看标签，如sRGB或Linear。法线贴图等数据贴图应为线性。</p></div>
 <div class="faq-item"><h3>为什么PNG文件很小但显存占用大？</h3><p>PNG是无损压缩，GPU无法直接使用，需解压为原始像素格式，因此显存占用取决于纹理格式而非文件大小。</p></div>
-<div class="faq-item"><h3>如何批量查看贴图信息？</h3><p>可使用命令行工具如ImageMagick（`identify -verbose`）或编写脚本遍历文件夹，输出尺寸、格式等信息。</p></div>
-</section>
+<div class="faq-item"><h3>如何批量查看贴图信息？</h3><p>可使用命令行工具如ImageMagick（<code>identify -verbose</code>）或编写脚本遍历文件夹，输出尺寸、格式等信息。</p></div>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>贴图信息查看器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/bc-texture-compression.html">BC 贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/seo/normal-map-format.html">法线贴图格式 DirectX OpenGL</a></p></section>
   </article>
 </main>

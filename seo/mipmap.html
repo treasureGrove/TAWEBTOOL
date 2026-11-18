@@ -47,19 +47,19 @@ var _hmt = _hmt || [];
 <h2>纹理过滤与 Mipmap</h2>
 <p>Mipmap 与纹理过滤结合使用：</p>
 <ul>
-<li>**双线性过滤**：在单个 Mipmap 级别内进行双线性插值。</li>
-<li>**三线性过滤**：在两个相邻 Mipmap 级别之间进行插值，过渡更平滑，但性能稍差。</li>
-<li>**各向异性过滤**：处理倾斜表面的模糊，与 Mipmap 协同工作，提供更清晰的纹理。</li>
+<li><strong>双线性过滤</strong>：在单个 Mipmap 级别内进行双线性插值。</li>
+<li><strong>三线性过滤</strong>：在两个相邻 Mipmap 级别之间进行插值，过渡更平滑，但性能稍差。</li>
+<li><strong>各向异性过滤</strong>：处理倾斜表面的模糊，与 Mipmap 协同工作，提供更清晰的纹理。</li>
 </ul>
-<p>在着色器中，可以使用 `tex2Dlod` 或 `textureLod` 手动指定 Mipmap 级别，用于特殊效果。</p>
+<p>在着色器中，可以使用 <code>tex2Dlod</code> 或 <code>textureLod</code> 手动指定 Mipmap 级别，用于特殊效果。</p>
 <h2>Mipmap 的优势与注意事项</h2>
-<p>**优势**：</p>
+<p><strong>优势</strong>：</p>
 <ul>
 <li>减少远处物体的锯齿和摩尔纹。</li>
 <li>提高纹理缓存命中率，提升性能。</li>
 <li>降低带宽消耗，因为采样低分辨率纹理。</li>
 </ul>
-<p>**注意事项**：</p>
+<p><strong>注意事项</strong>：</p>
 <ul>
 <li>内存增加约 33%，对于内存受限的平台（如移动端）需要权衡。</li>
 <li>某些纹理（如 UI、精确图案）可能不适合 Mipmap，可能导致模糊。</li>
@@ -84,7 +84,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Mipmap 和 LOD 有什么关系？</h3><p>Mipmap 是纹理的 LOD（细节层次），类似于网格的 LOD，都是根据距离调整细节以优化性能。</p></div>
 <div class="faq-item"><h3>如何生成 Mipmap？</h3><p>在 Unity 中导入纹理时勾选 Generate Mip Maps；Unreal 默认生成。也可用图像软件或 API 手动生成。</p></div>
 <div class="faq-item"><h3>移动端应该使用 Mipmap 吗？</h3><p>移动端通常建议为 3D 场景纹理启用 Mipmap，但需权衡内存，可以限制级别或使用压缩格式。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>贴图信息查看器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a></p></section>
   </article>
 </main>

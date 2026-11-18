@@ -43,34 +43,34 @@ var _hmt = _hmt || [];
 <h2>ACES的组成</h2>
 <p>ACES包含多个核心组件：</p>
 <ul>
-<li>**ACES色彩空间**：一个超大色域的色彩空间，能包含所有可见颜色，避免色彩信息丢失。</li>
-<li>**输入设备转换（IDT）**：将不同摄像机的色彩空间转换为ACES。</li>
-<li>**输出设备转换（ODT）**：将ACES转换为特定显示设备的色彩空间（如sRGB、Rec.709、HDR10）。</li>
-<li>**参考渲染变换（RRT）**：将场景参考的线性数据转换为显示参考的色调映射结果。</li>
-<li>**ACES色调映射**：常用的近似实现，如ACES Filmic Tone Mapping，将HDR值映射到LDR范围。</li>
+<li><strong>ACES色彩空间</strong>：一个超大色域的色彩空间，能包含所有可见颜色，避免色彩信息丢失。</li>
+<li><strong>输入设备转换（IDT）</strong>：将不同摄像机的色彩空间转换为ACES。</li>
+<li><strong>输出设备转换（ODT）</strong>：将ACES转换为特定显示设备的色彩空间（如sRGB、Rec.709、HDR10）。</li>
+<li><strong>参考渲染变换（RRT）</strong>：将场景参考的线性数据转换为显示参考的色调映射结果。</li>
+<li><strong>ACES色调映射</strong>：常用的近似实现，如ACES Filmic Tone Mapping，将HDR值映射到LDR范围。</li>
 </ul>
 <h2>为什么使用ACES</h2>
 <ul>
-<li>**色彩一致性**：在不同设备和软件之间保持颜色一致。</li>
-<li>**高质量色调映射**：ACES色调映射提供自然的色彩和对比度，保留高光细节，避免传统Reinhard的灰暗感。</li>
-<li>**未来兼容性**：ACES支持HDR和广色域，适应未来显示技术。</li>
-<li>**行业标准**：被电影和游戏行业广泛采用，便于协作。</li>
+<li><strong>色彩一致性</strong>：在不同设备和软件之间保持颜色一致。</li>
+<li><strong>高质量色调映射</strong>：ACES色调映射提供自然的色彩和对比度，保留高光细节，避免传统Reinhard的灰暗感。</li>
+<li><strong>未来兼容性</strong>：ACES支持HDR和广色域，适应未来显示技术。</li>
+<li><strong>行业标准</strong>：被电影和游戏行业广泛采用，便于协作。</li>
 </ul>
 <h2>ACES色调映射</h2>
 <p>在游戏引擎中，最常用的是ACES色调映射，其函数输入线性HDR颜色，输出适合显示的LDR颜色。常见实现有：</p>
 <ul>
-<li>**ACES Filmic Tone Mapping**（Narkowicz 2015近似）：简单高效，广泛使用。</li>
-<li>**ACES Central**：更接近官方RRT，但计算稍复杂。</li>
+<li><strong>ACES Filmic Tone Mapping</strong>（Narkowicz 2015近似）：简单高效，广泛使用。</li>
+<li><strong>ACES Central</strong>：更接近官方RRT，但计算稍复杂。</li>
 </ul>
 <p>例如，Unity的Post Processing Stack和Unreal Engine都提供了ACES色调映射选项。</p>
 <h2>实现ACES色彩管理</h2>
 <p>在实时渲染管线中，通常按照以下步骤集成ACES：</p>
 <ol>
-<li>**线性空间渲染**：确保场景光照在线性空间计算。</li>
-<li>**HDR浮点渲染目标**：存储HDR颜色。</li>
-<li>**应用ACES色调映射**：在后处理阶段将HDR颜色转换为显示颜色。</li>
-<li>**颜色分级**：在ACES空间或显示空间进行调色。</li>
-<li>**输出转换**：根据目标显示设备应用ODT（如sRGB或HDR10）。</li>
+<li><strong>线性空间渲染</strong>：确保场景光照在线性空间计算。</li>
+<li><strong>HDR浮点渲染目标</strong>：存储HDR颜色。</li>
+<li><strong>应用ACES色调映射</strong>：在后处理阶段将HDR颜色转换为显示颜色。</li>
+<li><strong>颜色分级</strong>：在ACES空间或显示空间进行调色。</li>
+<li><strong>输出转换</strong>：根据目标显示设备应用ODT（如sRGB或HDR10）。</li>
 </ul>
 <p>许多引擎已经内置ACES，开发者只需选择相应的颜色管理配置。</p>
 <h2>ACES与sRGB的区别</h2>
@@ -85,7 +85,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>在Unity中如何使用ACES？</h3><p>在Unity的Post Processing或URP/HDRP中，选择Color Grading，然后选择ACES色调映射。确保项目使用线性空间和HDR渲染。</p></div>
 <div class="faq-item"><h3>ACES只用于电影吗？</h3><p>不，ACES也广泛应用于游戏、动画和实时渲染。游戏引擎内置ACES色调映射，以提升画面质量。</p></div>
 <div class="faq-item"><h3>ACES会增加性能开销吗？</h3><p>ACES色调映射的计算成本较低，通常是后处理中的一小部分。整体颜色管理流程对性能影响微小。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>色彩空间转换器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR 编辑器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/seo/color-grading.html">调色 Color Grading</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

@@ -52,7 +52,7 @@ var _hmt = _hmt || [];
 <h3>GPU Culling</h3>
 <p>Using compute shaders to perform visibility tests in parallel on the GPU for objects or clusters, including frustum culling and depth-buffer-based occlusion culling. Results directly generate a list of visible instances without needing to be sent back to the CPU.</p>
 <h3>Indirect Drawing</h3>
-<p>Using indirect draw commands (such as `DrawIndirect`, `DispatchIndirect`) allows the GPU to read draw parameters from buffers without CPU involvement. Multiple draw calls can be packed into a single indirect draw buffer.</p>
+<p>Using indirect draw commands (such as <code>DrawIndirect</code>, <code>DispatchIndirect</code>) allows the GPU to read draw parameters from buffers without CPU involvement. Multiple draw calls can be packed into a single indirect draw buffer.</p>
 <h3>Persistent Buffers</h3>
 <p>Storing scene data (transformation matrices, bounding boxes, material indices, etc.) in GPU-accessible buffers for processing by compute shaders.</p>
 <h3>Cluster Rendering</h3>
@@ -68,17 +68,17 @@ var _hmt = _hmt || [];
 </ul>
 <h2>Advantages</h2>
 <ul>
-<li>**Reduces CPU bottleneck**: Offloads repetitive work to the GPU, freeing the CPU for game logic, physics, etc.</li>
-<li>**Improves performance**: Reduces draw call preparation overhead, enabling rendering of more objects.</li>
-<li>**Better scalability**: GPU parallelism is well-suited for massive instances.</li>
-<li>**Works well with modern graphics APIs**: Leverages low-overhead features of DirectX 12 and Vulkan.</li>
+<li><strong>Reduces CPU bottleneck</strong>: Offloads repetitive work to the GPU, freeing the CPU for game logic, physics, etc.</li>
+<li><strong>Improves performance</strong>: Reduces draw call preparation overhead, enabling rendering of more objects.</li>
+<li><strong>Better scalability</strong>: GPU parallelism is well-suited for massive instances.</li>
+<li><strong>Works well with modern graphics APIs</strong>: Leverages low-overhead features of DirectX 12 and Vulkan.</li>
 </ul>
 <h2>Challenges</h2>
 <ul>
-<li>**High programming complexity**: Requires deep GPU programming knowledge, and debugging is difficult.</li>
-<li>**Hardware requirements**: Requires modern GPUs supporting compute shaders and indirect drawing.</li>
-<li>**Data management**: Requires careful design of GPU data structures to avoid memory waste.</li>
-<li>**Compatibility**: Older hardware may not support certain features, requiring traditional paths as fallback.</li>
+<li><strong>High programming complexity</strong>: Requires deep GPU programming knowledge, and debugging is difficult.</li>
+<li><strong>Hardware requirements</strong>: Requires modern GPUs supporting compute shaders and indirect drawing.</li>
+<li><strong>Data management</strong>: Requires careful design of GPU data structures to avoid memory waste.</li>
+<li><strong>Compatibility</strong>: Older hardware may not support certain features, requiring traditional paths as fallback.</li>
 </ul>
 <h2>Application Examples</h2>
 <p>Many modern game engines (such as Unreal Engine 5's Nanite, Unity's DOTS rendering) adopt GPU Driven techniques. Nanite uses GPU-driven cluster culling and rasterization to render ultra-high-polygon scenes.</p>
@@ -97,7 +97,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What is the relationship between GPU Driven and Mesh Shader?</h3><p>Mesh Shader is an important tool in GPU Driven rendering, allowing flexible generation and culling of geometry on the GPU. They are often used together.</p></div>
 <div class="faq-item"><h3>What scenarios are suitable for GPU Driven?</h3><p>Suitable for large-scale open worlds, massive instances, complex urban scenes, etc., effectively increasing the number of drawable objects and frame rate stability.</p></div>
 <div class="faq-item"><h3>How can I start learning GPU Driven Rendering?</h3><p>It is recommended to first master compute shaders and indirect drawing, then refer to open-source projects (such as Unreal Engine source code or DirectX samples) for practice.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/mesh-shader.html">Mesh Shader</a> · <a href="https://tools.treasuregrove.art/en/seo/compute-shader.html">计算着色器</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/variable-rate-shading.html">可变速率着色 VRS</a></p></section>
   </article>
 </main>

@@ -54,7 +54,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>能从颜色判断格式吗？</h3><p>不能凭整体色调或平坦区域判断。常见平坦法线 (0,0,1) 在 8 位编码中约为 (128,128,255)，两种约定都可出现；应以导出设置与同一模型的对照渲染为准。</p></div>
 <div class="faq-item"><h3>如何转换绿色通道约定？</h3><p>只在确认约定不匹配时对绿色通道反相：归一化 G_new=1-G，8 位 G_new=255-G。像素上下翻转不是这项转换；源图与导入器不要同时反相，否则发生二次反相。</p></div>
 <div class="faq-item"><h3>导入前还要核对什么？</h3><p>按目标应用文档核对法线贴图类型与绿色通道设置，并检查 UV、三角化、切线基底和压缩。Unity 提供 Flip Green Channel 选项，但它不代替对来源约定的确认。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a></p></section>
   </article>
 </main>

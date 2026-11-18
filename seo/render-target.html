@@ -43,12 +43,12 @@ var _hmt = _hmt || [];
 <h2>渲染目标的用途</h2>
 <p>渲染目标广泛应用于实时渲染和游戏开发：</p>
 <ul>
-<li>**后处理效果**：如模糊、泛光、色调映射等，需要先将场景渲染到渲染目标，然后对该纹理进行后处理。</li>
-<li>**阴影映射**：从光源视角渲染深度信息到渲染目标，生成阴影贴图。</li>
-<li>**反射和折射**：渲染场景到立方体贴图或平面反射纹理。</li>
-<li>**延迟渲染**：将几何信息（位置、法线、颜色等）渲染到多个渲染目标（MRT），然后进行光照计算。</li>
-<li>**屏幕空间效果**：如SSAO、SSR等，使用渲染目标存储中间结果。</li>
-<li>**动态纹理**：例如游戏中监控摄像头画面、镜子反射等。</li>
+<li><strong>后处理效果</strong>：如模糊、泛光、色调映射等，需要先将场景渲染到渲染目标，然后对该纹理进行后处理。</li>
+<li><strong>阴影映射</strong>：从光源视角渲染深度信息到渲染目标，生成阴影贴图。</li>
+<li><strong>反射和折射</strong>：渲染场景到立方体贴图或平面反射纹理。</li>
+<li><strong>延迟渲染</strong>：将几何信息（位置、法线、颜色等）渲染到多个渲染目标（MRT），然后进行光照计算。</li>
+<li><strong>屏幕空间效果</strong>：如SSAO、SSR等，使用渲染目标存储中间结果。</li>
+<li><strong>动态纹理</strong>：例如游戏中监控摄像头画面、镜子反射等。</li>
 </ul>
 <h2>创建渲染目标</h2>
 <p>在图形API中，创建渲染目标通常涉及以下步骤：</p>
@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <li>可选创建深度/模板缓冲区，并与颜色渲染目标一起绑定到帧缓冲对象。</li>
 <li>在渲染循环中，绑定渲染目标，执行渲染命令，然后解绑。</li>
 </ul>
-<p>不同API有不同的接口，例如DirectX 11的`ID3D11RenderTargetView`，OpenGL的FBO和`glFramebufferTexture2D`。</p>
+<p>不同API有不同的接口，例如DirectX 11的<code>ID3D11RenderTargetView</code>，OpenGL的FBO和<code>glFramebufferTexture2D</code>。</p>
 <p>在游戏引擎（如Unity、Unreal）中，通常通过图形API抽象层来创建和管理渲染目标，开发者可以使用高级接口。</p>
 <h2>渲染目标与纹理</h2>
 <p>渲染目标本质上是一种可写的纹理。纹理可以被采样（读），渲染目标可以被渲染（写）。现代GPU允许同一纹理在渲染目标和着色器资源之间切换，但需要注意性能影响，如避免同时读写。</p>
@@ -67,10 +67,10 @@ var _hmt = _hmt || [];
 <p>多渲染目标（Multiple Render Targets）允许同时渲染到多个颜色缓冲区。这在延迟渲染中常用，可以一次渲染输出位置、法线、反照率等到不同的渲染目标。MRT需要显卡支持，并且所有渲染目标必须具有相同的尺寸和位深。</p>
 <h2>性能注意事项</h2>
 <ul>
-<li>**渲染目标切换**：频繁切换渲染目标会带来开销，应尽量减少切换次数。</li>
-<li>**带宽**：渲染到高分辨率、高精度纹理消耗大量带宽，可能成为瓶颈。</li>
-<li>**内存**：渲染目标占用显存，尤其多渲染目标和mipmap链。</li>
-<li>**清除操作**：不必要的清除会浪费性能，但延迟渲染中通常需要清除。</li>
+<li><strong>渲染目标切换</strong>：频繁切换渲染目标会带来开销，应尽量减少切换次数。</li>
+<li><strong>带宽</strong>：渲染到高分辨率、高精度纹理消耗大量带宽，可能成为瓶颈。</li>
+<li><strong>内存</strong>：渲染目标占用显存，尤其多渲染目标和mipmap链。</li>
+<li><strong>清除操作</strong>：不必要的清除会浪费性能，但延迟渲染中通常需要清除。</li>
 </ul>
 <h2>总结</h2>
 <p>渲染目标是现代图形渲染的基础概念，掌握其原理和使用方法对于实现高级效果和优化性能至关重要。</p>
@@ -82,7 +82,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>多渲染目标（MRT）有什么用途？</h3><p>MRT允许同时输出多个颜色缓冲区，常用于延迟渲染，一次输出几何信息（如位置、法线、颜色等）到不同纹理，减少绘制调用。</p></div>
 <div class="faq-item"><h3>渲染目标的分辨率必须与屏幕一致吗？</h3><p>不一定。渲染目标可以设置为任意分辨率，常用于降分辨率渲染（如半分辨率后处理）以提升性能，或使用更高分辨率进行超采样抗锯齿。</p></div>
 <div class="faq-item"><h3>渲染目标会影响性能吗？</h3><p>会，渲染到渲染目标涉及额外的带宽和内存。高分辨率、多渲染目标或频繁切换都会增加性能开销，需要合理设计。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a></p></section>
   </article>
 </main>

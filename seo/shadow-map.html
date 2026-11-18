@@ -42,8 +42,8 @@ var _hmt = _hmt || [];
 <h2>阴影贴图的原理</h2>
 <p>阴影贴图通常分为两个 Pass：</p>
 <ol>
-<li>**阴影 Pass**：从光源位置渲染场景，只写入深度，得到阴影贴图。对于方向光，使用正交投影；对于点光源，使用透视投影或立方体贴图（六面）。</li>
-<li>**主渲染 Pass**：正常渲染场景，在片段着色器中，将世界坐标转换到光源空间，采样阴影贴图，比较深度。如果当前片元深度大于阴影贴图中对应深度（加上偏移），则片元在阴影中，光照减弱。</li>
+<li><strong>阴影 Pass</strong>：从光源位置渲染场景，只写入深度，得到阴影贴图。对于方向光，使用正交投影；对于点光源，使用透视投影或立方体贴图（六面）。</li>
+<li><strong>主渲染 Pass</strong>：正常渲染场景，在片段着色器中，将世界坐标转换到光源空间，采样阴影贴图，比较深度。如果当前片元深度大于阴影贴图中对应深度（加上偏移），则片元在阴影中，光照减弱。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>阴影痤疮（Shadow Acne）</h3>
@@ -56,16 +56,16 @@ var _hmt = _hmt || [];
 <p>阴影贴图使用深度纹理，精度有限，远处可能产生 Z-fighting。可以使用级联阴影贴图（CSM）提高方向光在大场景中的精度。</p>
 <h2>优化方法</h2>
 <ul>
-<li>**级联阴影贴图（Cascaded Shadow Maps, CSM）**：将视锥体划分为多个区域，每个区域使用不同分辨率的阴影贴图，提高近处阴影质量。</li>
-<li>**紧配合光源视锥**：调整光源投影范围以紧密包围场景，提高阴影贴图利用率。</li>
-<li>**使用低分辨率阴影贴图**：对于远处或小物体，可以降低阴影贴图分辨率。</li>
-<li>**阴影距离限制**：超出一定距离不渲染阴影。</li>
-<li>**缓存静态阴影**：烘焙静态物体的阴影到光照贴图。</li>
+<li><strong>级联阴影贴图（Cascaded Shadow Maps, CSM）</strong>：将视锥体划分为多个区域，每个区域使用不同分辨率的阴影贴图，提高近处阴影质量。</li>
+<li><strong>紧配合光源视锥</strong>：调整光源投影范围以紧密包围场景，提高阴影贴图利用率。</li>
+<li><strong>使用低分辨率阴影贴图</strong>：对于远处或小物体，可以降低阴影贴图分辨率。</li>
+<li><strong>阴影距离限制</strong>：超出一定距离不渲染阴影。</li>
+<li><strong>缓存静态阴影</strong>：烘焙静态物体的阴影到光照贴图。</li>
 </ul>
 <h2>在引擎中的应用</h2>
 <ul>
-<li>**Unity**：使用 Shadow Map 技术，支持 CSM、软阴影、阴影距离等设置。</li>
-<li>**Unreal**：使用 Shadow Map 和 Ray Traced Shadows，支持多种优化。</li>
+<li><strong>Unity</strong>：使用 Shadow Map 技术，支持 CSM、软阴影、阴影距离等设置。</li>
+<li><strong>Unreal</strong>：使用 Shadow Map 和 Ray Traced Shadows，支持多种优化。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>阴影贴图和光线追踪阴影有什么区别？</h3>
@@ -86,7 +86,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>点光源如何生成阴影贴图？</h3><p>点光源通常使用立方体阴影贴图，从六个方向渲染深度，或使用单通道双抛物面映射。</p></div>
 <div class="faq-item"><h3>移动端如何优化阴影？</h3><p>可以使用低分辨率阴影贴图、限制阴影距离、使用简单的硬阴影或关闭阴影。</p></div>
 <div class="faq-item"><h3>CSM 是什么？</h3><p>级联阴影贴图，将视锥体分为多个区域，每个区域使用不同分辨率阴影贴图，平衡阴影质量。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/z-fighting.html">Z-Fighting 深度冲突</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a></p></section>
   </article>
 </main>

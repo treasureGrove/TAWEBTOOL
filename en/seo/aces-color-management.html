@@ -43,34 +43,34 @@ var _hmt = _hmt || [];
 <h2>Components of ACES</h2>
 <p>ACES includes several core components:</p>
 <ul>
-<li>**ACES color space**: A wide-gamut color space that can contain all visible colors, avoiding color information loss.</li>
-<li>**Input Device Transform (IDT)**: Converts various camera color spaces to ACES.</li>
-<li>**Output Device Transform (ODT)**: Converts ACES to specific display device color spaces (e.g., sRGB, Rec.709, HDR10).</li>
-<li>**Reference Rendering Transform (RRT)**: Converts scene-referred linear data to display-referred tone-mapped result.</li>
-<li>**ACES tone mapping**: Common approximate implementations, such as ACES Filmic Tone Mapping, map HDR values to LDR range.</li>
+<li><strong>ACES color space</strong>: A wide-gamut color space that can contain all visible colors, avoiding color information loss.</li>
+<li><strong>Input Device Transform (IDT)</strong>: Converts various camera color spaces to ACES.</li>
+<li><strong>Output Device Transform (ODT)</strong>: Converts ACES to specific display device color spaces (e.g., sRGB, Rec.709, HDR10).</li>
+<li><strong>Reference Rendering Transform (RRT)</strong>: Converts scene-referred linear data to display-referred tone-mapped result.</li>
+<li><strong>ACES tone mapping</strong>: Common approximate implementations, such as ACES Filmic Tone Mapping, map HDR values to LDR range.</li>
 </ul>
 <h2>Why Use ACES</h2>
 <ul>
-<li>**Color consistency**: Maintains color consistency across different devices and software.</li>
-<li>**High-quality tone mapping**: ACES tone mapping provides natural color and contrast, preserves highlight details, and avoids the dullness of traditional Reinhard.</li>
-<li>**Future compatibility**: ACES supports HDR and wide color gamut, adapting to future display technologies.</li>
-<li>**Industry standard**: Widely adopted in film and game industries, facilitating collaboration.</li>
+<li><strong>Color consistency</strong>: Maintains color consistency across different devices and software.</li>
+<li><strong>High-quality tone mapping</strong>: ACES tone mapping provides natural color and contrast, preserves highlight details, and avoids the dullness of traditional Reinhard.</li>
+<li><strong>Future compatibility</strong>: ACES supports HDR and wide color gamut, adapting to future display technologies.</li>
+<li><strong>Industry standard</strong>: Widely adopted in film and game industries, facilitating collaboration.</li>
 </ul>
 <h2>ACES Tone Mapping</h2>
 <p>In game engines, ACES tone mapping is most commonly used. Its function takes linear HDR color and outputs displayable LDR color. Common implementations include:</p>
 <ul>
-<li>**ACES Filmic Tone Mapping** (Narkowicz 2015 approximation): Simple and efficient, widely used.</li>
-<li>**ACES Central**: Closer to the official RRT but slightly more complex computationally.</li>
+<li><strong>ACES Filmic Tone Mapping</strong> (Narkowicz 2015 approximation): Simple and efficient, widely used.</li>
+<li><strong>ACES Central</strong>: Closer to the official RRT but slightly more complex computationally.</li>
 </ul>
 <p>For example, Unity's Post Processing Stack and Unreal Engine offer ACES tone mapping options.</p>
 <h2>Implementing ACES Color Management</h2>
 <p>In a real-time rendering pipeline, ACES is typically integrated by:</p>
 <ol>
-<li>**Linear space rendering**: Ensure scene lighting is computed in linear space.</li>
-<li>**HDR floating-point render target**: Store HDR colors.</li>
-<li>**Apply ACES tone mapping**: Convert HDR colors to display colors in post-processing.</li>
-<li>**Color grading**: Adjust colors in ACES space or display space.</li>
-<li>**Output transform**: Apply ODT based on target display device (e.g., sRGB or HDR10).</li>
+<li><strong>Linear space rendering</strong>: Ensure scene lighting is computed in linear space.</li>
+<li><strong>HDR floating-point render target</strong>: Store HDR colors.</li>
+<li><strong>Apply ACES tone mapping</strong>: Convert HDR colors to display colors in post-processing.</li>
+<li><strong>Color grading</strong>: Adjust colors in ACES space or display space.</li>
+<li><strong>Output transform</strong>: Apply ODT based on target display device (e.g., sRGB or HDR10).</li>
 </ul>
 <p>Many engines already have ACES built-in; developers just select the appropriate color management configuration.</p>
 <h2>Difference between ACES and sRGB</h2>
@@ -85,7 +85,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to use ACES in Unity?</h3><p>In Unity's Post Processing or URP/HDRP, select Color Grading, then choose ACES tone mapping. Ensure the project uses linear space and HDR rendering.</p></div>
 <div class="faq-item"><h3>Is ACES only for film?</h3><p>No, ACES is also widely used in games, animation, and real-time rendering. Game engines include ACES tone mapping to improve image quality.</p></div>
 <div class="faq-item"><h3>Does ACES add performance overhead?</h3><p>ACES tone mapping has low computational cost, being a small part of post-processing. The overall color management workflow has minimal performance impact.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>Color Space Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR Editor</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/color-grading.html">调色 Color Grading</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

@@ -48,17 +48,17 @@ var _hmt = _hmt || [];
 <p>The roughness map controls the microscopic roughness of the surface. White (value 1) means completely rough, with strong diffuse and scattered specular; black (value 0) means completely smooth, with sharp specular. Roughness can be seen as the inverse of glossiness (roughness = 1 - glossiness).</p>
 <h3>Other Common Maps</h3>
 <ul>
-<li>**Normal Map**: Provides surface bump details for more realism.</li>
-<li>**Ambient Occlusion (AO) Map**: Adds contact shadows and local darkening.</li>
-<li>**Height Map**: Used for effects like parallax mapping to add depth.</li>
+<li><strong>Normal Map</strong>: Provides surface bump details for more realism.</li>
+<li><strong>Ambient Occlusion (AO) Map</strong>: Adds contact shadows and local darkening.</li>
+<li><strong>Height Map</strong>: Used for effects like parallax mapping to add depth.</li>
 </ul>
 <h2>Steps to Use the Metallic Roughness Workflow</h2>
 <ol>
-<li>**Create or obtain PBR textures**: Use tools like Substance Painter, Quixel Mixer, or download from libraries.</li>
-<li>**Import into game engine**: Import the textures into Unity or Unreal and create a material.</li>
-<li>**Connect the maps**: Assign the albedo, metallic, roughness, normal, etc., to the corresponding material inputs.</li>
-<li>**Adjust parameters**: Modify tiling, offset, or material properties (e.g., metallic/roughness sliders) as needed.</li>
-<li>**Test under different lighting**: Check material appearance in multiple lighting conditions to ensure consistency.</li>
+<li><strong>Create or obtain PBR textures</strong>: Use tools like Substance Painter, Quixel Mixer, or download from libraries.</li>
+<li><strong>Import into game engine</strong>: Import the textures into Unity or Unreal and create a material.</li>
+<li><strong>Connect the maps</strong>: Assign the albedo, metallic, roughness, normal, etc., to the corresponding material inputs.</li>
+<li><strong>Adjust parameters</strong>: Modify tiling, offset, or material properties (e.g., metallic/roughness sliders) as needed.</li>
+<li><strong>Test under different lighting</strong>: Check material appearance in multiple lighting conditions to ensure consistency.</li>
 </ul>
 <h2>Comparison with Specular/Glossiness Workflow</h2>
 <p>| Feature | Metallic Roughness | Specular Glossiness |</p>
@@ -88,7 +88,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why shouldn't the metallic map have intermediate values?</h3><p>Physically, materials are usually either metal or non-metal; intermediate values only appear in transition areas, so it's recommended to keep it binary or with minimal transitions.</p></div>
 <div class="faq-item"><h3>How to avoid white edges on metallic boundaries?</h3><p>Ensure the albedo map has correct colors at boundaries, or use higher resolution textures to reduce aliasing.</p></div>
 <div class="faq-item"><h3>Is the metallic roughness workflow suitable for all materials?</h3><p>It suits most materials, but special materials (skin, car paint) may need additional maps to enhance realism.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>RGBA Channel Packer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/fresnel-effect.html">菲涅尔效应</a></p></section>
   </article>
 </main>

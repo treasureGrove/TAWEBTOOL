@@ -49,7 +49,7 @@ var _hmt = _hmt || [];
 <h2>蒙皮算法</h2>
 <h3>线性混合蒙皮（Linear Blend Skinning）</h3>
 <p>最常用的蒙皮算法。对于顶点V，受骨骼i影响权重wi，则变形后位置为：</p>
-<p>`V' = Σ wi * Mi * V`</p>
+<p><code>V' = Σ wi * Mi * V</code></p>
 <p>其中Mi是骨骼i的全局变换矩阵乘以绑定姿势的逆矩阵。线性混合蒙皮计算简单，但在关节弯曲处可能产生“糖果纸”伪影（体积塌陷）。</p>
 <h3>双四元数蒙皮（Dual Quaternion Skinning）</h3>
 <p>使用双四元数混合变换，避免线性混合的旋转插值问题，减少体积损失，保持更好的体积感。计算稍复杂，但效果更佳。</p>
@@ -60,14 +60,14 @@ var _hmt = _hmt || [];
 <h2>在GPU上的实现</h2>
 <p>骨骼动画通常在顶点着色器中完成蒙皮计算，将骨骼变换矩阵数组（Bone Matrix Palette）传递给着色器，顶点根据影响骨骼的索引和权重进行变换。由于GPU并行处理顶点，性能很高。对于大量骨骼或顶点，皮肤计算可能成为瓶颈，可采用计算着色器优化。</p>
 <h2>优点与局限</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>相比逐顶点动画，内存占用小（只需骨骼变换，不需存储每帧顶点位置）。</li>
 <li>动画数据可重用，同一骨骼可驱动不同网格。</li>
 <li>支持动画混合、IK（反向动力学）等高级控制。</li>
 <li>适合实时渲染，性能良好。</li>
 </ul>
-<p>**局限**：</p>
+<p><strong>局限</strong>：</p>
 <ul>
 <li>不擅长表现布料、液体等非刚性变形，需要结合物理模拟或网格变形。</li>
 <li>蒙皮权重绘制耗时，需要美术经验。</li>
@@ -83,7 +83,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>线性混合蒙皮有什么缺点？</h3><p>在关节弯曲较大时，线性混合蒙皮可能导致体积塌陷（糖果纸伪影）。双四元数蒙皮等算法可以缓解这一问题。</p></div>
 <div class="faq-item"><h3>骨骼动画在GPU上如何实现？</h3><p>通常在顶点着色器中进行蒙皮计算，将骨骼矩阵数组作为常量缓冲区传入，顶点根据骨骼索引和权重混合变换。这样可以充分利用GPU并行性。</p></div>
 <div class="faq-item"><h3>如何解决骨骼动画中的关节扭曲问题？</h3><p>可以使用双四元数蒙皮或球形混合蒙皮等更高级的算法，或者增加辅助骨骼（如扭曲骨骼）来改善变形效果。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/blend-shape.html">BlendShape 混合变形</a> · <a href="https://tools.treasuregrove.art/seo/vertex-vs-fragment-shader.html">顶点着色器与片元着色器</a> · <a href="https://tools.treasuregrove.art/seo/compute-shader.html">计算着色器</a></p></section>
   </article>
 </main>

@@ -200,6 +200,14 @@ function esc(s) {
 }
 
 // ───────────────────────── Markdown → HTML（极简） ─────────────────────────
+// 行内标记必须先转义再还原成标签：AI 输出的 **加粗**、`代码`、[文字](链接)
+// 以前被 esc() 原样保留，页面上直接显示成 `**PBR Texture Merger**`。
+function inlineMarkup(escaped) {
+  return escaped
+    .replace(/`([^`\n]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" rel="nofollow noopener" target="_blank">$1</a>');
+}
 function mdToHtml(md) {
   const lines = String(md || '').split(/\r?\n/);
   let html = '';
@@ -207,13 +215,13 @@ function mdToHtml(md) {
   const closeUl = () => { if (inUl) { html += '</ul>\n'; inUl = false; } };
   for (const raw of lines) {
     const line = raw.trimEnd();
-    if (/^###\s+/.test(line)) { closeUl(); html += `<h3>${esc(line.replace(/^###\s+/, ''))}</h3>\n`; }
-    else if (/^##\s+/.test(line)) { closeUl(); html += `<h2>${esc(line.replace(/^##\s+/, ''))}</h2>\n`; }
-    else if (/^#\s+/.test(line)) { closeUl(); html += `<h2>${esc(line.replace(/^#\s+/, ''))}</h2>\n`; }
-    else if (/^[-*]\s+/.test(line)) { if (!inUl) { html += '<ul>\n'; inUl = true; } html += `<li>${esc(line.replace(/^[-*]\s+/, ''))}</li>\n`; }
-    else if (/^\d+[.)]\s+/.test(line)) { if (!inUl) { html += '<ol>\n'; inUl = true; } html += `<li>${esc(line.replace(/^\d+[.)]\s+/, ''))}</li>\n`; }
+    if (/^###\s+/.test(line)) { closeUl(); html += `<h3>${inlineMarkup(esc(line.replace(/^###\s+/, '')))}</h3>\n`; }
+    else if (/^##\s+/.test(line)) { closeUl(); html += `<h2>${inlineMarkup(esc(line.replace(/^##\s+/, '')))}</h2>\n`; }
+    else if (/^#\s+/.test(line)) { closeUl(); html += `<h2>${inlineMarkup(esc(line.replace(/^#\s+/, '')))}</h2>\n`; }
+    else if (/^[-*]\s+/.test(line)) { if (!inUl) { html += '<ul>\n'; inUl = true; } html += `<li>${inlineMarkup(esc(line.replace(/^[-*]\s+/, '')))}</li>\n`; }
+    else if (/^\d+[.)]\s+/.test(line)) { if (!inUl) { html += '<ol>\n'; inUl = true; } html += `<li>${inlineMarkup(esc(line.replace(/^\d+[.)]\s+/, '')))}</li>\n`; }
     else if (!line.trim()) { closeUl(); }
-    else { closeUl(); html += `<p>${esc(line)}</p>\n`; }
+    else { closeUl(); html += `<p>${inlineMarkup(esc(line))}</p>\n`; }
   }
   closeUl();
   return html;

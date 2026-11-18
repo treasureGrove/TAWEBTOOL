@@ -42,29 +42,29 @@ var _hmt = _hmt || [];
 <h2>LOD的实现原理</h2>
 <p>LOD系统通常包含多个级别的模型，例如LOD0（最高精度）、LOD1、LOD2等。引擎根据物体与摄像机的距离或屏幕空间占比来选择使用哪个级别。常见的切换标准包括：</p>
 <ul>
-<li>**距离阈值**：为每个LOD级别设置距离范围。</li>
-<li>**屏幕空间误差**：计算模型在屏幕上的投影大小，当误差低于设定阈值时切换。</li>
-<li>**像素覆盖率**：评估物体覆盖的像素数量。</li>
+<li><strong>距离阈值</strong>：为每个LOD级别设置距离范围。</li>
+<li><strong>屏幕空间误差</strong>：计算模型在屏幕上的投影大小，当误差低于设定阈值时切换。</li>
+<li><strong>像素覆盖率</strong>：评估物体覆盖的像素数量。</li>
 </ul>
 <p>切换过程可以是离散的（突然替换模型）或连续的（如使用Alpha过渡或几何过渡）。离散切换简单高效，但可能产生视觉跳变；连续切换更平滑但实现复杂。</p>
 <h2>LOD的创建方法</h2>
 <p>创建LOD模型有多种方式：</p>
 <ol>
-<li>**手动建模**：美术人员为每个LOD级别单独制作模型，通过减面工具（如Simplygon、InstaLOD）或手动简化。</li>
-<li>**自动生成**：使用算法自动简化网格，例如边折叠（Edge Collapse）、顶点聚类等。常见工具包括MikkTSpace、MeshOptimizer等。</li>
-<li>**混合方法**：自动简化后手工调整，以确保轮廓和关键特征保留。</li>
+<li><strong>手动建模</strong>：美术人员为每个LOD级别单独制作模型，通过减面工具（如Simplygon、InstaLOD）或手动简化。</li>
+<li><strong>自动生成</strong>：使用算法自动简化网格，例如边折叠（Edge Collapse）、顶点聚类等。常见工具包括MikkTSpace、MeshOptimizer等。</li>
+<li><strong>混合方法</strong>：自动简化后手工调整，以确保轮廓和关键特征保留。</li>
 </ul>
 <p>在游戏引擎（如Unity、Unreal）中，通常提供LOD组组件，开发者可以导入多个LOD模型并设置切换距离。</p>
 <h2>LOD的注意事项</h2>
 <ul>
-<li>**视觉跳变**：LOD切换时，如果模型差异较大，会产生明显的“弹出”感。可通过调整切换距离、使用屏幕空间误差或使用交叉淡化（Crossfade）来缓解。</li>
-<li>**材质和纹理**：LOD级别不仅影响几何，还可以简化材质和纹理（如使用更小尺寸的贴图、减少纹理层）。</li>
-<li>**阴影和光照**：低LOD模型可能影响阴影质量，需要确保阴影LOD与主LOD匹配。</li>
-<li>**动画和骨骼**：对于角色，LOD可能涉及减少骨骼数量或简化动画。</li>
-<li>**性能开销**：切换LOD本身有开销，应避免过于频繁的切换。</li>
+<li><strong>视觉跳变</strong>：LOD切换时，如果模型差异较大，会产生明显的“弹出”感。可通过调整切换距离、使用屏幕空间误差或使用交叉淡化（Crossfade）来缓解。</li>
+<li><strong>材质和纹理</strong>：LOD级别不仅影响几何，还可以简化材质和纹理（如使用更小尺寸的贴图、减少纹理层）。</li>
+<li><strong>阴影和光照</strong>：低LOD模型可能影响阴影质量，需要确保阴影LOD与主LOD匹配。</li>
+<li><strong>动画和骨骼</strong>：对于角色，LOD可能涉及减少骨骼数量或简化动画。</li>
+<li><strong>性能开销</strong>：切换LOD本身有开销，应避免过于频繁的切换。</li>
 </ul>
 <h2>LOD在实时渲染中的应用</h2>
-<p>LOD广泛应用于游戏、VR、建筑可视化等领域。在开放世界游戏中，LOD对于处理大规模场景至关重要。结合其他优化技术（如遮挡剔除、实例化），LOD可以大幅提升性能。此外，现代引擎还支持**HLOD（Hierarchical LOD）**，将多个物体合并为一个整体LOD，进一步减少绘制调用。</p>
+<p>LOD广泛应用于游戏、VR、建筑可视化等领域。在开放世界游戏中，LOD对于处理大规模场景至关重要。结合其他优化技术（如遮挡剔除、实例化），LOD可以大幅提升性能。此外，现代引擎还支持<strong>HLOD（Hierarchical LOD）</strong>，将多个物体合并为一个整体LOD，进一步减少绘制调用。</p>
 <h2>总结</h2>
 <p>LOD是3D渲染中不可或缺的优化手段。通过合理设置LOD级别和切换策略，开发者可以在保持画面质量的同时显著提升性能。理解LOD的原理和实现细节，有助于在项目中更好地平衡视觉与效率。</p>
 
@@ -75,7 +75,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>LOD会导致明显的模型跳变吗？</h3><p>如果LOD级别之间差异过大或切换距离设置不当，可能会产生跳变。可通过使用连续LOD、交叉淡化或调整切换阈值来减少跳变。</p></div>
 <div class="faq-item"><h3>LOD对性能有多大提升？</h3><p>提升幅度取决于场景复杂度和LOD设置。通常可减少50%以上的多边形数量，从而降低GPU负载，提高帧率。在大型场景中，配合HLOD可以进一步优化。</p></div>
 <div class="faq-item"><h3>所有物体都需要LOD吗？</h3><p>对于小物体或始终靠近摄像机的物体，LOD可能不必要。但对于大型场景、大量物体或移动平台，LOD非常重要。需要根据项目需求评估。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/gltf_optimizer.html"><b>glTF 压缩与 LOD</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
   </article>
 </main>

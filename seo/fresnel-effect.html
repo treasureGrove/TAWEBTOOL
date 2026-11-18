@@ -50,22 +50,22 @@ var _hmt = _hmt || [];
 <h2>在实时渲染中的应用</h2>
 <p>菲涅尔效应在PBR（基于物理的渲染）中不可或缺，用于计算BRDF中的菲涅尔项。它决定了镜面反射的强度随视角的变化，从而影响材质的外观。例如：</p>
 <ul>
-<li>**光滑表面**：如水面、玻璃，在掠射角处反射明显，呈现镜面效果。</li>
-<li>**粗糙表面**：如粗糙塑料，菲涅尔效应仍存在，但因表面微平面散射，掠射角反射增强的同时模糊度也增加。</li>
-<li>**金属**：金属的F0较高（通常大于0.5），因此垂直视角下也有较强反射，且反射颜色与金属本身颜色相关。</li>
+<li><strong>光滑表面</strong>：如水面、玻璃，在掠射角处反射明显，呈现镜面效果。</li>
+<li><strong>粗糙表面</strong>：如粗糙塑料，菲涅尔效应仍存在，但因表面微平面散射，掠射角反射增强的同时模糊度也增加。</li>
+<li><strong>金属</strong>：金属的F0较高（通常大于0.5），因此垂直视角下也有较强反射，且反射颜色与金属本身颜色相关。</li>
 </ul>
 <p>除了PBR，菲涅尔效应还用于其他效果：</p>
 <ul>
-<li>**边缘光（Rim Lighting）**：利用菲涅尔效应在物体边缘增加高光，增强轮廓感，常用于角色渲染和风格化效果。</li>
-<li>**环境反射**：在计算环境贴图反射时，根据视角混合反射强度，使反射更自然。</li>
-<li>**皮肤和头发渲染**：模拟皮肤的次表面散射和头发的各向异性高光时，菲涅尔效应影响光线的反射与透射。</li>
+<li><strong>边缘光（Rim Lighting）</strong>：利用菲涅尔效应在物体边缘增加高光，增强轮廓感，常用于角色渲染和风格化效果。</li>
+<li><strong>环境反射</strong>：在计算环境贴图反射时，根据视角混合反射强度，使反射更自然。</li>
+<li><strong>皮肤和头发渲染</strong>：模拟皮肤的次表面散射和头发的各向异性高光时，菲涅尔效应影响光线的反射与透射。</li>
 </ul>
 <h2>实现注意事项与常见误区</h2>
 <ul>
-<li>**F0 的选择**：电介质的F0约为0.04（灰度），金属的F0在0.5~1.0之间且带颜色。在混合材质（如带金属度的PBR）中，F0由金属度和基础色共同决定。</li>
-<li>**线性空间计算**：菲涅尔计算应在线性空间进行，确保物理正确性。若在伽马空间计算，可能导致结果偏差。</li>
-<li>**粗糙度的影响**：对于粗糙表面，菲涅尔效应不能简单用Schlick近似在宏观法线上计算，需考虑微平面法线分布，常使用修正的菲涅尔项（如将粗糙度纳入计算）。</li>
-<li>**过度使用边缘光**：虽然菲涅尔效应可用于边缘光，但应匹配材质属性，避免所有物体都出现相同的边缘光，破坏真实感。</li>
+<li><strong>F0 的选择</strong>：电介质的F0约为0.04（灰度），金属的F0在0.5~1.0之间且带颜色。在混合材质（如带金属度的PBR）中，F0由金属度和基础色共同决定。</li>
+<li><strong>线性空间计算</strong>：菲涅尔计算应在线性空间进行，确保物理正确性。若在伽马空间计算，可能导致结果偏差。</li>
+<li><strong>粗糙度的影响</strong>：对于粗糙表面，菲涅尔效应不能简单用Schlick近似在宏观法线上计算，需考虑微平面法线分布，常使用修正的菲涅尔项（如将粗糙度纳入计算）。</li>
+<li><strong>过度使用边缘光</strong>：虽然菲涅尔效应可用于边缘光，但应匹配材质属性，避免所有物体都出现相同的边缘光，破坏真实感。</li>
 </ul>
 <h2>结语</h2>
 <p>菲涅尔效应是连接物理光学与实时渲染的桥梁，掌握其原理和近似方法，能显著提升材质的真实感和视觉层次。在PBR工作流中，正确实现菲涅尔项是构建可信场景的关键一步。</p>
@@ -77,7 +77,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Schlick近似是什么？</h3><p>Schlick近似是一种快速计算菲涅尔反射率的公式：F = F0 + (1-F0)*(1-cosθ)^5，其中θ是视线与法线夹角。它计算高效且精度足够，被广泛使用。</p></div>
 <div class="faq-item"><h3>菲涅尔效应和边缘光有什么区别？</h3><p>边缘光是一种利用菲涅尔效应的视觉技巧，在物体轮廓处添加高光以增强立体感，但菲涅尔效应本身是光学现象，用于真实反射计算。</p></div>
 <div class="faq-item"><h3>粗糙表面的菲涅尔效应如何处理？</h3><p>粗糙表面因微平面分布，不能用单一法线计算菲涅尔。实时渲染中常用修正的Schlick近似，将粗糙度融入计算，或使用预积分的查找表。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader 函数库</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/srgb-vs-linear.html">sRGB 与线性色彩空间</a> · <a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a></p></section>
   </article>
 </main>

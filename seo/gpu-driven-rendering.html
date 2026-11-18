@@ -52,7 +52,7 @@ var _hmt = _hmt || [];
 <h3>GPU 剔除</h3>
 <p>利用计算着色器在 GPU 上并行地对物体或集群进行可见性测试，包括视锥体裁剪和基于深度缓冲的遮挡剔除。结果直接生成可见实例列表，无需回传给 CPU。</p>
 <h3>间接绘制</h3>
-<p>使用间接绘制命令（如 `DrawIndirect`、`DispatchIndirect`）允许 GPU 从缓冲区中读取绘制参数，无需 CPU 参与。多个绘制调用可打包为单个间接绘制缓冲区。</p>
+<p>使用间接绘制命令（如 <code>DrawIndirect</code>、<code>DispatchIndirect</code>）允许 GPU 从缓冲区中读取绘制参数，无需 CPU 参与。多个绘制调用可打包为单个间接绘制缓冲区。</p>
 <h3>持久化缓冲区</h3>
 <p>将场景数据（变换矩阵、包围盒、材质索引等）存储在 GPU 可访问的缓冲区中，供计算着色器处理。</p>
 <h3>集群渲染</h3>
@@ -68,17 +68,17 @@ var _hmt = _hmt || [];
 </ul>
 <h2>优势</h2>
 <ul>
-<li>**减少 CPU 瓶颈**：将重复性工作转移给 GPU，释放 CPU 用于游戏逻辑、物理等。</li>
-<li>**提升性能**：减少绘制调用准备开销，支持渲染更多物体。</li>
-<li>**更好的扩展性**：GPU 并行处理能力强，适合海量实例。</li>
-<li>**与现代图形 API 配合**：充分利用 DirectX 12、Vulkan 的低开销特性。</li>
+<li><strong>减少 CPU 瓶颈</strong>：将重复性工作转移给 GPU，释放 CPU 用于游戏逻辑、物理等。</li>
+<li><strong>提升性能</strong>：减少绘制调用准备开销，支持渲染更多物体。</li>
+<li><strong>更好的扩展性</strong>：GPU 并行处理能力强，适合海量实例。</li>
+<li><strong>与现代图形 API 配合</strong>：充分利用 DirectX 12、Vulkan 的低开销特性。</li>
 </ul>
 <h2>挑战</h2>
 <ul>
-<li>**编程复杂度高**：需要深厚 GPU 编程知识，调试困难。</li>
-<li>**硬件要求**：需要支持计算着色器和间接绘制的新一代 GPU。</li>
-<li>**数据管理**：需要精心设计 GPU 数据结构，避免内存浪费。</li>
-<li>**兼容性**：旧硬件不支持某些特性，可能需要传统路径作为后备。</li>
+<li><strong>编程复杂度高</strong>：需要深厚 GPU 编程知识，调试困难。</li>
+<li><strong>硬件要求</strong>：需要支持计算着色器和间接绘制的新一代 GPU。</li>
+<li><strong>数据管理</strong>：需要精心设计 GPU 数据结构，避免内存浪费。</li>
+<li><strong>兼容性</strong>：旧硬件不支持某些特性，可能需要传统路径作为后备。</li>
 </ul>
 <h2>应用实例</h2>
 <p>许多现代游戏引擎（如 Unreal Engine 5 的 Nanite、Unity 的 DOTS 渲染）都采用了 GPU Driven 技术。Nanite 使用 GPU 驱动的集群剔除和光栅化，实现超高多边形场景渲染。</p>
@@ -97,7 +97,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>GPU Driven 与 Mesh Shader 是什么关系？</h3><p>Mesh Shader 是 GPU Driven 渲染的重要工具之一，允许在 GPU 上灵活生成和剔除几何体，两者常结合使用。</p></div>
 <div class="faq-item"><h3>GPU Driven 适合哪些场景？</h3><p>适合大规模开放世界、海量实例、复杂城市场景等，能有效提升绘制物体数量和帧率稳定性。</p></div>
 <div class="faq-item"><h3>如何开始学习 GPU Driven 渲染？</h3><p>建议先掌握计算着色器和间接绘制，然后参考开源项目（如 Unreal Engine 源码或 DirectX 示例）进行实践。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/mesh-shader.html">Mesh Shader</a> · <a href="https://tools.treasuregrove.art/seo/compute-shader.html">计算着色器</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/variable-rate-shading.html">可变速率着色 VRS</a></p></section>
   </article>
 </main>

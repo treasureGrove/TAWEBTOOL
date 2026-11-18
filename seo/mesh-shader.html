@@ -49,8 +49,8 @@ var _hmt = _hmt || [];
 <h2>Mesh Shader 管线</h2>
 <p>Mesh Shader 管线包含两个新阶段：</p>
 <ol>
-<li>**任务着色器（Task Shader，也称为 Amplification Shader）**：可选，用于粗粒度处理，如视锥体裁剪、LOD 选择。</li>
-<li>**网格着色器（Mesh Shader）**：必需，负责生成顶点和图元（通常是三角形）。</li>
+<li><strong>任务着色器（Task Shader，也称为 Amplification Shader）</strong>：可选，用于粗粒度处理，如视锥体裁剪、LOD 选择。</li>
+<li><strong>网格着色器（Mesh Shader）</strong>：必需，负责生成顶点和图元（通常是三角形）。</li>
 </ul>
 <p>工作流类似计算着色器：任务着色器启动多个线程组，每个线程组可生成一组网格着色器线程组，网格着色器输出顶点和索引到光栅化器。</p>
 <h2>核心特性</h2>
@@ -70,15 +70,15 @@ var _hmt = _hmt || [];
 <h3>高性能渲染</h3>
 <p>在大量小物体渲染（如草丛、石块）时，Mesh Shader 可以批处理并减少 CPU 负载。</p>
 <h2>硬件与 API 支持</h2>
-<p>需要支持 DirectX 12 Ultimate 或 Vulkan 1.2 的 GPU，如 NVIDIA Turing 及以后、AMD RDNA 2 及以后。在 API 中，通过创建 Mesh Shader 和 Task Shader 对象，使用 `DispatchMesh` 命令执行。</p>
+<p>需要支持 DirectX 12 Ultimate 或 Vulkan 1.2 的 GPU，如 NVIDIA Turing 及以后、AMD RDNA 2 及以后。在 API 中，通过创建 Mesh Shader 和 Task Shader 对象，使用 <code>DispatchMesh</code> 命令执行。</p>
 <h2>优势与挑战</h2>
-<p>**优势**：</p>
+<p><strong>优势</strong>：</p>
 <ul>
 <li>更高的几何处理灵活性，适应现代渲染需求。</li>
 <li>减少 CPU 瓶颈，适合 GPU 驱动渲染。</li>
 <li>可扩展性能，便于实现高效的 LOD 和剔除。</li>
 </ul>
-<p>**挑战**：</p>
+<p><strong>挑战</strong>：</p>
 <ul>
 <li>编程复杂度较高，需要理解并行计算模型。</li>
 <li>目前硬件支持有限，旧设备无法使用。</li>
@@ -99,7 +99,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Mesh Shader 能完全取代传统管线吗？</h3><p>可以，Mesh Shader 可以替代顶点着色器和几何着色器，但为了兼容旧硬件，开发者可能需要保留传统路径。</p></div>
 <div class="faq-item"><h3>Mesh Shader 适合哪些场景？</h3><p>适合程序化几何生成、高效剔除、海量小物体渲染、GPU 驱动渲染等场景，尤其能减少 CPU 开销。</p></div>
 <div class="faq-item"><h3>如何开始学习 Mesh Shader？</h3><p>建议从官方示例和教程入手，使用支持 Mesh Shader 的引擎或框架（如 Unreal Engine 5、Microsoft DirectX 示例）进行实践。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader 函数库</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/compute-shader.html">计算着色器</a> · <a href="https://tools.treasuregrove.art/seo/gpu-driven-rendering.html">GPU Driven 渲染</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/tessellation.html">曲面细分</a> · <a href="https://tools.treasuregrove.art/seo/variable-rate-shading.html">可变速率着色 VRS</a></p></section>
   </article>
 </main>

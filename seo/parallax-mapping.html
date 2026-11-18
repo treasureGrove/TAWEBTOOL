@@ -41,7 +41,7 @@ var _hmt = _hmt || [];
 <p>视差贴图（Parallax Mapping）是一种先进的纹理映射技术，用于在平面表面上模拟凹凸不平的立体效果。它通过根据观察角度和表面高度图（Height Map）来偏移纹理坐标，使得纹理的不同部分产生视差位移，从而营造出比法线贴图更加强烈的深度感。与法线贴图仅改变光照方向不同，视差贴图实际上改变了纹理采样的位置，因此在视角变化时，凸起区域会遮挡凹陷区域，效果更接近真实几何体。</p>
 <h2>基本原理</h2>
 <p>视差贴图的核心思想基于简单的几何关系。当观察者从侧面看一个带有高度的表面时，原本在纹理坐标中的点会因为高度而偏移。假设表面有一个高度场 h(u,v)，观察方向为 V，那么实际看到的点应该是从原始位置沿着 V 在表面上的投影偏移后的位置。为了简化计算，通常采用近似方法：根据高度 h 和视角的切平面分量，将纹理坐标向视角方向偏移一个量。公式为：</p>
-<p>`offset = h * V.xy / V.z`</p>
+<p><code>offset = h * V.xy / V.z</code></p>
 <p>这种近似在高度变化平缓时效果很好，但在高度变化剧烈或视角非常倾斜时会产生扭曲。</p>
 <h2>常见类型与变体</h2>
 <h3>基础视差贴图</h3>
@@ -56,19 +56,19 @@ var _hmt = _hmt || [];
 <p>一种改进的陡峭视差贴图，通过线性插值或二分查找来精确确定视线与高度场的交点，能够产生自阴影和更准确的轮廓。POM 在现代游戏中广泛使用。</p>
 <h2>与法线贴图、位移贴图的对比</h2>
 <ul>
-<li>**法线贴图**：改变光照计算的法线方向，但不改变纹理坐标，因此表面几何形状不变，没有视差位移。</li>
-<li>**视差贴图**：改变纹理采样坐标，使得纹理看起来有深度，但不改变几何表面，光照仍基于原始法线（除非结合法线贴图）。</li>
-<li>**位移贴图**：实际改变几何体的顶点位置，产生真实的凹凸，需要足够的顶点密度，性能开销最大。</li>
+<li><strong>法线贴图</strong>：改变光照计算的法线方向，但不改变纹理坐标，因此表面几何形状不变，没有视差位移。</li>
+<li><strong>视差贴图</strong>：改变纹理采样坐标，使得纹理看起来有深度，但不改变几何表面，光照仍基于原始法线（除非结合法线贴图）。</li>
+<li><strong>位移贴图</strong>：实际改变几何体的顶点位置，产生真实的凹凸，需要足够的顶点密度，性能开销最大。</li>
 </ul>
 <p>视差贴图通常在片元着色器中实现，需要高度图，并且为了获得最佳效果通常与法线贴图结合使用。</p>
 <h2>优点与局限</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>相比位移贴图，无需额外几何体，性能开销较低。</li>
 <li>能产生比法线贴图更真实的深度和视差效果。</li>
 <li>适合表现砖墙、鹅卵石、雕刻表面等细节。</li>
 </ul>
-<p>**局限**：</p>
+<p><strong>局限</strong>：</p>
 <ul>
 <li>仍然是近似，在极端视角下可能出现扭曲或伪影。</li>
 <li>表面轮廓边缘仍是平的，无法产生真实的轮廓变化。</li>
@@ -92,7 +92,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>视差贴图有哪些常见类型？</h3><p>常见类型包括基础视差贴图、带偏移限制的视差贴图、陡峭视差贴图、浮雕视差贴图和视差遮蔽贴图（POM），它们在效果和性能上有所不同。</p></div>
 <div class="faq-item"><h3>视差贴图在游戏中的应用有哪些？</h3><p>广泛用于砖墙、鹅卵石路面、科幻面板、地形细节等，为平面模型增加立体感，提升视觉质量。</p></div>
 <div class="faq-item"><h3>视差贴图的性能开销如何？</h3><p>基础视差贴图性能开销较低，但高级变体如 POM 需要多次纹理采样和循环计算，开销较大。实际应用中需要权衡效果与性能。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/tessellation.html">曲面细分</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a></p></section>
   </article>
 </main>

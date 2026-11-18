@@ -42,35 +42,35 @@ var _hmt = _hmt || [];
 <p>在游戏开发和实时渲染中，调色通常作为后处理效果的一部分，通过调整颜色映射来改变整个场景的视觉效果。</p>
 <h2>调色的作用</h2>
 <ul>
-<li>**统一风格**：确保场景中所有元素色彩协调。</li>
-<li>**传达情绪**：通过色调表达氛围，如恐怖游戏的阴暗冷色调，或温馨场景的暖色调。</li>
-<li>**提升视觉质量**：增强对比度、饱和度，使画面更有冲击力。</li>
-<li>**模拟电影效果**：如模仿特定电影的色彩风格。</li>
+<li><strong>统一风格</strong>：确保场景中所有元素色彩协调。</li>
+<li><strong>传达情绪</strong>：通过色调表达氛围，如恐怖游戏的阴暗冷色调，或温馨场景的暖色调。</li>
+<li><strong>提升视觉质量</strong>：增强对比度、饱和度，使画面更有冲击力。</li>
+<li><strong>模拟电影效果</strong>：如模仿特定电影的色彩风格。</li>
 </ul>
 <h2>调色工具与参数</h2>
 <p>常见的调色工具包括：</p>
 <ul>
-<li>**颜色查找表（LUT）**：使用预先生成的查找表对颜色进行映射，可以快速应用复杂调色。许多引擎支持导入LUT纹理。</li>
-<li>**色彩平衡**：调整阴影、中间调、高光的颜色偏移。</li>
-<li>**曲线**：通过曲线调整亮度、对比度、RGB通道。</li>
-<li>**色相/饱和度/亮度（HSL）**：针对特定颜色范围调整。</li>
-<li>**色调映射**：与调色结合，影响整体对比度。</li>
+<li><strong>颜色查找表（LUT）</strong>：使用预先生成的查找表对颜色进行映射，可以快速应用复杂调色。许多引擎支持导入LUT纹理。</li>
+<li><strong>色彩平衡</strong>：调整阴影、中间调、高光的颜色偏移。</li>
+<li><strong>曲线</strong>：通过曲线调整亮度、对比度、RGB通道。</li>
+<li><strong>色相/饱和度/亮度（HSL）</strong>：针对特定颜色范围调整。</li>
+<li><strong>色调映射</strong>：与调色结合，影响整体对比度。</li>
 </ul>
 <p>在游戏引擎中，如Unity的Post Processing Stack、Unreal Engine的Color Grading模块，都提供了上述参数。</p>
 <h2>调色的工作流程</h2>
 <p>典型的工作流程如下：</p>
 <ol>
-<li>**基础校正**：确保曝光、白平衡正确，通常在线性空间处理。</li>
-<li>**风格化调色**：应用LUT或调整参数，实现艺术效果。</li>
-<li>**输出转换**：应用色调映射和色彩空间转换，确保在目标设备上显示正确。</li>
-<li>**迭代测试**：在不同场景和光照下测试调色效果。</li>
+<li><strong>基础校正</strong>：确保曝光、白平衡正确，通常在线性空间处理。</li>
+<li><strong>风格化调色</strong>：应用LUT或调整参数，实现艺术效果。</li>
+<li><strong>输出转换</strong>：应用色调映射和色彩空间转换，确保在目标设备上显示正确。</li>
+<li><strong>迭代测试</strong>：在不同场景和光照下测试调色效果。</li>
 </ul>
 <p>调色通常在HDR渲染之后、输出到屏幕之前进行。</p>
 <h2>在游戏开发中使用调色</h2>
 <ul>
-<li>**实现方式**：大多数引擎提供后处理体积或相机效果，允许全局调色。也可以使用脚本动态调整，例如根据游戏状态改变色调。</li>
-<li>**LUT生成**：可以使用Photoshop、DaVinci Resolve等工具创建LUT，然后导入引擎。</li>
-<li>**性能考虑**：调色通常是全屏后处理，但计算成本相对较低，使用LUT时尤其高效。</li>
+<li><strong>实现方式</strong>：大多数引擎提供后处理体积或相机效果，允许全局调色。也可以使用脚本动态调整，例如根据游戏状态改变色调。</li>
+<li><strong>LUT生成</strong>：可以使用Photoshop、DaVinci Resolve等工具创建LUT，然后导入引擎。</li>
+<li><strong>性能考虑</strong>：调色通常是全屏后处理，但计算成本相对较低，使用LUT时尤其高效。</li>
 </ul>
 <h2>总结</h2>
 <p>调色是提升游戏和影视视觉表现的重要手段，通过合理运用调色工具，可以营造独特的视觉风格，增强沉浸感。</p>
@@ -82,7 +82,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>调色在游戏开发中什么时候进行？</h3><p>通常在渲染管线的后处理阶段，在色调映射之后或之前。许多引擎允许在其他后处理效果之后应用调色。</p></div>
 <div class="faq-item"><h3>调色会影响性能吗？</h3><p>调色本身计算简单，但作为全屏后处理会消耗一定的GPU资源。使用LUT可以非常高效，通常性能影响可忽略。</p></div>
 <div class="faq-item"><h3>如何为游戏创建LUT？</h3><p>可以使用图像编辑软件（如Photoshop）对标准LUT图进行调色，或使用DaVinci Resolve等专业工具生成，然后导入引擎。有些引擎支持直接从截图调色生成LUT。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>色彩空间转换器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/seo/aces-color-management.html">ACES 色彩管理</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
   </article>
 </main>

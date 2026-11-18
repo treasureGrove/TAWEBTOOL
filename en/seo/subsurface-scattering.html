@@ -43,41 +43,41 @@ var _hmt = _hmt || [];
 <p>The physical basis of SSS is the transport of light in participating media. When light enters a translucent material, it scatters and gets absorbed by particles (like cells, blood in skin). Scattering and absorption coefficients determine the light's path and attenuation. For skin, red light penetrates deeper, while blue and green are absorbed more, so light exiting the skin is reddish, creating the characteristic warm translucency.</p>
 <p>Accurately simulating volumetric scattering in real-time requires expensive path tracing, so approximations are typically used. Common methods include:</p>
 <ul>
-<li>**Texture Space Diffusion**: Unwrap the model into texture space, perform blurring in texture space, then map back to the 3D surface. Popularized by NVIDIA's demo team, suitable for real-time.</li>
-<li>**Screen Space Blur**: After rendering the scene, apply depth-aware blur to objects with SSS material in screen space; efficient but less physically accurate.</li>
-<li>**Pre-Integrated Skin Shading**: Use lookup tables storing scattering results for different curvatures and lighting angles, combined with normal maps to simulate fine scattering.</li>
-<li>**Thin Surface Transmission**: For thin objects (like ears, leaves), compute light transmitted from the back side, adding translucency.</li>
+<li><strong>Texture Space Diffusion</strong>: Unwrap the model into texture space, perform blurring in texture space, then map back to the 3D surface. Popularized by NVIDIA's demo team, suitable for real-time.</li>
+<li><strong>Screen Space Blur</strong>: After rendering the scene, apply depth-aware blur to objects with SSS material in screen space; efficient but less physically accurate.</li>
+<li><strong>Pre-Integrated Skin Shading</strong>: Use lookup tables storing scattering results for different curvatures and lighting angles, combined with normal maps to simulate fine scattering.</li>
+<li><strong>Thin Surface Transmission</strong>: For thin objects (like ears, leaves), compute light transmitted from the back side, adding translucency.</li>
 </ul>
 <h2>Real-Time Rendering Implementation Essentials</h2>
 <p>In game engines (like Unity, Unreal), high-quality SSS often combines multiple techniques:</p>
 <ol>
-<li>**Diffusion Profile**: Defines scattering distance and intensity for different color channels. For skin, red channel typically has longer scattering distance, blue shorter.</li>
-<li>**Screen-Space Subsurface Scattering**: In deferred rendering, blur pixels of skin material in screen space multiple times, weighted by depth and normals, to simulate nearby scattering.</li>
-<li>**Texture Space Diffusion**: Requires good UV unwrapping with no overlaps. Bake lighting results into texture space, perform Gaussian blur, then sample back onto the surface.</li>
-<li>**Transmission Term**: For thin areas like ears, nostrils, compute backlight intensity, multiply by transmission color, and add to final shading.</li>
+<li><strong>Diffusion Profile</strong>: Defines scattering distance and intensity for different color channels. For skin, red channel typically has longer scattering distance, blue shorter.</li>
+<li><strong>Screen-Space Subsurface Scattering</strong>: In deferred rendering, blur pixels of skin material in screen space multiple times, weighted by depth and normals, to simulate nearby scattering.</li>
+<li><strong>Texture Space Diffusion</strong>: Requires good UV unwrapping with no overlaps. Bake lighting results into texture space, perform Gaussian blur, then sample back onto the surface.</li>
+<li><strong>Transmission Term</strong>: For thin areas like ears, nostrils, compute backlight intensity, multiply by transmission color, and add to final shading.</li>
 </ul>
 <p>Implementation notes: SSS should be computed in linear space for energy conservation; scattering radius must be adjusted for world-space scale; when combined with PBR, SSS is added to the diffuse term.</p>
 <h2>Parameter Tuning and Art Direction</h2>
 <p>SSS effect heavily depends on artistic parameter adjustment. Common parameters include:</p>
 <ul>
-<li>**Scatter Color**: Controls the color of internally scattered light; for skin, typically reddish.</li>
-<li>**Scatter Radius/Intensity**: Determines how far light travels inside and attenuation, affecting translucency.</li>
-<li>**Transmission Color**: Color of light after passing through thin walls.</li>
-<li>**Texture Weight**: Controls influence of detail normals on SSS to avoid blurring details.</li>
+<li><strong>Scatter Color</strong>: Controls the color of internally scattered light; for skin, typically reddish.</li>
+<li><strong>Scatter Radius/Intensity</strong>: Determines how far light travels inside and attenuation, affecting translucency.</li>
+<li><strong>Transmission Color</strong>: Color of light after passing through thin walls.</li>
+<li><strong>Texture Weight</strong>: Controls influence of detail normals on SSS to avoid blurring details.</li>
 </ul>
 <p>Tuning should reference real materials: skin scattering radius is a few millimeters to centimeters, and red scatters farther than blue. Performance considerations: screen-space blur can be downsampled; texture-space diffusion can precompute some results.</p>
 <h2>Application Scenarios and Common Issues</h2>
 <p>SSS is widely used for:</p>
 <ul>
-<li>**Digital Humans**: Film and game characters, pursuing photorealistic skin.</li>
-<li>**Wax, Jade, Food**: Enhance translucent quality.</li>
-<li>**Vegetation**: Thin leaf translucency, simulating sunlight through leaves.</li>
+<li><strong>Digital Humans</strong>: Film and game characters, pursuing photorealistic skin.</li>
+<li><strong>Wax, Jade, Food</strong>: Enhance translucent quality.</li>
+<li><strong>Vegetation</strong>: Thin leaf translucency, simulating sunlight through leaves.</li>
 </ul>
 <p>Common issues include:</p>
 <ul>
-<li>**Over-scattering making materials look muddy**: Balance scattering intensity and blur radius.</li>
-<li>**Discontinuities at UV seams**: Texture-space diffusion needs UV boundary handling.</li>
-<li>**Performance cost too high**: Use downsampling, limit blur radius, or use pre-integrated techniques.</li>
+<li><strong>Over-scattering making materials look muddy</strong>: Balance scattering intensity and blur radius.</li>
+<li><strong>Discontinuities at UV seams</strong>: Texture-space diffusion needs UV boundary handling.</li>
+<li><strong>Performance cost too high</strong>: Use downsampling, limit blur radius, or use pre-integrated techniques.</li>
 </ul>
 <p>Mastering SSS technology significantly enhances realism for characters and organic materials, an important advanced step in real-time rendering.</p>
 
@@ -88,7 +88,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to combine SSS with PBR materials?</h3><p>In PBR, SSS is typically part of the diffuse term. Separate the part of diffuse lighting that needs scattering, apply diffusion profile blur, then add to specular term, maintaining energy conservation.</p></div>
 <div class="faq-item"><h3>Can mobile real-time rendering support SSS?</h3><p>Yes, but use lightweight approximations like pre-integrated skin shading or simple screen-space blur at low resolution. Balance effect and performance.</p></div>
 <div class="faq-item"><h3>Why is red light scattering more pronounced in skin rendering?</h3><p>Blood and melanin in skin absorb blue and green light strongly but absorb red weakly, so red light penetrates deeper and scatters out more, giving skin a warm red tone.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/bloom.html">Bloom 泛光</a></p></section>
   </article>
 </main>

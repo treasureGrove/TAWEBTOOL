@@ -51,19 +51,19 @@ var _hmt = _hmt || [];
 <h2>合批的条件与限制</h2>
 <p>合批通常需要满足以下条件：</p>
 <ul>
-<li>**相同材质**：必须使用相同的材质实例，否则无法合批。</li>
-<li>**相同Shader**：至少Shader要相同，材质属性可以不同但需要支持。</li>
-<li>**顶点格式一致**：顶点数据布局需一致。</li>
-<li>**无透明排序问题**：透明物体通常难以合批，因为需要严格的渲染顺序。</li>
+<li><strong>相同材质</strong>：必须使用相同的材质实例，否则无法合批。</li>
+<li><strong>相同Shader</strong>：至少Shader要相同，材质属性可以不同但需要支持。</li>
+<li><strong>顶点格式一致</strong>：顶点数据布局需一致。</li>
+<li><strong>无透明排序问题</strong>：透明物体通常难以合批，因为需要严格的渲染顺序。</li>
 </ul>
 <p>此外，动态合批受顶点数量限制，静态合批增加内存，GPU Instancing需要Shader支持。</p>
 <h2>如何优化以支持合批</h2>
 <ul>
-<li>**使用纹理图集**：将多个小纹理合并到一张大纹理，使不同物体可以使用同一材质。</li>
-<li>**减少材质种类**：合并使用相同Shader和纹理的材质。</li>
-<li>**利用引擎的合批工具**：如Unity的Frame Debugger可以检查哪些物体没有合批及原因。</li>
-<li>**合理组织场景**：将静态物体标记为Static，以启用静态合批。</li>
-<li>**使用GPU Instancing**：对于重复物体，使用实例化渲染。</li>
+<li><strong>使用纹理图集</strong>：将多个小纹理合并到一张大纹理，使不同物体可以使用同一材质。</li>
+<li><strong>减少材质种类</strong>：合并使用相同Shader和纹理的材质。</li>
+<li><strong>利用引擎的合批工具</strong>：如Unity的Frame Debugger可以检查哪些物体没有合批及原因。</li>
+<li><strong>合理组织场景</strong>：将静态物体标记为Static，以启用静态合批。</li>
+<li><strong>使用GPU Instancing</strong>：对于重复物体，使用实例化渲染。</li>
 </ul>
 <h2>合批与Draw Call的关系</h2>
 <p>合批直接减少Draw Call数量，从而降低CPU的渲染命令提交开销。但合批并非万能，过度合批可能导致内存增加或GPU负载不均衡。需要结合项目实际情况选择合适的合批策略。</p>
@@ -77,7 +77,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>为什么透明物体难以合批？</h3><p>透明物体需要从后往前排序以保证混合正确，排序后相邻物体可能不满足合批条件（如不同材质），强制合批会破坏渲染顺序。</p></div>
 <div class="faq-item"><h3>如何检查Unity中哪些物体没有合批？</h3><p>使用Frame Debugger可以查看每个Draw Call的来源，并显示未合批的原因。还可以使用Profiler查看Draw Call数量和合批统计。</p></div>
 <div class="faq-item"><h3>合批一定提升性能吗？</h3><p>通常减少Draw Call可以降低CPU开销，但合批也可能带来副作用，如静态合批增加内存、动态合批消耗CPU、实例化需要Shader支持。需要权衡。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
   </article>
 </main>

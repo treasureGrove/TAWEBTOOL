@@ -47,9 +47,9 @@ var _hmt = _hmt || [];
 <p>TAA（Temporal Anti-Aliasing）利用时间域信息，结合多帧样本进行抗锯齿。它通常与运动矢量配合，将当前帧与历史帧混合，可以显著减少几何和着色锯齿，并支持超采样效果。TAA 在静态场景下效果很好，但可能出现鬼影（ghosting）和模糊，且需要处理运动中的抖动。现代游戏广泛使用 TAA，尤其在延迟渲染中。</p>
 <h2>其他抗锯齿技术</h2>
 <ul>
-<li>**SMAA**：结合了后处理和边缘检测，效果优于 FXAA，性能略高。</li>
-<li>**DLSS/FSR**：基于深度学习的超采样技术，不仅抗锯齿还能提升性能，但需要特定硬件。</li>
-<li>**SSAA**：超采样抗锯齿，渲染更高分辨率再降采样，效果最佳但性能最差。</li>
+<li><strong>SMAA</strong>：结合了后处理和边缘检测，效果优于 FXAA，性能略高。</li>
+<li><strong>DLSS/FSR</strong>：基于深度学习的超采样技术，不仅抗锯齿还能提升性能，但需要特定硬件。</li>
+<li><strong>SSAA</strong>：超采样抗锯齿，渲染更高分辨率再降采样，效果最佳但性能最差。</li>
 </ul>
 <h2>选择建议</h2>
 <ul>
@@ -78,7 +78,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>移动端适合哪种抗锯齿？</h3><p>移动端通常使用 FXAA 或 MSAA（2x/4x），但需权衡性能和功耗。</p></div>
 <div class="faq-item"><h3>延迟渲染为什么不支持 MSAA？</h3><p>延迟渲染的 G-Buffer 多个渲染目标，MSAA 导致内存和带宽急剧增加，因此通常用后处理 AA。</p></div>
 <div class="faq-item"><h3>是否可以同时使用多种抗锯齿？</h3><p>可以，但会增加复杂性和性能开销，通常选择一种合适的 AA 技术。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/ssao.html">SSAO 环境光遮蔽</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
   </article>
 </main>

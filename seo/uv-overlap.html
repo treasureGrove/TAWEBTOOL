@@ -43,43 +43,43 @@ var _hmt = _hmt || [];
 <h2>UV重叠的原因</h2>
 <p>UV重叠通常由以下原因引起：</p>
 <ul>
-<li>**自动展开错误**：使用自动UV展开工具时，算法可能无法正确分割所有面，导致重叠。</li>
-<li>**手动编辑疏忽**：在手动调整UV岛时，不小心将两个岛重叠在一起。</li>
-<li>**镜像或复制**：复制模型部分或使用对称修改器时，如果未正确处理UV，可能导致重叠。</li>
-<li>**优化空间**：有时为了最大化纹理空间利用率，美术会故意重叠对称部分，但这需要确保纹理设计对称。</li>
+<li><strong>自动展开错误</strong>：使用自动UV展开工具时，算法可能无法正确分割所有面，导致重叠。</li>
+<li><strong>手动编辑疏忽</strong>：在手动调整UV岛时，不小心将两个岛重叠在一起。</li>
+<li><strong>镜像或复制</strong>：复制模型部分或使用对称修改器时，如果未正确处理UV，可能导致重叠。</li>
+<li><strong>优化空间</strong>：有时为了最大化纹理空间利用率，美术会故意重叠对称部分，但这需要确保纹理设计对称。</li>
 </ul>
 <h2>如何检查UV重叠</h2>
 <p>大多数3D建模软件都提供了检查UV重叠的工具或方法：</p>
 <ul>
-<li>**Maya**：使用UV Texture Editor中的“Overlap”显示选项，重叠区域会高亮显示。</li>
-<li>**Blender**：在UV编辑器中，启用“Overlap”显示（通过Overlay菜单），重叠面会以不同颜色显示。</li>
-<li>**3ds Max**：使用UV Editor中的“Checker”图案或脚本检查重叠。</li>
-<li>**专用插件**：如RizomUV、UVLayout等工具提供高级重叠检测和修复功能。</li>
+<li><strong>Maya</strong>：使用UV Texture Editor中的“Overlap”显示选项，重叠区域会高亮显示。</li>
+<li><strong>Blender</strong>：在UV编辑器中，启用“Overlap”显示（通过Overlay菜单），重叠面会以不同颜色显示。</li>
+<li><strong>3ds Max</strong>：使用UV Editor中的“Checker”图案或脚本检查重叠。</li>
+<li><strong>专用插件</strong>：如RizomUV、UVLayout等工具提供高级重叠检测和修复功能。</li>
 </ul>
 <p>此外，还可以通过导出UV布局并使用图像编辑软件（如Photoshop）进行检查。</p>
 <h2>UV重叠的影响</h2>
 <p>UV重叠会导致：</p>
 <ul>
-<li>**纹理错误**：不同面显示相同的纹理区域，可能破坏模型外观。</li>
-<li>**光照烘焙问题**：在烘焙光照贴图时，重叠的面会共享光照信息，导致不正确的阴影或漏光。</li>
-<li>**纹理分辨率浪费**：如果重叠区域包含不同细节需求的面，可能无法为每个面提供足够的纹理空间。</li>
+<li><strong>纹理错误</strong>：不同面显示相同的纹理区域，可能破坏模型外观。</li>
+<li><strong>光照烘焙问题</strong>：在烘焙光照贴图时，重叠的面会共享光照信息，导致不正确的阴影或漏光。</li>
+<li><strong>纹理分辨率浪费</strong>：如果重叠区域包含不同细节需求的面，可能无法为每个面提供足够的纹理空间。</li>
 </ul>
 <p>但在对称模型中，合理利用重叠可以节省纹理空间，提高分辨率。</p>
 <h2>如何修复UV重叠</h2>
 <p>修复UV重叠的方法包括：</p>
 <ul>
-<li>**自动展开**：重新运行UV展开算法，确保不重叠。</li>
-<li>**手动调整**：在UV编辑器中移动重叠的岛，使其分离。</li>
-<li>**使用工具**：一些软件提供“Layout”功能，自动排列UV岛避免重叠。</li>
-<li>**对称处理**：如果重叠是有意的，确保纹理设计为对称，或使用镜像修改器。</li>
+<li><strong>自动展开</strong>：重新运行UV展开算法，确保不重叠。</li>
+<li><strong>手动调整</strong>：在UV编辑器中移动重叠的岛，使其分离。</li>
+<li><strong>使用工具</strong>：一些软件提供“Layout”功能，自动排列UV岛避免重叠。</li>
+<li><strong>对称处理</strong>：如果重叠是有意的，确保纹理设计为对称，或使用镜像修改器。</li>
 </ul>
 <p>对于复杂模型，可能需要耐心调整UV布局，并优先保证重要区域无重叠。</p>
 <h2>最佳实践</h2>
 <ul>
-<li>**早期检查**：在建模流程中尽早检查UV重叠，避免后续返工。</li>
-<li>**保持UV空间利用率**：在避免重叠的同时，尽量高效利用0-1 UV空间。</li>
-<li>**使用测试纹理**：应用棋盘格或数字纹理，快速发现重叠和拉伸。</li>
-<li>**注意光照贴图UV**：光照贴图UV通常需要单独展开，确保无重叠且布局合理。</li>
+<li><strong>早期检查</strong>：在建模流程中尽早检查UV重叠，避免后续返工。</li>
+<li><strong>保持UV空间利用率</strong>：在避免重叠的同时，尽量高效利用0-1 UV空间。</li>
+<li><strong>使用测试纹理</strong>：应用棋盘格或数字纹理，快速发现重叠和拉伸。</li>
+<li><strong>注意光照贴图UV</strong>：光照贴图UV通常需要单独展开，确保无重叠且布局合理。</li>
 </ul>
 <h2>总结</h2>
 <p>UV重叠检查是确保纹理正确映射的重要步骤。通过理解其原理并掌握检测和修复方法，可以提升模型质量和渲染效果。</p>
@@ -92,7 +92,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>UV重叠会影响性能吗？</h3><p>通常不会直接影响性能，但会导致视觉错误。在光照贴图烘焙时，重叠可能导致烘焙结果错误，增加迭代时间。</p></div>
 <div class="faq-item"><h3>如何快速修复UV重叠？</h3><p>可以使用自动重新展开或UV布局工具。在Blender中，选择所有面后使用“UV &gt; Pack Islands”可以自动排列避免重叠。在Maya中，使用“Layout”功能。</p></div>
 <div class="faq-item"><h3>为什么对称模型可以UV重叠？</h3><p>对称模型的左右部分在几何上镜像，如果纹理也是对称的，那么重叠不会产生视觉问题，并且可以节省一半的纹理空间，提高有效分辨率。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/seo/texel-density.html">贴图密度 Texel Density</a> · <a href="https://tools.treasuregrove.art/seo/normal-map-format.html">法线贴图格式 DirectX OpenGL</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a></p></section>
   </article>
 </main>

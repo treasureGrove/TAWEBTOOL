@@ -49,7 +49,7 @@ var _hmt = _hmt || [];
 <h2>Skinning Algorithms</h2>
 <h3>Linear Blend Skinning</h3>
 <p>Most commonly used skinning algorithm. For vertex V influenced by bone i with weight wi, the deformed position is:</p>
-<p>`V' = Σ wi * Mi * V`</p>
+<p><code>V' = Σ wi * Mi * V</code></p>
 <p>where Mi is the global transformation matrix of bone i multiplied by the inverse bind pose matrix. Linear blend skinning is simple but may cause &quot;candy wrapper&quot; artifacts (volume collapse) at joint bends.</p>
 <h3>Dual Quaternion Skinning</h3>
 <p>Uses dual quaternions to blend transformations, avoiding rotation interpolation issues of linear blending and reducing volume loss, maintaining better volume. Slightly more complex but yields better results.</p>
@@ -60,14 +60,14 @@ var _hmt = _hmt || [];
 <h2>GPU Implementation</h2>
 <p>Skeletal animation is usually performed in the vertex shader. The bone transformation matrix array (Bone Matrix Palette) is passed to the shader, and vertices are transformed based on influencing bone indices and weights. Due to GPU parallel processing, performance is high. For many bones or vertices, skinning may become a bottleneck, and compute shaders can be used for optimization.</p>
 <h2>Advantages and Limitations</h2>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>Small memory footprint compared to per-vertex animation (only bone transforms, not per-frame vertex positions).</li>
 <li>Animation data can be reused; the same skeleton can drive different meshes.</li>
 <li>Supports advanced controls like animation blending and IK (Inverse Kinematics).</li>
 <li>Suitable for real-time rendering with good performance.</li>
 </ul>
-<p>**Limitations**:</p>
+<p><strong>Limitations</strong>:</p>
 <ul>
 <li>Not good at non-rigid deformations like cloth and fluids; needs physics simulation or mesh deformation.</li>
 <li>Skin weight painting is time-consuming and requires artistic skill.</li>
@@ -83,7 +83,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What are the disadvantages of linear blend skinning?</h3><p>At large joint bends, linear blend skinning may cause volume collapse (candy wrapper artifact). Dual quaternion skinning can alleviate this.</p></div>
 <div class="faq-item"><h3>How is skeletal animation implemented on GPU?</h3><p>Typically skinning is done in the vertex shader, with bone matrix arrays passed as constant buffers, and vertices blended based on bone indices and weights. This leverages GPU parallelism.</p></div>
 <div class="faq-item"><h3>How to solve joint twisting issues in skeletal animation?</h3><p>Use advanced algorithms like dual quaternion skinning or spherical blend skinning, or add helper bones (like twist bones) to improve deformation.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/blend-shape.html">BlendShape 混合变形</a> · <a href="https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html">顶点着色器与片元着色器</a> · <a href="https://tools.treasuregrove.art/en/seo/compute-shader.html">计算着色器</a></p></section>
   </article>
 </main>

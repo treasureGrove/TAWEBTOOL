@@ -43,12 +43,12 @@ var _hmt = _hmt || [];
 <h2>Uses of Render Targets</h2>
 <p>Render targets are widely used in real-time rendering and game development:</p>
 <ul>
-<li>**Post-processing effects**: Such as blur, bloom, tone mapping, etc., where the scene is first rendered to a render target, then that texture is post-processed.</li>
-<li>**Shadow mapping**: Rendering depth information from the light's perspective to a render target to generate shadow maps.</li>
-<li>**Reflections and refractions**: Rendering the scene to a cubemap or planar reflection texture.</li>
-<li>**Deferred rendering**: Rendering geometric information (position, normal, color, etc.) to multiple render targets (MRT), then performing lighting calculations.</li>
-<li>**Screen-space effects**: Like SSAO, SSR, using render targets to store intermediate results.</li>
-<li>**Dynamic textures**: For example, security camera feeds, mirror reflections in games.</li>
+<li><strong>Post-processing effects</strong>: Such as blur, bloom, tone mapping, etc., where the scene is first rendered to a render target, then that texture is post-processed.</li>
+<li><strong>Shadow mapping</strong>: Rendering depth information from the light's perspective to a render target to generate shadow maps.</li>
+<li><strong>Reflections and refractions</strong>: Rendering the scene to a cubemap or planar reflection texture.</li>
+<li><strong>Deferred rendering</strong>: Rendering geometric information (position, normal, color, etc.) to multiple render targets (MRT), then performing lighting calculations.</li>
+<li><strong>Screen-space effects</strong>: Like SSAO, SSR, using render targets to store intermediate results.</li>
+<li><strong>Dynamic textures</strong>: For example, security camera feeds, mirror reflections in games.</li>
 </ul>
 <h2>Creating a Render Target</h2>
 <p>In graphics APIs, creating a render target typically involves:</p>
@@ -58,7 +58,7 @@ var _hmt = _hmt || [];
 <li>Optionally creating a depth/stencil buffer and binding it with the color render target to a frame buffer object.</li>
 <li>In the render loop, bind the render target, execute rendering commands, then unbind.</li>
 </ul>
-<p>Different APIs have different interfaces, e.g., DirectX 11's `ID3D11RenderTargetView`, OpenGL's FBO and `glFramebufferTexture2D`.</p>
+<p>Different APIs have different interfaces, e.g., DirectX 11's <code>ID3D11RenderTargetView</code>, OpenGL's FBO and <code>glFramebufferTexture2D</code>.</p>
 <p>In game engines (like Unity, Unreal), render targets are usually created and managed through graphics API abstraction layers, and developers use high-level interfaces.</p>
 <h2>Render Target vs Texture</h2>
 <p>A render target is essentially a writable texture. Textures can be sampled (read), render targets can be rendered to (write). Modern GPUs allow the same texture to switch between render target and shader resource, but performance implications, such as avoiding simultaneous read/write, should be considered.</p>
@@ -67,10 +67,10 @@ var _hmt = _hmt || [];
 <p>Multiple Render Targets (MRT) allow simultaneous rendering to multiple color buffers. This is common in deferred rendering, where one pass outputs position, normal, albedo, etc., to different render targets. MRT requires GPU support, and all render targets must have the same dimensions and bit depth.</p>
 <h2>Performance Considerations</h2>
 <ul>
-<li>**Render target switching**: Frequent switching between render targets incurs overhead; minimize switches.</li>
-<li>**Bandwidth**: Rendering to high-resolution, high-precision textures consumes significant bandwidth and may become a bottleneck.</li>
-<li>**Memory**: Render targets occupy video memory, especially multiple render targets and mipmap chains.</li>
-<li>**Clear operations**: Unnecessary clears waste performance, but they are often needed in deferred rendering.</li>
+<li><strong>Render target switching</strong>: Frequent switching between render targets incurs overhead; minimize switches.</li>
+<li><strong>Bandwidth</strong>: Rendering to high-resolution, high-precision textures consumes significant bandwidth and may become a bottleneck.</li>
+<li><strong>Memory</strong>: Render targets occupy video memory, especially multiple render targets and mipmap chains.</li>
+<li><strong>Clear operations</strong>: Unnecessary clears waste performance, but they are often needed in deferred rendering.</li>
 </ul>
 <h2>Summary</h2>
 <p>Render targets are a fundamental concept in modern graphics rendering. Mastering their principles and usage is essential for implementing advanced effects and optimizing performance.</p>
@@ -82,7 +82,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>What is the use of Multiple Render Targets (MRT)?</h3><p>MRT allows simultaneous output to multiple color buffers, commonly used in deferred rendering to output geometric information (e.g., position, normal, color) to different textures in one pass, reducing draw calls.</p></div>
 <div class="faq-item"><h3>Must the render target resolution match the screen?</h3><p>No. Render targets can be any resolution, often used for reduced-resolution rendering (e.g., half-res post-processing) to improve performance, or higher resolution for supersampling anti-aliasing.</p></div>
 <div class="faq-item"><h3>Do render targets impact performance?</h3><p>Yes, rendering to render targets involves extra bandwidth and memory. High resolution, multiple render targets, or frequent switching increase performance overhead, so design carefully.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a> · <a href="https://tools.treasuregrove.art/en/seo/depth-buffer.html">深度缓冲</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/hdr-render-pipeline.html">HDR 渲染管线</a></p></section>
   </article>
 </main>

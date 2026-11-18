@@ -45,9 +45,9 @@ var _hmt = _hmt || [];
 <p>反射探针可以是静态的（在编辑时烘焙）或动态的（在运行时更新）。动态探针会实时渲染场景，开销较大，通常用于重要区域或移动物体。</p>
 <h2>反射探针的类型</h2>
 <ul>
-<li>**静态反射探针**：在构建时烘焙环境，不随运行时变化，性能开销低。适用于固定场景。</li>
-<li>**动态反射探针**：在运行时更新，可以反映移动物体和光照变化，但性能消耗高。通常限制更新频率和分辨率。</li>
-<li>**实时反射探针**：每帧更新，用于高保真反射，如镜面，但成本最高。</li>
+<li><strong>静态反射探针</strong>：在构建时烘焙环境，不随运行时变化，性能开销低。适用于固定场景。</li>
+<li><strong>动态反射探针</strong>：在运行时更新，可以反映移动物体和光照变化，但性能消耗高。通常限制更新频率和分辨率。</li>
+<li><strong>实时反射探针</strong>：每帧更新，用于高保真反射，如镜面，但成本最高。</li>
 </ul>
 <h2>反射探针的放置与影响范围</h2>
 <p>反射探针可以放置在场景中的关键位置，并设置影响范围（如球形或盒形区域）。物体根据其位置选择最相关的探针或混合多个探针的数据，以获得平滑过渡。</p>
@@ -56,11 +56,11 @@ var _hmt = _hmt || [];
 <p>反射探针提供的是静态或低频的环境反射，无法捕捉屏幕外的细节或动态物体的精确反射。屏幕空间反射（SSR）可以补充这一点，但仅限于屏幕空间内。两者常结合使用。</p>
 <h2>性能优化</h2>
 <ul>
-<li>**降低分辨率**：反射探针的立方体贴图分辨率不必很高，通常128-256即可满足大多数反射。</li>
-<li>**限制更新频率**：动态探针可以每秒更新几次，而不是每帧。</li>
-<li>**使用时间切片**：分帧渲染六个面，减少单帧开销。</li>
-<li>**合理布局**：避免过多的探针，利用混合减少数量。</li>
-<li>**使用预滤波**：为不同粗糙度预生成mipmap，减少运行时计算。</li>
+<li><strong>降低分辨率</strong>：反射探针的立方体贴图分辨率不必很高，通常128-256即可满足大多数反射。</li>
+<li><strong>限制更新频率</strong>：动态探针可以每秒更新几次，而不是每帧。</li>
+<li><strong>使用时间切片</strong>：分帧渲染六个面，减少单帧开销。</li>
+<li><strong>合理布局</strong>：避免过多的探针，利用混合减少数量。</li>
+<li><strong>使用预滤波</strong>：为不同粗糙度预生成mipmap，减少运行时计算。</li>
 </ul>
 <h2>总结</h2>
 <p>反射探针是实时渲染中实现环境反射和间接光照的实用工具，正确使用可以显著提升场景真实感。</p>
@@ -72,7 +72,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>反射探针可以反射动态物体吗？</h3><p>只有动态或实时反射探针才能包含动态物体，但性能开销大。静态探针只能反射烘焙时的静态场景。</p></div>
 <div class="faq-item"><h3>反射探针会影响性能吗？</h3><p>会，尤其是实时更新的探针。静态探针在运行时几乎没有开销（除了采样）。动态探针需要渲染场景，应控制数量和更新频率。</p></div>
 <div class="faq-item"><h3>如何让物体使用多个反射探针？</h3><p>引擎通常会自动根据物体位置选择并混合附近的探针。可以设置探针的混合距离和权重，实现平滑过渡。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR 编辑器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a></p></section>
   </article>
 </main>

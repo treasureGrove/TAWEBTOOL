@@ -45,10 +45,10 @@ var _hmt = _hmt || [];
 <h3>Shader Storage Objects</h3>
 <p>Compute shaders can access various resources:</p>
 <ul>
-<li>**Structured Buffer**: Stores custom data structures.</li>
-<li>**Raw Buffer**: Stores raw byte data.</li>
-<li>**RWTexture**: Read-write texture, directly accessible without the rendering pipeline.</li>
-<li>**Constant Buffer**: Passes constant parameters.</li>
+<li><strong>Structured Buffer</strong>: Stores custom data structures.</li>
+<li><strong>Raw Buffer</strong>: Stores raw byte data.</li>
+<li><strong>RWTexture</strong>: Read-write texture, directly accessible without the rendering pipeline.</li>
+<li><strong>Constant Buffer</strong>: Passes constant parameters.</li>
 </ul>
 <h3>Synchronization Mechanisms</h3>
 <p>Threads within a work group can synchronize via barriers to ensure consistency of shared memory. Different work groups cannot synchronize directly; coordination often requires multiple dispatches or atomic operations.</p>
@@ -66,21 +66,21 @@ var _hmt = _hmt || [];
 <h3>General-Purpose Computing</h3>
 <p>Sorting, matrix operations, neural network inference, similar to GPGPU.</p>
 <h2>Programming Model and APIs</h2>
-<p>In DirectX 11+, use HLSL to write compute shaders and call via `Dispatch`; in OpenGL 4.3+, use GLSL and call via `glDispatchCompute`. Shader code must declare `numthreads` to specify work group size. Typical workflow:</p>
+<p>In DirectX 11+, use HLSL to write compute shaders and call via <code>Dispatch</code>; in OpenGL 4.3+, use GLSL and call via <code>glDispatchCompute</code>. Shader code must declare <code>numthreads</code> to specify work group size. Typical workflow:</p>
 <ol>
 <li>Create and compile the compute shader.</li>
 <li>Bind input/output resources (UAV, SRV, etc.).</li>
-<li>Call `Dispatch` specifying the number of work groups.</li>
+<li>Call <code>Dispatch</code> specifying the number of work groups.</li>
 <li>GPU executes the shader, results written back to resources.</li>
 </ul>
 <h2>Advantages and Challenges</h2>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>Highly parallel, suitable for data-parallel tasks.</li>
 <li>Bypasses graphics pipeline, reducing fixed-function overhead.</li>
 <li>Shared memory accelerates communication within work groups.</li>
 </ul>
-<p>**Challenges**:</p>
+<p><strong>Challenges</strong>:</p>
 <ul>
 <li>Requires understanding GPU architecture, carefully arranging work group sizes and memory access patterns.</li>
 <li>Debugging is difficult, requiring tools like NVIDIA Nsight or RenderDoc.</li>
@@ -101,7 +101,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Which APIs support compute shaders?</h3><p>DirectX 11 and above, OpenGL 4.3 and above, Vulkan, Metal, and other modern graphics APIs support compute shaders.</p></div>
 <div class="faq-item"><h3>How to optimize compute shader performance?</h3><p>Optimize memory access patterns (coalesced access, shared memory), choose appropriate work group size, reduce thread divergence, use vectorized instructions, etc.</p></div>
 <div class="faq-item"><h3>Can compute shaders do ray tracing?</h3><p>Yes, compute shaders can implement ray tracing algorithms, but dedicated ray tracing pipelines (like DXR) are often more efficient.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/glsl_hlsl_converter.html"><b>GLSL / HLSL Converter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/en/seo/render-target.html">渲染目标 Render Target</a> · <a href="https://tools.treasuregrove.art/en/seo/g-buffer.html">G-Buffer 延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a> · <a href="https://tools.treasuregrove.art/en/seo/mesh-shader.html">Mesh Shader</a></p></section>
   </article>
 </main>

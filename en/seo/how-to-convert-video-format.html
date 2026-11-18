@@ -70,10 +70,10 @@ var _hmt = _hmt || [];
 <p>```</p>
 <h3>Parameter Explanation</h3>
 <ul>
-<li>`-c:v` specifies video codec.</li>
-<li>`-c:a` specifies audio codec.</li>
-<li>Add `-crf` to control quality (0-51, lower is better quality).</li>
-<li>`-b:v` sets video bitrate.</li>
+<li><code>-c:v</code> specifies video codec.</li>
+<li><code>-c:a</code> specifies audio codec.</li>
+<li>Add <code>-crf</code> to control quality (0-51, lower is better quality).</li>
+<li><code>-b:v</code> sets video bitrate.</li>
 </ul>
 <h2>Using Online Conversion Tools</h2>
 <p>Such as CloudConvert, Convertio, Zamzar, upload video to convert, suitable for small files.</p>
@@ -81,28 +81,38 @@ var _hmt = _hmt || [];
 <p>Adobe Premiere, Final Cut Pro, DaVinci Resolve can export to different formats.</p>
 <h2>Format Selection Recommendations</h2>
 <ul>
-<li>**MP4 (H.264)**: Best compatibility, suitable for most scenarios.</li>
-<li>**WebM (VP9)**: Open format, good for web, smaller file size.</li>
-<li>**MKV**: Multi-track container, suitable for storage.</li>
-<li>**MOV**: Common in Apple ecosystem.</li>
+<li><strong>MP4 (H.264)</strong>: Best compatibility, suitable for most scenarios.</li>
+<li><strong>WebM (VP9)</strong>: Open format, good for web, smaller file size.</li>
+<li><strong>MKV</strong>: Multi-track container, suitable for storage.</li>
+<li><strong>MOV</strong>: Common in Apple ecosystem.</li>
 </ul>
 <h2>Notes</h2>
 <ul>
-<li>**Copyright**: Ensure you have the right to convert the video.</li>
-<li>**Quality vs Size Balance**: Choose encoding parameters based on target platform.</li>
-<li>**Hardware Acceleration**: Use GPU acceleration to speed up, e.g., `-hwaccel` in FFmpeg.</li>
+<li><strong>Copyright</strong>: Ensure you have the right to convert the video.</li>
+<li><strong>Quality vs Size Balance</strong>: Choose encoding parameters based on target platform.</li>
+<li><strong>Hardware Acceleration</strong>: Use GPU acceleration to speed up, e.g., <code>-hwaccel</code> in FFmpeg.</li>
 </ul>
 <h2>Summary</h2>
 <p>There are many video format conversion tools. HandBrake is suitable for GUI users, FFmpeg is powerful and automatable, online tools are convenient. Choose based on needs.</p>
 
     </div>
     <section class="seo-faq"><h2>FAQ</h2>
-<div class="faq-item"><h3>How to convert video to GIF animation?</h3><p>Use FFmpeg command: `ffmpeg -i input.mp4 -vf &quot;fps=10,scale=320:-1&quot; output.gif`, adjust frame rate and size.</p></div>
-<div class="faq-item"><h3>What if no audio after conversion?</h3><p>Check audio codec settings; ensure output container supports the audio codec. Specify `-c:a` explicitly, e.g., `-c:a aac`.</p></div>
+<div class="faq-item"><h3>How to convert video to GIF animation?</h3><p>Use FFmpeg command: <code>ffmpeg -i input.mp4 -vf &quot;fps=10,scale=320:-1&quot; output.gif</code>, adjust frame rate and size.</p></div>
+<div class="faq-item"><h3>What if no audio after conversion?</h3><p>Check audio codec settings; ensure output container supports the audio codec. Specify <code>-c:a</code> explicitly, e.g., <code>-c:a aac</code>.</p></div>
 <div class="faq-item"><h3>How to batch convert multiple videos?</h3><p>Use FFmpeg with batch scripts, such as Windows for loop or Linux shell script, iterating files and executing conversion commands.</p></div>
-<div class="faq-item"><h3>Conversion is slow, how to speed up?</h3><p>Use hardware-accelerated encoding like Intel QSV, NVIDIA NVENC. Specify `-c:v h264_nvenc` in FFmpeg, or reduce output resolution, use faster encoding presets.</p></div>
+<div class="faq-item"><h3>Conversion is slow, how to speed up?</h3><p>Use hardware-accelerated encoding like Intel QSV, NVIDIA NVENC. Specify <code>-c:v h264_nvenc</code> in FFmpeg, or reduce output resolution, use faster encoding presets.</p></div>
 <div class="faq-item"><h3>Which is better, WebM or MP4?</h3><p>WebM is open format, often smaller at same quality, but less compatible than MP4. For web, WebM is good; for universal compatibility, MP4 is safer.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/video_format_cover.html"><b>Video Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/video_cut.html"><b>Video Cutter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-convert-video-format.html">视频格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-convert-color-space.html">色彩空间转换</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-pack-sprite-sheet.html">图集打包 Sprite Sheet</a></p></section>
   </article>
 </main>

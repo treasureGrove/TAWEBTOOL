@@ -41,67 +41,67 @@ var _hmt = _hmt || [];
 <p>In cross-platform game or graphics application development, it is often necessary to convert shader code from one shading language to another. GLSL (OpenGL Shading Language) and HLSL (High-Level Shading Language) are used for OpenGL and DirectX respectively. Manual conversion is time-consuming and error-prone. Using a GLSL to HLSL converter can automate this process and improve efficiency. This tutorial will guide you through using such converters.</p>
 <h2>Preparation</h2>
 <ol>
-<li>Ensure you have GLSL shader files to convert (usually `.vert` for vertex shaders and `.frag` for fragment shaders).</li>
+<li>Ensure you have GLSL shader files to convert (usually <code>.vert</code> for vertex shaders and <code>.frag</code> for fragment shaders).</li>
 <li>Choose a suitable converter. Common converters include:</li>
 </ul>
-<p>   - **SPIRV-Cross**: Supports compiling GLSL to SPIR-V and then cross-compiling to HLSL.</p>
-<p>   - **glslang + SPIRV-Cross**: Combined tools.</p>
-<p>   - **Online conversion services**: Such as Shader Conductor (a library based on SPIRV-Cross).</p>
-<p>   - **IDE plugins**: Like Visual Studio's Shader tools or JetBrains Rider plugins.</p>
+<p>   - <strong>SPIRV-Cross</strong>: Supports compiling GLSL to SPIR-V and then cross-compiling to HLSL.</p>
+<p>   - <strong>glslang + SPIRV-Cross</strong>: Combined tools.</p>
+<p>   - <strong>Online conversion services</strong>: Such as Shader Conductor (a library based on SPIRV-Cross).</p>
+<p>   - <strong>IDE plugins</strong>: Like Visual Studio's Shader tools or JetBrains Rider plugins.</p>
 <p>   This tutorial uses SPIRV-Cross command-line tools as an example.</p>
 <h2>Installing Conversion Tools</h2>
 <h3>Using SPIRV-Cross</h3>
 <ol>
-<li>Download precompiled binaries from [GitHub releases](https://github.com/KhronosGroup/SPIRV-Cross/releases) or compile from source.</li>
-<li>Ensure the Vulkan SDK or the GLSL compiler `glslangValidator` is installed, used to compile GLSL to SPIR-V.</li>
+<li>Download precompiled binaries from <a href="https://github.com/KhronosGroup/SPIRV-Cross/releases" rel="nofollow noopener" target="_blank">GitHub releases</a> or compile from source.</li>
+<li>Ensure the Vulkan SDK or the GLSL compiler <code>glslangValidator</code> is installed, used to compile GLSL to SPIR-V.</li>
 </ul>
 <p>   - Download Vulkan SDK: https://vulkan.lunarg.com/</p>
-<p>   - After installation, `glslangValidator` will be included in the SDK.</p>
+<p>   - After installation, <code>glslangValidator</code> will be included in the SDK.</p>
 <h2>Conversion Steps</h2>
 <h3>Step 1: Compile GLSL to SPIR-V</h3>
-<p>Use `glslangValidator` to compile GLSL code to SPIR-V binary.</p>
-<p>Example: Compile vertex shader `vertex.vert` to `vertex.spv`</p>
+<p>Use <code>glslangValidator</code> to compile GLSL code to SPIR-V binary.</p>
+<p>Example: Compile vertex shader <code>vertex.vert</code> to <code>vertex.spv</code></p>
 <p>```bash</p>
 <p>glslangValidator -V vertex.vert -o vertex.spv</p>
 <p>```</p>
-<p>Compile fragment shader `fragment.frag` to `fragment.spv`</p>
+<p>Compile fragment shader <code>fragment.frag</code> to <code>fragment.spv</code></p>
 <p>```bash</p>
 <p>glslangValidator -V fragment.frag -o fragment.spv</p>
 <p>```</p>
-<p>The `-V` flag indicates generating a SPIR-V module.</p>
+<p>The <code>-V</code> flag indicates generating a SPIR-V module.</p>
 <h3>Step 2: Use SPIRV-Cross to Generate HLSL</h3>
-<p>Use `spirv-cross` to convert the SPIR-V file to HLSL code.</p>
-<p>Example: Convert vertex shader SPIR-V to HLSL `vertex.hlsl`</p>
+<p>Use <code>spirv-cross</code> to convert the SPIR-V file to HLSL code.</p>
+<p>Example: Convert vertex shader SPIR-V to HLSL <code>vertex.hlsl</code></p>
 <p>```bash</p>
 <p>spirv-cross vertex.spv --hlsl --output vertex.hlsl</p>
 <p>```</p>
-<p>Convert fragment shader SPIR-V to HLSL `fragment.hlsl`</p>
+<p>Convert fragment shader SPIR-V to HLSL <code>fragment.hlsl</code></p>
 <p>```bash</p>
 <p>spirv-cross fragment.spv --hlsl --output fragment.hlsl</p>
 <p>```</p>
-<p>The `--hlsl` flag specifies HLSL output format.</p>
+<p>The <code>--hlsl</code> flag specifies HLSL output format.</p>
 <h3>Step 3: Review and Adjust Output</h3>
 <p>After conversion, open the generated HLSL files and inspect. Due to semantic differences between GLSL and HLSL, manual adjustments may be needed:</p>
 <ul>
-<li>**Vertex shader inputs/outputs**: HLSL uses semantics like `POSITION`, `TEXCOORD`; the converter usually maps automatically but may require fine-tuning.</li>
-<li>**Matrix multiplication order**: GLSL uses column-major order, vector right-multiplied by matrix; HLSL defaults row-major, vector left-multiplied. The converter may attempt to handle it, but check.</li>
-<li>**Texture sampling**: GLSL's `texture()` converts to HLSL's `Sample()`, may require specifying sampler states.</li>
-<li>**Built-in functions**: Some GLSL functions have no direct HLSL equivalent; may be replaced with custom functions.</li>
+<li><strong>Vertex shader inputs/outputs</strong>: HLSL uses semantics like <code>POSITION</code>, <code>TEXCOORD</code>; the converter usually maps automatically but may require fine-tuning.</li>
+<li><strong>Matrix multiplication order</strong>: GLSL uses column-major order, vector right-multiplied by matrix; HLSL defaults row-major, vector left-multiplied. The converter may attempt to handle it, but check.</li>
+<li><strong>Texture sampling</strong>: GLSL's <code>texture()</code> converts to HLSL's <code>Sample()</code>, may require specifying sampler states.</li>
+<li><strong>Built-in functions</strong>: Some GLSL functions have no direct HLSL equivalent; may be replaced with custom functions.</li>
 </ul>
 <h3>Step 4: Integrate into DirectX Project</h3>
 <p>Add generated HLSL files to your DirectX project and ensure the shader compilation targets are correct (e.g., vs_5_0, ps_5_0).</p>
 <h2>Precautions</h2>
 <ul>
-<li>**Entry point name**: Converters usually keep GLSL's `main` function, but HLSL may need a specified entry point. Can be set at compile time with `--entry`.</li>
-<li>**Constant buffers**: GLSL uniform variables convert to HLSL constant buffers; pay attention to memory layout. SPIRV-Cross supports `--reflect` to generate reflection info.</li>
-<li>**Testing**: Always test on target platform after conversion to ensure correct rendering.</li>
+<li><strong>Entry point name</strong>: Converters usually keep GLSL's <code>main</code> function, but HLSL may need a specified entry point. Can be set at compile time with <code>--entry</code>.</li>
+<li><strong>Constant buffers</strong>: GLSL uniform variables convert to HLSL constant buffers; pay attention to memory layout. SPIRV-Cross supports <code>--reflect</code> to generate reflection info.</li>
+<li><strong>Testing</strong>: Always test on target platform after conversion to ensure correct rendering.</li>
 </ul>
 <h2>Common Issues and Solutions</h2>
 <ul>
-<li>**Conversion failure**: Ensure GLSL code is valid and uses a compatible version (e.g., GLSL 450 or earlier).</li>
-<li>**Texture sampling issues**: Check sampler states; HLSL may require explicit SamplerState definitions.</li>
-<li>**Matrix operation errors**: Manually adjust matrix multiplication order, or use `mul(vector, matrix)` instead of `mul(matrix, vector)` in HLSL.</li>
-<li>**Performance differences**: Converted HLSL may be less optimized than hand-written; manually optimize if necessary.</li>
+<li><strong>Conversion failure</strong>: Ensure GLSL code is valid and uses a compatible version (e.g., GLSL 450 or earlier).</li>
+<li><strong>Texture sampling issues</strong>: Check sampler states; HLSL may require explicit SamplerState definitions.</li>
+<li><strong>Matrix operation errors</strong>: Manually adjust matrix multiplication order, or use <code>mul(vector, matrix)</code> instead of <code>mul(matrix, vector)</code> in HLSL.</li>
+<li><strong>Performance differences</strong>: Converted HLSL may be less optimized than hand-written; manually optimize if necessary.</li>
 </ul>
 <h2>Conclusion</h2>
 <p>Using a GLSL to HLSL converter can greatly save cross-platform shader development time. By compiling GLSL to SPIR-V and converting with SPIRV-Cross, you can obtain relatively reliable HLSL code. However, automatic conversion cannot completely replace manual inspection and adjustment; understanding the differences between the two languages remains important.</p>
@@ -113,7 +113,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to convert shaders using OpenGL-specific extensions?</h3><p>Converters may not handle certain extensions. It is recommended to first remove or replace them with equivalent standard GLSL code, or manually implement the corresponding HLSL logic.</p></div>
 <div class="faq-item"><h3>Are there online converters available?</h3><p>Some online tools like Shader Playground or web services based on Shader Conductor exist, but with limited functionality. It is recommended to use local tools for more control.</p></div>
 <div class="faq-item"><h3>Will converted shader performance decrease?</h3><p>Auto-generated code is usually close to hand-written but may not be optimal. Perform profiling and manually optimize hotspots.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/glsl_hlsl_converter.html"><b>GLSL / HLSL Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-use-glsl-hlsl-converter.html">GLSL/HLSL 着色器转换</a> · <a href="https://tools.treasuregrove.art/en/seo/vertex-vs-fragment-shader.html">顶点着色器与片元着色器</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a></p></section>
   </article>
 </main>

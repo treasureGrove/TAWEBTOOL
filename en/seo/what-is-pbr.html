@@ -42,37 +42,37 @@ var _hmt = _hmt || [];
 <h2>Core Principles of PBR</h2>
 <p>The core of PBR lies in simulating real-world lighting behavior, mainly including:</p>
 <ul>
-<li>**Energy Conservation**: The light energy reflected by a surface cannot exceed the incoming light energy. This means stronger specular reflection results in weaker diffuse reflection, and vice versa.</li>
-<li>**Microfacet Theory**: Object surfaces are composed of countless tiny facets, whose orientation distribution determines roughness. Lower roughness means more aligned microfacets and sharper reflections; higher roughness results in blurrier reflections.</li>
-<li>**Fresnel Effect**: All surfaces exhibit increased reflectivity at grazing angles (when the view angle is small). For example, looking across a lake shows reflection of the sky, while looking straight down makes the water appear more transparent.</li>
+<li><strong>Energy Conservation</strong>: The light energy reflected by a surface cannot exceed the incoming light energy. This means stronger specular reflection results in weaker diffuse reflection, and vice versa.</li>
+<li><strong>Microfacet Theory</strong>: Object surfaces are composed of countless tiny facets, whose orientation distribution determines roughness. Lower roughness means more aligned microfacets and sharper reflections; higher roughness results in blurrier reflections.</li>
+<li><strong>Fresnel Effect</strong>: All surfaces exhibit increased reflectivity at grazing angles (when the view angle is small). For example, looking across a lake shows reflection of the sky, while looking straight down makes the water appear more transparent.</li>
 </ul>
 <h2>Metallic/Roughness Workflow</h2>
 <p>The most common PBR workflow is the metallic/roughness workflow, which uses two key texture maps to define material properties:</p>
 <ul>
-<li>**Metallic Map**: Specifies which areas are metal (white) or non-metal (black). Metals have black diffuse and tinted specular, while non-metals have colored diffuse and white specular.</li>
-<li>**Roughness Map**: Specifies surface roughness. White indicates completely rough (strong diffuse, scattered specular), black indicates completely smooth (sharp specular).</li>
+<li><strong>Metallic Map</strong>: Specifies which areas are metal (white) or non-metal (black). Metals have black diffuse and tinted specular, while non-metals have colored diffuse and white specular.</li>
+<li><strong>Roughness Map</strong>: Specifies surface roughness. White indicates completely rough (strong diffuse, scattered specular), black indicates completely smooth (sharp specular).</li>
 </ul>
 <p>Additionally, an Albedo map defines base color, and a Normal Map defines surface details.</p>
 <h2>Implementation and Applications of PBR</h2>
 <p>PBR is widely used in various engines and software:</p>
 <ul>
-<li>**Game Engines**: Unity uses Standard Shader and Lit Shader in URP/HDRP; Unreal Engine uses a physically based material system.</li>
-<li>**Offline Renderers**: Arnold, V-Ray, Blender's Cycles, etc., support PBR materials.</li>
-<li>**Texture Creation**: Tools like Substance Painter and Quixel Mixer facilitate the creation of PBR texture maps.</li>
+<li><strong>Game Engines</strong>: Unity uses Standard Shader and Lit Shader in URP/HDRP; Unreal Engine uses a physically based material system.</li>
+<li><strong>Offline Renderers</strong>: Arnold, V-Ray, Blender's Cycles, etc., support PBR materials.</li>
+<li><strong>Texture Creation</strong>: Tools like Substance Painter and Quixel Mixer facilitate the creation of PBR texture maps.</li>
 </ul>
 <p>In practical projects, PBR materials typically include Albedo, Metallic, Roughness, Normal, Ambient Occlusion (AO) maps, and sometimes Height maps for parallax mapping.</p>
 <h2>Pros and Cons of PBR</h2>
-<p>**Pros**:</p>
+<p><strong>Pros</strong>:</p>
 <ul>
-<li>**Consistency**: Materials look consistent under different lighting, eliminating the need for per-scene adjustments.</li>
-<li>**Realism**: Based on physical principles, rendering results are closer to the real world.</li>
-<li>**Predictability**: Artists only need to focus on material properties, without manually adjusting complex lighting parameters.</li>
+<li><strong>Consistency</strong>: Materials look consistent under different lighting, eliminating the need for per-scene adjustments.</li>
+<li><strong>Realism</strong>: Based on physical principles, rendering results are closer to the real world.</li>
+<li><strong>Predictability</strong>: Artists only need to focus on material properties, without manually adjusting complex lighting parameters.</li>
 </ul>
-<p>**Cons**:</p>
+<p><strong>Cons</strong>:</p>
 <ul>
-<li>**Computational Cost**: PBR rendering involves more complex calculations, impacting performance, especially on mobile.</li>
-<li>**Learning Curve**: Requires understanding physical concepts, which can be steep for beginners.</li>
-<li>**Texture Requirements**: Multiple texture maps are needed, increasing asset management and production costs.</li>
+<li><strong>Computational Cost</strong>: PBR rendering involves more complex calculations, impacting performance, especially on mobile.</li>
+<li><strong>Learning Curve</strong>: Requires understanding physical concepts, which can be steep for beginners.</li>
+<li><strong>Texture Requirements</strong>: Multiple texture maps are needed, increasing asset management and production costs.</li>
 </ul>
 <h2>FAQ</h2>
 <h3>What is the difference between PBR and traditional rendering?</h3>
@@ -93,7 +93,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why do PBR materials look more natural under different lighting?</h3><p>Because PBR follows energy conservation and physical laws, material properties are fixed, and material response is physically correct when lighting changes.</p></div>
 <div class="faq-item"><h3>How to choose between metallic/roughness and specular/glossiness workflows?</h3><p>Metallic/roughness is more intuitive and uses fewer textures but may have edge artifacts; specular/glossiness offers finer control but requires more textures. Modern engines often recommend the former.</p></div>
 <div class="faq-item"><h3>Is PBR only for 3D games?</h3><p>No. PBR is also widely used in film effects, architectural visualization, product design, and more; any scene requiring realistic rendering can use PBR.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/fresnel-effect.html">菲涅尔效应</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a></p></section>
   </article>
 </main>

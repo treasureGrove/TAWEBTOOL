@@ -48,18 +48,18 @@ var _hmt = _hmt || [];
 <h2>法线贴图的生成与使用</h2>
 <p>法线贴图可以从高模烘焙到低模，也可以从灰度高度图转换，或使用工具直接绘制。</p>
 <ul>
-<li>**烘焙法线贴图**：使用3D软件（如Blender、Substance Painter、xNormal）将高分辨率模型的细节投影到低分辨率模型的UV空间，生成法线贴图。这是游戏开发中最常用的方法。</li>
-<li>**从高度图生成**：高度图是一张灰度图，白色表示凸起，黑色表示凹陷。通过计算相邻像素的高度差，可以得到法线扰动，生成法线贴图。</li>
-<li>**直接绘制**：在支持法线贴图绘制的软件中（如Substance Painter、Photoshop插件），艺术家可以手动绘制法线细节。</li>
+<li><strong>烘焙法线贴图</strong>：使用3D软件（如Blender、Substance Painter、xNormal）将高分辨率模型的细节投影到低分辨率模型的UV空间，生成法线贴图。这是游戏开发中最常用的方法。</li>
+<li><strong>从高度图生成</strong>：高度图是一张灰度图，白色表示凸起，黑色表示凹陷。通过计算相邻像素的高度差，可以得到法线扰动，生成法线贴图。</li>
+<li><strong>直接绘制</strong>：在支持法线贴图绘制的软件中（如Substance Painter、Photoshop插件），艺术家可以手动绘制法线细节。</li>
 </ul>
 <p>在游戏引擎（如Unity、Unreal）中，将法线贴图导入后，指定为材质的Normal Map属性即可。着色器会自动处理切线空间转换和光照计算。</p>
 <h2>常见问题与注意事项</h2>
 <ul>
-<li>**法线贴图的颜色**：法线贴图通常呈现蓝紫色调，因为大部分法线接近(0,0,1)，编码为(128,128,255)。如果法线贴图颜色异常（如全红或全绿），可能表示贴图错误或坐标系统不匹配。</li>
-<li>**切线空间与对象空间**：法线贴图分为切线空间和对象空间两种。切线空间更灵活，支持变形和重用；对象空间法线贴图存储世界空间法线，不支持变形，但细节更精确。现代引擎多使用切线空间。</li>
-<li>**UV布局**：法线贴图依赖于UV坐标，因此UV展开时需要避免重叠和过度拉伸，否则法线贴图会出现伪影。</li>
-<li>**压缩格式**：法线贴图在纹理压缩中需要特殊处理，如使用DXT5nm格式，仅保留X和Y分量，Z分量在着色器中重建，以减少存储和带宽。</li>
-<li>**性能影响**：法线贴图增加了纹理采样和计算量，但相比增加几何复杂度，性能开销较小。在移动平台上，需要权衡法线贴图的使用。</li>
+<li><strong>法线贴图的颜色</strong>：法线贴图通常呈现蓝紫色调，因为大部分法线接近(0,0,1)，编码为(128,128,255)。如果法线贴图颜色异常（如全红或全绿），可能表示贴图错误或坐标系统不匹配。</li>
+<li><strong>切线空间与对象空间</strong>：法线贴图分为切线空间和对象空间两种。切线空间更灵活，支持变形和重用；对象空间法线贴图存储世界空间法线，不支持变形，但细节更精确。现代引擎多使用切线空间。</li>
+<li><strong>UV布局</strong>：法线贴图依赖于UV坐标，因此UV展开时需要避免重叠和过度拉伸，否则法线贴图会出现伪影。</li>
+<li><strong>压缩格式</strong>：法线贴图在纹理压缩中需要特殊处理，如使用DXT5nm格式，仅保留X和Y分量，Z分量在着色器中重建，以减少存储和带宽。</li>
+<li><strong>性能影响</strong>：法线贴图增加了纹理采样和计算量，但相比增加几何复杂度，性能开销较小。在移动平台上，需要权衡法线贴图的使用。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>法线贴图和凹凸贴图有什么区别？</h3>
@@ -80,7 +80,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>切线空间法线贴图有什么优势？</h3><p>切线空间法线贴图可应用于不同朝向表面，支持变形和动画，并允许纹理重用。</p></div>
 <div class="faq-item"><h3>如何从高模烘焙法线贴图？</h3><p>在3D软件中对齐高模和低模，设置烘焙参数，软件会计算高模细节在低模UV空间中的法线扰动并生成贴图。</p></div>
 <div class="faq-item"><h3>法线贴图在移动端如何优化？</h3><p>使用ASTC、ETC2等压缩格式，降低分辨率，并仅在重要表面使用法线贴图。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a></p></section>
   </article>
 </main>

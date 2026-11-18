@@ -42,17 +42,17 @@ var _hmt = _hmt || [];
 <h2>Draw Call 对性能的影响</h2>
 <p>每个 Draw Call 都有 CPU 开销，包括：</p>
 <ul>
-<li>**状态切换**：切换着色器、纹理、混合模式等渲染状态。</li>
-<li>**数据提交**：将顶点、索引、常量等数据上传到 GPU。</li>
-<li>**驱动开销**：图形 API 和驱动程序的验证与调度。</li>
+<li><strong>状态切换</strong>：切换着色器、纹理、混合模式等渲染状态。</li>
+<li><strong>数据提交</strong>：将顶点、索引、常量等数据上传到 GPU。</li>
+<li><strong>驱动开销</strong>：图形 API 和驱动程序的验证与调度。</li>
 </ul>
 <p>现代 GPU 可以处理大量 Draw Call，但 CPU 往往成为瓶颈。当 Draw Call 数量过多（如超过数千）时，帧率会显著下降，尤其在移动平台和低端设备上。</p>
 <h2>优化方法</h2>
 <h3>合批（Batching）</h3>
 <p>合批是将多个 Draw Call 合并为一个，减少 CPU 开销。主要方式有：</p>
 <ul>
-<li>**静态合批**：将不移动的静态物体合并为一个大网格，前提是使用相同材质。在 Unity 中，勾选 Static Batching 即可。</li>
-<li>**动态合批**：在运行时将小网格合并，适用于顶点数较少且材质相同的物体。Unity 对动态合批有顶点数限制（通常小于 300 顶点）。</li>
+<li><strong>静态合批</strong>：将不移动的静态物体合并为一个大网格，前提是使用相同材质。在 Unity 中，勾选 Static Batching 即可。</li>
+<li><strong>动态合批</strong>：在运行时将小网格合并，适用于顶点数较少且材质相同的物体。Unity 对动态合批有顶点数限制（通常小于 300 顶点）。</li>
 </ul>
 <h3>纹理图集（Texture Atlas）</h3>
 <p>将多个小纹理合并到一张大纹理中，使不同物体可以使用相同材质，从而促进合批。需要注意 UV 调整和纹理空间利用率。</p>
@@ -64,9 +64,9 @@ var _hmt = _hmt || [];
 <p>Unity 的可编程渲染管线（SRP）提供 SRP Batcher，通过缓存材质属性减少 CPU 开销，即使不减少 Draw Call 也能提升性能。</p>
 <h3>其他优化</h3>
 <ul>
-<li>**LOD（细节层次）**：远处物体使用低模，减少顶点处理量。</li>
-<li>**遮挡剔除**：不渲染被遮挡的物体，减少 Draw Call。</li>
-<li>**分帧加载**：避免同时创建大量物体。</li>
+<li><strong>LOD（细节层次）</strong>：远处物体使用低模，减少顶点处理量。</li>
+<li><strong>遮挡剔除</strong>：不渲染被遮挡的物体，减少 Draw Call。</li>
+<li><strong>分帧加载</strong>：避免同时创建大量物体。</li>
 </ul>
 <h2>合批的注意事项</h2>
 <p>合批需要满足条件，如相同材质、相同着色器、相同光照贴图等。动态合批受顶点数限制，且可能增加内存。过度合批可能导致网格过大，影响内存和加载时间。因此，需要根据场景特点选择合适的优化策略。</p>
@@ -89,7 +89,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>静态合批和动态合批有什么区别？</h3><p>静态合批在构建时合并网格，适用于静态物体；动态合批在运行时合并，适用于小网格且可移动的物体。</p></div>
 <div class="faq-item"><h3>GPU 实例化与合批有何不同？</h3><p>GPU 实例化允许一个 Draw Call 绘制多个相同网格实例，但需要在着色器中支持，适合大量重复物体。</p></div>
 <div class="faq-item"><h3>移动端如何优化 Draw Call？</h3><p>移动端应优先使用静态合批、纹理图集和 GPU 实例化，控制 Draw Call 在几百以内。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/gltf_optimizer.html"><b>glTF 压缩与 LOD</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/lod-level-of-detail.html">LOD 细节层次</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a></p></section>
   </article>
 </main>

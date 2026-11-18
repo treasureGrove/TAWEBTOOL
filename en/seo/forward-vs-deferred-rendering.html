@@ -41,14 +41,14 @@ var _hmt = _hmt || [];
 <p>In real-time rendering, forward rendering and deferred rendering are two main rendering paths. Forward rendering calculates lighting per object, while deferred rendering writes geometry information to a G-Buffer first and then computes lighting uniformly. Choosing which path depends on scene complexity, number of lights, platform performance, and other factors.</p>
 <h2>Forward Rendering</h2>
 <p>Forward rendering is the most direct approach: for each object, in the fragment shader, iterate over all lights affecting the object, compute lighting, and output color. It is often combined with multi-pass forward rendering, where each light gets a pass and results are blended.</p>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>Supports hardware MSAA for anti-aliasing.</li>
 <li>Transparency handling is simple; transparent objects render naturally.</li>
 <li>Lower memory usage, no G-Buffer needed.</li>
 <li>Suitable for mobile and simple scenes.</li>
 </ul>
-<p>**Disadvantages**:</p>
+<p><strong>Disadvantages</strong>:</p>
 <ul>
 <li>As light count increases, computational complexity grows O(objects × lights), performance drops quickly.</li>
 <li>Light culling is difficult, requiring CPU-side management.</li>
@@ -57,16 +57,16 @@ var _hmt = _hmt || [];
 <h2>Deferred Rendering</h2>
 <p>Deferred rendering splits rendering into two stages:</p>
 <ol>
-<li>**Geometry Pass**: Render geometry information (position, normal, albedo, material properties, etc.) into multiple render targets (G-Buffer).</li>
-<li>**Lighting Pass**: For each pixel on screen, read data from G-Buffer, iterate over all lights to compute lighting, and output final color.</li>
+<li><strong>Geometry Pass</strong>: Render geometry information (position, normal, albedo, material properties, etc.) into multiple render targets (G-Buffer).</li>
+<li><strong>Lighting Pass</strong>: For each pixel on screen, read data from G-Buffer, iterate over all lights to compute lighting, and output final color.</li>
 </ul>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>Lighting computation decoupled from geometric complexity, supports many dynamic lights, each light only affects screen pixels.</li>
 <li>Suitable for complex scenes and high-end PCs.</li>
 <li>Naturally supports screen-space effects (e.g., SSAO, SSR).</li>
 </ul>
-<p>**Disadvantages**:</p>
+<p><strong>Disadvantages</strong>:</p>
 <ul>
 <li>G-Buffer consumes significant video memory bandwidth, may be a bottleneck on mobile.</li>
 <li>Does not support hardware MSAA (usually uses post-process AA like TAA).</li>
@@ -75,9 +75,9 @@ var _hmt = _hmt || [];
 </ul>
 <h2>Selection Recommendations</h2>
 <ul>
-<li>**Mobile**: Prioritize forward rendering due to bandwidth and memory constraints.</li>
-<li>**PC/Console**: If scene has many dynamic lights, use deferred; if scene is simple or high-quality MSAA is needed, use forward.</li>
-<li>**Hybrid**: Some engines support forward+deferred hybrid, like Unreal's Forward+.</li>
+<li><strong>Mobile</strong>: Prioritize forward rendering due to bandwidth and memory constraints.</li>
+<li><strong>PC/Console</strong>: If scene has many dynamic lights, use deferred; if scene is simple or high-quality MSAA is needed, use forward.</li>
+<li><strong>Hybrid</strong>: Some engines support forward+deferred hybrid, like Unreal's Forward+.</li>
 </ul>
 <h2>Frequently Asked Questions</h2>
 <h3>Which is better performance, forward or deferred rendering?</h3>
@@ -98,7 +98,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How are transparent objects handled in deferred rendering?</h3><p>Usually render opaque objects first (deferred), then render transparent objects using a forward pass, sorted by depth.</p></div>
 <div class="faq-item"><h3>How to choose rendering path in Unity?</h3><p>In Project Settings, select Forward or Deferred; URP defaults to forward, HDRP defaults to deferred.</p></div>
 <div class="faq-item"><h3>What G-Buffers are needed for deferred rendering?</h3><p>Typically include albedo, normal, depth, metallic, roughness, etc., depending on engine and material model.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/en/seo/ssao.html">SSAO 环境光遮蔽</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/en/seo/bloom.html">Bloom 泛光</a></p></section>
   </article>
 </main>

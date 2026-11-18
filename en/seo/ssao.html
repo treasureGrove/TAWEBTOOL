@@ -54,19 +54,19 @@ var _hmt = _hmt || [];
 <p>There are several SSAO variants, such as Crytek's original SSAO, HBAO (Horizon-Based Ambient Occlusion), and GTAO (Ground Truth Ambient Occlusion). In Unity and Unreal, post-processing stacks provide SSAO options.</p>
 <p>Optimization techniques:</p>
 <ul>
-<li>**Downsampling**: Compute SSAO at lower resolution, then upsample and blur.</li>
-<li>**Reduce sample count**: Typically 8-16 samples with random rotation and blur.</li>
-<li>**Hemisphere sampling**: Restrict samples to the hemisphere around the normal to reduce invalid samples.</li>
-<li>**Depth range limiting**: Only consider occluders within a certain distance to avoid distant irrelevant occlusion.</li>
+<li><strong>Downsampling</strong>: Compute SSAO at lower resolution, then upsample and blur.</li>
+<li><strong>Reduce sample count</strong>: Typically 8-16 samples with random rotation and blur.</li>
+<li><strong>Hemisphere sampling</strong>: Restrict samples to the hemisphere around the normal to reduce invalid samples.</li>
+<li><strong>Depth range limiting</strong>: Only consider occluders within a certain distance to avoid distant irrelevant occlusion.</li>
 </ul>
 <h2>Pros and Cons of SSAO</h2>
-<p>**Pros**:</p>
+<p><strong>Pros</strong>:</p>
 <ul>
 <li>Good real-time performance, no precomputation.</li>
 <li>Works with dynamic scenes and arbitrary geometry.</li>
 <li>Enhances visual realism, especially for small-scale details.</li>
 </ul>
-<p>**Cons**:</p>
+<p><strong>Cons</strong>:</p>
 <ul>
 <li>Screen-space limitations: only uses visible pixel information, cannot handle off-screen occluders.</li>
 <li>May produce flickering and noise, requiring blur.</li>
@@ -74,9 +74,9 @@ var _hmt = _hmt || [];
 </ul>
 <h2>Comparison with Other AO Techniques</h2>
 <ul>
-<li>**Baked AO**: Offline precomputation baking AO into textures or vertex colors, suitable for static scenes, zero runtime cost.</li>
-<li>**Ray-traced AO**: Uses hardware ray tracing for precise results but expensive and requires modern GPUs.</li>
-<li>**SSAO**: Real-time approximation, moderate cost, the most common dynamic AO technique.</li>
+<li><strong>Baked AO</strong>: Offline precomputation baking AO into textures or vertex colors, suitable for static scenes, zero runtime cost.</li>
+<li><strong>Ray-traced AO</strong>: Uses hardware ray tracing for precise results but expensive and requires modern GPUs.</li>
+<li><strong>SSAO</strong>: Real-time approximation, moderate cost, the most common dynamic AO technique.</li>
 </ul>
 <h2>FAQ</h2>
 <h3>What is the difference between SSAO and AO?</h3>
@@ -97,7 +97,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Can SSAO be used on mobile?</h3><p>Mobile GPUs have limited performance; SSAO may be too expensive. Simplified versions or prebaked AO can be used.</p></div>
 <div class="faq-item"><h3>How to reduce SSAO noise?</h3><p>Use random rotation noise, increase sample count, or apply blur filters (e.g., bilateral filtering).</p></div>
 <div class="faq-item"><h3>Does SSAO require normal information?</h3><p>Yes, normals are needed to determine the sampling hemisphere orientation, usually obtained from G-Buffer. If not available, normals can be reconstructed from depth.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/en/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
   </article>
 </main>

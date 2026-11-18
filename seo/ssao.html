@@ -54,19 +54,19 @@ var _hmt = _hmt || [];
 <p>SSAO 有多种变体，如 Crytek 的原始 SSAO、HBAO（Horizon-Based Ambient Occlusion）、GTAO（Ground Truth Ambient Occlusion）等。在 Unity 和 Unreal 中，后处理栈提供了 SSAO 选项。</p>
 <p>优化技巧：</p>
 <ul>
-<li>**降采样**：在较低分辨率下计算 SSAO，再上采样模糊。</li>
-<li>**减少采样数**：通常使用 8-16 个采样点，配合随机旋转和模糊。</li>
-<li>**使用半球法线**：限制采样在表面法线半球内，减少无效采样。</li>
-<li>**深度范围限制**：仅考虑一定距离内的遮挡，避免远距离不相关遮挡。</li>
+<li><strong>降采样</strong>：在较低分辨率下计算 SSAO，再上采样模糊。</li>
+<li><strong>减少采样数</strong>：通常使用 8-16 个采样点，配合随机旋转和模糊。</li>
+<li><strong>使用半球法线</strong>：限制采样在表面法线半球内，减少无效采样。</li>
+<li><strong>深度范围限制</strong>：仅考虑一定距离内的遮挡，避免远距离不相关遮挡。</li>
 </ul>
 <h2>SSAO 的优缺点</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>实时性能好，无需预计算。</li>
 <li>适用于动态场景和任意几何体。</li>
 <li>增强视觉真实感，尤其在小尺度细节。</li>
 </ul>
-<p>**缺点**：</p>
+<p><strong>缺点</strong>：</p>
 <ul>
 <li>屏幕空间限制：只能利用可见像素的信息，无法处理屏幕外的遮挡。</li>
 <li>可能产生闪烁和噪声，需要模糊处理。</li>
@@ -74,9 +74,9 @@ var _hmt = _hmt || [];
 </ul>
 <h2>与其他 AO 技术的比较</h2>
 <ul>
-<li>**烘焙 AO**：离线预计算，将 AO 信息烘焙到纹理或顶点色，适合静态场景，无运行时开销。</li>
-<li>**光线追踪 AO**：使用硬件光线追踪精确计算，但性能昂贵，需现代 GPU。</li>
-<li>**SSAO**：实时近似，性能适中，是最常用的动态 AO 技术。</li>
+<li><strong>烘焙 AO</strong>：离线预计算，将 AO 信息烘焙到纹理或顶点色，适合静态场景，无运行时开销。</li>
+<li><strong>光线追踪 AO</strong>：使用硬件光线追踪精确计算，但性能昂贵，需现代 GPU。</li>
+<li><strong>SSAO</strong>：实时近似，性能适中，是最常用的动态 AO 技术。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>SSAO 和 AO 有什么区别？</h3>
@@ -97,7 +97,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>移动端可以使用 SSAO 吗？</h3><p>移动端性能有限，SSAO 可能过于昂贵，可使用简化版本或预烘焙 AO。</p></div>
 <div class="faq-item"><h3>如何减少 SSAO 噪声？</h3><p>使用随机旋转噪声、增加采样数、应用模糊过滤（如双边滤波）可降低噪声。</p></div>
 <div class="faq-item"><h3>SSAO 需要法线信息吗？</h3><p>需要，法线用于确定采样半球方向，通常从 G-Buffer 获取，也可从深度重建。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/hdr-hdri.html">HDR 与 HDRI</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a></p></section>
   </article>
 </main>

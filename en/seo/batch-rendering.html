@@ -51,19 +51,19 @@ var _hmt = _hmt || [];
 <h2>Conditions and Limitations of Batching</h2>
 <p>Batching typically requires the following conditions:</p>
 <ul>
-<li>**Same material**: Must use the same material instance, otherwise cannot batch.</li>
-<li>**Same shader**: At least the shader must be the same; material properties can differ if supported.</li>
-<li>**Consistent vertex format**: Vertex data layout must be consistent.</li>
-<li>**No transparent sorting issues**: Transparent objects are often difficult to batch because they require strict rendering order.</li>
+<li><strong>Same material</strong>: Must use the same material instance, otherwise cannot batch.</li>
+<li><strong>Same shader</strong>: At least the shader must be the same; material properties can differ if supported.</li>
+<li><strong>Consistent vertex format</strong>: Vertex data layout must be consistent.</li>
+<li><strong>No transparent sorting issues</strong>: Transparent objects are often difficult to batch because they require strict rendering order.</li>
 </ul>
 <p>Additionally, dynamic batching has vertex count limits, static batching increases memory, and GPU Instancing requires shader support.</p>
 <h2>How to Optimize for Batching</h2>
 <ul>
-<li>**Use texture atlases**: Combine multiple small textures into one large texture so different objects can use the same material.</li>
-<li>**Reduce material variety**: Merge materials that use the same shader and textures.</li>
-<li>**Utilize engine batching tools**: For example, Unity's Frame Debugger can inspect which objects are not batched and why.</li>
-<li>**Organize scenes properly**: Mark static objects as Static to enable static batching.</li>
-<li>**Use GPU Instancing**: For repeated objects, use instanced rendering.</li>
+<li><strong>Use texture atlases</strong>: Combine multiple small textures into one large texture so different objects can use the same material.</li>
+<li><strong>Reduce material variety</strong>: Merge materials that use the same shader and textures.</li>
+<li><strong>Utilize engine batching tools</strong>: For example, Unity's Frame Debugger can inspect which objects are not batched and why.</li>
+<li><strong>Organize scenes properly</strong>: Mark static objects as Static to enable static batching.</li>
+<li><strong>Use GPU Instancing</strong>: For repeated objects, use instanced rendering.</li>
 </ul>
 <h2>Relationship between Batching and Draw Calls</h2>
 <p>Batching directly reduces the number of draw calls, thereby lowering CPU overhead in submitting rendering commands. However, batching is not a silver bullet; excessive batching may increase memory or cause GPU load imbalance. Choose the appropriate batching strategy based on project needs.</p>
@@ -77,7 +77,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why are transparent objects hard to batch?</h3><p>Transparent objects require back-to-front sorting for correct blending. After sorting, adjacent objects may not meet batching conditions (e.g., different materials), and forced batching would break render order.</p></div>
 <div class="faq-item"><h3>How to check which objects are not batched in Unity?</h3><p>Use the Frame Debugger to see the source of each draw call and the reason for not being batched. The Profiler also shows draw call count and batching statistics.</p></div>
 <div class="faq-item"><h3>Does batching always improve performance?</h3><p>Reducing draw calls usually lowers CPU overhead, but batching can have side effects, such as static batching increasing memory, dynamic batching consuming CPU, and instancing requiring shader support. Trade-offs are needed.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a> · <a href="https://tools.treasuregrove.art/en/seo/gpu-instancing.html">GPU Instancing</a> · <a href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/en/seo/forward-vs-deferred-rendering.html">前向渲染与延迟渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/shader-complexity-optimization.html">Shader 复杂度优化</a></p></section>
   </article>
 </main>

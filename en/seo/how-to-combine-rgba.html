@@ -42,9 +42,9 @@ var _hmt = _hmt || [];
 <h2>Choosing an Online Compositing Tool</h2>
 <p>Although professional software like Photoshop and GIMP can manually edit channels, online tools are more convenient and faster. The following online platforms are recommended:</p>
 <ul>
-<li>**PBR Texture Merger**: Specifically designed for merging PBR maps, supporting AO, roughness, metallic, height, and other channels.</li>
-<li>**Texture Channel Packer**: Simple and easy to use; upload four grayscale images and output an RGBA composite.</li>
-<li>**Online Image Editor**: Provides channel operations but requires manual setup.</li>
+<li><strong>PBR Texture Merger</strong>: Specifically designed for merging PBR maps, supporting AO, roughness, metallic, height, and other channels.</li>
+<li><strong>Texture Channel Packer</strong>: Simple and easy to use; upload four grayscale images and output an RGBA composite.</li>
+<li><strong>Online Image Editor</strong>: Provides channel operations but requires manual setup.</li>
 </ul>
 <p>These tools are usually free and require no registration, suitable for quick processing.</p>
 <h2>Steps for Online RGBA Texture Compositing</h2>
@@ -68,10 +68,10 @@ var _hmt = _hmt || [];
 </ul>
 <h2>Precautions and Tips</h2>
 <ul>
-<li>**Ensure grayscale images have the same size**: All input images must have identical width and height; otherwise, the tool may error or auto-scale.</li>
-<li>**Channel order**: Different engines or software have different conventions for channel meanings. Common Unity convention: R=Metallic, G=AO, B=Detail Mask, A=Smoothness (inverted Roughness). UE4 convention: R=AO, G=Roughness, B=Metallic, A=Reserved. Consult the target engine documentation.</li>
-<li>**Linear space**: If the texture is used for physically based rendering, ensure input grayscale images are in linear space to avoid errors from sRGB conversion.</li>
-<li>**Preview single channel**: After compositing, use an image editor to view individual channels to verify data correctness.</li>
+<li><strong>Ensure grayscale images have the same size</strong>: All input images must have identical width and height; otherwise, the tool may error or auto-scale.</li>
+<li><strong>Channel order</strong>: Different engines or software have different conventions for channel meanings. Common Unity convention: R=Metallic, G=AO, B=Detail Mask, A=Smoothness (inverted Roughness). UE4 convention: R=AO, G=Roughness, B=Metallic, A=Reserved. Consult the target engine documentation.</li>
+<li><strong>Linear space</strong>: If the texture is used for physically based rendering, ensure input grayscale images are in linear space to avoid errors from sRGB conversion.</li>
+<li><strong>Preview single channel</strong>: After compositing, use an image editor to view individual channels to verify data correctness.</li>
 </ul>
 
     </div>
@@ -81,7 +81,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Is 16-bit texture compositing supported?</h3><p>Some online tools support 16-bit PNG or TGA, but most only support 8-bit. If 16-bit precision is needed, use professional software such as Substance Designer, GIMP, or command-line tools.</p></div>
 <div class="faq-item"><h3>Can the composited texture be used in Unity?</h3><p>Yes, but in Unity, set the texture type to &quot;Default&quot; or &quot;Texture&quot;, and correctly sample according to the channel order in the shader. Pay attention to the sRGB option; data textures should have sRGB disabled.</p></div>
 <div class="faq-item"><h3>Are online tools slow for large textures?</h3><p>For 4K or larger textures, online tools may be slow or have file size limits. It is recommended to use local software for large textures; online tools are suitable for quick prototypes and small textures.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>RGBA Channel Packer</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/texture_channel_splitter.html"><b>Texture Channel Splitter</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map-format.html">法线贴图格式 DirectX OpenGL</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a></p></section>
   </article>
 </main>

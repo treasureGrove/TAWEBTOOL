@@ -42,29 +42,29 @@ var _hmt = _hmt || [];
 <h2>光照贴图的原理</h2>
 <p>烘焙过程通常使用光线追踪或辐射度算法，模拟光子在场景中的传播，计算每个表面点的入射光照。结果可以存储为：</p>
 <ul>
-<li>**光照贴图**：2D 纹理，记录漫反射光照颜色。</li>
-<li>**光照探针**：用于动态物体的间接光照。</li>
-<li>**反射探针**：记录环境反射信息。</li>
+<li><strong>光照贴图</strong>：2D 纹理，记录漫反射光照颜色。</li>
+<li><strong>光照探针</strong>：用于动态物体的间接光照。</li>
+<li><strong>反射探针</strong>：记录环境反射信息。</li>
 </ul>
 <p>烘焙结果与静态物体绑定，因此要求场景中的静态物体在运行时不能移动。</p>
 <h2>烘焙流程</h2>
 <p>在 Unity 和 Unreal 中，光照贴图烘焙通常包括以下步骤：</p>
 <ol>
-<li>**标记静态物体**：将不移动的物体标记为 Static（Unity）或 Mobility 设为 Static（Unreal）。</li>
-<li>**设置 UV**：确保模型有合适的第二套 UV（用于光照贴图），UV 需唯一且不重叠。</li>
-<li>**配置光源**：将光源设置混合模式为 Baked 或 Mixed。</li>
-<li>**调整烘焙参数**：如分辨率、间接光照强度、环境光等。</li>
-<li>**开始烘焙**：引擎离线计算光照，生成光照贴图。</li>
-<li>**应用**：运行时自动采样光照贴图。</li>
+<li><strong>标记静态物体</strong>：将不移动的物体标记为 Static（Unity）或 Mobility 设为 Static（Unreal）。</li>
+<li><strong>设置 UV</strong>：确保模型有合适的第二套 UV（用于光照贴图），UV 需唯一且不重叠。</li>
+<li><strong>配置光源</strong>：将光源设置混合模式为 Baked 或 Mixed。</li>
+<li><strong>调整烘焙参数</strong>：如分辨率、间接光照强度、环境光等。</li>
+<li><strong>开始烘焙</strong>：引擎离线计算光照，生成光照贴图。</li>
+<li><strong>应用</strong>：运行时自动采样光照贴图。</li>
 </ul>
 <h2>光照贴图的优缺点</h2>
-<p>**优点**：</p>
+<p><strong>优点</strong>：</p>
 <ul>
 <li>运行时性能高，无需实时全局光照计算。</li>
 <li>光照效果逼真，支持软阴影、颜色反弹等。</li>
 <li>适合移动端和低端硬件。</li>
 </ul>
-<p>**缺点**：</p>
+<p><strong>缺点</strong>：</p>
 <ul>
 <li>只能用于静态场景，动态物体无法使用。</li>
 <li>烘焙耗时，修改场景需重新烘焙。</li>
@@ -73,11 +73,11 @@ var _hmt = _hmt || [];
 </ul>
 <h2>优化与注意事项</h2>
 <ul>
-<li>**降低光照贴图分辨率**：远处或次要物体可以使用低分辨率。</li>
-<li>**使用光照探针**：为动态物体提供近似间接光照。</li>
-<li>**压缩光照贴图**：使用 ASTC、ETC2 等压缩格式减少内存。</li>
-<li>**合并 UV 岛**：优化 UV 布局，减少纹理空间浪费。</li>
-<li>**避免接缝**：确保相邻 UV 岛之间有足够填充，防止渗色。</li>
+<li><strong>降低光照贴图分辨率</strong>：远处或次要物体可以使用低分辨率。</li>
+<li><strong>使用光照探针</strong>：为动态物体提供近似间接光照。</li>
+<li><strong>压缩光照贴图</strong>：使用 ASTC、ETC2 等压缩格式减少内存。</li>
+<li><strong>合并 UV 岛</strong>：优化 UV 布局，减少纹理空间浪费。</li>
+<li><strong>避免接缝</strong>：确保相邻 UV 岛之间有足够填充，防止渗色。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>光照贴图和实时全局光照有什么区别？</h3>
@@ -98,7 +98,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>为什么需要第二套UV？</h3><p>第一套UV可能重叠或拉伸，第二套UV专用于光照贴图，需要唯一且不重叠。</p></div>
 <div class="faq-item"><h3>烘焙光照需要多久？</h3><p>取决于场景复杂度、参数和硬件，可能从几分钟到几小时。</p></div>
 <div class="faq-item"><h3>移动端必须使用光照贴图吗？</h3><p>不必须，但强烈推荐，因为移动端性能有限，光照贴图可以显著提升帧率。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
   </article>
 </main>

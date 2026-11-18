@@ -45,8 +45,8 @@ var _hmt = _hmt || [];
 <h2>伽马校正与 sRGB 转换</h2>
 <p>伽马校正是指在线性与 sRGB 之间转换的过程。典型公式：</p>
 <ul>
-<li>线性到 sRGB：`C_srgb = C_linear^(1/2.2)`（近似）</li>
-<li>sRGB 到线性：`C_linear = C_srgb^2.2`（近似）</li>
+<li>线性到 sRGB：<code>C_srgb = C_linear^(1/2.2)</code>（近似）</li>
+<li>sRGB 到线性：<code>C_linear = C_srgb^2.2</code>（近似）</li>
 </ul>
 <p>精确的 sRGB 转换使用分段函数，但近似通常足够。在渲染管线中：</p>
 <ol>
@@ -55,12 +55,12 @@ var _hmt = _hmt || [];
 <li>最终输出：将结果从线性转换到 sRGB，写入帧缓冲或显示。</li>
 </ul>
 <h2>在游戏引擎中的实现</h2>
-<p>**Unity**：</p>
+<p><strong>Unity</strong>：</p>
 <ul>
 <li>在 Player Settings 中选择 Color Space 为 Linear 或 Gamma。Linear 模式下，引擎自动处理 sRGB 纹理的解码和输出编码。</li>
 <li>纹理资源可标记为 sRGB（默认颜色纹理）或 Linear（法线贴图、金属度贴图等数据纹理）。</li>
 </ul>
-<p>**Unreal Engine**：</p>
+<p><strong>Unreal Engine</strong>：</p>
 <ul>
 <li>默认使用线性工作流，纹理导入时设置 sRGB 选项。</li>
 <li>项目设置中可调整 Gamma。</li>
@@ -68,10 +68,10 @@ var _hmt = _hmt || [];
 <p>正确设置色彩空间对于 PBR 渲染尤为重要，因为 PBR 依赖物理正确的光照计算。</p>
 <h2>常见问题与注意事项</h2>
 <ul>
-<li>**纹理标记错误**：如果法线贴图被标记为 sRGB，采样时会错误解码，导致法线方向错误。因此，数据纹理（如法线、金属度、粗糙度）应标记为 Linear。</li>
-<li>**混合操作**：在线性空间混合颜色更准确，在 sRGB 空间混合可能导致边缘伪影。</li>
-<li>**UI 元素**：UI 通常直接使用 sRGB 颜色，不需要线性转换。</li>
-<li>**移动平台**：部分移动 GPU 不支持线性渲染，需要权衡。</li>
+<li><strong>纹理标记错误</strong>：如果法线贴图被标记为 sRGB，采样时会错误解码，导致法线方向错误。因此，数据纹理（如法线、金属度、粗糙度）应标记为 Linear。</li>
+<li><strong>混合操作</strong>：在线性空间混合颜色更准确，在 sRGB 空间混合可能导致边缘伪影。</li>
+<li><strong>UI 元素</strong>：UI 通常直接使用 sRGB 颜色，不需要线性转换。</li>
+<li><strong>移动平台</strong>：部分移动 GPU 不支持线性渲染，需要权衡。</li>
 </ul>
 <h2>常见问题</h2>
 <h3>sRGB 和线性色彩空间有什么区别？</h3>
@@ -92,7 +92,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>伽马校正是什么？</h3><p>伽马校正是在线性与 sRGB 之间转换的过程，通过幂函数调整亮度编码，以适应人眼感知和显示设备。</p></div>
 <div class="faq-item"><h3>如何知道纹理是否需要 sRGB 解码？</h3><p>颜色纹理（反照率、漫反射）需要 sRGB 解码；数据纹理（法线、金属度、粗糙度）不需要，应标记为 Linear。</p></div>
 <div class="faq-item"><h3>Unity 中如何切换到线性空间？</h3><p>在 Player Settings &gt; Other Settings &gt; Color Space 中选择 Linear，并确保所有纹理的 sRGB 标记正确。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/color_space_converter.html"><b>色彩空间转换器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/gamma-correction.html">伽马校正</a> · <a href="https://tools.treasuregrove.art/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">色彩空间转换</a></p></section>
   </article>
 </main>

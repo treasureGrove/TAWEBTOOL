@@ -42,29 +42,29 @@ var _hmt = _hmt || [];
 <h2>Principles of Lightmaps</h2>
 <p>The baking process typically uses ray tracing or radiosity algorithms to simulate the propagation of photons in the scene and compute the incident lighting on each surface point. Results can be stored as:</p>
 <ul>
-<li>**Lightmaps**: 2D textures recording diffuse lighting colors.</li>
-<li>**Light Probes**: For indirect lighting of dynamic objects.</li>
-<li>**Reflection Probes**: Recording environment reflection information.</li>
+<li><strong>Lightmaps</strong>: 2D textures recording diffuse lighting colors.</li>
+<li><strong>Light Probes</strong>: For indirect lighting of dynamic objects.</li>
+<li><strong>Reflection Probes</strong>: Recording environment reflection information.</li>
 </ul>
 <p>Baking results are bound to static objects, so static objects in the scene must not move at runtime.</p>
 <h2>Baking Workflow</h2>
 <p>In Unity and Unreal, lightmap baking typically involves the following steps:</p>
 <ol>
-<li>**Mark Static Objects**: Mark non-moving objects as Static (Unity) or set Mobility to Static (Unreal).</li>
-<li>**Set Up UVs**: Ensure the model has a suitable second UV set (for lightmaps), which must be unique and non-overlapping.</li>
-<li>**Configure Lights**: Set lights to Baked or Mixed mode.</li>
-<li>**Adjust Baking Parameters**: Such as resolution, indirect lighting intensity, ambient light, etc.</li>
-<li>**Start Baking**: The engine offline computes lighting and generates lightmaps.</li>
-<li>**Apply**: At runtime, lightmaps are automatically sampled.</li>
+<li><strong>Mark Static Objects</strong>: Mark non-moving objects as Static (Unity) or set Mobility to Static (Unreal).</li>
+<li><strong>Set Up UVs</strong>: Ensure the model has a suitable second UV set (for lightmaps), which must be unique and non-overlapping.</li>
+<li><strong>Configure Lights</strong>: Set lights to Baked or Mixed mode.</li>
+<li><strong>Adjust Baking Parameters</strong>: Such as resolution, indirect lighting intensity, ambient light, etc.</li>
+<li><strong>Start Baking</strong>: The engine offline computes lighting and generates lightmaps.</li>
+<li><strong>Apply</strong>: At runtime, lightmaps are automatically sampled.</li>
 </ul>
 <h2>Advantages and Disadvantages of Lightmaps</h2>
-<p>**Advantages**:</p>
+<p><strong>Advantages</strong>:</p>
 <ul>
 <li>High runtime performance, no need for real-time global illumination calculations.</li>
 <li>Realistic lighting effects, supporting soft shadows, color bouncing, etc.</li>
 <li>Suitable for mobile and low-end hardware.</li>
 </ul>
-<p>**Disadvantages**:</p>
+<p><strong>Disadvantages</strong>:</p>
 <ul>
 <li>Only for static scenes; dynamic objects cannot use them.</li>
 <li>Baking is time-consuming; scene modifications require re-baking.</li>
@@ -73,11 +73,11 @@ var _hmt = _hmt || [];
 </ul>
 <h2>Optimization and Considerations</h2>
 <ul>
-<li>**Reduce Lightmap Resolution**: Distant or less important objects can use lower resolution.</li>
-<li>**Use Light Probes**: Provide approximate indirect lighting for dynamic objects.</li>
-<li>**Compress Lightmaps**: Use ASTC, ETC2, etc., to reduce memory.</li>
-<li>**Merge UV Islands**: Optimize UV layout to reduce texture space waste.</li>
-<li>**Avoid Seams**: Ensure enough padding between adjacent UV islands to prevent bleeding.</li>
+<li><strong>Reduce Lightmap Resolution</strong>: Distant or less important objects can use lower resolution.</li>
+<li><strong>Use Light Probes</strong>: Provide approximate indirect lighting for dynamic objects.</li>
+<li><strong>Compress Lightmaps</strong>: Use ASTC, ETC2, etc., to reduce memory.</li>
+<li><strong>Merge UV Islands</strong>: Optimize UV layout to reduce texture space waste.</li>
+<li><strong>Avoid Seams</strong>: Ensure enough padding between adjacent UV islands to prevent bleeding.</li>
 </ul>
 <h2>Frequently Asked Questions</h2>
 <h3>What is the difference between lightmaps and real-time global illumination?</h3>
@@ -98,7 +98,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>Why do we need a second UV set?</h3><p>The first UV set may have overlaps and stretching; the second UV set is dedicated to lightmaps and needs to be unique and non-overlapping.</p></div>
 <div class="faq-item"><h3>How long does baking light take?</h3><p>It depends on scene complexity, parameters, and hardware, ranging from minutes to hours.</p></div>
 <div class="faq-item"><h3>Is lightmap necessary on mobile?</h3><p>Not mandatory, but highly recommended because mobile performance is limited, and lightmaps can significantly improve frame rate.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/uv-mapping.html">UV 映射与展开</a> · <a href="https://tools.treasuregrove.art/en/seo/shadow-map.html">阴影贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/occlusion-culling.html">遮挡剔除</a> · <a href="https://tools.treasuregrove.art/en/seo/draw-call-optimization.html">Draw Call 优化</a></p></section>
   </article>
 </main>

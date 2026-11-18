@@ -70,10 +70,10 @@ var _hmt = _hmt || [];
 <p>```</p>
 <h3>参数说明</h3>
 <ul>
-<li>`-c:v` 指定视频编码器。</li>
-<li>`-c:a` 指定音频编码器。</li>
-<li>可添加 `-crf` 控制质量（0-51，越小质量越高）。</li>
-<li>`-b:v` 设置视频比特率。</li>
+<li><code>-c:v</code> 指定视频编码器。</li>
+<li><code>-c:a</code> 指定音频编码器。</li>
+<li>可添加 <code>-crf</code> 控制质量（0-51，越小质量越高）。</li>
+<li><code>-b:v</code> 设置视频比特率。</li>
 </ul>
 <h2>使用在线转换工具</h2>
 <p>如 CloudConvert、Convertio、Zamzar 等，上传视频即可转换，适合小文件。</p>
@@ -81,28 +81,38 @@ var _hmt = _hmt || [];
 <p>Adobe Premiere、Final Cut Pro、DaVinci Resolve 等均可导出不同格式。</p>
 <h2>格式选择建议</h2>
 <ul>
-<li>**MP4 (H.264)**：兼容性最好，适用于大多数场景。</li>
-<li>**WebM (VP9)**：开源格式，适合网页，文件较小。</li>
-<li>**MKV**：多轨容器，适合存储。</li>
-<li>**MOV**：苹果生态常用。</li>
+<li><strong>MP4 (H.264)</strong>：兼容性最好，适用于大多数场景。</li>
+<li><strong>WebM (VP9)</strong>：开源格式，适合网页，文件较小。</li>
+<li><strong>MKV</strong>：多轨容器，适合存储。</li>
+<li><strong>MOV</strong>：苹果生态常用。</li>
 </ul>
 <h2>注意事项</h2>
 <ul>
-<li>**版权**：确保你有权转换视频。</li>
-<li>**质量与大小平衡**：根据目标平台选择编码参数。</li>
-<li>**硬件加速**：使用 GPU 加速可提高速度，如 FFmpeg 中使用 `-hwaccel`。</li>
+<li><strong>版权</strong>：确保你有权转换视频。</li>
+<li><strong>质量与大小平衡</strong>：根据目标平台选择编码参数。</li>
+<li><strong>硬件加速</strong>：使用 GPU 加速可提高速度，如 FFmpeg 中使用 <code>-hwaccel</code>。</li>
 </ul>
 <h2>总结</h2>
 <p>视频格式转换工具多样，HandBrake 适合图形界面用户，FFmpeg 功能强大且可自动化，在线工具方便快捷。根据需求选择合适的工具。</p>
 
     </div>
     <section class="seo-faq"><h2>常见问题</h2>
-<div class="faq-item"><h3>如何将视频转换为 GIF 动图？</h3><p>使用 FFmpeg 命令：`ffmpeg -i input.mp4 -vf &quot;fps=10,scale=320:-1&quot; output.gif`，可调整帧率和尺寸。</p></div>
-<div class="faq-item"><h3>转换后视频没有声音怎么办？</h3><p>检查音频编码设置，确保输出容器支持音频编码。使用 FFmpeg 时明确指定 `-c:a`，如 `-c:a aac`。</p></div>
+<div class="faq-item"><h3>如何将视频转换为 GIF 动图？</h3><p>使用 FFmpeg 命令：<code>ffmpeg -i input.mp4 -vf &quot;fps=10,scale=320:-1&quot; output.gif</code>，可调整帧率和尺寸。</p></div>
+<div class="faq-item"><h3>转换后视频没有声音怎么办？</h3><p>检查音频编码设置，确保输出容器支持音频编码。使用 FFmpeg 时明确指定 <code>-c:a</code>，如 <code>-c:a aac</code>。</p></div>
 <div class="faq-item"><h3>如何批量转换多个视频？</h3><p>使用 FFmpeg 的批处理脚本，如 Windows 的 for 循环或 Linux 的 shell 脚本，遍历文件并执行转换命令。</p></div>
-<div class="faq-item"><h3>转换速度很慢，如何加速？</h3><p>使用硬件加速编码，如 Intel QSV、NVIDIA NVENC。在 FFmpeg 中指定 `-c:v h264_nvenc` 等。或降低输出分辨率、使用更快的编码预设。</p></div>
+<div class="faq-item"><h3>转换速度很慢，如何加速？</h3><p>使用硬件加速编码，如 Intel QSV、NVIDIA NVENC。在 FFmpeg 中指定 <code>-c:v h264_nvenc</code> 等。或降低输出分辨率、使用更快的编码预设。</p></div>
 <div class="faq-item"><h3>WebM 和 MP4 哪个更好？</h3><p>WebM 是开源格式，在相同质量下通常文件更小，但兼容性不如 MP4。对于网页，WebM 是好选择；对于通用性，MP4 更安全。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/video_format_cover.html"><b>视频格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/video_cut.html"><b>视频剪辑</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-convert-video-format.html">视频格式转换</a> · <a href="https://tools.treasuregrove.art/seo/how-to-convert-color-space.html">色彩空间转换</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/seo/how-to-upscale-image-ai.html">AI 图片无损放大</a> · <a href="https://tools.treasuregrove.art/seo/how-to-pack-sprite-sheet.html">图集打包 Sprite Sheet</a></p></section>
   </article>
 </main>

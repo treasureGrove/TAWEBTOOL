@@ -41,17 +41,17 @@ var _hmt = _hmt || [];
 <p>HDR (High Dynamic Range) refers to technology that can represent a wider luminance range than standard images. Traditional LDR images typically have 8 bits per channel with maximum brightness of 1 (or 255). HDR images use floating-point or higher bit depths, capturing details from darkest shadows to brightest highlights. HDRI (High Dynamic Range Image) is a high dynamic range image file, commonly used for environment maps and light probes.</p>
 <h2>Advantages of HDR</h2>
 <ul>
-<li>**Detail preservation**: Retains details in both bright and dark areas, avoiding overexposure and underexposure.</li>
-<li>**Physically correct lighting**: In rendering, HDR lighting values can exceed 1, simulating real light source intensities.</li>
-<li>**Post-processing flexibility**: Tone mapping and exposure adjustments can operate on HDR buffers without color loss.</li>
+<li><strong>Detail preservation</strong>: Retains details in both bright and dark areas, avoiding overexposure and underexposure.</li>
+<li><strong>Physically correct lighting</strong>: In rendering, HDR lighting values can exceed 1, simulating real light source intensities.</li>
+<li><strong>Post-processing flexibility</strong>: Tone mapping and exposure adjustments can operate on HDR buffers without color loss.</li>
 </ul>
 <h2>HDRI Environment Maps</h2>
 <p>The most common application of HDRI is as an environment map for image-based lighting (IBL). An environment map is a 360-degree panoramic image recording surrounding lighting information. In PBR rendering, HDRI provides ambient light and reflections, seamlessly integrating objects into the environment.</p>
 <h3>Generating HDRI</h3>
 <ul>
-<li>**Photography**: Capture the same scene with a camera at different exposures, then composite into an HDR panorama using software.</li>
-<li>**Procedural generation**: Use software like Blender or Terragen to render sky and lighting.</li>
-<li>**Download**: Obtain free HDRIs from websites like Poly Haven, HDRI Haven.</li>
+<li><strong>Photography</strong>: Capture the same scene with a camera at different exposures, then composite into an HDR panorama using software.</li>
+<li><strong>Procedural generation</strong>: Use software like Blender or Terragen to render sky and lighting.</li>
+<li><strong>Download</strong>: Obtain free HDRIs from websites like Poly Haven, HDRI Haven.</li>
 </ul>
 <h3>Using HDRI</h3>
 <p>In Unity, import HDRI as a Cubemap or 2D texture and set it in the skybox material. In Unreal, load HDRI via a Sky Light. Engines automatically handle IBL, providing diffuse and specular lighting to the scene.</p>
@@ -83,7 +83,16 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to view HDRI files?</h3><p>Use HDR-capable viewers like Photoshop, HDRView, or online preview tools. Normal monitors cannot display full dynamic range, so tone mapping is needed.</p></div>
 <div class="faq-item"><h3>Does mobile support HDR rendering?</h3><p>Modern mobile GPUs support floating-point textures for HDR rendering, but bandwidth and performance should be considered; compressed formats like R11G11B10 are often used.</p></div>
 <div class="faq-item"><h3>Can HDRI be used in non-PBR rendering?</h3><p>Yes, HDRI as an environment map provides lighting; any shader can sample it for reflections and diffuse.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/hdr_editor.html"><b>HDR Editor</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/ibl-image-based-lighting.html">IBL 基于图像的光照</a> · <a href="https://tools.treasuregrove.art/en/seo/tone-mapping.html">色调映射</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-edit-hdr.html">HDR/HDRI 环境贴图编辑</a></p></section>
   </article>
 </main>

@@ -85,15 +85,15 @@ var _hmt = _hmt || [];
 <p>Note: Provide channel images in order.</p>
 <h2>Common Applications in Game Development</h2>
 <ul>
-<li>**ORM Texture**: Put ambient occlusion (O) in red channel, roughness (R) in green channel, metallic (M) in blue channel to reduce texture count.</li>
-<li>**Normal Map Compression**: Normal maps often store X and Y components; Z can be reconstructed, so only two channels are stored.</li>
-<li>**Mask Textures**: Multiple masks packed into different channels.</li>
+<li><strong>ORM Texture</strong>: Put ambient occlusion (O) in red channel, roughness (R) in green channel, metallic (M) in blue channel to reduce texture count.</li>
+<li><strong>Normal Map Compression</strong>: Normal maps often store X and Y components; Z can be reconstructed, so only two channels are stored.</li>
+<li><strong>Mask Textures</strong>: Multiple masks packed into different channels.</li>
 </ul>
 <h2>Notes</h2>
 <ul>
-<li>**Color Space**: Channel operations should be done in linear space or with correct settings to avoid data errors caused by sRGB conversion.</li>
-<li>**Alpha Channel**: Ensure the alpha channel is not accidentally modified.</li>
-<li>**Precision**: 8-bit images have 256 levels per channel, which may not be sufficient for high-precision data; consider using 16-bit or 32-bit.</li>
+<li><strong>Color Space</strong>: Channel operations should be done in linear space or with correct settings to avoid data errors caused by sRGB conversion.</li>
+<li><strong>Alpha Channel</strong>: Ensure the alpha channel is not accidentally modified.</li>
+<li><strong>Precision</strong>: 8-bit images have 256 levels per channel, which may not be sufficient for high-precision data; consider using 16-bit or 32-bit.</li>
 </ul>
 <h2>Summary</h2>
 <p>Channel splitting and combining are common operations in texture pipelines. Mastering these techniques can improve workflow efficiency and optimize texture resources.</p>
@@ -105,7 +105,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to view the content of a single channel?</h3><p>In Photoshop, click a single channel in the Channels panel to see its grayscale representation; similar in GIMP.</p></div>
 <div class="faq-item"><h3>How to ensure channel data is not altered by color management?</h3><p>For technical textures, set image mode to grayscale or ensure a linear color profile, disable color management, or use raw data.</p></div>
 <div class="faq-item"><h3>Can channel splitting and combining be done programmatically?</h3><p>Yes, using Python's Pillow or OpenCV libraries to manipulate channels conveniently, suitable for batch processing.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/texture_channel_splitter.html"><b>Texture Channel Splitter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/combine_rgba.html"><b>RGBA Channel Packer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/en/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a></p></section>
   </article>
 </main>

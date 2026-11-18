@@ -42,16 +42,16 @@ var _hmt = _hmt || [];
 <h2>选择在线转换工具</h2>
 <p>许多免费在线工具可完成图片与Base64互转：</p>
 <ul>
-<li>**Base64 Image Encoder/Decoder**：如base64-image.de，简单易用。</li>
-<li>**Code Beauty Tools**：支持批量转换，提供多种格式选项。</li>
-<li>**Browserling**：开发者工具集合，可转换图片并生成HTML代码片段。</li>
+<li><strong>Base64 Image Encoder/Decoder</strong>：如base64-image.de，简单易用。</li>
+<li><strong>Code Beauty Tools</strong>：支持批量转换，提供多种格式选项。</li>
+<li><strong>Browserling</strong>：开发者工具集合，可转换图片并生成HTML代码片段。</li>
 <li>也可使用本地代码或命令行工具（如Python的base64模块）实现。</li>
 </ul>
 <h2>在线图片转Base64操作步骤</h2>
 <ol>
 <li>打开在线转换工具网站。</li>
 <li>找到“图片转Base64”功能，点击上传图片或拖拽图片到指定区域。</li>
-<li>选择输出格式（如纯Base64字符串或带`data:image/png;base64,`前缀的完整Data URI）。</li>
+<li>选择输出格式（如纯Base64字符串或带<code>data:image/png;base64,</code>前缀的完整Data URI）。</li>
 <li>点击“转换”按钮，工具将显示生成的Base64编码。</li>
 <li>复制编码结果，可用于前端开发或存储。</li>
 </ul>
@@ -63,15 +63,15 @@ var _hmt = _hmt || [];
 <li>下载还原的图片文件，格式通常为PNG或JPEG。</li>
 </ul>
 <h2>代码示例与注意事项</h2>
-<p>**前端使用Base64图片：**</p>
+<p><strong>前端使用Base64图片：</strong></p>
 <p>```html</p>
 <p>&lt;img src=&quot;data:image/png;base64,iVBORw0KGgo...&quot; /&gt;</p>
 <p>```</p>
-<p>**CSS背景：**</p>
+<p><strong>CSS背景：</strong></p>
 <p>```css</p>
 <p>background-image: url(data:image/png;base64,...);</p>
 <p>```</p>
-<p>**注意事项：**</p>
+<p><strong>注意事项：</strong></p>
 <ul>
 <li>确保Base64字符串完整，不要有换行或空格。</li>
 <li>大图片转Base64可能导致网页加载缓慢，建议仅用于小图标或关键图片。</li>
@@ -81,11 +81,20 @@ var _hmt = _hmt || [];
     </div>
     <section class="seo-faq"><h2>常见问题</h2>
 <div class="faq-item"><h3>图片转Base64后体积变大多少？</h3><p>Base64编码会使数据体积增加约33%。例如100KB的图片转Base64后约为133KB，因为每3个字节编码为4个字符。</p></div>
-<div class="faq-item"><h3>为什么我粘贴Base64后无法显示图片？</h3><p>可能原因：Base64字符串不完整、包含非法字符、缺少正确的Data URI前缀，或图片格式未指定。检查字符串完整性并确保前缀如`data:image/png;base64,`正确。</p></div>
+<div class="faq-item"><h3>为什么我粘贴Base64后无法显示图片？</h3><p>可能原因：Base64字符串不完整、包含非法字符、缺少正确的Data URI前缀，或图片格式未指定。检查字符串完整性并确保前缀如<code>data:image/png;base64,</code>正确。</p></div>
 <div class="faq-item"><h3>在线工具转换安全吗？</h3><p>多数可信工具不会存储你的图片，但敏感图片建议使用本地代码或开源工具进行转换，避免隐私泄露。</p></div>
 <div class="faq-item"><h3>可以批量转换图片吗？</h3><p>部分在线工具支持批量上传和转换，如Code Beauty Tools。也可编写脚本使用Python等语言批量处理。</p></div>
 <div class="faq-item"><h3>Base64图片适合用在网页中吗？</h3><p>适合小图片（如小于10KB的图标、logo）以减少HTTP请求。大图片建议使用普通文件引用，利用浏览器缓存提高性能。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/base64_image.html"><b>图片与 Base64 互转</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/how-to-ai-image.html">AI 通用生图</a> · <a href="https://tools.treasuregrove.art/seo/how-to-compress-image.html">图片压缩与格式转换</a> · <a href="https://tools.treasuregrove.art/seo/how-to-gif-compress.html">GIF 压缩</a> · <a href="https://tools.treasuregrove.art/seo/how-to-combine-rgba.html">贴图通道合成</a> · <a href="https://tools.treasuregrove.art/seo/how-to-image-metadata.html">贴图信息查看</a></p></section>
   </article>
 </main>

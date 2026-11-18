@@ -42,39 +42,39 @@ var _hmt = _hmt || [];
 <h2>Physical Principles and Mathematical Models</h2>
 <p>In microfacet theory, a surface is composed of many tiny mirrors, and the normal distribution function (NDF) determines the shape of highlights. An isotropic NDF depends only on the angle θ between the normal and half-vector, while an anisotropic NDF also depends on the azimuth angle φ, i.e., the directional distribution of microfacet normals in the tangent plane. Common anisotropic NDFs include:</p>
 <ul>
-<li>**Beckmann Anisotropic Distribution**: Extends Beckmann distribution with two roughness parameters α_x and α_y (along tangent and bitangent directions).</li>
-<li>**GGX Anisotropic Distribution**: Similarly, GGX can be extended to anisotropic form, more popular in real-time rendering due to more natural tail falloff.</li>
+<li><strong>Beckmann Anisotropic Distribution</strong>: Extends Beckmann distribution with two roughness parameters α_x and α_y (along tangent and bitangent directions).</li>
+<li><strong>GGX Anisotropic Distribution</strong>: Similarly, GGX can be extended to anisotropic form, more popular in real-time rendering due to more natural tail falloff.</li>
 </ul>
-<p>In shading models, anisotropic highlights are often implemented by combining roughness parameters in tangent space. For example, in Disney Principled BSDF, an `anisotropic` parameter controls highlight stretching, with `anisotropic rotation` for direction. In real-time rendering, common practice:</p>
+<p>In shading models, anisotropic highlights are often implemented by combining roughness parameters in tangent space. For example, in Disney Principled BSDF, an <code>anisotropic</code> parameter controls highlight stretching, with <code>anisotropic rotation</code> for direction. In real-time rendering, common practice:</p>
 <ol>
-<li>Split roughness into two directional values: `roughness_x` and `roughness_y`, corresponding to tangent and bitangent.</li>
+<li>Split roughness into two directional values: <code>roughness_x</code> and <code>roughness_y</code>, corresponding to tangent and bitangent.</li>
 <li>When computing NDF, transform the half-vector to tangent space and use different roughnesses, stretching the highlight along one direction.</li>
 <li>Pass an anisotropic direction texture (flow map) to specify microstructure direction.</li>
 </ul>
 <h2>Implementation Methods and Parameter Tuning</h2>
 <p>In game engines, implementing anisotropic highlights typically involves:</p>
 <ul>
-<li>**Tangent Space and Direction Map**: The anisotropy direction must align with the surface microstructure. Use the model's tangent space or provide a flow map to define direction. For hair, use a tangent field along hair strands; for brushed metal, direction can come from UV coordinates.</li>
-<li>**Roughness Parameters**: Define two roughness values in the shader, exposed to the material editor. For example, in Unity's HDRP, anisotropic materials have an `Anisotropy` parameter (-1 to 1): negative values stretch vertically, positive horizontally.</li>
-<li>**Integration with PBR**: Anisotropic highlight should be part of the specular term, combined with diffuse. Ensure energy conservation: adjust anisotropic parameters while keeping reflection energy within limits.</li>
-<li>**Combining with Subsurface Scattering**: For hair, anisotropic highlight is often combined with subsurface scattering to simulate light transmission inside hair strands.</li>
+<li><strong>Tangent Space and Direction Map</strong>: The anisotropy direction must align with the surface microstructure. Use the model's tangent space or provide a flow map to define direction. For hair, use a tangent field along hair strands; for brushed metal, direction can come from UV coordinates.</li>
+<li><strong>Roughness Parameters</strong>: Define two roughness values in the shader, exposed to the material editor. For example, in Unity's HDRP, anisotropic materials have an <code>Anisotropy</code> parameter (-1 to 1): negative values stretch vertically, positive horizontally.</li>
+<li><strong>Integration with PBR</strong>: Anisotropic highlight should be part of the specular term, combined with diffuse. Ensure energy conservation: adjust anisotropic parameters while keeping reflection energy within limits.</li>
+<li><strong>Combining with Subsurface Scattering</strong>: For hair, anisotropic highlight is often combined with subsurface scattering to simulate light transmission inside hair strands.</li>
 </ul>
 <p>Tuning notes: Too high anisotropy makes highlights too thin and unnatural; too low loses character. Reference real material photos. Direction map precision and continuity affect highlight smoothness; avoid seams.</p>
 <h2>Application Scenarios and Classic Examples</h2>
 <p>Anisotropic highlights are widely used in:</p>
 <ul>
-<li>**Character Hair**: Hair is a classic anisotropic material; anisotropic highlights simulate shine and flow. In real-time character rendering, often combined with the Marschner hair model.</li>
-<li>**Brushed Metal**: Stainless steel, CDs, automotive interiors, etc., to show brushing or polishing patterns.</li>
-<li>**Velvet and Cloth**: Velvet highlights are stronger at edges and weaker in center, can be simulated with inverse anisotropy.</li>
-<li>**Terrain and Water**: Some special surfaces (e.g., wind-blown sand ripples) can use anisotropic highlights for detail.</li>
+<li><strong>Character Hair</strong>: Hair is a classic anisotropic material; anisotropic highlights simulate shine and flow. In real-time character rendering, often combined with the Marschner hair model.</li>
+<li><strong>Brushed Metal</strong>: Stainless steel, CDs, automotive interiors, etc., to show brushing or polishing patterns.</li>
+<li><strong>Velvet and Cloth</strong>: Velvet highlights are stronger at edges and weaker in center, can be simulated with inverse anisotropy.</li>
+<li><strong>Terrain and Water</strong>: Some special surfaces (e.g., wind-blown sand ripples) can use anisotropic highlights for detail.</li>
 </ul>
 <p>In real-time rendering, anisotropy adds marginal computational cost but greatly improves visuals, widely used in AAA games and film CG.</p>
 <h2>Common Issues and Optimization Suggestions</h2>
 <ul>
-<li>**Performance**: Anisotropic NDF computation is nearly identical to isotropic, only a few extra instructions, so performance impact is minimal. But direction map sampling and extra parameter passing need attention.</li>
-<li>**Direction Definition**: Ensure anisotropic direction is correct under deformation. For skinned meshes, tangents may change with skeletal animation; recompute in shader.</li>
-<li>**Energy Loss**: Some anisotropic models may not be perfectly energy conserving, causing dark highlights. Use energy compensation factors.</li>
-<li>**Mobile**: Simplify anisotropic calculations on mobile or bake direction information into textures.</li>
+<li><strong>Performance</strong>: Anisotropic NDF computation is nearly identical to isotropic, only a few extra instructions, so performance impact is minimal. But direction map sampling and extra parameter passing need attention.</li>
+<li><strong>Direction Definition</strong>: Ensure anisotropic direction is correct under deformation. For skinned meshes, tangents may change with skeletal animation; recompute in shader.</li>
+<li><strong>Energy Loss</strong>: Some anisotropic models may not be perfectly energy conserving, causing dark highlights. Use energy compensation factors.</li>
+<li><strong>Mobile</strong>: Simplify anisotropic calculations on mobile or bake direction information into textures.</li>
 </ul>
 <p>In summary, anisotropic highlight is an important tool for material realism. Mastering its principles and implementation empowers you to handle special materials with ease.</p>
 
@@ -85,7 +85,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to implement anisotropic highlights in Unity or Unreal?</h3><p>In HDRP, materials have an Anisotropy parameter; in Unreal, use custom anisotropic GGX in the material editor or a shading model with anisotropy. Provide a direction texture or use tangent.</p></div>
 <div class="faq-item"><h3>Does anisotropic highlight significantly impact performance?</h3><p>Very little; anisotropic NDF adds only a few GPU instructions. Main overhead may come from direction map sampling.</p></div>
 <div class="faq-item"><h3>How to adjust the direction of anisotropic highlight?</h3><p>Rotate tangent space or use a flow map. Expose a rotation angle parameter in the material editor.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/shader_library.html"><b>Shader Function Library</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/what-is-pbr.html">PBR 物理渲染</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/en/seo/brdf.html">BRDF</a> · <a href="https://tools.treasuregrove.art/en/seo/roughness-metallic-workflow.html">金属度粗糙度工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/subsurface-scattering.html">次表面散射 SSS</a></p></section>
   </article>
 </main>

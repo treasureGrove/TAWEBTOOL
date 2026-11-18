@@ -50,24 +50,24 @@ var _hmt = _hmt || [];
 <p>Ray marching can use fixed steps, hierarchical steps (Hi-Z), or hybrid methods to improve performance and accuracy.</p>
 <h2>Advantages of SSR</h2>
 <ul>
-<li>**Dynamic Reflections**: Can reflect dynamic objects on screen, not limited by pre-baking.</li>
-<li>**Rich Detail**: Reflection content is based on actual rendered results, high realism.</li>
-<li>**No Extra Geometry Rendering**: Uses only screen-space data, cheaper than planar reflections or render-to-texture.</li>
+<li><strong>Dynamic Reflections</strong>: Can reflect dynamic objects on screen, not limited by pre-baking.</li>
+<li><strong>Rich Detail</strong>: Reflection content is based on actual rendered results, high realism.</li>
+<li><strong>No Extra Geometry Rendering</strong>: Uses only screen-space data, cheaper than planar reflections or render-to-texture.</li>
 </ul>
 <h2>Limitations of SSR</h2>
 <ul>
-<li>**Screen-Space Limitation**: Can only reflect objects visible on screen; off-screen or back-facing objects cannot be reflected.</li>
-<li>**Performance Cost**: Ray marching requires multiple depth samples, can be expensive at high resolutions.</li>
-<li>**Noise**: If marching precision is insufficient, noise or banding may occur, requiring post-process denoising.</li>
-<li>**Thickness Issue**: For thin objects, depth comparison may be inaccurate, causing missing or incorrect reflections.</li>
+<li><strong>Screen-Space Limitation</strong>: Can only reflect objects visible on screen; off-screen or back-facing objects cannot be reflected.</li>
+<li><strong>Performance Cost</strong>: Ray marching requires multiple depth samples, can be expensive at high resolutions.</li>
+<li><strong>Noise</strong>: If marching precision is insufficient, noise or banding may occur, requiring post-process denoising.</li>
+<li><strong>Thickness Issue</strong>: For thin objects, depth comparison may be inaccurate, causing missing or incorrect reflections.</li>
 </ul>
 <h2>SSR Optimization</h2>
 <ul>
-<li>**Reduce Resolution**: Compute SSR at half or quarter resolution, then upsample.</li>
-<li>**Hierarchical Depth (Hi-Z)**: Use mipmap chain to accelerate ray marching, reducing steps.</li>
-<li>**Limit Reflection Distance**: Set a maximum reflection distance to avoid long marches.</li>
-<li>**Temporal Filtering**: Combine with previous frame results to reduce noise.</li>
-<li>**Importance Sampling**: Adjust marching strategy based on material roughness.</li>
+<li><strong>Reduce Resolution</strong>: Compute SSR at half or quarter resolution, then upsample.</li>
+<li><strong>Hierarchical Depth (Hi-Z)</strong>: Use mipmap chain to accelerate ray marching, reducing steps.</li>
+<li><strong>Limit Reflection Distance</strong>: Set a maximum reflection distance to avoid long marches.</li>
+<li><strong>Temporal Filtering</strong>: Combine with previous frame results to reduce noise.</li>
+<li><strong>Importance Sampling</strong>: Adjust marching strategy based on material roughness.</li>
 </ul>
 <h2>Combining SSR with Other Reflection Techniques</h2>
 <p>SSR is often used in conjunction with reflection probes and planar reflections. When SSR fails, fall back to reflection probes to ensure reflection information is always available. Ray tracing can also be used for more complete reflections.</p>
@@ -81,7 +81,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to reduce SSR noise?</h3><p>Use temporal filtering, spatial filtering, increase marching precision, or use importance sampling. Combining with blur can also help.</p></div>
 <div class="faq-item"><h3>Is SSR suitable for mobile platforms?</h3><p>Mobile platforms have limited performance, SSR may be too expensive. But simplified versions can be used, or rely on reflection probes.</p></div>
 <div class="faq-item"><h3>What buffers does SSR require?</h3><p>Requires color buffer, depth buffer, and normal buffer. These are easily obtained in deferred rendering; forward rendering may need extra generation.</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR Texture Generator</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>Image Compressor &amp; Converter</b><span>Free · In-browser · No install</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D Model Viewer</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/reflection-probe.html">反射探针</a> · <a href="https://tools.treasuregrove.art/en/seo/cubemap.html">立方体贴图 Cubemap</a> · <a href="https://tools.treasuregrove.art/en/seo/screen-space-reflection.html">屏幕空间反射 SSR</a> · <a href="https://tools.treasuregrove.art/en/seo/ray-tracing-basics.html">光线追踪基础</a> · <a href="https://tools.treasuregrove.art/en/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

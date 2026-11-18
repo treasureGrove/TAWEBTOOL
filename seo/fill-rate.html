@@ -39,21 +39,21 @@ var _hmt = _hmt || [];
     <div class="seo-content">
 <h2>什么是填充率</h2>
 <p>填充率（Fill Rate）是指图形处理器（GPU）每秒钟可以渲染到屏幕上的像素数量，通常以百万像素/秒（MP/s）或十亿像素/秒（GP/s）为单位。它是衡量GPU性能的重要指标，尤其在处理高分辨率渲染和复杂片段着色时。</p>
-<p>填充率可以分为**像素填充率**和**纹理填充率**：</p>
+<p>填充率可以分为<strong>像素填充率</strong>和<strong>纹理填充率</strong>：</p>
 <ul>
-<li>**像素填充率**：GPU每秒能够写入帧缓冲的像素数，取决于光栅化单元（ROP）的数量和频率。</li>
-<li>**纹理填充率**：GPU每秒能够采样的纹理像素（texel）数，取决于纹理单元（TMU）的数量和频率。</li>
+<li><strong>像素填充率</strong>：GPU每秒能够写入帧缓冲的像素数，取决于光栅化单元（ROP）的数量和频率。</li>
+<li><strong>纹理填充率</strong>：GPU每秒能够采样的纹理像素（texel）数，取决于纹理单元（TMU）的数量和频率。</li>
 </ul>
 <h2>填充率的重要性</h2>
 <p>填充率直接影响渲染性能，当场景需要处理大量像素（如高分辨率、多图层、复杂后处理）时，填充率可能成为瓶颈。如果GPU的填充率不足，帧率会下降，出现卡顿。</p>
 <p>移动设备由于屏幕分辨率高但GPU填充率相对较低，对填充率特别敏感。</p>
 <h2>影响填充率的因素</h2>
 <ul>
-<li>**分辨率**：分辨率越高，需要渲染的像素越多，对填充率要求越高。</li>
-<li>**Overdraw**：同一像素被多次绘制会增加填充率压力。</li>
-<li>**片段着色器复杂度**：虽然复杂着色器主要消耗ALU，但每个像素执行多次纹理采样也会占用纹理填充率。</li>
-<li>**混合操作**：Alpha混合需要读取帧缓冲并写入，消耗额外带宽。</li>
-<li>**后处理**：全屏后处理效果（如模糊、泛光）需要多次处理全屏像素，大幅增加填充率需求。</li>
+<li><strong>分辨率</strong>：分辨率越高，需要渲染的像素越多，对填充率要求越高。</li>
+<li><strong>Overdraw</strong>：同一像素被多次绘制会增加填充率压力。</li>
+<li><strong>片段着色器复杂度</strong>：虽然复杂着色器主要消耗ALU，但每个像素执行多次纹理采样也会占用纹理填充率。</li>
+<li><strong>混合操作</strong>：Alpha混合需要读取帧缓冲并写入，消耗额外带宽。</li>
+<li><strong>后处理</strong>：全屏后处理效果（如模糊、泛光）需要多次处理全屏像素，大幅增加填充率需求。</li>
 </ul>
 <h2>填充率与Overdraw的关系</h2>
 <p>Overdraw是填充率消耗的主要来源之一。例如，一个像素被绘制3次，就相当于填充率需求增加了3倍。减少Overdraw可以有效降低填充率压力。</p>
@@ -92,7 +92,18 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>移动设备为什么对填充率敏感？</h3><p>移动设备屏幕分辨率高但GPU填充率较低，且带宽受限，高Overdraw和复杂后处理会迅速耗尽填充率，导致发热和降频。</p></div>
 <div class="faq-item"><h3>纹理填充率和像素填充率有区别吗？</h3><p>有。像素填充率是写入像素的能力，纹理填充率是采样纹理的能力。两者可能不同，复杂纹理采样可能使纹理填充率成为瓶颈。</p></div>
 <div class="faq-item"><h3>后处理如何影响填充率？</h3><p>每个后处理效果都需要遍历全屏像素，执行着色器并可能多次采样，多个后处理叠加会成倍增加填充率需求。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/pbr_texture_generator.html"><b>PBR 贴图生成器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/compress_image.html"><b>图片压缩与格式转换</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/overdraw.html">Overdraw 过度绘制</a> · <a href="https://tools.treasuregrove.art/seo/shader-complexity-optimization.html">Shader 复杂度优化</a> · <a href="https://tools.treasuregrove.art/seo/hdr-render-pipeline.html">HDR 渲染管线</a> · <a href="https://tools.treasuregrove.art/seo/anti-aliasing-comparison.html">抗锯齿 MSAA/FXAA/TAA</a> · <a href="https://tools.treasuregrove.art/seo/post-processing-stack.html">后处理特效</a></p></section>
   </article>
 </main>

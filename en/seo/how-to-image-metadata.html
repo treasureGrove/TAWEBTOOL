@@ -40,18 +40,18 @@ var _hmt = _hmt || [];
 <h2>Why View Texture Information</h2>
 <p>In game development and 3D rendering, understanding texture properties is crucial for performance optimization. Key information includes:</p>
 <ul>
-<li>**Resolution**: Affects video memory usage and texture detail.</li>
-<li>**Format**: Such as PNG, JPG, TGA, EXR, determining compression method and quality.</li>
-<li>**Color space**: sRGB or linear, affecting rendering correctness.</li>
-<li>**Bit depth**: 8-bit, 16-bit, or 32-bit, affecting color precision.</li>
-<li>**Memory estimation**: Can calculate approximate size after upload to GPU.</li>
+<li><strong>Resolution</strong>: Affects video memory usage and texture detail.</li>
+<li><strong>Format</strong>: Such as PNG, JPG, TGA, EXR, determining compression method and quality.</li>
+<li><strong>Color space</strong>: sRGB or linear, affecting rendering correctness.</li>
+<li><strong>Bit depth</strong>: 8-bit, 16-bit, or 32-bit, affecting color precision.</li>
+<li><strong>Memory estimation</strong>: Can calculate approximate size after upload to GPU.</li>
 </ul>
 <h2>Using Online Tools to View Texture Information</h2>
 <p>Basic image information can be obtained via browsers or online tools:</p>
 <ul>
-<li>**Online Image Info Viewer**: Upload an image to display dimensions, file size, format, bit depth, etc.</li>
-<li>**Get-Metadata.com**: Reads EXIF and basic properties.</li>
-<li>**Photopea**: After opening an image, check resolution under &quot;Image&quot; &gt; &quot;Image Size&quot;, and format in file info.</li>
+<li><strong>Online Image Info Viewer</strong>: Upload an image to display dimensions, file size, format, bit depth, etc.</li>
+<li><strong>Get-Metadata.com</strong>: Reads EXIF and basic properties.</li>
+<li><strong>Photopea</strong>: After opening an image, check resolution under &quot;Image&quot; &gt; &quot;Image Size&quot;, and format in file info.</li>
 </ul>
 <p>For professional texture formats (such as DDS, KTX), online tools are scarce; local tools are recommended.</p>
 <h2>Steps for Online Image Info Viewing</h2>
@@ -87,15 +87,15 @@ var _hmt = _hmt || [];
 <p>Online memory calculators can be used: input dimensions and format to get size.</p>
 <h2>Using Professional Tools to View</h2>
 <ul>
-<li>**Windows File Explorer**: Right-click image &gt; Properties &gt; Details, can see dimensions and file size.</li>
-<li>**Texture Tools**: Such as NVIDIA Texture Tools Exporter and AMD Compressonator can open DDS and view detailed information and memory statistics.</li>
-<li>**Inside renderers**: In Unity/Unreal, selecting a texture asset shows import settings and estimated memory usage in the Inspector panel.</li>
+<li><strong>Windows File Explorer</strong>: Right-click image &gt; Properties &gt; Details, can see dimensions and file size.</li>
+<li><strong>Texture Tools</strong>: Such as NVIDIA Texture Tools Exporter and AMD Compressonator can open DDS and view detailed information and memory statistics.</li>
+<li><strong>Inside renderers</strong>: In Unity/Unreal, selecting a texture asset shows import settings and estimated memory usage in the Inspector panel.</li>
 </ul>
 <h2>Precautions</h2>
 <ul>
-<li>**File size ≠ memory size**: Compressed formats like PNG are small on disk but may be large after decompression in GPU.</li>
-<li>**Color space impact**: sRGB textures are automatically linearized when sampled, but data textures (like normal maps) should be marked linear.</li>
-<li>**Mipmap impact**: Enabling mipmaps increases memory by about 33% but improves distant rendering quality.</li>
+<li><strong>File size ≠ memory size</strong>: Compressed formats like PNG are small on disk but may be large after decompression in GPU.</li>
+<li><strong>Color space impact</strong>: sRGB textures are automatically linearized when sampled, but data textures (like normal maps) should be marked linear.</li>
+<li><strong>Mipmap impact</strong>: Enabling mipmaps increases memory by about 33% but improves distant rendering quality.</li>
 </ul>
 
     </div>
@@ -104,8 +104,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>How to calculate texture memory usage?</h3><p>Use the formula: width × height × bytes per pixel × 1.33 (including mipmaps). For example, a 1024×1024 RGBA8 texture is about 5.33MB.</p></div>
 <div class="faq-item"><h3>Where can I view texture color space?</h3><p>Online tools typically do not show color space. In image editing software or game engines, check the tag, such as sRGB or Linear. Data textures like normal maps should be linear.</p></div>
 <div class="faq-item"><h3>Why is a PNG file small but uses a lot of memory?</h3><p>PNG is lossless compression that the GPU cannot use directly; it must be decompressed to raw pixel format, so memory usage depends on texture format rather than file size.</p></div>
-<div class="faq-item"><h3>How to batch view texture information?</h3><p>Use command-line tools like ImageMagick (`identify -verbose`) or write scripts to traverse folders and output dimensions, format, etc.</p></div>
-</section>
+<div class="faq-item"><h3>How to batch view texture information?</h3><p>Use command-line tools like ImageMagick (<code>identify -verbose</code>) or write scripts to traverse folders and output dimensions, format, etc.</p></div>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>Try These Free Tools</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/image_metadata_inspector.html"><b>Texture Info Inspector</b><span>Free · In-browser · No install</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/en/">TA Toolbox — 20+ free technical artist tools</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>Related</h2><p><a href="https://tools.treasuregrove.art/en/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/bc-texture-compression.html">BC 贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/en/seo/mipmap.html">Mipmap 多级渐远纹理</a> · <a href="https://tools.treasuregrove.art/en/seo/srgb-texture-workflow.html">sRGB 贴图工作流</a> · <a href="https://tools.treasuregrove.art/en/seo/normal-map-format.html">法线贴图格式 DirectX OpenGL</a></p></section>
   </article>
 </main>

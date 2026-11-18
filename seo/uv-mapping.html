@@ -43,18 +43,18 @@ var _hmt = _hmt || [];
 <p>UV 展开（UV Unwrapping）是将 3D 网格的三角形面片展开到 2D 平面，生成 UV 布局的过程。理想的 UV 展开应尽量减少拉伸、重叠和接缝，保证纹理在模型上均匀分布。</p>
 <h3>展开方法</h3>
 <ul>
-<li>**自动展开**：软件根据算法自动生成 UV，如 Blender 的 Smart UV Project、Unfold3D 等。</li>
-<li>**手动展开**：艺术家手动切割接缝，使用松弛、展开工具调整 UV，获得最佳布局。</li>
-<li>**投影展开**：从特定视角投影模型到平面，如平面、圆柱、球面投影。</li>
+<li><strong>自动展开</strong>：软件根据算法自动生成 UV，如 Blender 的 Smart UV Project、Unfold3D 等。</li>
+<li><strong>手动展开</strong>：艺术家手动切割接缝，使用松弛、展开工具调整 UV，获得最佳布局。</li>
+<li><strong>投影展开</strong>：从特定视角投影模型到平面，如平面、圆柱、球面投影。</li>
 </ul>
 <p>在游戏资产中，通常需要手动优化 UV 布局，以提高纹理密度和减少接缝。</p>
 <h2>UV 映射的注意事项</h2>
 <ul>
-<li>**接缝**：UV 边界处纹理可能不连续，需将接缝放置在隐蔽处（如模型内侧、背面）。</li>
-<li>**拉伸**：UV 面片与 3D 面片比例不一致导致纹理拉伸，需要均匀展开。</li>
-<li>**重叠**：多个面片使用相同 UV 区域（如对称模型），可以节省纹理空间，但需注意法线贴图等。</li>
-<li>**纹理密度**：保持模型各部分像素密度一致，避免某些区域模糊。</li>
-<li>**UV 通道**：模型可以有多个 UV 通道，用于不同贴图（如光照贴图使用第二套 UV）。</li>
+<li><strong>接缝</strong>：UV 边界处纹理可能不连续，需将接缝放置在隐蔽处（如模型内侧、背面）。</li>
+<li><strong>拉伸</strong>：UV 面片与 3D 面片比例不一致导致纹理拉伸，需要均匀展开。</li>
+<li><strong>重叠</strong>：多个面片使用相同 UV 区域（如对称模型），可以节省纹理空间，但需注意法线贴图等。</li>
+<li><strong>纹理密度</strong>：保持模型各部分像素密度一致，避免某些区域模糊。</li>
+<li><strong>UV 通道</strong>：模型可以有多个 UV 通道，用于不同贴图（如光照贴图使用第二套 UV）。</li>
 </ul>
 <h2>在游戏引擎中的使用</h2>
 <p>在 Unity 和 Unreal 中，导入模型时自动读取 UV 坐标。光照贴图需要第二套 UV（UV1），要求 UV 不重叠且在 0-1 范围内。引擎提供 UV 检查工具（如 Unreal 的 UV 密度视图）。</p>
@@ -77,7 +77,17 @@ var _hmt = _hmt || [];
 <div class="faq-item"><h3>UV展开中的岛是什么意思？</h3><p>岛是UV展开中一组连续的面片，它们共享UV空间，岛之间有空隙避免纹理渗色。</p></div>
 <div class="faq-item"><h3>如何检测UV拉伸？</h3><p>在3D软件中显示UV棋盘格或使用拉伸可视化工具，引擎中也有类似视图。</p></div>
 <div class="faq-item"><h3>UV贴图和纹理坐标有什么关系？</h3><p>UV贴图是顶点属性，存储顶点UV坐标，光栅化时插值得到片元UV用于纹理采样。</p></div>
-</section>
+</section><!-- related-tools:start -->
+    <section class="seo-tools">
+      <h2>边学边试：免费在线工具</h2>
+      <div class="seo-tool-cards">
+      <a class="seo-tool-card" href="/tools_html/model_previewer.html"><b>3D 模型预览器</b><span>免费 · 浏览器打开即用</span></a>
+      <a class="seo-tool-card" href="/tools_html/tiling_texture.html"><b>Tiling 贴图预览</b><span>免费 · 浏览器打开即用</span></a>
+      </div>
+      <p class="seo-tools-more"><a href="/">TA工具箱 — 20+ 款免费技术美术工具</a></p>
+    </section>
+<!-- related-tools:end -->
+
     <section class="seo-related"><h2>相关词条</h2><p><a href="https://tools.treasuregrove.art/seo/normal-map.html">法线贴图</a> · <a href="https://tools.treasuregrove.art/seo/lightmap-baking.html">光照贴图烘焙</a> · <a href="https://tools.treasuregrove.art/seo/how-to-generate-pbr-texture.html">PBR 贴图生成</a> · <a href="https://tools.treasuregrove.art/seo/texture-compression-format.html">贴图压缩格式</a> · <a href="https://tools.treasuregrove.art/seo/how-to-split-texture-channel.html">贴图通道拆分与合成</a></p></section>
   </article>
 </main>
