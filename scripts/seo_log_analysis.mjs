@@ -42,7 +42,16 @@ export function parseLine(line, timeZone = 'Asia/Shanghai') {
   return { ip:m[1], day:dayKey(date,timeZone), date, request:m[3], status:+m[4], referer:m[6] || '-', ua:m[7] || '-', format:common?'common':'combined' };
 }
 export function emptyDay() {
-  return { pv:0, uv:new Set(), requests:0, acceptedRequests:0, refs:new Map(), pages:new Map(), filtered:{crawler:0,bot:0,missingUa:0,httpError:0,invalidRequest:0,nonGet:0,nonPage:0} };
+  return { pv:0, uv:new Set(), ipPv:new Map(), requests:0, acceptedRequests:0, refs:new Map(), pages:new Map(), filtered:{crawler:0,bot:0,missingUa:0,httpError:0,invalidRequest:0,nonGet:0,nonPage:0} };
+}
+// One address producing this many page views in a day is a fetch/scan loop, not a reader.
+export const BURST_THRESHOLD = 20;
+export function burstStats(day) {
+  let burst = 0, ips = 0;
+  for (const views of day.ipPv.values()) {
+    if (views >= BURST_THRESHOLD) { burst += views; ips++; }
+  }
+  return { burst, ips, pvExBurst: day.pv - burst, threshold: BURST_THRESHOLD };
 }
 // Discover only rotation names for this exact basename, never error logs/other sites.
 export function discoverLogPaths(logPath) {
@@ -92,7 +101,7 @@ export function analyzeLog({ paths, timeZone = 'Asia/Shanghai' }) {
       try { clean=new URL(req[2],'https://log.invalid').pathname; } catch { s.filtered.invalidRequest++; s.acceptedRequests--; continue; }
       if (req[1]!=='GET') { s.filtered.nonGet++; continue; }
       if (!(clean==='/' || clean.endsWith('/') || /\.html?$/i.test(clean))) { s.filtered.nonPage++; continue; }
-      s.pv++; s.uv.add(r.ip); s.pages.set(clean,(s.pages.get(clean)||0)+1);
+      s.pv++; s.uv.add(r.ip); s.ipPv.set(r.ip,(s.ipPv.get(r.ip)||0)+1); s.pages.set(clean,(s.pages.get(clean)||0)+1);
       try {
         const h=new URL(r.referer).hostname.toLowerCase();
         const engine=[['百度',/(^|\.)baidu\.com$/],['Bing',/(^|\.)bing\.com$/],['Google',/(^|\.)google\.com$/],['搜狗',/(^|\.)sogou\.com$/],['360搜索',/(^|\.)so\.com$/],['神马',/(^|\.)sm\.cn$/],['DuckDuckGo',/(^|\.)duckduckgo\.com$/],['Yandex',/(^|\.)yandex\.(com|ru)$/]].find(([,re])=>re.test(h));

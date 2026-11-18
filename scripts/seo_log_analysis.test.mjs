@@ -75,3 +75,30 @@ test('discovers real production rotation names and excludes unrelated files',t=>
   for (const name of [...entries,'access.error.log','other.log','access.log.backup','accessXlog.3']) fs.writeFileSync(path.join(path.dirname(file),name),'');
   assert.deepEqual(discoverLogPaths(file).sort(),[file,...entries.map(n=>path.join(path.dirname(file),n))].sort());
 });
+
+import { burstStats, BURST_THRESHOLD } from './seo_log_analysis.mjs';
+import { updateHistory } from './daily_seo_report.mjs';
+test('a single address looping over pages is reported apart from human PV',t=>{
+  const loop=Array.from({length:BURST_THRESHOLD+5},()=>line());
+  const reader=line().replace('2001:db8::1','2001:db8::2');
+  const r=analyzeLog({paths:[fixture(t,[...loop,reader].join('\n'))]});
+  const s=r.stats.get('2026-10-16');
+  assert.equal(s.pv,BURST_THRESHOLD+6);
+  const b=burstStats(s);
+  assert.equal(b.ips,1); assert.equal(b.burst,BURST_THRESHOLD+5); assert.equal(b.pvExBurst,1);
+  assert.equal(burstStats(analyzeLog({paths:[fixture(t,reader)]}).stats.get('2026-10-16')).pvExBurst,1);
+});
+test('burst columns and the append-only history survive reruns',t=>{
+  const r=analyzeLog({paths:[fixture(t,[...Array.from({length:BURST_THRESHOLD},()=>line()),line().replace('2001:db8::1','2001:db8::2')].join('\n'))]});
+  const report=buildReport({logResult:r,engines:[],now:new Date('2026-10-17T04:00:00+08:00')});
+  assert.match(report,/日期 \| PV \| UV \| 单 IP 突发 \| 去突发 PV/);
+  assert.match(report,/2026-10-16 \| 21 \| 2 \| 20（1 IP） \| 1 \|/);
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'seo-history-'));
+  t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
+  updateHistory(r,['2026-10-16'],root);
+  updateHistory(r,['2026-10-16'],root);
+  const saved=fs.readFileSync(path.join(root,'logs/seo_history.tsv'),'utf8').trim().split('\n');
+  assert.equal(saved.length,2);
+  assert.match(saved[0],/^date\tpv\tuv\tburst_pv\tpv_ex_burst\trequests\tsearch_refs$/);
+  assert.equal(saved[1].split('\t').slice(0,5).join(','),'2026-10-16,21,2,20,1');
+});

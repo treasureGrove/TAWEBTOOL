@@ -16,12 +16,13 @@
  *   SEO_REPORT_EMAIL   收件人（默认与百度推送一致）
  *   SITE_BASE          站点根 URL
  * 输出：logs/daily_seo_report.last.md（同时作为邮件正文）
+ *       logs/seo_history.tsv（追加式历史快照，日志轮转后仍可看跨月趋势）
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { analyzeLog, discoverLogPaths, CRAWLERS, dayKey as zonedDayKey, reportDays, emptyDay, dataState } from './seo_log_analysis.mjs';
+import { analyzeLog, discoverLogPaths, CRAWLERS, dayKey as zonedDayKey, reportDays, emptyDay, dataState, burstStats } from './seo_log_analysis.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SITE_BASE = process.env.SITE_BASE || 'https://tools.treasuregrove.art';
@@ -135,7 +136,9 @@ export function buildReport({ logResult, engines, now = new Date() }) {
   L.push('');
   const y = s(yesterday);
   const usable = d => logResult.stats.has(d);
-  L.push(`**昨日 ${yesterday}：PV ${usable(yesterday) ? y.pv : '—'}　UV ${usable(yesterday) ? y.uv.size : '—'}　已解析原始请求 ${y.requests}**`);
+  const yBurst = burstStats(y);
+  L.push(`**昨日 ${yesterday}：PV ${usable(yesterday) ? y.pv : '—'}　UV ${usable(yesterday) ? y.uv.size : '—'}　去突发 PV ${usable(yesterday) ? yBurst.pvExBurst : '—'}**`);
+  L.push(`单 IP 突发口径：同一地址当日 ≥${yBurst.threshold} 次页面浏览视为抓取/扫描循环。昨日命中 ${yBurst.ips} 个地址、共 ${yBurst.burst} 次，已从「去突发 PV」中扣除，原始 PV 不变以保持与历史可比。`);
   L.push(`数据状态：${dataState(logResult, yesterday)}。缺失日期不能证明真实零流量；解析失败无法可靠归属日期。`);
   const diag = logResult.diagnostics;
   L.push(`原始非空日志行 ${diag.rawLines}；成功解析 ${diag.parsed}；解析失败 ${diag.failed}（格式 ${diag.failures.format}，日期 ${diag.failures.timestamp}）。`);
@@ -149,11 +152,13 @@ export function buildReport({ logResult, engines, now = new Date() }) {
   for (const d of days) { const v=s(d); const f=v.filtered; L.push(`| ${d} | ${v.requests} | ${v.acceptedRequests} | ${f.crawler} | ${f.bot} | ${f.missingUa} | ${f.httpError} | ${f.invalidRequest} | ${f.nonGet} | ${f.nonPage} | ${dataState(logResult,d)} |`); }
   L.push('覆盖限制：默认读取活动日志及同名日期/数字轮转文件（含 .gz），显式 NGINX_LOG_FILES 覆盖自动发现；未记录的请求、CDN 缓存命中和 access_log off 无法从这些日志恢复。');
   L.push('');
-  L.push('| 日期 | PV | UV |');
-  L.push('| --- | --- | --- |');
+  L.push('| 日期 | PV | UV | 单 IP 突发 | 去突发 PV |');
+  L.push('| --- | --- | --- | --- | --- |');
   for (const d of days) {
     const v = s(d);
-    L.push(`| ${d} | ${usable(d) ? v.pv : '—'} | ${usable(d) ? v.uv.size : '—'} |`);
+    if (!usable(d)) { L.push(`| ${d} | — | — | — | — |`); continue; }
+    const b = burstStats(v);
+    L.push(`| ${d} | ${v.pv} | ${v.uv.size} | ${b.burst}${b.ips ? `（${b.ips} IP）` : ''} | ${b.pvExBurst} |`);
   }
   L.push('');
   const refs = new Map();
@@ -209,6 +214,35 @@ export function buildReport({ logResult, engines, now = new Date() }) {
   return L.join('\n');
 }
 
+/**
+ * 追加式历史快照：logs/seo_history.tsv
+ *
+ * 日志会按周轮转，日报文件本身也每天覆盖，所以只保留 7–8 天；这里把每天的
+ * 口径固定成一行制表符记录，供跨月趋势使用。按日期去重，重复运行不会写重。
+ */
+export function updateHistory(logResult, days, root = ROOT) {
+  const file = path.join(root, 'logs/seo_history.tsv');
+  const rows = new Map();
+  try {
+    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+      const date = line.split('\t')[0];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) rows.set(date, line);
+    }
+  } catch {}
+  for (const d of days) {
+    if (!logResult.stats.has(d)) continue;
+    const v = logResult.stats.get(d);
+    const b = burstStats(v);
+    const refs = [...v.refs.values()].reduce((a, c) => a + c, 0);
+    rows.set(d, [d, v.pv, v.uv.size, b.burst, b.pvExBurst, v.requests, refs].join('\t'));
+  }
+  const header = 'date\tpv\tuv\tburst_pv\tpv_ex_burst\trequests\tsearch_refs';
+  const body = [...rows.keys()].sort().map((k) => rows.get(k)).join('\n');
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, `${header}\n${body}\n`, 'utf8');
+  return { file, days: rows.size };
+}
+
 async function main() {
   const logResult = analyzeLog({ paths: LOG_PATHS, timeZone: TIME_ZONE });
   const engines = await checkEngines();
@@ -220,6 +254,8 @@ async function main() {
   fs.writeFileSync(outFile, report + '\n', 'utf8');
   console.log(report);
   console.log(`\n[report] 已写入 ${path.relative(ROOT, outFile)}`);
+  const history = updateHistory(logResult, reportDays(new Date(), DAYS, TIME_ZONE));
+  console.log(`[report] 历史快照 ${history.days} 天 → ${path.relative(ROOT, history.file)}`);
 
   if (!NO_MAIL) {
     const y = reportDays(new Date(), DAYS, TIME_ZONE)[0];
