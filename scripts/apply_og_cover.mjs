@@ -21,12 +21,28 @@ const EXCLUDED = new Set(process.argv.slice(2)
   .map((arg) => arg.slice('--exclude='.length).replace(/\\/g, '/').replace(/^\.\//, '')));
 
 const COVER = 'https://tools.treasuregrove.art/assets/images/og/site-cover-1200x630.jpg?v=20260930-brand';
+const BASE = 'https://tools.treasuregrove.art';
+const CARD_DIR = 'assets/images/og/tool';
+const CARD_VERSION = '20261118-tool';
 const LEGACY_IMAGES = [
   'https://tools.treasuregrove.art/assets/images/icon/icon.png',
   'https://tools.treasuregrove.art/assets/images/icon/icon.jpg'
 ];
 const ALT_ZH = 'TA工具箱 · 技术美术在线工具箱';
 const ALT_EN = 'TA Toolbox - free online technical artist tools';
+
+/**
+ * 工具页优先用自己那张卡片（scripts/gen_tool_og.mjs 产出），
+ * 卡片不存在时退回站点统一封面。改这里等于决定分享图的优先级。
+ */
+function coverFor(rel) {
+  const m = /^tools_html\/(.+)\.html$/.exec(rel);
+  if (m) {
+    const card = path.join(ROOT, CARD_DIR, `${m[1]}-1200x630.png`);
+    if (fs.existsSync(card)) return `${BASE}/${CARD_DIR}/${m[1]}-1200x630.png?v=${CARD_VERSION}`;
+  }
+  return COVER;
+}
 
 /** 需要覆盖的目录/文件（相对仓库根） */
 function targetFiles() {
@@ -70,11 +86,14 @@ function dedupeImageMeta(text) {
 function fixFile(rel) {
   const abs = path.join(ROOT, rel);
   const original = fs.readFileSync(abs, 'utf8');
+  const eol = original.includes('\r\n') ? '\r\n' : '\n';
+  const cover = coverFor(rel);
+  const coverType = cover.split('?')[0].endsWith('.png') ? 'image/png' : 'image/jpeg';
   let text = dedupeImageMeta(original);
-  for (const old of LEGACY_IMAGES) text = text.split(old).join(COVER);
+  for (const old of LEGACY_IMAGES) text = text.split(old).join(cover);
 
   const alt = isEn(text) ? ALT_EN : ALT_ZH;
-  const lines = text.split('\n');
+  const lines = text.split(/\r?\n/);
 
   // 1) 摘除所有受管行，在各自首次出现处留一个占位符
   const kept = [];
@@ -115,16 +134,16 @@ function fixFile(rel) {
 
   // 3) 占位符替换成固定顺序的 meta 块
   const ogBlock = [
-    meta('property', 'og:image', COVER),
-    meta('property', 'og:image:type', 'image/jpeg'),
+    meta('property', 'og:image', cover),
+    meta('property', 'og:image:type', coverType),
     meta('property', 'og:image:width', '1200'),
     meta('property', 'og:image:height', '630'),
     meta('property', 'og:image:alt', alt)
   ];
-  const twBlock = [meta('name', 'twitter:card', 'summary_large_image'), meta('name', 'twitter:image', COVER)];
+  const twBlock = [meta('name', 'twitter:card', 'summary_large_image'), meta('name', 'twitter:image', cover)];
   const next = kept
     .flatMap((line) => (line === OG_PLACEHOLDER ? ogBlock : line === TW_PLACEHOLDER ? twBlock : [line]))
-    .join('\n');
+    .join(eol);
 
   if (next === original) return { rel, status: 'ok' };
   if (!CHECK) fs.writeFileSync(abs, next, 'utf8');
