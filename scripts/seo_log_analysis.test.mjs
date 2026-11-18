@@ -102,3 +102,12 @@ test('burst columns and the append-only history survive reruns',t=>{
   assert.match(saved[0],/^date\tpv\tuv\tburst_pv\tpv_ex_burst\trequests\tsearch_refs$/);
   assert.equal(saved[1].split('\t').slice(0,5).join(','),'2026-10-16,21,2,20,1');
 });
+test('history snapshot shows up only once it outlives the log window',(t)=>{
+  const r=analyzeLog({paths:[fixture(t,line())]});
+  const history=Array.from({length:10},(_,i)=>({date:`2026-10-${String(i+1).padStart(2,'0')}`,pv:i,uv:i,burst:0,pvExBurst:i,requests:i,searchRefs:0}));
+  const now=new Date('2026-10-17T04:00:00+08:00');
+  const full=buildReport({logResult:r,engines:[],now,history});
+  assert.match(full,/历史快照（最近 10 天/);
+  assert.match(full,/2026-10-10 \| 9 \| 9 \| 9 \| 0 \|/);
+  assert.doesNotMatch(buildReport({logResult:r,engines:[],now,history:history.slice(0,3)}),/历史快照/);
+});

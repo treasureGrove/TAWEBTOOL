@@ -111,7 +111,22 @@ function sitemapCount() {
   return n;
 }
 
-export function buildReport({ logResult, engines, now = new Date() }) {
+export function readHistory(root = ROOT) {
+  const file = path.join(root, 'logs/seo_history.tsv');
+  try {
+    const rows = [];
+    for (const line of fs.readFileSync(file, 'utf8').split(/\r?\n/)) {
+      const c = line.split('\t');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(c[0]) || c.length < 7) continue;
+      rows.push({ date: c[0], pv: +c[1], uv: +c[2], burst: +c[3], pvExBurst: +c[4], requests: +c[5], searchRefs: +c[6] });
+    }
+    return rows.sort((a, b) => a.date.localeCompare(b.date));
+  } catch {
+    return [];
+  }
+}
+
+export function buildReport({ logResult, engines, now = new Date(), history = [] }) {
   const today = dayKey(now);
   const days = reportDays(now, DAYS, TIME_ZONE);
   const yesterday = days[0];
@@ -159,6 +174,17 @@ export function buildReport({ logResult, engines, now = new Date() }) {
     if (!usable(d)) { L.push(`| ${d} | — | — | — | — |`); continue; }
     const b = burstStats(v);
     L.push(`| ${d} | ${v.pv} | ${v.uv.size} | ${b.burst}${b.ips ? `（${b.ips} IP）` : ''} | ${b.pvExBurst} |`);
+  }
+  L.push('');
+  if (history.length > DAYS) {
+    L.push(`### 历史快照（最近 ${Math.min(history.length, 14)} 天，logs/seo_history.tsv）`);
+    L.push('');
+    L.push('日志与日报只留 7–8 天；下表来自每天追加的快照，用于看跨月趋势，口径与上面一致。');
+    L.push('');
+    L.push('| 日期 | PV | 去突发 PV | UV | 搜索来源 |');
+    L.push('| --- | --- | --- | --- | --- |');
+    for (const row of history.slice(-14)) L.push(`| ${row.date} | ${row.pv} | ${row.pvExBurst} | ${row.uv} | ${row.searchRefs} |`);
+    L.push('');
   }
   L.push('');
   const refs = new Map();
@@ -246,7 +272,7 @@ export function updateHistory(logResult, days, root = ROOT) {
 async function main() {
   const logResult = analyzeLog({ paths: LOG_PATHS, timeZone: TIME_ZONE });
   const engines = await checkEngines();
-  const report = buildReport({ logResult, engines });
+  const report = buildReport({ logResult, engines, history: readHistory(ROOT) });
 
   const outDir = path.join(ROOT, 'logs');
   fs.mkdirSync(outDir, { recursive: true });
