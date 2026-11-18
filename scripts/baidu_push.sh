@@ -21,7 +21,11 @@ mkdir -p "$LOG_DIR"
 # Serialize sync + cursor + request to avoid concurrent duplicate batches.
 exec 9>"$LOG_DIR/baidu_push.lock"
 flock -n 9 || exit 0
-python3 "$SCRIPT_DIR/check_search_index.py" --sync
+# 队列校验/补全失败时不能静默退出：至少要在日志里留下原因，并继续用现有队列推送，
+# 否则一次坏 sitemap 会让百度推送连续多天无声停摆。
+if ! python3 "$SCRIPT_DIR/check_search_index.py" --sync >> "$LOG_FILE" 2>&1; then
+  echo "[$(date '+%F %T')] WARN: 站点地图/队列校验失败（原因见上），本次不新增队列，按现有 $URLS_FILE 继续推送" >> "$LOG_FILE"
+fi
 [[ "$MAX_PUSH" =~ ^[1-9][0-9]*$ ]] || { echo 'Invalid BAIDU_MAX_PUSH'; exit 1; }
 (( MAX_PUSH <= 10 )) || MAX_PUSH=10
 BATCH_FILE=$(mktemp "$LOG_DIR/baidu_batch.XXXXXX")
