@@ -1,0 +1,264 @@
+.harness-hero {
+  display: grid;
+  grid-template-columns: minmax(17rem, .72fr) minmax(0, 1.32fr);
+  grid-template-areas: "intro film" "download film";
+  gap: 1.4rem clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  padding-block: clamp(2.4rem, 6vw, 5.6rem);
+}
+
+.harness-hero .hero-copy {
+  grid-area: intro;
+  align-self: end;
+  padding: 0;
+}
+
+.harness-intro {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+}
+
+.harness-intro img {
+  width: 2.8rem;
+  height: 2.8rem;
+  object-fit: cover;
+  object-position: 50% 22%;
+  background: #f5d5cb;
+  border: 1px solid #fff2dc;
+  border-radius: 50%;
+}
+
+.harness-hero h1 {
+  margin-block: .8rem;
+  text-wrap: balance;
+}
+
+.harness-hero h1 > span {
+  display: block;
+}
+
+.harness-hero h1 > span:first-child {
+  font: 500 clamp(3.4rem, 6.8vw, 6.1rem)/1 Georgia, serif;
+  letter-spacing: -.055em;
+}
+
+.harness-hero h1 > span:last-child {
+  margin-top: .65rem;
+  font: 500 clamp(1.4rem, 2.6vw, 2.4rem)/1.3 var(--serif);
+  letter-spacing: -.025em;
+}
+
+.harness-hero .hero-description {
+  max-width: 27em;
+  margin-top: 1rem;
+}
+
+.harness-hero .download-block {
+  grid-area: download;
+  align-self: start;
+  margin: 0;
+}
+
+.harness-hero .harness-film {
+  position: relative;
+  grid-area: film;
+  align-self: center;
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  transform: none;
+  scroll-margin-top: 2rem;
+}
+
+.harness-film .film-player {
+  padding: clamp(.4rem, .9vw, .8rem);
+  background: linear-gradient(130deg, #4c2a3e, #251c30 62%, #352239);
+  border: 1px solid #e6b5c1;
+  border-radius: 1.05rem;
+  box-shadow: 0 1.5rem 4rem #37092155, 0 0 0 .2rem #e59ca41a;
+}
+
+.harness-film .film-frame-bar {
+  align-items: center;
+  padding: .15rem .45rem .55rem;
+  text-align: left;
+}
+
+.harness-film .film-frame-bar h2 {
+  margin: 0;
+  color: #fff0e8;
+  font: 600 .9rem/1.5 var(--sans, sans-serif);
+  letter-spacing: .02em;
+}
+
+.harness-film .film-player video,
+.harness-showcase .preview-open img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  border-radius: .5rem;
+}
+
+.harness-film .film-play {
+  inset: auto .9rem .9rem auto;
+  gap: .5rem;
+  min-height: 2.5rem;
+  padding: .35rem .8rem .35rem .45rem;
+  border-radius: 2rem;
+  transform: none;
+}
+
+.harness-film .film-play .play-circle {
+  width: 1.65rem;
+  height: 1.65rem;
+  font-size: .65rem;
+}
+
+.harness-film .film-play > span:last-child {
+  font: 500 .875rem/1.2 var(--sans, sans-serif);
+}
+
+.harness-film .film-caption {
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: .8rem .25rem 0;
+  gap: .25rem 1rem;
+  color: #ffebe8;
+  font-size: .875rem;
+  text-align: left;
+}
+
+.harness-film .film-file {
+  margin: 0;
+}
+
+.harness-film .harness-motion {
+  margin: .65rem .25rem 0;
+}
+
+.harness-showcase {
+  grid-template-columns: minmax(13rem, .54fr) minmax(0, 1.46fr);
+  gap: clamp(1.5rem, 5vw, 5.25rem);
+}
+
+.harness-showcase h2 {
+  margin-top: 0;
+  margin-bottom: 1.35rem;
+}
+
+.harness-showcase .showcase-copy > p {
+  margin-bottom: 1rem;
+}
+
+.harness-showcase .preview-tabs {
+  display: grid;
+  gap: .4rem;
+  margin: 0;
+}
+
+.harness-showcase .preview-tabs[hidden] {
+  display: none;
+}
+
+.harness-showcase .preview-tabs button {
+  display: grid;
+  justify-items: start;
+  gap: .2rem;
+  width: 100%;
+  padding: .75rem .9rem;
+  border: 1px solid transparent;
+  border-inline-start: .2rem solid #d1babd;
+  border-radius: 0 .65rem .65rem 0;
+  text-align: left;
+  color: #502937;
+  background: transparent;
+}
+
+.harness-showcase .preview-tabs button[aria-selected="true"] {
+  border-color: #e4bdc6;
+  border-inline-start-color: #a12e52;
+  color: #68243d;
+  background: #f9e3e8;
+}
+
+.harness-showcase .preview-tabs strong {
+  font-size: 1rem;
+}
+
+.harness-showcase .preview-tabs button > span {
+  color: #674856;
+  font-size: .875rem;
+  line-height: 1.55;
+}
+
+.harness-showcase .product-frame,
+.harness-showcase .product-frame:hover {
+  padding: .45rem;
+  background: #f7eaef;
+  border-color: #dbc2cb;
+  border-radius: .95rem;
+  transform: none;
+  box-shadow: 0 1rem 3rem #4b223519;
+}
+
+.harness-showcase .preview-open {
+  border-radius: .58rem;
+}
+
+@media (max-width: 850px) {
+  .harness-hero {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "intro" "film" "download";
+    gap: 1.55rem;
+  }
+
+  .harness-hero .hero-copy,
+  .harness-hero .harness-film {
+    width: 100%;
+    margin: 0;
+    text-align: left;
+  }
+
+  .harness-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .harness-showcase h2 br {
+    display: none;
+  }
+
+  .harness-showcase .preview-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .harness-showcase .preview-tabs button {
+    border-inline-start: 1px solid transparent;
+    border-block-end: .15rem solid #d1babd;
+    border-radius: .5rem .5rem 0 0;
+  }
+
+  .harness-showcase .preview-tabs button[aria-selected="true"] {
+    border-inline-start-color: #e4bdc6;
+    border-block-end-color: #a12e52;
+  }
+}
+
+@media (max-width: 520px) {
+  .harness-showcase .preview-tabs button {
+    justify-items: center;
+    padding: .65rem .15rem;
+    text-align: center;
+  }
+
+  .harness-showcase .preview-tabs strong {
+    font-size: .875rem;
+  }
+
+  .harness-showcase .preview-tabs button > span {
+    display: none;
+  }
+}

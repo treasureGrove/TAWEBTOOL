@@ -17,6 +17,12 @@ const repository = path.resolve(
 const sourceDirectory = path.join(repository, "lolicode");
 const assetNames = [
   "site.css",
+  "harness-20261119-model.webp",
+  "harness-20261119-poster.webp",
+  "harness-20261119-review.webp",
+  "harness-20261119-showcase.css",
+  "harness-20261119-tools.webp",
+  "harness-20261119-tour.mp4",
   "downloads.js",
   "motion.js",
   "logo.svg",

@@ -26,12 +26,12 @@
     <meta property="og:site_name" content="LoliCode" />
     <meta
       property="og:image"
-      content="https://lolicode.com/desktop-assets/companion.webp"
+      content="https://lolicode.com/desktop-assets/harness-20261119-poster.webp"
     />
-    <meta property="og:image:width" content="720" />
-    <meta property="og:image:height" content="768" />
-    <meta property="og:image:alt" content="粉色长发、折耳的 LoliCode 看板娘，穿着樱桃红缎带舞台服，伸手邀请你一起创作" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="900" />
+    <meta property="og:image:alt" content="LoliCode 看板娘、新版桌面工作台与代码差异预览" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta
       property="og:url"
       content="https://lolicode.com/"
@@ -124,15 +124,15 @@
             "applicationCategory": "DeveloperApplication",
             "operatingSystem": "Windows",
             "image": "https://lolicode.com/desktop-assets/site-icon-512.png",
-            "description": "AI 编程助手与桌面 Agent。自由选择模型，在同一工作台编写代码、调用工具、预览成果。",
+            "description": "桌面 Agent Harness。在同一工作台选择模型、调用工具并审阅项目改动。",
             "publisher": {
               "@id": "https://lolicode.com/#organization"
             },
             "downloadUrl": "https://github.com/treasureGrove/LoliCode-Releases/releases/latest",
             "screenshot": [
-              "https://lolicode.com/desktop-assets/workbench.jpg",
-              "https://lolicode.com/desktop-assets/workbench-cream.jpg",
-              "https://lolicode.com/desktop-assets/channels-light.jpg"
+              "https://lolicode.com/desktop-assets/harness-20261119-model.webp",
+              "https://lolicode.com/desktop-assets/harness-20261119-tools.webp",
+              "https://lolicode.com/desktop-assets/harness-20261119-review.webp"
             ]
           },
           {
@@ -150,17 +150,18 @@
             "@type": "ImageObject",
             "@id": "https://lolicode.com/#hero-image",
             "name": "LoliCode 官网主图",
-            "caption": "粉色长发、折耳的 LoliCode 看板娘，穿着樱桃红缎带舞台服，伸手邀请你一起创作",
-            "url": "https://lolicode.com/desktop-assets/companion.webp",
-            "contentUrl": "https://lolicode.com/desktop-assets/companion.webp",
-            "width": 720,
-            "height": 768,
+            "caption": "LoliCode 看板娘、新版桌面工作台与代码差异预览",
+            "url": "https://lolicode.com/desktop-assets/harness-20261119-poster.webp",
+            "contentUrl": "https://lolicode.com/desktop-assets/harness-20261119-poster.webp",
+            "width": 1600,
+            "height": 900,
             "encodingFormat": "image/webp"
           }
         ]
       }
     </script>
     <link rel="stylesheet" href="./assets/site.css?v=lovely-studio-20261020" />
+    <link rel="stylesheet" href="./assets/harness-20261119-showcase.css" />
     <script src="./assets/downloads.js?v=product1-20261020" defer></script>
     <script src="./assets/motion.js?v=lovely-studio-20261020" defer></script>
   </head>
@@ -194,21 +195,12 @@
     </header>
 
     <main id="main">
-      <section class="hero page-width" aria-labelledby="hero-title">
+      <section class="hero harness-hero page-width" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">
-            <span class="tiny-gem" aria-hidden="true"></span> LOLICODE 官方网站 · AI 编程助手
-          </p>
-          <h1 id="hero-title">
-            <span class="title-line"><span>LoliCode</span></span>
-            <span class="title-line"><span>让想法<span class="title-accent">成真。</span></span></span>
-          </h1>
-          <p class="hero-handwritten" aria-hidden="true">
-            Make something lovely.
-          </p>
-          <p class="hero-description">
-            你的 AI 编程助手与桌面 Agent。<br />自由选择模型，写代码、用工具，把想法变成作品。
-          </p>
+          <div class="harness-intro"><img src="./assets/companion.webp" width="48" height="48" alt="" /><p class="eyebrow">Desktop Agent Harness · Windows</p></div>
+          <h1 id="hero-title"><span>LoliCode</span><span>桌面 Agent 工作台</span></h1>
+          <p class="hero-description">选好模型，让 Agent 读取项目、运行测试，再逐行核对它的改动。</p>
+        </div>
           <div id="download" class="download-block" aria-label="下载 LoliCode">
             <div class="release-meta">
               <span class="release-indicator" aria-hidden="true"></span
@@ -295,131 +287,29 @@
               >
             </p>
           </div>
-        </div>
-        <div class="hero-visual">
-          <div class="companion-stage" data-parallax>
-            <div class="art-disc" aria-hidden="true"></div>
-            <svg class="celestial-map" viewBox="0 0 600 600" stroke="url(#orbit-ink)" aria-hidden="true" focusable="false">
-              <defs>
-                <linearGradient id="orbit-ink" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0" stop-color="#fff6e9" stop-opacity="0.7" />
-                  <stop offset="1" stop-color="#efba87" stop-opacity="0.2" />
-                </linearGradient>
-              </defs>
-              <circle class="scene-outline" cx="300" cy="300" r="273" pathLength="1" />
-              <circle class="scene-dashes" cx="300" cy="300" r="257" />
-              <path class="scene-compass" d="M300 16v25M300 559v25M16 300h25M559 300h25M99 99l17 17M484 484l17 17M99 501l17-17M484 116l17-17" />
-              <g class="scene-satellite satellite-one">
-                <circle cx="300" cy="27" r="5" />
-                <path d="M300 9v8M300 37v8M282 27h8M310 27h8" />
-              </g>
-              <g class="scene-satellite satellite-two">
-                <path d="M300 32l5 8-5 8-5-8z" />
-              </g>
-            </svg>
-            <div class="art-orbit orbit-one" aria-hidden="true"></div>
-            <div class="art-orbit orbit-two" aria-hidden="true"></div>
-            <span class="art-cross cross-one" aria-hidden="true">✳</span>
-            <span class="art-cross cross-two" aria-hidden="true">✧</span>
-            <span class="art-coordinate" aria-hidden="true"
-              >FIG. 01 / YOUR CREATIVE COMPANION</span
-            >
-            <div class="companion-float">
-              <img
-                class="hero-companion"
-                src="./assets/companion.webp"
-                width="720"
-                height="768"
-                fetchpriority="high"
-                alt="粉色长发、折耳的 LoliCode 看板娘，穿着樱桃红缎带舞台服，伸手邀请你一起创作"
-              />
+        <section id="film" class="hero-visual harness-film" aria-labelledby="film-title">
+          <div class="film-player">
+            <div class="film-frame-bar">
+              <h2 id="film-title">看 Agent 修复待办筛选</h2>
+              <span class="film-frame-status" aria-hidden="true"><i></i><span class="film-is-playing">播放中</span><span class="film-is-paused">Windows 桌面版</span></span>
             </div>
-            <span class="art-signature" aria-hidden="true"
-              >A little magic,<br />made with you.</span
-            >
-            <span class="art-seal" aria-hidden="true"
-              >LOLI<br /><i>♡</i><br />CODE</span
-            >
-          </div>
-          <p class="visual-footnote">
-            <span>认真做事，也可爱一点。</span
-            ><button class="motion-toggle" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停页面动效" hidden>
-              <span class="motion-toggle-glyph" aria-hidden="true">✦</span>
-              <span data-motion-label>暂停动效</span>
+            <video id="product-film" controls muted playsinline loop preload="none"
+              poster="./assets/harness-20261119-poster.webp" width="1600" height="900"
+              aria-label="LoliCode 桌面 Agent 工作台演示" aria-describedby="film-description">
+              <source src="./assets/harness-20261119-tour.mp4" type="video/mp4" />
+              你的浏览器暂时无法播放这段演示。
+            </video>
+            <button type="button" class="film-play" hidden aria-label="播放工作台演示">
+              <span class="play-circle" aria-hidden="true">▶</span><span>播放演示</span>
             </button>
-          </p>
-        </div>
-      </section>
-
-      <section
-        id="film"
-        class="film-section page-width"
-        aria-labelledby="film-title"
-      >
-        <div class="film-heading">
-          <div>
-            <p class="eyebrow">MEET YOUR NEW WORKSPACE</p>
-            <h2 id="film-title">先看一眼，再开始。</h2>
           </div>
-          <p>
-            一段小小的工作台导览。<br /><span
-              >模型选择 · 项目预览 · 自定义外观</span
-            >
-          </p>
-        </div>
-        <div class="film-player">
-          <div class="film-frame-bar" aria-hidden="true">
-            <span>LOLICODE <span class="film-frame-label-detail">/ WORKSPACE TOUR</span></span>
-            <span class="film-frame-status"><i></i><span class="film-is-playing">NOW PLAYING</span><span class="film-is-paused">PRODUCT FILM / 01</span></span>
+          <div class="film-caption" id="film-description">
+            <span>21.6 秒 · 1.1.4 实际界面 · 示例任务数据</span>
+            <a class="film-file" href="./assets/harness-20261119-tour.mp4">打开视频</a>
           </div>
-          <video
-            id="product-film"
-            controls
-            muted
-            playsinline
-            loop
-            preload="none"
-            poster="./assets/tour-poster.webp?v=lovely-studio-20261020"
-            width="1600"
-            height="1000"
-            aria-label="LoliCode 界面操作演示，使用示例数据，静音视频"
-            aria-describedby="film-description"
-          >
-            <source
-              src="./assets/lolicode-tour.mp4?v=lovely-studio-20261020"
-              type="video/mp4"
-            />
-            你的浏览器暂不支持视频播放。
-          </video>
-          <button
-            class="film-play"
-            type="button"
-            hidden
-            aria-label="播放 LoliCode 界面演示"
-          >
-            <span class="play-circle" aria-hidden="true">▶</span
-            ><span>一起看看<span class="play-detail">PLAY THE FILM</span></span>
-          </button>
-        </div>
-        <div class="film-caption" id="film-description">
-          <span
-            ><span class="tiny-gem" aria-hidden="true"></span> 真实界面操作 ·
-            示例数据</span
-          >
-          <span
-            >选择模型与思考档位，查看项目预览，再换一个喜欢的外观。<a
-              class="film-file"
-              href="./assets/lolicode-tour.mp4?v=lovely-studio-20261020"
-              >打开视频 ↗</a
-            ></span
-          >
-        </div>
-        <p class="film-error" role="status" hidden>
-          视频暂时没加载出来。可以稍后重试，或<a
-            href="./assets/lolicode-tour.mp4?v=lovely-studio-20261020"
-            >直接打开视频 ↗</a
-          >。
-        </p>
+          <p class="film-error" role="status" hidden>视频暂时无法播放。<a href="./assets/harness-20261119-tour.mp4">打开原片</a></p>
+          <button class="motion-toggle harness-motion" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停页面动效" hidden><span data-motion-label>暂停动效</span></button>
+        </section>
       </section>
 
       <div class="paper">
@@ -430,99 +320,35 @@
           </div>
         </div>
 
-        <section
-          class="showcase-section page-width section-space"
-          aria-labelledby="showcase-title"
-        >
+        <section class="showcase-section harness-showcase page-width section-space" aria-labelledby="showcase-title">
           <div class="showcase-copy">
-            <p class="eyebrow">A COZY PLACE TO CREATE</p>
-            <h2 id="showcase-title">工作台，<br />也有你的性格。</h2>
-            <p>
-              深夜的莓果色，清晨的奶油白。<br />选一个喜欢的模样，把灵感好好安放。
-            </p>
-            <div
-              class="preview-tabs"
-              role="tablist"
-              aria-label="选择界面预览"
-              hidden
-            >
-              <button
-                type="button"
-                id="preview-tab-dark"
-                role="tab"
-                aria-controls="workspace-preview"
-                aria-selected="true"
-                data-preview-src="./assets/workbench.jpg?v=atelier-20261016"
-                data-preview-alt="LoliCode 深色工作台：主 Agent 对话、项目侧栏与模型选择，使用示例数据"
-              >
-                <span class="theme-swatch swatch-dark" aria-hidden="true"></span
-                >莓果夜色
+            <h2 id="showcase-title">看清 Agent<br />怎样完成任务</h2>
+            <p>示例里，待办看板的「已完成」筛选出了错。可以逐步看它怎么修，片尾还有桌宠的投喂互动。</p>
+            <div class="preview-tabs" role="tablist" aria-label="工作台功能" hidden>
+              <button type="button" role="tab" id="preview-tab-model" aria-controls="workspace-preview"
+                aria-selected="true" tabindex="0"
+                data-preview-src="./assets/harness-20261119-model.webp" data-preview-alt="LoliCode 工作台 · 选择模型">
+                <strong>选择模型</strong><span>在 DeepSeek V3.2 和 R1 之间切换。</span>
               </button>
-              <button
-                type="button"
-                id="preview-tab-cream"
-                role="tab"
-                aria-controls="workspace-preview"
-                aria-selected="false"
-                tabindex="-1"
-                data-preview-src="./assets/workbench-cream.jpg?v=lovely-studio-20261020"
-                data-preview-alt="LoliCode 奶油色工作台：项目侧栏、创建任务与模型选择，使用示例数据"
-              >
-                <span
-                  class="theme-swatch swatch-cream"
-                  aria-hidden="true"
-                ></span
-                >奶油日光
+              <button type="button" role="tab" id="preview-tab-tools" aria-controls="workspace-preview"
+                aria-selected="false" tabindex="-1"
+                data-preview-src="./assets/harness-20261119-tools.webp" data-preview-alt="LoliCode 工作台 · 查看工具调用">
+                <strong>查看工具调用</strong><span>展开读文件、编辑和测试的记录。</span>
               </button>
-              <button
-                type="button"
-                id="preview-tab-channels"
-                role="tab"
-                aria-controls="workspace-preview"
-                aria-selected="false"
-                tabindex="-1"
-                data-preview-src="./assets/channels-light.jpg?v=lovely-studio-20261020"
-                data-preview-alt="LoliCode 模型与渠道管理界面，使用示例数据"
-              >
-                <span class="theme-swatch swatch-teal" aria-hidden="true"></span
-                >模型渠道
+              <button type="button" role="tab" id="preview-tab-review" aria-controls="workspace-preview"
+                aria-selected="false" tabindex="-1"
+                data-preview-src="./assets/harness-20261119-review.webp" data-preview-alt="LoliCode 工作台 · 审阅改动">
+                <strong>审阅改动</strong><span>对照红绿两行，核对筛选条件的修复。</span>
               </button>
             </div>
-            <span class="preview-hint">真实界面 · 示例数据 · 点击图片放大</span>
+            <span class="preview-hint">点击画面可放大</span>
           </div>
-          <figure
-            id="workspace-preview"
-            class="product-frame"
-            role="tabpanel"
-            aria-labelledby="preview-tab-dark"
-            tabindex="0"
-          >
-            <div class="product-frame-top">
-              <span class="window-dots" aria-hidden="true"
-                ><i></i><i></i><i></i></span
-              ><span>LoliCode · 对话工作台</span
-              ><span class="frame-gem" aria-hidden="true">✦</span>
-            </div>
-            <a
-              class="preview-open"
-              href="./assets/workbench.jpg?v=atelier-20261016"
-              aria-label="放大界面预览"
-            >
-              <img
-                id="preview-image"
-                src="./assets/workbench.jpg?v=atelier-20261016"
-                width="1000"
-                height="650"
-                alt="LoliCode 深色工作台：主 Agent 对话、项目侧栏与模型选择，使用示例数据"
-                loading="lazy"
-                decoding="async"
-              />
-              <span class="preview-zoom" aria-hidden="true">↗ 放大看看</span>
+          <figure id="workspace-preview" class="product-frame" role="tabpanel" aria-labelledby="preview-tab-model" tabindex="0">
+            <a class="preview-open" href="./assets/harness-20261119-model.webp" aria-label="放大当前工作台画面">
+              <img id="preview-image" src="./assets/harness-20261119-model.webp" width="1600" height="900"
+                   alt="LoliCode 工作台 · 选择模型" loading="lazy" decoding="async" />
+              <span class="preview-zoom" aria-hidden="true">放大</span>
             </a>
-            <figcaption>
-              <span>一个主对话 · 模型自由选择 · 过程始终可见</span
-              ><span aria-hidden="true">♡</span>
-            </figcaption>
           </figure>
         </section>
 
@@ -789,8 +615,8 @@
           关闭 <span aria-hidden="true">×</span>
         </button>
       </div>
-      <img id="preview-full-image" alt="" width="1000" height="650" />
-      <p>真实界面 · 示例数据 <span>按 Esc 或点击空白处关闭</span></p>
+    <img id="preview-full-image" alt="" width="2160" height="1215" />
+      <p>工作台画面 <span>按 Esc 或点击空白处关闭</span></p>
     </dialog>
   </body>
 </html>
