@@ -67,6 +67,25 @@
   }
 
   film.muted = true;
+  const sound = document.querySelector?.("[data-film-sound]");
+  if (sound) {
+    const syncSound = () => {
+      const audible = !film.muted && film.volume > 0;
+      sound.setAttribute("aria-pressed", String(audible));
+      sound.textContent = audible ? "静音" : "开启配乐";
+    };
+    sound.setAttribute("aria-label", "视频配乐");
+    syncSound();
+    sound.hidden = false;
+    film.addEventListener("volumechange", syncSound);
+    sound.addEventListener("click", () => {
+      const enableSound = film.muted || film.volume === 0;
+      if (enableSound && film.volume === 0) film.volume = 0.65;
+      film.muted = !enableSound;
+      syncSound();
+      if (enableSound && film.paused) void startPlayback(true);
+    });
+  }
   play.hidden = false;
   film.controls = false;
   play.addEventListener("click", async () => {
@@ -445,6 +464,17 @@
     });
   });
   tabs.hidden = false;
+  const partnerLink = document.querySelector("[data-partner-preview]");
+  const partnerTab = buttons.find((button) => button.id === "preview-tab-companion");
+  if (partnerLink && partnerTab) {
+    partnerLink.addEventListener("click", (event) => {
+      if (event.button > 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      partnerTab.focus({ preventScroll: true });
+      void select(partnerTab);
+      panel.scrollIntoView({ block: "center" });
+    });
+  }
   document.addEventListener("lolicode:effectschange", () => {
     if (document.documentElement?.getAttribute?.("data-effects") !== "active")
       preview.getAnimations().forEach((animation) => animation.cancel());

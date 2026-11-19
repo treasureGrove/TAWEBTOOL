@@ -82,10 +82,14 @@ function eventTarget(initial = {}) {
 function runFilm({ reduced = false, observer = true } = {}) {
   const preference = eventTarget({ matches: reduced });
   const play = eventTarget({ hidden: true });
+  const sound = eventTarget({
+    hidden: true, attributes: {},
+    setAttribute(name, value) { this.attributes[name] = value; },
+  });
   const error = eventTarget({ hidden: true });
   const observers = [];
   const film = eventTarget({
-    paused: true, muted: false, controls: true, playCalls: 0, pauseCalls: 0,
+    paused: true, muted: false, volume: 1, controls: true, playCalls: 0, pauseCalls: 0,
     nextResult: null,
     play() {
       this.playCalls += 1;
@@ -108,6 +112,7 @@ function runFilm({ reduced = false, observer = true } = {}) {
     hidden: false,
     querySelector: (selector) => ({
       "#product-film": film, ".film-play": play, ".film-error": error,
+      "[data-film-sound]": sound,
     })[selector] || null,
     querySelectorAll: () => [],
   });
@@ -123,7 +128,7 @@ function runFilm({ reduced = false, observer = true } = {}) {
   });
   const filmObserver = observers.find((item) => item.targets.includes(film));
   return {
-    film, play, error, preference, document,
+    film, play, sound, error, preference, document,
     intersect(ratio) {
       filmObserver.callback([{ target: film, isIntersecting: ratio > 0, intersectionRatio: ratio }]);
     },
@@ -158,6 +163,24 @@ test("scrolling back to a completed film keeps its final frame", async () => {
   play.emit("click");
   await settle();
   assert.equal(film.playCalls, 2);
+});
+
+test("the music switch starts a muted film on demand and follows native controls", async () => {
+  const { film, sound } = runFilm({ reduced: true });
+  assert.equal(film.muted, true);
+  assert.equal(sound.hidden, false);
+  assert.equal(sound.attributes["aria-pressed"], "false");
+  film.volume = 0;
+  sound.emit("click");
+  await settle();
+  assert.equal(film.paused, false);
+  assert.equal(film.muted, false);
+  assert.ok(film.volume > 0);
+  assert.equal(sound.attributes["aria-pressed"], "true");
+  film.muted = true;
+  film.emit("volumechange");
+  assert.equal(sound.attributes["aria-pressed"], "false");
+  assert.equal(film.playCalls, 1);
 });
 
 test("film requests no playback offscreen and resumes after visibility pauses", async () => {

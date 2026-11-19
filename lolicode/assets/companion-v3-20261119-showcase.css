@@ -1,0 +1,149 @@
+.harness-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, .52fr);
+  grid-template-areas: "intro partner" "description partner" "controls partner" "film film";
+  gap: .85rem clamp(1.2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.harness-hero .hero-copy {
+  align-self: end;
+}
+
+.harness-hero h1 {
+  font-size: clamp(2.65rem, 4.2vw, 4.25rem);
+  line-height: 1.16;
+}
+
+.harness-hero h1 > span {
+  display: block;
+}
+
+.character-name {
+  color: #8e385b;
+}
+
+.harness-hero .companion-description {
+  grid-area: description;
+  align-self: start;
+  max-width: 36em;
+  margin: 0;
+}
+
+.harness-hero .download-block {
+  align-self: start;
+  margin: .2rem 0 0;
+}
+
+.harness-hero .harness-film {
+  margin-top: clamp(.8rem, 2vw, 1.65rem);
+}
+
+.hero-partner {
+  display: grid;
+  grid-area: partner;
+  justify-items: center;
+  justify-self: center;
+  width: min(100%, 22rem);
+  color: #733c51;
+  text-align: center;
+}
+
+.partner-art {
+  position: relative;
+  display: grid;
+  width: 100%;
+  place-items: center;
+  isolation: isolate;
+}
+
+.partner-art::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8% -3% 1%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f4d8df 2%, #f9e9e9 37%, transparent 72%);
+}
+
+.partner-art img {
+  display: block;
+  width: auto;
+  height: clamp(14rem, 21vw, 19rem);
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.partner-action {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  margin-top: .35rem;
+  color: #73394f;
+  font: 500 .86rem/1.5 var(--harness-body);
+  text-decoration: underline;
+  text-underline-offset: .28em;
+  text-decoration-color: #cfa7b4;
+}
+
+.hero-partner:hover .partner-action {
+  color: #50223a;
+  text-decoration-color: currentColor;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  html[data-effects="active"] .partner-art img {
+    transition: transform .22s ease-out;
+  }
+  html[data-effects="active"] .hero-partner:hover .partner-art img {
+    transform: translateY(-.18rem);
+  }
+}
+
+.film-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: .8rem;
+  flex-shrink: 0;
+}
+
+.film-actions button {
+  border: 0;
+  border-radius: .2rem;
+  background: transparent;
+  color: #704059;
+  font: inherit;
+  white-space: nowrap;
+  padding: .12rem .25rem;
+  text-decoration: underline;
+  text-underline-offset: .25em;
+}
+
+@media (max-width: 850px) {
+  .harness-hero {
+    grid-template-columns: minmax(0,1fr) minmax(8rem,.52fr);
+    grid-template-areas: "intro partner" "description partner" "controls controls" "film film";
+    gap: .7rem .85rem;
+  }
+  .partner-art img { height: clamp(10rem, 24vw, 14rem); }
+  .harness-showcase .preview-tabs { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+
+@media (max-width: 560px) {
+  .harness-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(5.3rem, 29%);
+    grid-template-areas: "intro partner" "description description" "controls controls" "film film";
+    gap: .9rem .45rem;
+    padding-top: 1.7rem;
+  }
+  .harness-kicker { margin-bottom:.45rem; font-size:.72rem; letter-spacing:.02em; }
+  .harness-hero h1 { font-size: clamp(1.55rem, 7.25vw, 2.4rem); line-height:1.16; }
+  .harness-hero .hero-copy { align-self: center; }
+  .partner-art img { height: auto; width: 100%; }
+  .partner-action { gap:.15rem; margin-top:.12rem; font-size:.75rem; }
+  .harness-hero .harness-film { margin-top:.22rem; }
+  .harness-hero .download-block { margin-top:0; }
+  .harness-film .film-caption { flex-wrap:wrap; gap:.25rem 1rem; }
+  .film-actions { gap:.6rem; }
+  .harness-showcase .preview-tabs strong { font-size:.8rem; }
+}

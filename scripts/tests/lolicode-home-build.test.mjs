@@ -36,9 +36,10 @@ test("home HTML is derived without changing the tools source", () => {
     3,
   );
   assert.ok(!html.includes('src="./assets/'));
-  assert.match(html, /poster="\/desktop-assets\/harness-v2-20261119-poster\.webp"/);
-  assert.match(html, /src="\/desktop-assets\/harness-v2-20261119-tour\.mp4"/);
+  assert.match(html, /poster="\/desktop-assets\/companion-v3-20261119-poster\.webp"/);
+  assert.match(html, /src="\/desktop-assets\/companion-v3-20261119-tour\.mp4"/);
   assert.match(html, /tour-mobile\.mp4" media="\(max-width: 640px\)"/);
+  assert.match(html, /data-preview-src="\/desktop-assets\/companion-v3-20261119-companion\.webp"/);
   for (const feature of ["model", "tools", "review"]) {
     assert.ok(html.includes(`data-preview-src="/desktop-assets/harness-20261119-${feature}.webp"`));
   }
@@ -98,7 +99,7 @@ test("missing source markers stop a build instead of silently producing a broken
 test("builder emits only the homepage assets and can refresh its own directory", async () => {
   await tempDirectory(async (directory) => {
     const result = await buildHome({ outDirectory: directory });
-    assert.equal(result.files.length, 37);
+    assert.equal(result.files.length, 43);
     assert.deepEqual((await readdir(directory)).sort(), [
       ".lolicode-home-build.json",
       "desktop-assets",
@@ -112,6 +113,12 @@ test("builder emits only the homepage assets and can refresh its own directory",
         "atelier-room.webp",
         "brooch.webp",
         "channels-light.jpg",
+        "companion-v3-20261119-companion.webp",
+        "companion-v3-20261119-poster.webp",
+        "companion-v3-20261119-share.jpg",
+        "companion-v3-20261119-showcase.css",
+        "companion-v3-20261119-tour-mobile.mp4",
+        "companion-v3-20261119-tour.mp4",
         "companion.webp",
         "discovery-v1.json",
         "downloads.js",
