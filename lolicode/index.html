@@ -26,11 +26,11 @@
     <meta property="og:site_name" content="LoliCode" />
     <meta
       property="og:image"
-      content="https://lolicode.com/desktop-assets/harness-20261119-poster.webp"
+      content="https://lolicode.com/desktop-assets/harness-v2-20261119-poster.webp"
     />
-    <meta property="og:image:width" content="1600" />
-    <meta property="og:image:height" content="900" />
-    <meta property="og:image:alt" content="LoliCode 看板娘、新版桌面工作台与代码差异预览" />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="LoliCode 桌面工作台中，逐行核对修复待办筛选的代码" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
       property="og:url"
@@ -150,20 +150,20 @@
             "@type": "ImageObject",
             "@id": "https://lolicode.com/#hero-image",
             "name": "LoliCode 官网主图",
-            "caption": "LoliCode 看板娘、新版桌面工作台与代码差异预览",
-            "url": "https://lolicode.com/desktop-assets/harness-20261119-poster.webp",
-            "contentUrl": "https://lolicode.com/desktop-assets/harness-20261119-poster.webp",
-            "width": 1600,
-            "height": 900,
+            "caption": "LoliCode 桌面工作台中，逐行核对修复待办筛选的代码",
+            "url": "https://lolicode.com/desktop-assets/harness-v2-20261119-poster.webp",
+            "contentUrl": "https://lolicode.com/desktop-assets/harness-v2-20261119-poster.webp",
+            "width": 1920,
+            "height": 1080,
             "encodingFormat": "image/webp"
           }
         ]
       }
     </script>
     <link rel="stylesheet" href="./assets/site.css?v=lovely-studio-20261020" />
-    <link rel="stylesheet" href="./assets/harness-20261119-showcase.css" />
+    <link rel="stylesheet" href="./assets/harness-v2-20261119-showcase.css" />
     <script src="./assets/downloads.js?v=product1-20261020" defer></script>
-    <script src="./assets/motion.js?v=lovely-studio-20261020" defer></script>
+    <script src="./assets/motion.js?v=harness-v2-20261119" defer></script>
   </head>
   <body>
     <div class="reading-progress" aria-hidden="true"></div>
@@ -197,133 +197,59 @@
     <main id="main">
       <section class="hero harness-hero page-width" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <div class="harness-intro"><img src="./assets/companion.webp" width="48" height="48" alt="" /><p class="eyebrow">Desktop Agent Harness · Windows</p></div>
-          <h1 id="hero-title"><span>LoliCode</span><span>桌面 Agent 工作台</span></h1>
-          <p class="hero-description">选好模型，让 Agent 读取项目、运行测试，再逐行核对它的改动。</p>
+          <p class="harness-kicker">Desktop Agent Harness</p>
+          <h1 id="hero-title">桌面上的编程 <em>Agent</em></h1>
+          <p class="hero-description">选你自己的模型，让 Agent 读项目、用工具、跑测试。<br class="desktop-break" />每一步操作和代码改动，都能在同一个工作台里查看。</p>
         </div>
-          <div id="download" class="download-block" aria-label="下载 LoliCode">
-            <div class="release-meta">
-              <span class="release-indicator" aria-hidden="true"></span
-              ><span id="version">正在读取最新版本</span
-              ><span class="release-platform">Windows x64</span>
-            </div>
-            <div class="download-actions">
-              <a
-                id="installer"
-                class="button button-primary"
-                data-magnetic
-                aria-disabled="true"
-                tabindex="-1"
-                ><span class="download-icon" aria-hidden="true">↓</span
-                ><span>下载 Windows 安装版</span
-                ><span aria-hidden="true">↗</span></a
-              >
-              <a
-                id="github-backup"
-                class="button button-secondary"
-                aria-disabled="true"
-                tabindex="-1"
-                hidden
-                >GitHub 备用下载 <span aria-hidden="true">↗</span></a
-              >
-              <a
-                id="portable"
-                class="button button-secondary"
-                aria-disabled="true"
-                tabindex="-1"
-                hidden
-                >便携版 <span aria-hidden="true">↓</span></a
-              >
-              <button
-                id="retry"
-                class="button button-secondary"
-                type="button"
-                hidden
-              >
-                重新读取
-              </button>
-            </div>
-            <div
-              id="tencent-downloads"
-              class="download-actions download-alternatives"
-              aria-label="手动选择腾讯下载线路"
-              hidden
-            >
-              <a
-                id="tencent-installer"
-                class="button button-secondary"
-                aria-disabled="true"
-                tabindex="-1"
-                hidden
-                >腾讯线路 · 安装版 <span aria-hidden="true">↗</span></a
-              >
-              <a
-                id="tencent-portable"
-                class="button button-secondary"
-                aria-disabled="true"
-                tabindex="-1"
-                hidden
-                >腾讯线路 · 便携版 <span aria-hidden="true">↗</span></a
-              >
-            </div>
-            <p
-              id="status"
-              class="release-status"
-              role="status"
-              aria-live="polite"
-              data-state="loading"
-            >
-              正在连接发布服务…
-            </p>
-            <p class="platform-note">
-              官方下载：<a href="https://github.com/treasureGrove/LoliCode-Releases/releases/latest" target="_blank" rel="noopener noreferrer">GitHub 最新发布 · 安装版与便携版 ↗</a>
-            </p>
-            <p class="platform-note">
-              macOS 与 Linux 版本仍在准备中。<a
-                href="https://github.com/treasureGrove/LoliCode"
-                target="_blank"
-                rel="noopener noreferrer"
-                >在 GitHub 看源码、点 Star ↗</a
-              >
-            </p>
+        <div id="download" class="download-block" aria-label="下载 LoliCode">
+          <div class="harness-actions">
+            <a id="installer" class="button button-primary" aria-disabled="true" tabindex="-1"><span aria-hidden="true">↓</span>下载 Windows 版</a>
+            <a class="source-action" href="https://github.com/treasureGrove/LoliCode" target="_blank" rel="noopener noreferrer">GitHub 源码 · Star</a>
           </div>
-        <section id="film" class="hero-visual harness-film" aria-labelledby="film-title">
+          <div class="download-meta">
+            <span class="release-meta"><span id="version">正在读取最新版本</span><span>Windows x64</span></span>
+            <details class="more-downloads">
+              <summary>更多下载</summary>
+              <div class="download-options">
+                <a id="portable" aria-disabled="true" tabindex="-1" hidden>下载便携版</a>
+                <a id="github-backup" aria-disabled="true" tabindex="-1" hidden>GitHub 备用下载</a>
+                <div id="tencent-downloads" aria-label="手动选择腾讯下载线路" hidden>
+                  <a id="tencent-installer" aria-disabled="true" tabindex="-1" hidden>腾讯线路安装版</a>
+                  <a id="tencent-portable" aria-disabled="true" tabindex="-1" hidden>腾讯线路便携版</a>
+                </div>
+                <a href="https://github.com/treasureGrove/LoliCode-Releases/releases/latest" target="_blank" rel="noopener noreferrer">全部正式发布</a>
+                <p>macOS 与 Linux 版本仍在准备中。</p>
+              </div>
+            </details>
+          </div>
+          <p id="status" class="release-status" role="status" aria-live="polite" data-state="loading">正在连接发布服务…</p>
+          <button id="retry" type="button" hidden>重新读取下载信息</button>
+        </div>
+        <figure id="film" class="harness-film" aria-labelledby="film-description">
           <div class="film-player">
-            <div class="film-frame-bar">
-              <h2 id="film-title">看 Agent 修复待办筛选</h2>
-              <span class="film-frame-status" aria-hidden="true"><i></i><span class="film-is-playing">播放中</span><span class="film-is-paused">Windows 桌面版</span></span>
-            </div>
-            <video id="product-film" controls muted playsinline loop preload="none"
-              poster="./assets/harness-20261119-poster.webp" width="1600" height="900"
-              aria-label="LoliCode 桌面 Agent 工作台演示" aria-describedby="film-description">
-              <source src="./assets/harness-20261119-tour.mp4" type="video/mp4" />
+            <video id="product-film" controls muted playsinline preload="none"
+              poster="./assets/harness-v2-20261119-poster.webp" width="1920" height="1080"
+              aria-label="LoliCode 工作台修复待办筛选的演示" aria-describedby="film-description">
+              <source src="./assets/harness-v2-20261119-tour-mobile.mp4" media="(max-width: 640px)" type="video/mp4" />
+              <source src="./assets/harness-v2-20261119-tour.mp4" type="video/mp4" />
               你的浏览器暂时无法播放这段演示。
             </video>
-            <button type="button" class="film-play" hidden aria-label="播放工作台演示">
-              <span class="play-circle" aria-hidden="true">▶</span><span>播放演示</span>
-            </button>
+            <button type="button" class="film-play" hidden aria-label="播放或重播工作台演示"><span aria-hidden="true">▶</span>播放演示</button>
           </div>
-          <div class="film-caption" id="film-description">
-            <span>21.6 秒 · 1.1.4 实际界面 · 示例任务数据</span>
-            <a class="film-file" href="./assets/harness-20261119-tour.mp4">打开视频</a>
-          </div>
-          <p class="film-error" role="status" hidden>视频暂时无法播放。<a href="./assets/harness-20261119-tour.mp4">打开原片</a></p>
-          <button class="motion-toggle harness-motion" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停页面动效" hidden><span data-motion-label>暂停动效</span></button>
-        </section>
+          <figcaption class="film-caption" id="film-description">
+            <span><strong>修复「已完成」筛选</strong><span class="clip-context">15.8 秒 · LoliCode 1.1.4 真实界面，示例任务</span></span>
+            <a class="film-file" href="./assets/harness-v2-20261119-tour.mp4">打开原片</a>
+          </figcaption>
+          <p class="film-error" role="status" hidden>视频暂时无法播放。<a href="./assets/harness-v2-20261119-tour.mp4">打开原片</a></p>
+        </figure>
       </section>
 
       <div class="paper">
-        <div class="studio-ribbon" aria-hidden="true">
-          <div class="ribbon-track">
-            <div class="ribbon-set"><span>SMALL IDEAS</span><i>✳</i><span>LOVELY THINGS</span><i>✳</i><span>MADE WITH YOU</span><i>✳</i></div>
-            <div class="ribbon-set"><span>SMALL IDEAS</span><i>✳</i><span>LOVELY THINGS</span><i>✳</i><span>MADE WITH YOU</span><i>✳</i></div>
-          </div>
-        </div>
-
         <section class="showcase-section harness-showcase page-width section-space" aria-labelledby="showcase-title">
           <div class="showcase-copy">
-            <h2 id="showcase-title">看清 Agent<br />怎样完成任务</h2>
-            <p>示例里，待办看板的「已完成」筛选出了错。可以逐步看它怎么修，片尾还有桌宠的投喂互动。</p>
+            <img class="studio-companion" src="./assets/companion.webp" width="72" height="77" loading="lazy" alt="LoliCode 桌面伙伴" />
+            <h2 id="showcase-title">任务执行过程</h2>
+            <p>从选择模型到检查一行代码的修改，点开任一画面查看细节。</p>
             <div class="preview-tabs" role="tablist" aria-label="工作台功能" hidden>
               <button type="button" role="tab" id="preview-tab-model" aria-controls="workspace-preview"
                 aria-selected="true" tabindex="0"
@@ -604,6 +530,7 @@
           感谢 CC Switch、ZCode、OpenCode 等开源项目。<br />代码来源与许可说明见下载仓库。
         </p>
       </div>
+      <div class="site-motion-row page-width"><button class="motion-toggle" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停页面动效" hidden><span data-motion-label>暂停动效</span></button></div>
       <div class="footer-wordmark" aria-hidden="true">
         LoliCode<span>®</span>
       </div>

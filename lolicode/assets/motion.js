@@ -90,6 +90,7 @@
   // A failed <source> dispatches a non-bubbling error on the source itself.
   film.addEventListener("error", showError, true);
   film.addEventListener("ended", () => {
+    userPaused = true;
     play.hidden = false;
     film.controls = true;
   });

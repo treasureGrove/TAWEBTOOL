@@ -134,14 +134,30 @@ function runFilm({ reduced = false, observer = true } = {}) {
   };
 }
 
-test("film markup supports muted inline looping without eager autoplay", async () => {
+test("film plays inline with native controls and waits for explicit replay", async () => {
   const html = await readFile(new URL("../../lolicode/index.html", import.meta.url), "utf8");
   const video = html.match(/<video\b[^>]*id="product-film"[^>]*>/)[0];
-  for (const attribute of ["muted", "playsinline", "loop", "controls"]) {
+  for (const attribute of ["muted", "playsinline", "controls"]) {
     assert.match(video, new RegExp(`\\s${attribute}(?:\\s|>)`));
   }
   assert.match(video, /preload="none"/);
-  assert.doesNotMatch(video, /\sautoplay(?:\s|=|>)/);
+  assert.doesNotMatch(video, /\s(?:autoplay|loop)(?:\s|=|>)/);
+});
+
+test("scrolling back to a completed film keeps its final frame", async () => {
+  const { film, play, intersect } = runFilm();
+  intersect(0.8);
+  await settle();
+  film.paused = true;
+  film.emit("ended");
+  intersect(0);
+  intersect(0.8);
+  await settle();
+  assert.equal(film.playCalls, 1);
+  assert.equal(play.hidden, false);
+  play.emit("click");
+  await settle();
+  assert.equal(film.playCalls, 2);
 });
 
 test("film requests no playback offscreen and resumes after visibility pauses", async () => {
