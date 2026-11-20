@@ -44,6 +44,10 @@ test("home HTML is derived without changing the tools source", () => {
     assert.ok(html.includes(`data-preview-src="/desktop-assets/harness-20261119-${feature}.webp"`));
   }
   assert.match(html, /src="\/desktop-assets\/downloads\.js\?/);
+  assert.match(
+    html,
+    /class="product-header"[\s\S]*id="download"[\s\S]*id="terminal-install"[\s\S]*id="film"[\s\S]*id="workspace-gallery"[\s\S]*id="community"/,
+  );
   assert.match(html, /href="https:\/\/tools\.treasuregrove\.art\/">TA 工具箱/);
   assert.match(source, /content="tools"/);
   assert.equal(
@@ -99,7 +103,7 @@ test("missing source markers stop a build instead of silently producing a broken
 test("builder emits only the homepage assets and can refresh its own directory", async () => {
   await tempDirectory(async (directory) => {
     const result = await buildHome({ outDirectory: directory });
-    assert.equal(result.files.length, 47);
+    assert.equal(result.files.length, 48);
     assert.deepEqual((await readdir(directory)).sort(), [
       ".lolicode-home-build.json",
       "desktop-assets",
@@ -139,7 +143,8 @@ test("builder emits only the homepage assets and can refresh its own directory",
         "home-20261120-atelier.css",
         "home-20261120-cherry.css",
         "home-20261120-community.js",
-        "home-20261120-portal.css",
+        "home-20261120-product.css",
+        "home-20261120-product.js",
         "logo.svg",
         "lolicode-tour.mp4",
         "maid.png",

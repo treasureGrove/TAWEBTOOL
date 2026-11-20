@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <meta name="theme-color" content="#9e2445" />
+    <meta name="theme-color" content="#751b35" />
     <meta name="lolicode-download-profile" content="tools" />
     <meta
       name="google-site-verification"
@@ -167,124 +167,121 @@
     <link rel="stylesheet" href="./assets/site.css?v=lovely-studio-20261020" />
     <link rel="stylesheet" href="./assets/harness-v2-20261119-showcase.css" />
     <link rel="stylesheet" href="./assets/companion-v3-20261119-showcase.css" />
-    <link rel="stylesheet" href="./assets/home-20261120-portal.css" />
+    <link rel="stylesheet" href="./assets/home-20261120-product.css" />
+    <script type="module" src="./assets/home-20261120-product.js"></script>
     <script src="./assets/downloads.js?v=product1-20261020" defer></script>
     <script src="./assets/motion.js?v=companion-v3-20261119" defer></script>
     <script type="module" src="./assets/home-20261120-community.js"></script>
   </head>
-  <body class="community-home">
+  <body class="product-home">
     <div class="reading-progress" aria-hidden="true"></div>
     <a class="skip-link" href="#main">跳到主要内容</a>
-    <header class="home-rail">
-      <a class="rail-brand" href="./" aria-label="LoliCode 官方网站首页">
-        <img src="./assets/site-icon-192.png?v=wine-20261020" width="42" height="42" alt="" />
-        <span><strong>LoliCode</strong><small>开发者工作台</small></span>
-      </a>
-      <a class="rail-community" href="https://lolicode.com/all">进入社区 <span aria-hidden="true">↗</span></a>
-      <nav class="rail-nav" aria-label="主导航">
-        <p class="rail-label">工作台</p>
-        <a href="./" aria-current="page"><i aria-hidden="true">⌂</i>首页</a>
-        <a href="#download"><i aria-hidden="true">▣</i>桌面版</a>
-        <a href="https://lolicode.com/cli/"><i aria-hidden="true">›_</i>命令行</a>
-        <a href="#updates"><i aria-hidden="true">◷</i>版本更新</a>
-        <p class="rail-label">社区</p>
-        <a href="#community"><i aria-hidden="true">◇</i>最近话题</a>
-        <a class="rail-extra" href="https://lolicode.com/resources"><i aria-hidden="true">▤</i>资源中心</a>
-        <a class="rail-extra" href="https://lolicode.com/rankings"><i aria-hidden="true">▥</i>模型排行</a>
-      </nav>
-      <div class="rail-bottom">
-        <a href="https://github.com/treasureGrove/LoliCode"><i aria-hidden="true">⌘</i>GitHub 源码 <span aria-hidden="true">↗</span></a>
-        <button class="motion-toggle" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停动效" hidden><i aria-hidden="true">✦</i><span data-motion-label>暂停动效</span></button>
+    <header class="product-header">
+      <div class="page-width product-header-inner">
+        <a class="brand" href="./" aria-label="LoliCode 官方网站首页">
+          <img src="./assets/site-icon-192.png?v=wine-20261020" width="36" height="36" alt="" />
+          <span>LoliCode</span>
+        </a>
+        <nav class="header-nav" aria-label="主导航">
+          <a href="#film">演示</a>
+          <a href="#features">功能</a>
+          <a href="#start">上手</a>
+          <a href="https://lolicode.com/cli/">CLI</a>
+          <a href="https://lolicode.com/all">社区 <span aria-hidden="true">↗</span></a>
+        </nav>
+        <a class="product-header-download" href="#download">获取 LoliCode <span aria-hidden="true">↓</span></a>
       </div>
     </header>
 
     <main id="main">
-      <section class="portal-hero" aria-labelledby="hero-title">
-        <div class="portal-hero-inner page-width">
-          <div class="portal-intro">
-            <p class="portal-kicker"><span aria-hidden="true">✦</span> LoliCode · AI 编程工作台</p>
-            <h1 id="hero-title">和小笨狗一起做项目。</h1>
-            <p class="portal-description">在桌面或终端里，让 AI 读项目、改代码、跑测试。遇到问题，来社区一起聊。</p>
-            <a class="portal-tour" href="#film"><span aria-hidden="true">▶</span> 看工作台演示</a>
+      <div class="product-hero-surface">
+        <section class="product-hero page-width" aria-labelledby="hero-title">
+          <div class="product-intro">
+            <p class="product-kicker"><span aria-hidden="true">✦</span> AI 编程助手</p>
+            <h1 id="hero-title"><span>和小笨狗一起，</span><span>在桌面写代码。</span></h1>
+            <p class="product-description">让 AI 读项目、改代码、跑测试。模型由你选，改动由你审阅。</p>
           </div>
-          <div class="companion-stage portal-companion" aria-hidden="true">
-            <div class="portal-medallion"></div>
-            <div class="portal-orbit"><span></span></div>
-            <div class="portal-orbit portal-orbit-two"><span></span></div>
-            <span class="portal-spark spark-east">✦</span>
-            <span class="portal-spark spark-west">✧</span>
-            <div class="companion-float"><img src="./assets/companion.webp" width="720" height="768" alt="" fetchpriority="high" /></div>
+          <div class="product-art">
+            <div class="companion-stage product-companion" aria-hidden="true">
+              <div class="product-halo"></div>
+              <div class="product-orbit"><i></i></div>
+              <span class="product-spark product-spark-top">✦</span>
+              <span class="product-spark product-spark-bottom">✧</span>
+              <div class="companion-float">
+                <img src="./assets/companion.webp" width="720" height="768" alt="" fetchpriority="high" />
+              </div>
+            </div>
+            <button class="motion-toggle" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停动效" hidden>
+              <span aria-hidden="true">✦</span><span data-motion-label>暂停动效</span>
+            </button>
           </div>
-        </div>
-      </section>
-
-      <div class="studio-ribbon portal-ribbon" aria-hidden="true">
-        <div class="ribbon-track">
-          <div class="ribbon-set"><span>桌面工作台</span><i>✦</i><span>命令行工具</span><i>✦</i><span>开发者社区</span><i>✦</i><span>作品与资源分享</span><i>✦</i></div>
-          <div class="ribbon-set"><span>桌面工作台</span><i>✦</i><span>命令行工具</span><i>✦</i><span>开发者社区</span><i>✦</i><span>作品与资源分享</span><i>✦</i></div>
-        </div>
+          <div id="download" class="product-download" aria-label="下载 LoliCode 桌面版">
+            <div class="product-actions">
+              <a id="installer" class="button button-primary" aria-disabled="true" tabindex="-1"><span aria-hidden="true">↓</span> 下载 Windows 版</a>
+              <a class="button button-secondary" href="#film"><span aria-hidden="true">▶</span> 观看演示</a>
+            </div>
+            <div class="product-version">
+              <span><span id="version">读取版本中</span> · Windows x64</span>
+              <details class="more-downloads">
+                <summary>更多下载</summary>
+                <div class="download-options">
+                  <a id="portable" aria-disabled="true" tabindex="-1" hidden>下载便携版</a>
+                  <a id="github-backup" aria-disabled="true" tabindex="-1" hidden>GitHub 备用下载</a>
+                  <div id="tencent-downloads" aria-label="手动选择腾讯下载线路" hidden>
+                    <a id="tencent-installer" aria-disabled="true" tabindex="-1" hidden>腾讯线路安装版</a>
+                    <a id="tencent-portable" aria-disabled="true" tabindex="-1" hidden>腾讯线路便携版</a>
+                  </div>
+                  <a href="https://github.com/treasureGrove/LoliCode-Releases/releases/latest">桌面版发布页</a>
+                  <p>macOS 与 Linux 版本仍在准备中。Linux 可使用 <a href="https://lolicode.com/cli/">LoliCode CLI</a>。</p>
+                </div>
+              </details>
+            </div>
+            <p id="status" class="release-status" role="status" aria-live="polite" data-state="loading">正在连接发布服务…</p>
+            <button id="retry" type="button" hidden>重新读取下载信息</button>
+          </div>
+          <section id="terminal-install" class="terminal-install" data-terminal-install aria-labelledby="terminal-title">
+            <div class="terminal-heading">
+              <h2 id="terminal-title">终端安装 CLI</h2>
+              <a href="https://lolicode.com/cli/">安装与用法 <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="terminal-panel">
+              <div class="terminal-tabs" role="tablist" aria-label="选择操作系统" hidden>
+                <button type="button" id="terminal-windows-tab" role="tab" aria-controls="terminal-windows" aria-selected="true">Windows</button>
+                <button type="button" id="terminal-linux-tab" role="tab" aria-controls="terminal-linux" aria-selected="false" tabindex="-1">Linux</button>
+              </div>
+              <div id="terminal-windows" class="terminal-platform" role="tabpanel" aria-labelledby="terminal-windows-tab">
+                <p class="terminal-platform-label">Windows CMD / PowerShell</p>
+                <div class="terminal-command">
+                  <pre><code>npm.cmd install --global --ignore-scripts https://lolicode.com/cli/downloads/lolicode-cli-0.1.0-alpha.3.tgz
+lolicode.cmd</code></pre>
+                  <button type="button" data-copy-install aria-label="复制 Windows 安装命令" hidden>复制</button>
+                </div>
+              </div>
+              <div id="terminal-linux" class="terminal-platform" role="tabpanel" aria-labelledby="terminal-linux-tab">
+                <p class="terminal-platform-label">Linux</p>
+                <div class="terminal-command">
+                  <pre><code>npm install --global --prefix "$HOME/.local" --ignore-scripts https://lolicode.com/cli/downloads/lolicode-cli-0.1.0-alpha.3.tgz
+export PATH="$HOME/.local/bin:$PATH"
+lolicode</code></pre>
+                  <button type="button" data-copy-install aria-label="复制 Linux 安装命令" hidden>复制</button>
+                </div>
+              </div>
+            </div>
+            <div class="terminal-footnote">
+              <span>需要 Node.js 24.9 或更新版本</span>
+              <span data-install-status role="status"></span>
+            </div>
+          </section>
+        </section>
       </div>
 
-      <div class="paper portal-paper">
-        <section class="portal-products page-width" aria-labelledby="products-title">
-          <h2 id="products-title">下载与使用</h2>
-          <div class="portal-product-grid">
-            <article class="portal-product portal-card" id="download" aria-labelledby="desktop-title">
-              <div class="portal-product-heading">
-                <img src="./assets/site-icon-192.png?v=wine-20261020" class="portal-app-icon" width="44" height="44" alt="" />
-                <div><h3 id="desktop-title">LoliCode 桌面版</h3><p><span id="version">读取版本中</span> · Windows x64</p></div>
-              </div>
-              <p class="portal-product-description">在同一个工作台里切换模型、查看工具步骤，审阅每一处代码改动。</p>
-              <div class="portal-actions">
-                <a id="installer" class="button portal-primary" aria-disabled="true" tabindex="-1"><span aria-hidden="true">↓</span> 下载 Windows 版</a>
-                <details class="more-downloads">
-                  <summary>更多下载</summary>
-                  <div class="download-options">
-                    <a id="portable" aria-disabled="true" tabindex="-1" hidden>下载便携版</a>
-                    <a id="github-backup" aria-disabled="true" tabindex="-1" hidden>GitHub 备用下载</a>
-                    <div id="tencent-downloads" aria-label="手动选择腾讯下载线路" hidden>
-                      <a id="tencent-installer" aria-disabled="true" tabindex="-1" hidden>腾讯线路安装版</a>
-                      <a id="tencent-portable" aria-disabled="true" tabindex="-1" hidden>腾讯线路便携版</a>
-                    </div>
-                    <a href="https://github.com/treasureGrove/LoliCode-Releases/releases/latest">桌面版发布页</a>
-                    <p>macOS 与 Linux 版本仍在准备中。Linux 可先使用 <a href="https://lolicode.com/cli/">LoliCode CLI</a>。</p>
-                  </div>
-                </details>
-              </div>
-              <p id="status" class="release-status" role="status" aria-live="polite" data-state="loading">正在连接发布服务…</p>
-              <button id="retry" type="button" hidden>重新读取下载信息</button>
-            </article>
-            <article class="portal-product portal-card" aria-labelledby="cli-title">
-              <div class="portal-product-heading">
-                <span class="portal-cli-icon" aria-hidden="true">›_</span>
-                <div><h3 id="cli-title">LoliCode CLI</h3><p>Windows / Linux · Node.js 24.9+</p></div>
-              </div>
-              <p class="portal-product-description">在项目终端里继续对话，也可以用 <code>lolicode run</code> 把任务交给脚本。</p>
-              <div class="portal-actions">
-                <a class="button portal-secondary" href="https://lolicode.com/cli/">安装与命令 <span aria-hidden="true">↗</span></a>
-              </div>
-            </article>
+      <div class="paper">
+        <section id="film" class="landing-demo page-width" aria-labelledby="demo-title">
+          <div class="landing-demo-heading">
+            <h2 id="demo-title">工作台演示</h2>
+            <a href="https://github.com/treasureGrove/LoliCode">查看源码 <span aria-hidden="true">↗</span></a>
           </div>
-        </section>
-
-        <section id="community" class="portal-feed page-width" aria-labelledby="community-title">
-          <div class="portal-section-title">
-            <h2 id="community-title">最近话题</h2>
-            <a class="portal-text-link" href="https://lolicode.com/all">全部话题 <span aria-hidden="true">↗</span></a>
-          </div>
-          <div class="portal-card portal-discussions">
-            <ul class="discussion-list" data-community-feed></ul>
-            <p class="community-status" data-community-status role="status" aria-live="polite">进入社区，看看最近的讨论与分享。</p>
-          </div>
-          <div class="portal-feed-links" aria-label="社区其他入口">
-            <a href="https://lolicode.com/resources">资源中心 <span aria-hidden="true">↗</span></a>
-            <a href="https://lolicode.com/rankings">模型排行 <span aria-hidden="true">↗</span></a>
-          </div>
-        </section>
-
-        <section class="portal-demo page-width" aria-labelledby="demo-title">
-          <h2 id="demo-title">看看 LoliCode 怎么工作</h2>
-          <figure id="film" class="harness-film" aria-labelledby="film-description">
+          <figure class="harness-film" aria-labelledby="film-description">
             <div class="film-player">
               <video id="product-film" controls muted playsinline preload="none"
                 poster="./assets/companion-v3-20261119-poster.webp" width="1920" height="1080"
@@ -534,6 +531,17 @@
             </div>
           </div>
         </section>
+
+        <section id="community" class="landing-community page-width" aria-labelledby="community-title">
+          <div class="landing-community-heading">
+            <h2 id="community-title">社区交流</h2>
+            <a href="https://lolicode.com/all">浏览社区 <span aria-hidden="true">↗</span></a>
+          </div>
+          <p>分享作品、交流使用心得，也一起发现有意思的工具与资源。</p>
+          <ul class="discussion-list" data-community-feed></ul>
+          <p class="community-status" data-community-status role="status" aria-live="polite">进入社区，看看最近的讨论与分享。</p>
+        </section>
+
 
         <section
           class="closing-section page-width"
