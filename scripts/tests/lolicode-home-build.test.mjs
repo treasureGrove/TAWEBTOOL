@@ -36,8 +36,8 @@ test("home HTML is derived without changing the tools source", () => {
     4,
   );
   assert.ok(!html.includes('src="./assets/'));
-  assert.match(html, /poster="\/desktop-assets\/companion-v3-20261119-poster\.webp"/);
-  assert.match(html, /src="\/desktop-assets\/companion-v3-20261119-tour\.mp4"/);
+  assert.match(html, /poster="\/desktop-assets\/studio-20261120-poster\.webp"/);
+  assert.match(html, /src="\/desktop-assets\/studio-20261120-tour\.mp4"/);
   assert.match(html, /tour-mobile\.mp4" media="\(max-width: 640px\)"/);
   assert.match(html, /data-preview-src="\/desktop-assets\/companion-v3-20261119-companion\.webp"/);
   for (const feature of ["model", "tools", "review"]) {
@@ -103,7 +103,7 @@ test("missing source markers stop a build instead of silently producing a broken
 test("builder emits only the homepage assets and can refresh its own directory", async () => {
   await tempDirectory(async (directory) => {
     const result = await buildHome({ outDirectory: directory });
-    assert.equal(result.files.length, 49);
+    assert.equal(result.files.length, 54);
     assert.deepEqual((await readdir(directory)).sort(), [
       ".lolicode-home-build.json",
       "desktop-assets",
@@ -146,6 +146,8 @@ test("builder emits only the homepage assets and can refresh its own directory",
         "home-20261120-product.css",
         "home-20261120-product.js",
         "home-20261120-scrollbar.css",
+        "home-20261120-studio.css",
+        "home-20261120-studio.webp",
         "logo.svg",
         "lolicode-tour.mp4",
         "maid.png",
@@ -155,6 +157,9 @@ test("builder emits only the homepage assets and can refresh its own directory",
         "site-icon-512.png",
         "site-icon.png",
         "site.css",
+        "studio-20261120-poster.webp",
+        "studio-20261120-tour-mobile.mp4",
+        "studio-20261120-tour.mp4",
         "tour-poster.webp",
         "workbench-cream.jpg",
         "workbench.jpg",

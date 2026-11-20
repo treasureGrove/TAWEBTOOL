@@ -23,6 +23,8 @@ const assetNames = [
   "home-20261120-product.css",
   "home-20261120-product.js",
   "home-20261120-scrollbar.css",
+  "home-20261120-studio.css",
+  "home-20261120-studio.webp",
   "harness-20261119-model.webp",
   "harness-20261119-poster.webp",
   "harness-20261119-review.webp",
@@ -59,6 +61,9 @@ const assetNames = [
   "channels-light.jpg",
   "lolicode-tour.mp4",
   "tour-poster.webp",
+  "studio-20261120-poster.webp",
+  "studio-20261120-tour-mobile.mp4",
+  "studio-20261120-tour.mp4",
   "discovery-v1.json",
 ];
 const markerName = ".lolicode-home-build.json";

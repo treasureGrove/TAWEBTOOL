@@ -169,6 +169,7 @@
     <link rel="stylesheet" href="./assets/companion-v3-20261119-showcase.css" />
     <link rel="stylesheet" href="./assets/home-20261120-scrollbar.css" />
     <link rel="stylesheet" href="./assets/home-20261120-product.css" />
+    <link rel="stylesheet" href="./assets/home-20261120-studio.css" />
     <script type="module" src="./assets/home-20261120-product.js"></script>
     <script src="./assets/downloads.js?v=product1-20261020" defer></script>
     <script src="./assets/motion.js?v=companion-v3-20261119" defer></script>
@@ -279,26 +280,36 @@ lolicode</code></pre>
       <div class="paper">
         <section id="film" class="landing-demo page-width" aria-labelledby="demo-title">
           <div class="landing-demo-heading">
-            <h2 id="demo-title">工作台演示</h2>
+            <h2 id="demo-title">从报错到验证修复</h2>
             <a href="https://github.com/treasureGrove/LoliCode">查看源码 <span aria-hidden="true">↗</span></a>
           </div>
           <figure class="harness-film" aria-labelledby="film-description">
             <div class="film-player">
               <video id="product-film" controls muted playsinline preload="none"
-                poster="./assets/companion-v3-20261119-poster.webp" width="1920" height="1080"
-                aria-label="小笨狗和 LoliCode 工作台的产品演示" aria-describedby="film-description">
-                <source src="./assets/companion-v3-20261119-tour-mobile.mp4" media="(max-width: 640px)" type="video/mp4" />
-                <source src="./assets/companion-v3-20261119-tour.mp4" type="video/mp4" />
+                poster="./assets/studio-20261120-poster.webp" width="1920" height="1080"
+                aria-label="在 LoliCode 中复现问题、审阅修改并验证待办筛选" aria-describedby="film-description">
+                <source src="./assets/studio-20261120-tour-mobile.mp4" media="(max-width: 640px)" type="video/mp4" />
+                <source src="./assets/studio-20261120-tour.mp4" type="video/mp4" />
                 你的浏览器暂时无法播放这段演示。
               </video>
               <button type="button" class="film-play" hidden aria-label="播放或重播工作台演示"><span aria-hidden="true">▶</span>播放演示</button>
             </div>
             <figcaption class="film-caption" id="film-description">
-              <span><strong>和小笨狗修复「已完成」筛选</strong><span class="clip-context">43 秒 · LoliCode 1.1.4 真实界面 · 示例任务</span></span>
-              <span class="film-actions"><button type="button" data-film-sound aria-pressed="false" hidden>开启配乐</button><a class="film-file" href="./assets/companion-v3-20261119-tour.mp4">打开原片</a></span>
+              <span><strong>把一次修复讲清楚</strong><span class="clip-context">54 秒 · LoliCode 1.1.4 工作台画面 · 示例复跑</span></span>
+              <span class="film-actions"><button type="button" data-film-sound aria-pressed="false" hidden>开启配乐</button><a class="film-file" href="./assets/studio-20261120-tour.mp4">打开原片</a></span>
             </figcaption>
-            <p class="film-error" role="status" hidden>视频暂时无法播放。<a href="./assets/companion-v3-20261119-tour.mp4">打开原片</a></p>
+            <p class="film-error" role="status" hidden>视频暂时无法播放。<a href="./assets/studio-20261120-tour.mp4">打开原片</a></p>
           </figure>
+          <details class="film-note">
+            <summary>查看演示步骤</summary>
+            <ol>
+              <li>选中「已完成」，看到两项待办。运行 <code>npm test</code>，三项测试中有一项失败。</li>
+              <li>在工作台选择模型，描述故障并要求保留已有测试。展开工具回执，查看读文件、编辑和测试记录。</li>
+              <li>审阅筛选条件的一行改动，确认它会按照当前筛选项匹配任务状态。</li>
+              <li>重新打开示例页面并复跑测试。「已完成」只显示正确的一项，三项测试全部通过。</li>
+              <li>修复结束后，点击桌宠工具栏的小鱼，喂小笨狗一条小鱼干。</li>
+            </ol>
+          </details>
         </section>
 
 
