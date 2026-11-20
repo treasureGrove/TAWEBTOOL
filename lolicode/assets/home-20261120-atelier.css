@@ -1,0 +1,210 @@
+/* Restore the original atelier composition around today's product and community. */
+.atelier-hero {
+  padding-block: 58px 62px;
+  gap: clamp(25px, 4vw, 60px);
+}
+.atelier-hero .hero-copy {
+  padding-block: 0;
+}
+.atelier-hero h1 {
+  margin-top: 25px;
+  font-size: clamp(3.6rem, 5.5vw, 5.1rem);
+}
+.atelier-hero .hero-handwritten {
+  margin-block: 20px 25px;
+}
+.atelier-hero .hero-description {
+  max-width: 31em;
+  color: #f3d8d6;
+}
+.atelier-hero .download-block {
+  margin-top: 27px;
+  position: relative;
+  z-index: 3;
+}
+.atelier-hero .source-action,
+.atelier-hero .download-meta,
+.atelier-hero .more-downloads summary {
+  color: #f3d3d4;
+}
+.atelier-hero .download-meta {
+  margin-top: 12px;
+}
+.atelier-hero #retry {
+  color: #ffe5d8;
+}
+.atelier-hero .release-status[data-state="ready"] {
+  display: none;
+}
+.atelier-hero .hero-community-link {
+  margin-top: 17px;
+}
+.atelier-hero .visual-footnote {
+  margin-top: 5px;
+}
+.atelier-hero .companion-stage {
+  height: clamp(440px, 42vw, 590px);
+}
+.atelier-hero .hero-companion {
+  filter: drop-shadow(0 15px 20px #53112c24);
+}
+.atelier-hero .art-disc {
+  background-color: #edc8c4;
+}
+.atelier-hero .art-signature {
+  color: #fff0d9;
+}
+.atelier-hero .celestial-map {
+  opacity: 0.95;
+}
+.atelier-film {
+  width: min(1240px, calc(100% - 96px));
+  margin: 0 auto 55px;
+}
+.atelier-spark {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  color: #f4d5a4;
+  line-height: 1;
+}
+.spark-one {
+  left: 8%;
+  top: 7%;
+  font-size: 25px;
+}
+.spark-two {
+  right: 4%;
+  top: 37%;
+  font-size: 20px;
+}
+.spark-three {
+  left: 14%;
+  bottom: 17%;
+  font-size: 16px;
+}
+.spark-four {
+  right: 22%;
+  top: 5%;
+  font-size: 18px;
+}
+.studio-ribbon {
+  margin-top: 0;
+  padding-block: 20px;
+  border-block-color: #9e24452b;
+  color: #a44c60;
+  background: #f5e4dc;
+}
+.studio-ribbon i {
+  color: #b78264;
+}
+.community-copy .eyebrow::before {
+  content: "✦";
+  margin-right: 10px;
+  color: #ae6c55;
+}
+.community-topics {
+  position: relative;
+}
+.community-topics::before {
+  content: "with love, from the community";
+  position: absolute;
+  top: -14px;
+  right: 18px;
+  padding: 3px 13px;
+  rotate: 3deg;
+  background: #edc5bd;
+  color: #7c3548;
+  font:
+    italic 14px/1.6 Georgia,
+    serif;
+  box-shadow: 0 3px 9px #63233909;
+  pointer-events: none;
+}
+html[data-effects="active"]
+  .companion-stage[data-scene-visible="true"]
+  .atelier-spark {
+  animation: atelier-sparkle 5.5s ease-in-out infinite;
+}
+html[data-effects="active"]
+  .companion-stage[data-scene-visible="true"]
+  .spark-two {
+  animation-delay: -1.7s;
+}
+html[data-effects="active"]
+  .companion-stage[data-scene-visible="true"]
+  .spark-three {
+  animation-delay: -3.3s;
+}
+html[data-effects="active"]
+  .companion-stage[data-scene-visible="true"]
+  .spark-four {
+  animation-delay: -4.2s;
+}
+@keyframes atelier-sparkle {
+  0%,
+  100% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(-9px) scale(1.1);
+    opacity: 1;
+  }
+}
+@media (max-width: 850px) {
+  .atelier-hero {
+    gap: 20px;
+    padding-block: 35px 45px;
+  }
+  .atelier-hero h1 {
+    font-size: clamp(2.8rem, 6vw, 4rem);
+  }
+  .atelier-hero .companion-stage {
+    height: 400px;
+  }
+  .atelier-film {
+    width: calc(100% - 60px);
+  }
+}
+@media (max-width: 560px) {
+  .atelier-hero {
+    gap: 30px;
+    padding-block: 30px 35px;
+  }
+  .atelier-hero h1 {
+    font-size: clamp(3rem, 12.5vw, 4rem);
+  }
+  .atelier-hero .hero-handwritten {
+    font-size: 25px;
+    margin-block: 17px 20px;
+  }
+  .atelier-hero .hero-description {
+    font-size: 14px;
+  }
+  .atelier-hero .companion-stage {
+    height: clamp(300px, 93vw, 390px);
+  }
+  .atelier-hero .hero-visual {
+    max-width: 430px;
+  }
+  .atelier-hero .art-coordinate {
+    font-size: 7px;
+  }
+  .atelier-film {
+    width: calc(100% - 40px);
+    margin-bottom: 35px;
+  }
+  .studio-ribbon {
+    padding-block: 17px;
+  }
+  .ribbon-set {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atelier-spark {
+    animation: none !important;
+    transform: none !important;
+  }
+}

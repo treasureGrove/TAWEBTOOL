@@ -168,6 +168,7 @@
     <link rel="stylesheet" href="./assets/harness-v2-20261119-showcase.css" />
     <link rel="stylesheet" href="./assets/companion-v3-20261119-showcase.css" />
     <link rel="stylesheet" href="./assets/home-20261120-cherry.css" />
+    <link rel="stylesheet" href="./assets/home-20261120-atelier.css" />
     <script src="./assets/downloads.js?v=product1-20261020" defer></script>
     <script src="./assets/motion.js?v=companion-v3-20261119" defer></script>
     <script type="module" src="./assets/home-20261120-community.js"></script>
@@ -203,16 +204,21 @@
     </header>
 
     <main id="main">
-      <section class="hero harness-hero page-width" aria-labelledby="hero-title">
+      <section class="hero atelier-hero page-width" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="harness-kicker">LoliCode · Desktop Agent Harness</p>
-          <h1 id="hero-title"><span>和<span class="character-name">小笨狗</span>一起，</span><span>在桌面写代码。</span></h1>
-        </div>
-        <p class="hero-description companion-description">让 Agent 读项目、用工具、跑测试，由你审阅改动。工作的时候，小笨狗就在桌边。</p>
-        <a class="hero-partner" href="./assets/companion-v3-20261119-companion.webp" data-partner-preview aria-label="查看小笨狗的桌宠互动">
-          <span class="partner-art"><img src="./assets/companion.webp" width="720" height="768" alt="小笨狗，粉色长发、折耳、身穿酒红色裙装的 LoliCode 看板娘" decoding="async" fetchpriority="high" /></span>
-          <span class="partner-action">看桌宠互动 <span aria-hidden="true">↗</span></span>
-        </a>
+          <p class="eyebrow">
+            <span class="tiny-gem" aria-hidden="true"></span> LOLICODE 官方网站 · AI 编程助手
+          </p>
+          <h1 id="hero-title">
+            <span class="title-line"><span>LoliCode</span></span>
+            <span class="title-line"><span>让想法<span class="title-accent">成真。</span></span></span>
+          </h1>
+          <p class="hero-handwritten" aria-hidden="true">
+            Make something lovely.
+          </p>
+          <p class="hero-description">
+            你的 AI 编程助手与桌面 Agent。<br />和小笨狗一起，读项目、写代码、用工具。<br />把灵感慢慢做成作品，也带到社区与大家分享。
+          </p>
         <div id="download" class="download-block" aria-label="下载 LoliCode">
           <div class="harness-actions">
             <a id="installer" class="button button-primary" aria-disabled="true" tabindex="-1"><span aria-hidden="true">↓</span>下载 Windows 版</a>
@@ -238,7 +244,67 @@
           <button id="retry" type="button" hidden>重新读取下载信息</button>
           <a class="hero-community-link" href="#community">也来社区坐坐 <span aria-hidden="true">↗</span></a>
         </div>
-        <figure id="film" class="harness-film" aria-labelledby="film-description">
+        </div>
+        <div class="hero-visual">
+          <div class="companion-stage" data-parallax>
+            <span class="atelier-spark spark-one" aria-hidden="true">✦</span>
+            <span class="atelier-spark spark-two" aria-hidden="true">✧</span>
+            <span class="atelier-spark spark-three" aria-hidden="true">✦</span>
+            <span class="atelier-spark spark-four" aria-hidden="true">♡</span>
+            <div class="art-disc" aria-hidden="true"></div>
+            <svg class="celestial-map" viewBox="0 0 600 600" stroke="url(#orbit-ink)" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="orbit-ink" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#fff6e9" stop-opacity="0.7" />
+                  <stop offset="1" stop-color="#efba87" stop-opacity="0.2" />
+                </linearGradient>
+              </defs>
+              <circle class="scene-outline" cx="300" cy="300" r="273" pathLength="1" />
+              <circle class="scene-dashes" cx="300" cy="300" r="257" />
+              <path class="scene-compass" d="M300 16v25M300 559v25M16 300h25M559 300h25M99 99l17 17M484 484l17 17M99 501l17-17M484 116l17-17" />
+              <g class="scene-satellite satellite-one">
+                <circle cx="300" cy="27" r="5" />
+                <path d="M300 9v8M300 37v8M282 27h8M310 27h8" />
+              </g>
+              <g class="scene-satellite satellite-two">
+                <path d="M300 32l5 8-5 8-5-8z" />
+              </g>
+            </svg>
+            <div class="art-orbit orbit-one" aria-hidden="true"></div>
+            <div class="art-orbit orbit-two" aria-hidden="true"></div>
+            <span class="art-cross cross-one" aria-hidden="true">✳</span>
+            <span class="art-cross cross-two" aria-hidden="true">✧</span>
+            <span class="art-coordinate" aria-hidden="true"
+              >FIG. 01 / YOUR CREATIVE COMPANION</span
+            >
+            <div class="companion-float">
+              <img
+                class="hero-companion"
+                src="./assets/companion.webp"
+                width="720"
+                height="768"
+                fetchpriority="high"
+                alt="粉色长发、折耳的 LoliCode 看板娘，穿着樱桃红缎带舞台服，伸手邀请你一起创作"
+              />
+            </div>
+            <span class="art-signature" aria-hidden="true"
+              >A little magic,<br />made with you.</span
+            >
+            <span class="art-seal" aria-hidden="true"
+              >LOLI<br /><i>♡</i><br />CODE</span
+            >
+          </div>
+          <p class="visual-footnote">
+            <span>认真做事，也可爱一点。</span
+            ><button class="motion-toggle" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停页面动效" hidden>
+              <span class="motion-toggle-glyph" aria-hidden="true">✦</span>
+              <span data-motion-label>暂停动效</span>
+            </button>
+          </p>
+        </div>
+      </section>
+
+        <figure id="film" class="harness-film atelier-film page-width" aria-labelledby="film-description">
           <div class="film-player">
             <video id="product-film" controls muted playsinline preload="none"
               poster="./assets/companion-v3-20261119-poster.webp" width="1920" height="1080"
@@ -255,9 +321,15 @@
           </figcaption>
           <p class="film-error" role="status" hidden>视频暂时无法播放。<a href="./assets/companion-v3-20261119-tour.mp4">打开原片</a></p>
         </figure>
-      </section>
 
       <div class="paper">
+        <div class="studio-ribbon" aria-hidden="true">
+          <div class="ribbon-track">
+            <div class="ribbon-set"><span>SMALL IDEAS</span><i>✳</i><span>LOVELY THINGS</span><i>✳</i><span>MADE WITH YOU</span><i>✳</i></div>
+            <div class="ribbon-set"><span>SMALL IDEAS</span><i>✳</i><span>LOVELY THINGS</span><i>✳</i><span>MADE WITH YOU</span><i>✳</i></div>
+          </div>
+        </div>
+
         <section id="community" class="community-section page-width" aria-labelledby="community-title">
           <div class="community-copy">
             <p class="eyebrow">LOLICODE 社区</p>
@@ -561,7 +633,6 @@
           感谢 CC Switch、ZCode、OpenCode 等开源项目。<br />代码来源与许可说明见下载仓库。
         </p>
       </div>
-      <div class="site-motion-row page-width"><button class="motion-toggle" data-motion-toggle type="button" aria-pressed="false" aria-label="暂停页面动效" hidden><span data-motion-label>暂停动效</span></button></div>
       <div class="footer-wordmark" aria-hidden="true">
         LoliCode<span>®</span>
       </div>
