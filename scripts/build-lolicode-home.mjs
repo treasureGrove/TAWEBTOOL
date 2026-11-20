@@ -20,6 +20,7 @@ const assetNames = [
   "home-20261120-cherry.css",
   "home-20261120-atelier.css",
   "home-20261120-community.js",
+  "home-20261120-portal.css",
   "harness-20261119-model.webp",
   "harness-20261119-poster.webp",
   "harness-20261119-review.webp",
