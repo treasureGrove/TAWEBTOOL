@@ -1,0 +1,9 @@
+/* The viewport scrollbar uses the root's palette. */
+html:has(> body.product-home) {
+  --scrollbar-track: #eadbcf;
+  --scrollbar-thumb: #9b586a;
+}
+
+html:has(> body.product-home)::-webkit-scrollbar-thumb:hover {
+  background: #7d3a50;
+}
