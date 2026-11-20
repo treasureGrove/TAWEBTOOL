@@ -22,6 +22,6 @@ test('workflows and optional CLI skills describe the released boundary', () => {
 
 test('external app configuration and recorded usage do not promise complete billing', () => {
   assert.match(html, /一键应用到 WorkBuddy、DeepSeek Harness、ZCode 与 MiMo/);
-  assert.match(html, /本地 Agent 的用量记录；缺失的费用保持未知/);
+  assert.match(html, /本地 Agent 的用量记录。缺失的费用保持未知/);
   assert.doesNotMatch(html, /所有应用的完整账单|全部费用实时同步/);
 });

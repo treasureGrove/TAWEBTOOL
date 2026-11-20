@@ -36,6 +36,11 @@ test("home HTML is derived without changing the tools source", () => {
     4,
   );
   assert.ok(!html.includes('src="./assets/'));
+  assert.ok(html.includes('src="/desktop-assets/home-press-companion-v1.webp"'));
+  for (const guide of ["anime-ai", "ai-roleplay", "windows-ai-coding"]) {
+    assert.ok(html.includes(`href="/guides/${guide}/"`));
+    assert.ok(source.includes(`href="https://lolicode.com/guides/${guide}/"`));
+  }
   assert.match(html, /poster="\/desktop-assets\/studio-20261120-poster\.webp"/);
   assert.match(html, /src="\/desktop-assets\/studio-20261120-tour\.mp4"/);
   assert.match(html, /tour-mobile\.mp4" media="\(max-width: 640px\)"/);
@@ -46,7 +51,7 @@ test("home HTML is derived without changing the tools source", () => {
   assert.match(html, /src="\/desktop-assets\/downloads\.js\?/);
   assert.match(
     html,
-    /class="product-header"[\s\S]*id="download"[\s\S]*id="terminal-install"[\s\S]*id="film"[\s\S]*id="workspace-gallery"[\s\S]*id="community"/,
+    /class="masthead"[\s\S]*id="download"[\s\S]*id="terminal-install"[\s\S]*id="workspace-gallery"[\s\S]*id="film"[\s\S]*id="guides"[\s\S]*id="updates"[\s\S]*id="community"/,
   );
   assert.match(html, /href="https:\/\/tools\.treasuregrove\.art\/">TA 工具箱/);
   assert.match(source, /content="tools"/);
@@ -103,7 +108,7 @@ test("missing source markers stop a build instead of silently producing a broken
 test("builder emits only the homepage assets and can refresh its own directory", async () => {
   await tempDirectory(async (directory) => {
     const result = await buildHome({ outDirectory: directory });
-    assert.equal(result.files.length, 55);
+    assert.equal(result.files.length, 62);
     assert.deepEqual((await readdir(directory)).sort(), [
       ".lolicode-home-build.json",
       "desktop-assets",
@@ -149,6 +154,13 @@ test("builder emits only the homepage assets and can refresh its own directory",
         "home-20261120-scrollbar.css",
         "home-20261120-studio.css",
         "home-20261120-studio.webp",
+        "home-guide-characters-v1.webp",
+        "home-guide-code-v1.webp",
+        "home-guide-companion-v1.webp",
+        "home-press-companion-v1.webp",
+        "home-press-share-v1.jpg",
+        "home-press-v1.css",
+        "home-press-v1.js",
         "logo.svg",
         "lolicode-tour.mp4",
         "maid.png",

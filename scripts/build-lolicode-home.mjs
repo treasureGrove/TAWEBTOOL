@@ -26,6 +26,13 @@ const assetNames = [
   "home-20261120-scrollbar.css",
   "home-20261120-studio.css",
   "home-20261120-studio.webp",
+  "home-guide-characters-v1.webp",
+  "home-guide-code-v1.webp",
+  "home-guide-companion-v1.webp",
+  "home-press-companion-v1.webp",
+  "home-press-share-v1.jpg",
+  "home-press-v1.css",
+  "home-press-v1.js",
   "harness-20261119-model.webp",
   "harness-20261119-poster.webp",
   "harness-20261119-review.webp",
@@ -123,10 +130,12 @@ export function renderHome(source, forumPath = "/all") {
   );
   html = replaceRequired(
     html,
-    /<a href="\/">TA 工具箱 ↗<\/a>/,
-    '<a href="https://tools.treasuregrove.art/">TA 工具箱 ↗</a>',
+    /<a href="\/">TA 工具箱<\/a>/,
+    '<a href="https://tools.treasuregrove.art/">TA 工具箱</a>',
     "toolbox link",
   );
+  // The tools mirror points to the official guides. The site build keeps them on its own host.
+  html = html.replaceAll('href="https://lolicode.com/guides/', 'href="/guides/');
   return html;
 }
 
