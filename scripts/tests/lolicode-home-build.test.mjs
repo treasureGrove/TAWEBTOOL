@@ -33,7 +33,7 @@ test("home HTML is derived without changing the tools source", () => {
   assert.match(html, /property="og:url"\s+content="https:\/\/lolicode\.com\/"/);
   assert.equal(
     (html.match(/href="https:\/\/lolicode\.com\/all"/g) || []).length,
-    3,
+    4,
   );
   assert.ok(!html.includes('src="./assets/'));
   assert.match(html, /poster="\/desktop-assets\/companion-v3-20261119-poster\.webp"/);
@@ -48,7 +48,7 @@ test("home HTML is derived without changing the tools source", () => {
   assert.match(source, /content="tools"/);
   assert.equal(
     (source.match(/href="https:\/\/lolicode\.com\/all"/g) || []).length,
-    3,
+    4,
   );
   assert.ok(!source.includes('href="https://lolicode.com"'));
   assert.match(
@@ -99,7 +99,7 @@ test("missing source markers stop a build instead of silently producing a broken
 test("builder emits only the homepage assets and can refresh its own directory", async () => {
   await tempDirectory(async (directory) => {
     const result = await buildHome({ outDirectory: directory });
-    assert.equal(result.files.length, 43);
+    assert.equal(result.files.length, 45);
     assert.deepEqual((await readdir(directory)).sort(), [
       ".lolicode-home-build.json",
       "desktop-assets",
@@ -136,6 +136,8 @@ test("builder emits only the homepage assets and can refresh its own directory",
         "harness-v2-20261119-showcase.css",
         "harness-v2-20261119-tour-mobile.mp4",
         "harness-v2-20261119-tour.mp4",
+        "home-20261120-cherry.css",
+        "home-20261120-community.js",
         "logo.svg",
         "lolicode-tour.mp4",
         "maid.png",

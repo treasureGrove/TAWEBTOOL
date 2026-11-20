@@ -167,8 +167,10 @@
     <link rel="stylesheet" href="./assets/site.css?v=lovely-studio-20261020" />
     <link rel="stylesheet" href="./assets/harness-v2-20261119-showcase.css" />
     <link rel="stylesheet" href="./assets/companion-v3-20261119-showcase.css" />
+    <link rel="stylesheet" href="./assets/home-20261120-cherry.css" />
     <script src="./assets/downloads.js?v=product1-20261020" defer></script>
     <script src="./assets/motion.js?v=companion-v3-20261119" defer></script>
+    <script type="module" src="./assets/home-20261120-community.js"></script>
   </head>
   <body>
     <div class="reading-progress" aria-hidden="true"></div>
@@ -234,6 +236,7 @@
           </div>
           <p id="status" class="release-status" role="status" aria-live="polite" data-state="loading">正在连接发布服务…</p>
           <button id="retry" type="button" hidden>重新读取下载信息</button>
+          <a class="hero-community-link" href="#community">也来社区坐坐 <span aria-hidden="true">↗</span></a>
         </div>
         <figure id="film" class="harness-film" aria-labelledby="film-description">
           <div class="film-player">
@@ -255,6 +258,20 @@
       </section>
 
       <div class="paper">
+        <section id="community" class="community-section page-width" aria-labelledby="community-title">
+          <div class="community-copy">
+            <p class="eyebrow">LOLICODE 社区</p>
+            <h2 id="community-title">创作之后，<br />来社区聊聊。</h2>
+            <p>分享作品、交流使用心得，也一起发现有意思的工具与资源。</p>
+            <a class="button community-enter" href="https://lolicode.com/all">进入社区 <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="community-topics">
+            <h3>最近的话题</h3>
+            <ul class="discussion-list" data-community-feed></ul>
+            <p class="community-status" data-community-status role="status" aria-live="polite">进入社区，看看最近的讨论与分享。</p>
+          </div>
+        </section>
+
         <section id="workspace-gallery" class="showcase-section harness-showcase page-width section-space" aria-labelledby="showcase-title">
           <div class="showcase-copy">
             <h2 id="showcase-title">工作台与桌面伙伴</h2>
