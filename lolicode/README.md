@@ -13,6 +13,8 @@
 
 ## 官网页面
 
+独立 CLI 的官方入口为 `https://lolicode.com/cli/`，提供 Windows / Linux 的 npm 安装说明、版本和 SHA-256。CLI 页面与部署脚本由 LoliCode 源码仓库的 `deploy/lolicode-cli-site/` 维护，首页导航和本目录产品地图保留这一入口。
+
 页面展示 4.0.18 的 Agent、模型渠道、工具执行、静态预览、本机基础记忆、
 带参数的工作流与 Windows 闲时任务。记忆默认写入前确认，可编辑、删除或关闭，
 不宣称兼容 Hermes 记忆插件或无限记忆；八类 CLI 技能按需下载，
